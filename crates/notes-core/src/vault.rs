@@ -98,7 +98,7 @@ impl Vault {
         // and out of sync.
         let ignore = service.join(".gitignore");
         if !ignore.exists() {
-            write_atomic(&ignore, b"cache/\ntrash/\n")?;
+            write_atomic(&ignore, SERVICE_GITIGNORE)?;
         }
         Self::open(root)
     }
@@ -109,6 +109,19 @@ impl Vault {
 
     pub fn config(&self) -> &VaultConfig {
         &self.config
+    }
+
+    /// `.mdnotes/cache`, created on demand. Also makes sure the service
+    /// folder has a `.gitignore` that keeps local state out of Git.
+    pub fn cache_dir(&self) -> Result<PathBuf> {
+        let service = self.root.join(SERVICE_DIR);
+        let cache = service.join("cache");
+        fs::create_dir_all(&cache).map_err(io_err(&cache))?;
+        let ignore = service.join(".gitignore");
+        if !ignore.exists() {
+            write_atomic(&ignore, SERVICE_GITIGNORE)?;
+        }
+        Ok(cache)
     }
 
     /// Config name or the folder name.
@@ -332,6 +345,7 @@ impl Vault {
 }
 
 const TMP_SUFFIX: &str = ".mdnotes-tmp";
+const SERVICE_GITIGNORE: &[u8] = b"cache/\ntrash/\n";
 
 fn note_path(rel: &str) -> Result<String> {
     let norm = paths::normalize(rel)?;

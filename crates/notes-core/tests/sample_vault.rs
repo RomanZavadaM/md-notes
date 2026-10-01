@@ -83,3 +83,25 @@ fn sample_ids_are_unique() {
         ids.push(id);
     }
 }
+
+#[test]
+fn sample_vault_index() {
+    let vault = sample_vault();
+    let mut index = notes_core::Index::open_in_memory().unwrap();
+    let stats = index.sync(&vault).unwrap();
+    assert_eq!(stats.added as usize, vault.note_paths().unwrap().len());
+
+    let backlinks = index.backlinks("Проєкти/MD Notes.md").unwrap();
+    assert!(backlinks.iter().any(|b| b.path == "Головна.md"));
+    assert!(backlinks.iter().any(|b| b.path == "Проєкти/Задачі/Граф знань.md"));
+
+    let local_first = Some("Ресурси/Поняття/Local-first.md");
+    assert_eq!(index.resolve("local first").as_deref(), local_first);
+
+    let unresolved = index.unresolved_links().unwrap();
+    let targets: Vec<_> = unresolved.iter().map(|l| l.target.as_str()).collect();
+    assert_eq!(targets, EXPECTED_MISSING);
+
+    assert!(!index.search("синхронізація", 10).unwrap().is_empty());
+    assert!(index.tags().unwrap().iter().any(|t| t.tag == "mdnotes"));
+}

@@ -17,6 +17,8 @@ pub enum Error {
     AlreadyExists(String),
     #[error("invalid vault config: {0}")]
     Config(String),
+    #[error("index error: {0}")]
+    Index(#[from] rusqlite::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

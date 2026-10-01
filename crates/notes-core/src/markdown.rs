@@ -192,6 +192,25 @@ pub fn extract_wikilinks(masked: &str) -> Vec<WikiLink> {
     links
 }
 
+/// Like [`extract_wikilinks`], but pairs every link with the trimmed source
+/// line it appears on (used for backlink previews). Links are not
+/// deduplicated across lines.
+pub fn extract_wikilinks_with_context(body: &str, masked: &str) -> Vec<(WikiLink, String)> {
+    let mut out = Vec::new();
+    for (original, masked_line) in body.lines().zip(masked.lines()) {
+        if !masked_line.contains("[[") {
+            continue;
+        }
+        let context: String = original.trim().chars().take(CONTEXT_CHARS).collect();
+        for link in extract_wikilinks(masked_line) {
+            out.push((link, context.clone()));
+        }
+    }
+    out
+}
+
+const CONTEXT_CHARS: usize = 240;
+
 fn non_empty(s: &str) -> Option<String> {
     let s = s.trim();
     (!s.is_empty()).then(|| s.to_string())
