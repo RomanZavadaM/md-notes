@@ -1,38 +1,26 @@
-# Як долучитися
+# Contributing to MD Notes
 
-Документація ведеться українською, код, коментарі в коді й ідентифікатори —
-англійською.
+MD Notes is **proprietary software**, not an open-source project.
 
-## Коміти
+Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved.
 
-Повідомлення комітів і заголовки PR пишуться за
-[Conventional Commits](https://www.conventionalcommits.org/). З них
-автоматично формуються CHANGELOG і номер наступної версії.
+## External contributions
 
-| Префікс | Коли | Вплив на версію (до 1.0) |
-|---|---|---|
-| `feat:` | нова можливість | 0.x.**y** → 0.x.y+1 |
-| `fix:` | виправлення | 0.x.**y** → 0.x.y+1 |
-| `feat!:` / `BREAKING CHANGE:` | несумісна зміна | 0.**x**.y → 0.x+1.0 |
-| `docs:`, `refactor:`, `test:`, `ci:`, `chore:` | інше | без релізу |
+Unsolicited code contributions are not automatically accepted. Before submitting a material code, design, documentation, translation or branding contribution, obtain prior agreement from the repository owner regarding the contribution and the rights needed to incorporate it into the proprietary project.
 
-Можна вказувати область: `feat(core): …`, `fix(app): …`, `docs(adr): …`.
+A public pull request does not by itself transfer copyright ownership and does not change the MD Notes license.
 
-## Гілки і PR
+Pull requests submitted without prior agreement may be reviewed for discussion or closed without merge.
 
-- `main` завжди збирається і проходить CI.
-- Робота ведеться в гілках `feat/…`, `fix/…`, `docs/…` і потрапляє в `main`
-  через PR зі squash merge.
-- CI перевіряє форматування (`cargo fmt`), лінтер (`cargo clippy`), тести ядра
-  на Windows, macOS і Linux, а також типи і збірку інтерфейсу.
+## Technical requirements for an agreed contribution
 
-## Релізи
+- work against the current `main` in a separate branch with a pull request;
+- follow `PROJECT_RULES.md` and `PROJECT_STATE.md`, including the local-first and privacy boundaries;
+- write commit messages and PR titles in [Conventional Commits](https://www.conventionalcommits.org/) form (`feat:`, `fix:`, `docs:` …) — release-please builds the version and CHANGELOG from them;
+- run `cargo fmt --all --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test -p notes-core`, and `npm ci && npm run build` in `app/`;
+- add every new user-visible string to all seven language packs (UK, EN, FR, DE, ES, KO, JA); Ukrainian is the reference;
+- preserve all copyright and third-party notices; update `THIRD_PARTY_NOTICES.md` for new direct dependencies;
+- do not commit vaults, personal notes, credentials, index databases or private documents;
+- record significant architectural decisions as ADRs in `docs/adr/`.
 
-[release-please](https://github.com/googleapis/release-please) підтримує
-відкритий PR «chore(main): release x.y.z». Злиття цього PR створює тег,
-GitHub Release і запускає збірку інсталяторів для Windows, macOS і Linux.
-
-## Архітектурні рішення
-
-Суттєві рішення фіксуються як ADR у [docs/adr/](docs/adr/). Скопіюйте
-[шаблон](docs/adr/template.md) з наступним номером.
+Code, comments and identifiers are written in English; project documentation is in Ukrainian with translations of README and the user guide.

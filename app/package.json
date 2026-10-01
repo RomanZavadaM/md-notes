@@ -1,12 +1,14 @@
 {
   "name": "md-notes",
   "private": true,
+  "license": "UNLICENSED",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
+    "licenses": "node scripts/check-licenses.mjs",
     "preview": "vite preview",
     "tauri": "tauri"
   },
