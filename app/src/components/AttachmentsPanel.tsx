@@ -124,8 +124,8 @@ export function AttachmentsPanel({ vaultRoot, refreshKey, canInsert, onInserted,
               {t.attachmentOpen}
             </button>
             {canInsert && (
-              <button type="button" onClick={() => onInserted(selectedItem)}>
-                {t.attachmentInsert}
+              <button type="button" onClick={() => onInserted(selectedItem)} title={t.attachmentAddTitle}>
+                {t.attachmentAdd}
               </button>
             )}
           </div>
