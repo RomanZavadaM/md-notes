@@ -6,7 +6,7 @@
 
 **ACTIVE — далі залишок етапу v0.2 і етап v0.3.**
 
-Поточний опублікований checkpoint: **v0.2.0** (GitHub prerelease `v0.2.0`, 01.10.2026).
+Поточний опублікований checkpoint: **v0.2.1** (GitHub prerelease `v0.2.1`, 01.10.2026).
 Деталі стану — `PROJECT_STATE.md`, активна робота — `WORKLOG.md`.
 
 Не відновлювати старі work/feature branches як джерело коду і не повторювати merged slices.
