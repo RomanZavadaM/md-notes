@@ -2,9 +2,9 @@
 
 [🇺🇦 Українська](../../README.md) · **🇬🇧 English** · [🇫🇷 Français](README.fr.md) · [🇩🇪 Deutsch](README.de.md) · [🇪🇸 Español](README.es.md) · [🇰🇷 한국어](README.ko.md) · [🇯🇵 日本語](README.ja.md)
 
-> **Current checkpoint: [MD Notes v0.1.0](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.1.0)**
+> **Current checkpoint: [MD Notes v0.2.0](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.0)**
 >
-> **Development status: ACTIVE — stage v0.2 “structure and links”.**
+> **Development status: ACTIVE — next stage v0.3 “mobile platforms and sync”.**
 
 ## What it is
 
@@ -14,16 +14,20 @@
 
 Platforms: **Windows, macOS, Linux**; Android and iOS are planned for v0.3.
 
-## v0.1.0 highlights
+## v0.2.0 highlights
 
 - a local folder as a vault; file tree with create, rename and trash;
 - CodeMirror 6 editor, preview, side-by-side mode, autosave, atomic writes;
-- `[[wiki links]]` that open the target note or create it when missing;
-- `#tags` and YAML front matter properties;
-- light, dark and system themes; layout for narrow screens;
-- the sample knowledge base `sample-vault/`.
+- `[[wiki links]]`, `aliases`, a backlinks panel with context;
+- **link updates when notes and folders are renamed or moved**;
+- full-text search, tags with note counts, `Ctrl+O` quick switcher;
+- Mermaid, KaTeX and images from the vault;
+- note templates and daily notes;
+- watching files changed outside the app (desktop);
+- the interface in seven languages and an About window;
+- light, dark and system themes; the sample knowledge base `sample-vault/`.
 
-In progress (v0.2): index and full-text search, backlinks, link updates on rename, Mermaid and KaTeX, templates and daily notes, the interface in seven languages. Full plan: [roadmap](../roadmap.md) (Ukrainian).
+Next stage — v0.3: Android and iOS, sync via Git and WebDAV, tables and the query language. Full plan: [roadmap](../roadmap.md) (Ukrainian).
 
 ## Install
 

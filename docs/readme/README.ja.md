@@ -2,9 +2,9 @@
 
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · [🇩🇪 Deutsch](README.de.md) · [🇪🇸 Español](README.es.md) · [🇰🇷 한국어](README.ko.md) · **🇯🇵 日本語**
 
-> **現在の checkpoint: [MD Notes v0.1.0](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.1.0)**
+> **現在の checkpoint: [MD Notes v0.2.0](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.0)**
 >
-> **開発状態: ACTIVE — v0.2「構造とリンク」段階。**
+> **開発状態: ACTIVE — 次の段階 v0.3「モバイルプラットフォームと同期」。**
 
 ## 製品
 
@@ -14,16 +14,20 @@
 
 プラットフォーム: **Windows、macOS、Linux**。Android と iOS は v0.3 で対応予定です。
 
-## v0.1.0 の内容
+## v0.2.0 の内容
 
-- ローカルフォルダーを保管庫 (vault) として使用。ファイルツリーで作成、名前変更、ゴミ箱;
+- ローカルフォルダーを保管庫として使用。ファイルツリーで作成、名前変更、ゴミ箱;
 - CodeMirror 6 エディター、プレビュー、並列表示、自動保存、アトミックな書き込み;
-- `[[ウィキリンク]]` — リンク先のノートを開き、存在しなければ作成;
-- `#タグ` と YAML front matter のプロパティ;
-- ライト、ダーク、システムのテーマ。狭い画面向けのレイアウト;
-- サンプルのナレッジベース `sample-vault/`。
+- `[[ウィキリンク]]`、`aliases`、前後の文脈付きバックリンクパネル;
+- **ノートやフォルダーの名前変更・移動時のリンク自動更新**;
+- 全文検索、ノート数付きのタグ、`Ctrl+O` クイック移動;
+- Mermaid、KaTeX、保管庫の画像;
+- ノートテンプレートとデイリーノート;
+- アプリ外で変更されたファイルの監視 (デスクトップ);
+- 7 言語のインターフェースと「このアプリについて」ウィンドウ;
+- ライト、ダーク、システムのテーマ。サンプルのナレッジベース `sample-vault/`。
 
-開発中 (v0.2): インデックスと全文検索、バックリンク、名前変更時のリンク更新、Mermaid と KaTeX、テンプレートとデイリーノート、7 言語のインターフェース。全体計画: [roadmap](../roadmap.md)(ウクライナ語)。
+次の段階 — v0.3: Android と iOS、Git と WebDAV による同期、表とクエリ言語。全体計画: [roadmap](../roadmap.md)(ウクライナ語)。
 
 ## インストール
 

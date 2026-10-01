@@ -2,9 +2,9 @@
 
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · **🇫🇷 Français** · [🇩🇪 Deutsch](README.de.md) · [🇪🇸 Español](README.es.md) · [🇰🇷 한국어](README.ko.md) · [🇯🇵 日本語](README.ja.md)
 
-> **Checkpoint actuel : [MD Notes v0.1.0](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.1.0)**
+> **Checkpoint actuel : [MD Notes v0.2.0](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.0)**
 >
-> **État du développement : ACTIVE — étape v0.2 « structure et liens ».**
+> **État du développement : ACTIVE — prochaine étape v0.3 « plateformes mobiles et synchronisation ».**
 
 ## Présentation
 
@@ -14,16 +14,20 @@
 
 Plateformes : **Windows, macOS, Linux** ; Android et iOS sont prévus pour la v0.3.
 
-## Nouveautés de la v0.1.0
+## Nouveautés de la v0.2.0
 
-- un dossier local comme coffre (vault) ; arborescence de fichiers avec création, renommage et corbeille ;
+- un dossier local comme coffre ; arborescence avec création, renommage et corbeille ;
 - éditeur CodeMirror 6, aperçu, mode côte à côte, enregistrement automatique, écriture atomique ;
-- `[[liens wiki]]` qui ouvrent la note cible ou la créent si elle n'existe pas ;
-- `#étiquettes` et propriétés YAML front matter ;
-- thèmes clair, sombre et système ; mise en page pour écrans étroits ;
-- la base d'exemple `sample-vault/`.
+- `[[liens wiki]]`, `aliases`, panneau des rétroliens avec contexte ;
+- **mise à jour des liens lors du renommage ou du déplacement** de notes et de dossiers ;
+- recherche plein texte, étiquettes avec nombre de notes, navigation rapide `Ctrl+O` ;
+- Mermaid, KaTeX et images du coffre ;
+- modèles de notes et notes quotidiennes ;
+- suivi des fichiers modifiés hors de l'application (ordinateur) ;
+- interface en sept langues et fenêtre « À propos » ;
+- thèmes clair, sombre et système ; la base d'exemple `sample-vault/`.
 
-En cours (v0.2) : index et recherche plein texte, rétroliens, mise à jour des liens lors d'un renommage, Mermaid et KaTeX, modèles et notes quotidiennes, interface en sept langues. Plan complet : [roadmap](../roadmap.md) (en ukrainien).
+Étape suivante — v0.3 : Android et iOS, synchronisation via Git et WebDAV, tableaux et langage de requêtes. Plan complet : [roadmap](../roadmap.md) (en ukrainien).
 
 ## Installation
 
