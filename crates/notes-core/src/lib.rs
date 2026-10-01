@@ -5,12 +5,14 @@
 //! Tauri application and any future tools are thin layers on top of it.
 
 pub mod error;
+pub mod index;
 pub mod markdown;
 pub mod note;
 pub mod paths;
 pub mod vault;
 
 pub use error::{Error, Result};
+pub use index::{Backlink, Index, NoteSummary, SearchHit, SyncStats, TagCount, UnresolvedLink};
 pub use markdown::WikiLink;
 pub use note::Note;
 pub use vault::{EntryKind, TreeEntry, Vault, VaultConfig};
