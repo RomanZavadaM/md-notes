@@ -3,7 +3,8 @@
 use std::sync::Mutex;
 
 use notes_core::{
-    Backlink, Index, Note, NoteSummary, SearchHit, TagCount, TreeEntry, UnresolvedLink, Vault,
+    Backlink, Index, Note, NoteSummary, RenameOutcome, SearchHit, TagCount, TreeEntry,
+    UnresolvedLink, Vault,
 };
 use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager, State};
@@ -122,11 +123,9 @@ fn create_folder(parent: String, name: String, state: State<'_, AppState>) -> Cm
 }
 
 #[tauri::command]
-fn rename_entry(from: String, to: String, state: State<'_, AppState>) -> CmdResult<String> {
+fn rename_entry(from: String, to: String, state: State<'_, AppState>) -> CmdResult<RenameOutcome> {
     with_session(&state, |s| {
-        let moved = s.vault.rename(&from, &to)?;
-        s.index.sync(&s.vault)?;
-        Ok(moved)
+        notes_core::rename_with_links(&s.vault, &mut s.index, &from, &to)
     })
 }
 

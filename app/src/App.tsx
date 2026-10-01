@@ -275,7 +275,8 @@ export default function App() {
         let name = value;
         if (entry.kind === "note" && !/\.(md|markdown)$/i.test(name)) name += ".md";
         await save();
-        const moved = await api.renameEntry(entry.path, joinPath(parentPath(entry.path), name));
+        const outcome = await api.renameEntry(entry.path, joinPath(parentPath(entry.path), name));
+        const moved = outcome.path;
         await refreshTree();
         bump();
         setSelected(null);
@@ -283,6 +284,11 @@ export default function App() {
         if (current && current.path === entry.path) await openNote(moved);
         else if (current && current.path.startsWith(`${entry.path}/`)) {
           await openNote(moved + current.path.slice(entry.path.length));
+        } else if (current && outcome.updated.includes(current.path)) {
+          await openNote(current.path);
+        }
+        if (outcome.updated.length > 0) {
+          setError(`Оновлено посилання в нотатках: ${outcome.updated.length}`);
         }
       }
     } catch (e) {

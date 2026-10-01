@@ -58,6 +58,13 @@ export interface SearchHit {
   snippet: string;
 }
 
+export interface RenameOutcome {
+  /** New path of the renamed entry. */
+  path: string;
+  /** Notes whose links were updated. */
+  updated: string[];
+}
+
 export interface TagCount {
   tag: string;
   count: number;
@@ -76,7 +83,7 @@ export const api = {
   saveNote: (path: string, content: string) => invoke<Note>("save_note", { path, content }),
   createNote: (dir: string, title: string) => invoke<Note>("create_note", { dir, title }),
   createFolder: (parent: string, name: string) => invoke<string>("create_folder", { parent, name }),
-  renameEntry: (from: string, to: string) => invoke<string>("rename_entry", { from, to }),
+  renameEntry: (from: string, to: string) => invoke<RenameOutcome>("rename_entry", { from, to }),
   trashEntry: (path: string) => invoke<string>("trash_entry", { path }),
   resolveLink: (target: string) => invoke<string | null>("resolve_link", { target }),
   listNotes: () => invoke<NoteSummary[]>("list_notes"),
