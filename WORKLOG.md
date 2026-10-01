@@ -4,23 +4,26 @@
 
 ## STATUS
 
-**ACTIVE.** Checkpoint **v0.2.0** опубліковано — DONE. CSP slice інтегровано в `main` через PR #15. Розпочато наступний slice залишку v0.2: **вкладення**.
+**ACTIVE.** Checkpoint **v0.2.0** опубліковано — DONE. CSP slice інтегровано в `main` через PR #15. Активний slice залишку v0.2: **вкладення**.
 
 ## Поточний slice
 
-`feature/attachments-v0.2`: реалізувати керування вкладеннями у відкритому файловому форматі.
+`feature/attachments-v0.2`, draft PR #16: керування вкладеннями у відкритому файловому форматі.
 
 - база: `main` після merge PR #15 (`a8e1106b40b5552f453c410d96fbf5f1da9a243a`);
-- гілка: `feature/attachments-v0.2`;
 - ядро: імпорт файлу в `attachments/YYYY/MM/` без мовчазного перезапису;
 - ядро: перелік вкладень;
 - ядро: «де використовується» через посилання у Markdown;
 - ядро: перелік вкладень без посилань;
-- додані unit-тести на імпорт, унікальні імена, usage/orphan detection.
+- unit-тести: імпорт, унікальні імена, usage/orphan detection;
+- Tauri bridge: `import_attachment`, `list_attachments`, `attachment_used_by`, `orphan_attachments`;
+- frontend API: типізовані wrappers для attachment commands;
+- UI: додано `AttachmentsPanel` з системним picker, списком, image thumbnails, orphan marker, usage details і відкриттям файлу;
+- локалізація: нові attachment-рядки додані у UK / EN / FR / DE / ES / KO / JA.
 
 ## Наступна дія
 
-Підключити attachment APIs до Tauri bridge та UI: вибір файлу, вставлення Markdown-посилання у поточну нотатку, перегляд зображень/PDF і окрема панель використання/файлів без посилань. Після цього пройти стандартний CI + license gate і runtime-перевірку, якщо доступна.
+Підключити `AttachmentsPanel` у `App.tsx`: додати вкладку sidebar «Вкладення», вставлення Markdown-посилання в поточну нотатку після імпорту, refresh tree/index. Далі додати стилі панелі, перевірити поведінку PDF (відкриття/перегляд), пройти стандартний CI + license gate і runtime-перевірку, якщо доступна. PR #16 залишати draft до завершення UI.
 
 ## Останній checkpoint
 
