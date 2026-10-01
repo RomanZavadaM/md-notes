@@ -93,7 +93,9 @@ fn sample_vault_index() {
 
     let backlinks = index.backlinks("Проєкти/MD Notes.md").unwrap();
     assert!(backlinks.iter().any(|b| b.path == "Головна.md"));
-    assert!(backlinks.iter().any(|b| b.path == "Проєкти/Задачі/Граф знань.md"));
+    assert!(backlinks
+        .iter()
+        .any(|b| b.path == "Проєкти/Задачі/Граф знань.md"));
 
     let local_first = Some("Ресурси/Поняття/Local-first.md");
     assert_eq!(index.resolve("local first").as_deref(), local_first);

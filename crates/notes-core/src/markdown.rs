@@ -253,13 +253,31 @@ fn is_tag_char(c: char) -> bool {
 pub fn extract_title(body: &str, masked: &str) -> Option<String> {
     for (original, masked_line) in body.lines().zip(masked.lines()) {
         if masked_line.starts_with("# ") {
-            let title = original[2..].trim().trim_end_matches('#').trim();
+            let mut title = original[2..].trim().trim_end_matches('#').trim();
+            // Trailing `#tags` belong to the note, not to its title.
+            while let Some((head, last)) = title.rsplit_once(char::is_whitespace) {
+                if !is_tag_word(last) {
+                    break;
+                }
+                title = head.trim_end();
+            }
             if !title.is_empty() {
                 return Some(title.to_string());
             }
         }
     }
     None
+}
+
+fn is_tag_word(word: &str) -> bool {
+    match word.strip_prefix('#') {
+        Some(tag) => {
+            !tag.is_empty()
+                && tag.chars().all(is_tag_char)
+                && tag.chars().any(|c| !c.is_ascii_digit())
+        }
+        None => false,
+    }
 }
 
 #[cfg(test)]
@@ -346,5 +364,7 @@ mod tests {
             Some("Real `code` title")
         );
         assert_eq!(extract_title("no heading", "no heading"), None);
+        let body = "# Alpha #work #area/sub\n";
+        assert_eq!(extract_title(body, body).as_deref(), Some("Alpha"));
     }
 }

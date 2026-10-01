@@ -176,9 +176,7 @@ impl Index {
     }
 
     fn init(conn: Connection) -> Result<Self> {
-        conn.pragma_update_and_check(None, "journal_mode", "WAL", |row| {
-            row.get::<_, String>(0)
-        })?;
+        conn.pragma_update_and_check(None, "journal_mode", "WAL", |row| row.get::<_, String>(0))?;
         let version: i64 = conn.pragma_query_value(None, "user_version", |row| row.get(0))?;
         if version != SCHEMA_VERSION {
             conn.execute_batch(DROP_ALL)?;
@@ -294,13 +292,18 @@ impl Index {
                 resolver.by_stem.insert(stem, path);
             }
         }
-        let mut stmt = self.conn.prepare("SELECT path, alias FROM aliases ORDER BY path")?;
+        let mut stmt = self
+            .conn
+            .prepare("SELECT path, alias FROM aliases ORDER BY path")?;
         let aliases = stmt.query_map([], |row| {
             Ok((row.get::<_, String>(0)?, row.get::<_, String>(1)?))
         })?;
         for row in aliases {
             let (path, alias) = row?;
-            resolver.by_alias.entry(alias.to_lowercase()).or_insert(path);
+            resolver
+                .by_alias
+                .entry(alias.to_lowercase())
+                .or_insert(path);
         }
         Ok(resolver)
     }
@@ -474,9 +477,8 @@ fn upsert(tx: &Transaction, note: &Note, (mtime, size): (i64, i64)) -> Result<()
 
     let (_, body) = split_front_matter(&note.content);
     let masked = mask_code(body);
-    let mut insert_link = tx.prepare(
-        "INSERT INTO links (source, target, heading, context) VALUES (?1, ?2, ?3, ?4)",
-    )?;
+    let mut insert_link =
+        tx.prepare("INSERT INTO links (source, target, heading, context) VALUES (?1, ?2, ?3, ?4)")?;
     for (link, context) in extract_wikilinks_with_context(body, &masked) {
         insert_link.execute(params![note.path, link.target, link.heading, context])?;
     }
@@ -582,7 +584,10 @@ mod tests {
     fn resolves_aliases_and_tracks_unresolved_links() {
         let (_dir, vault, mut index) = setup();
         vault
-            .write_note("Local-first.md", "---\naliases: [локальний пріоритет]\n---\n")
+            .write_note(
+                "Local-first.md",
+                "---\naliases: [локальний пріоритет]\n---\n",
+            )
             .unwrap();
         vault
             .write_note("a.md", "[[Локальний пріоритет]] [[Missing]]")
@@ -656,8 +661,14 @@ mod tests {
 
     #[test]
     fn fts_query_escapes_input() {
-        assert_eq!(fts_query("hello wor").as_deref(), Some("\"hello\"* \"wor\"*"));
-        assert_eq!(fts_query("a\"b OR (c)").as_deref(), Some("\"a\"* \"b\"* \"OR\"* \"c\"*"));
+        assert_eq!(
+            fts_query("hello wor").as_deref(),
+            Some("\"hello\"* \"wor\"*")
+        );
+        assert_eq!(
+            fts_query("a\"b OR (c)").as_deref(),
+            Some("\"a\"* \"b\"* \"OR\"* \"c\"*")
+        );
         assert_eq!(fts_query(" -- !! "), None);
     }
 }
