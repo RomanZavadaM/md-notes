@@ -41,14 +41,14 @@ MD Notes використовує Tauri, React, CodeMirror, SQLite, KaTeX, Merma
 - у вікні **«Про програму»** в MD Notes;
 - у README та документації всіма мовами проєкту;
 - у файлах `LICENSE.md`, `COPYRIGHT.md`, `THIRD_PARTY_NOTICES.md`;
-- у metadata збірок (поле `copyright` у `tauri.conf.json`);
+- у metadata збірок (`copyright` у `tauri.conf.json`, `license-file` у `Cargo.toml`, `"license": "UNLICENSED"` у `package.json`);
 - у кожному GitHub Release разом із legal notices.
 
 ## Історія ліцензії
 
 Початковий каркас репозиторію і реліз **v0.1.0** (01.10.2026) були опубліковані з файлом `LICENSE` за ліцензією MIT. Правовласник вирішив перевести проєкт на модель **proprietary / All Rights Reserved**, описану в [LICENSE.md](../LICENSE.md).
 
-**Перехідний стан:** файл `LICENSE` (MIT) і поля `license = "MIT"` у `Cargo.toml` поки що залишаються в репозиторії. Їх видалення та заміну метаданих правовласник виконує окремою дією. До цього моменту в репозиторії одночасно присутні обидва тексти.
+За прямою вказівкою правовласника файл `LICENSE` (MIT) видалено, а метадані замінено: `license-file = "LICENSE.md"` у `Cargo.toml`, `"license": "UNLICENSED"` у `app/package.json`, поле `copyright` у `tauri.conf.json`. Єдиною ліцензією матеріалів MD Notes є [LICENSE.md](../LICENSE.md).
 
 Копії v0.1.0, які хтось уже отримав, можуть залишатися під умовами MIT у тому обсязі, у якому ці умови вже були надані.
 

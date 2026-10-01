@@ -10,7 +10,7 @@
 - GitHub Release: **v0.1.0**, опубліковано 01.10.2026 (release PR #1).
 - Активний продукт: Tauri 2 + React (`app/`), ядро Rust (`crates/notes-core`).
 - Платформи збірки: Windows / macOS / Linux. Android та iOS — етап v0.3.
-- Ліцензійна модель: proprietary / All Rights Reserved (Roman Zavada), `LICENSE.md`. Реліз v0.1.0 вийшов із файлом MIT `LICENSE`; цей файл і `license = "MIT"` у `Cargo.toml` ще не видалені — перехідний стан описано в `docs/LEGAL_AND_COPYRIGHT.md`, розділ «Історія ліцензії».
+- Ліцензійна модель: proprietary / All Rights Reserved (Roman Zavada), `LICENSE.md`. Реліз v0.1.0 вийшов із файлом MIT `LICENSE`; цей файл видалено за вказівкою власника — див. `docs/LEGAL_AND_COPYRIGHT.md`, розділ «Історія ліцензії».
 
 Детальна історія — у `CHANGELOG.md`, `docs/releases/`, merged PR і GitHub Issue #8.
 
