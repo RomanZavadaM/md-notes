@@ -2,9 +2,9 @@
 
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · **🇩🇪 Deutsch** · [🇪🇸 Español](README.es.md) · [🇰🇷 한국어](README.ko.md) · [🇯🇵 日本語](README.ja.md)
 
-> **Aktueller Checkpoint: [MD Notes v0.1.0](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.1.0)**
+> **Aktueller Checkpoint: [MD Notes v0.2.0](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.0)**
 >
-> **Entwicklungsstatus: ACTIVE — Stufe v0.2 „Struktur und Verknüpfungen“.**
+> **Entwicklungsstatus: ACTIVE — nächste Stufe v0.3 „mobile Plattformen und Synchronisation“.**
 
 ## Über das Produkt
 
@@ -14,16 +14,20 @@
 
 Plattformen: **Windows, macOS, Linux**; Android und iOS sind für v0.3 geplant.
 
-## Neu in v0.1.0
+## Neu in v0.2.0
 
-- ein lokaler Ordner als Tresor (Vault); Dateibaum mit Anlegen, Umbenennen und Papierkorb;
+- ein lokaler Ordner als Tresor; Dateibaum mit Anlegen, Umbenennen und Papierkorb;
 - CodeMirror-6-Editor, Vorschau, Nebeneinander-Modus, automatisches Speichern, atomares Schreiben;
-- `[[Wiki-Links]]`, die die Zielnotiz öffnen oder sie anlegen, falls sie fehlt;
-- `#Tags` und Eigenschaften im YAML-Front-Matter;
-- helles, dunkles und System-Design; Layout für schmale Bildschirme;
-- die Beispiel-Wissensdatenbank `sample-vault/`.
+- `[[Wiki-Links]]`, `aliases`, Rückverweis-Leiste mit Kontext;
+- **Aktualisierung von Links beim Umbenennen oder Verschieben** von Notizen und Ordnern;
+- Volltextsuche, Tags mit Notizanzahl, Schnellwechsler `Ctrl+O`;
+- Mermaid, KaTeX und Bilder aus dem Tresor;
+- Notizvorlagen und Tagesnotizen;
+- Überwachung von Dateien, die außerhalb der App geändert werden (Desktop);
+- Oberfläche in sieben Sprachen und Fenster „Über“;
+- helles, dunkles und System-Design; die Beispiel-Wissensdatenbank `sample-vault/`.
 
-In Arbeit (v0.2): Index und Volltextsuche, Rückverweise, Aktualisierung von Links beim Umbenennen, Mermaid und KaTeX, Vorlagen und Tagesnotizen, Oberfläche in sieben Sprachen. Vollständiger Plan: [Roadmap](../roadmap.md) (Ukrainisch).
+Nächste Stufe — v0.3: Android und iOS, Synchronisation über Git und WebDAV, Tabellen und Abfragesprache. Vollständiger Plan: [Roadmap](../roadmap.md) (Ukrainisch).
 
 ## Installation
 
