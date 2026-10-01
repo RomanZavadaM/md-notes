@@ -1,0 +1,21 @@
+# Rust
+/target/
+
+# Node / Vite
+node_modules/
+/app/dist/
+
+# Tauri generated files
+/app/src-tauri/gen/schemas/
+
+# Vault local state
+.mdnotes/cache/
+.mdnotes/trash/
+*.mdnotes-tmp
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

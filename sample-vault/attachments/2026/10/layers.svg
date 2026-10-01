@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 220" font-family="system-ui, sans-serif" font-size="14">
+  <rect width="420" height="220" fill="#ffffff"/>
+  <g fill="#e0e7ff" stroke="#4f46e5">
+    <rect x="20" y="15" width="380" height="40" rx="6"/>
+    <rect x="20" y="65" width="380" height="40" rx="6"/>
+    <rect x="20" y="115" width="380" height="40" rx="6"/>
+    <rect x="20" y="165" width="380" height="40" rx="6"/>
+  </g>
+  <g fill="#1d2129" text-anchor="middle">
+    <text x="210" y="40">Інтерфейс: React + TypeScript</text>
+    <text x="210" y="90">Tauri 2</text>
+    <text x="210" y="140">Ядро notes-core (Rust)</text>
+    <text x="210" y="190">Провайдери сховищ</text>
+  </g>
+</svg>

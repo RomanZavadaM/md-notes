@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "fields": {
+    "id": { "type": "text", "label": "Ідентифікатор", "readonly": true },
+    "type": { "type": "text", "label": "Тип" },
+    "title": { "type": "text", "label": "Заголовок" },
+    "tags": { "type": "list", "label": "Теги" },
+    "aliases": { "type": "list", "label": "Інші назви" },
+    "related": { "type": "links", "label": "Пов'язані" },
+    "created": { "type": "date", "label": "Створено" },
+    "updated": { "type": "date", "label": "Змінено" },
+    "status": {
+      "type": "enum",
+      "label": "Статус",
+      "values": ["idea", "todo", "doing", "waiting", "done", "cancelled"]
+    },
+    "priority": { "type": "enum", "label": "Пріоритет", "values": ["low", "medium", "high"] },
+    "start": { "type": "date", "label": "Початок" },
+    "due": { "type": "date", "label": "Термін" },
+    "date": { "type": "date", "label": "Дата" },
+    "project": { "type": "link", "label": "Проєкт", "noteType": "project" },
+    "participants": { "type": "links", "label": "Учасники", "noteType": "person" },
+    "org": { "type": "text", "label": "Організація" },
+    "role": { "type": "text", "label": "Роль" },
+    "author": { "type": "text", "label": "Автор" },
+    "url": { "type": "url", "label": "Посилання" },
+    "attachment": { "type": "file", "label": "Файл" }
+  },
+  "types": {
+    "note": { "label": "Нотатка", "template": "note.md", "fields": [] },
+    "concept": { "label": "Поняття", "template": "concept.md", "fields": ["aliases"] },
+    "project": {
+      "label": "Проєкт",
+      "template": "project.md",
+      "fields": ["status", "start", "due"],
+      "required": ["status"]
+    },
+    "task": {
+      "label": "Задача",
+      "template": "task.md",
+      "fields": ["status", "due", "priority", "project"],
+      "required": ["status"]
+    },
+    "person": { "label": "Людина", "template": "person.md", "fields": ["org", "role"] },
+    "meeting": {
+      "label": "Зустріч",
+      "template": "meeting.md",
+      "fields": ["date", "participants"],
+      "required": ["date"]
+    },
+    "source": { "label": "Джерело", "template": "source.md", "fields": ["author", "url", "attachment"] },
+    "daily": { "label": "Щоденна нотатка", "template": "daily.md", "fields": ["date"], "required": ["date"] },
+    "moc": { "label": "Карта змісту", "template": "moc.md", "fields": [] }
+  }
+}
