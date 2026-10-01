@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api, type NoteSummary, type TagCount } from "../api";
+import { useI18n } from "../i18n";
 
 interface Props {
   refreshKey: number;
@@ -8,6 +9,7 @@ interface Props {
 
 /** Tag cloud; picking a tag lists its notes (nested tags included). */
 export function TagsPanel({ refreshKey, onOpen }: Props) {
+  const { t } = useI18n();
   const [tags, setTags] = useState<TagCount[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [notes, setNotes] = useState<NoteSummary[]>([]);
@@ -32,7 +34,7 @@ export function TagsPanel({ refreshKey, onOpen }: Props) {
   }, [selected, refreshKey]);
 
   if (tags.length === 0) {
-    return <p className="panel-note">Тегів ще немає. Додайте #тег у текст або властивість tags.</p>;
+    return <p className="panel-note">{t.tagsEmpty}</p>;
   }
   return (
     <div className="panel">

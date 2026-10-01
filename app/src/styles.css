@@ -790,3 +790,53 @@ mark {
   overflow-x: auto;
   overflow-y: hidden;
 }
+
+/* About dialog and welcome footer */
+.dialog.about {
+  width: min(30rem, 100%);
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.dialog.about p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.about-version,
+.about-muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.about-copyright {
+  font-weight: 600;
+}
+
+.dialog.about h3 {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.about-languages {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+}
+
+.welcome-language {
+  margin-top: 1rem;
+}
+
+.link-button {
+  border: none;
+  background: none;
+  color: var(--link);
+  text-decoration: underline;
+}
+
+.welcome-copyright {
+  font-size: 0.8rem;
+  margin-top: 1.5rem;
+}

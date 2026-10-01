@@ -1,0 +1,79 @@
+// Ukrainian is the canonical language: every other pack must provide
+// exactly these keys (enforced by the `Strings` type).
+export const uk = {
+  appTagline: "Особиста база знань у звичайних Markdown-файлах.",
+  openFolder: "Відкрити папку",
+  pickFolderTitle: "Виберіть папку сховища",
+
+  sidebarToggle: "Бічна панель",
+  goToNote: "Перейти до нотатки (Ctrl+O)",
+  goToNotePlaceholder: "Перейти до нотатки…",
+  unsavedChanges: "Є незбережені зміни",
+  modeGroup: "Режим",
+  modeEdit: "Редактор",
+  modeSplit: "Поруч",
+  modePreview: "Перегляд",
+  linksPanelToggle: "Зв'язки нотатки",
+  theme: "Тема",
+  themeSystem: "Системна",
+  themeLight: "Світла",
+  themeDark: "Темна",
+  language: "Мова інтерфейсу",
+  about: "Про програму",
+
+  tabFiles: "Файли",
+  tabSearch: "Пошук",
+  tabTags: "Теги",
+  newNote: "Нова нотатка",
+  newNoteButton: "+ Нотатка",
+  newFolder: "Нова папка",
+  newFolderButton: "+ Папка",
+  today: "Сьогодні",
+  todayTitle: "Щоденна нотатка на сьогодні",
+  rename: "Перейменувати",
+  moveToTrash: "У кошик",
+  otherVault: "Інше сховище…",
+  treeEmpty: "Тут ще немає нотаток.",
+  workspaceEmpty: "Виберіть нотатку зліва, натисніть Ctrl+O для швидкого переходу або створіть нову.",
+
+  statusLinks: (count: number) => `Посилань: ${count}`,
+  statusPropertyError: (message: string) => `Помилка у властивостях: ${message}`,
+  statusSaved: "Збережено",
+  statusUnsaved: "Не збережено",
+
+  dialogName: "Назва",
+  dialogTemplate: "Шаблон",
+  emptyTemplate: "Порожня нотатка",
+  create: "Створити",
+  cancel: "Скасувати",
+  close: "Закрити",
+  trashTitle: "Видалення",
+  trashConfirm: (name: string) => `Перемістити «${name}» у кошик сховища (.mdnotes/trash)?`,
+  externalChange: "Нотатку змінено поза застосунком. Ваше збереження перезапише ті зміни.",
+  linksUpdated: (count: number) => `Оновлено посилання в нотатках: ${count}`,
+
+  properties: "Властивості",
+  searchPlaceholder: "Пошук у нотатках…",
+  searchNothing: "Нічого не знайдено.",
+  tagsEmpty: "Тегів ще немає. Додайте #тег у текст або властивість tags.",
+
+  linksPanel: "Зв'язки",
+  backlinks: "Зворотні посилання",
+  outgoingLinks: "Посилання",
+  noBacklinks: "Сюди ще ніхто не посилається.",
+  tags: "Теги",
+
+  switcherLabel: "Перехід до нотатки",
+  switcherPlaceholder: "Назва нотатки…",
+  switcherCreate: (title: string) => `Створити «${title}»`,
+
+  aboutVersion: (version: string) => `Версія ${version}`,
+  aboutDescription: "Кросплатформна local-first база знань у форматі Markdown.",
+  aboutProprietary:
+    "MD Notes — пропрієтарне програмне забезпечення. Публічний репозиторій не надає open-source ліцензії.",
+  aboutYourNotes: "Ваші нотатки належать вам і зберігаються у відкритих файлах.",
+  aboutThirdParty: "Сторонні компоненти зберігають власні ліцензії: див. THIRD_PARTY_NOTICES.md.",
+  aboutLanguages: "Мови інтерфейсу",
+};
+
+export type Strings = typeof uk;

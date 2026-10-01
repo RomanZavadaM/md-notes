@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api, type Backlink, type Note } from "../api";
+import { useI18n } from "../i18n";
 
 interface Props {
   note: Note;
@@ -10,6 +11,7 @@ interface Props {
 
 /** Right-hand panel: backlinks, outgoing links and tags of the open note. */
 export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
+  const { t } = useI18n();
   const [backlinks, setBacklinks] = useState<Backlink[]>([]);
 
   useEffect(() => {
@@ -30,12 +32,12 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
   const outgoing = [...new Set(note.links.filter((l) => l.target).map((l) => l.target))];
 
   return (
-    <aside className="links-panel" aria-label="Зв'язки">
+    <aside className="links-panel" aria-label={t.linksPanel}>
       <section>
         <h3>
-          Зворотні посилання <span className="count">{backlinks.length}</span>
+          {t.backlinks} <span className="count">{backlinks.length}</span>
         </h3>
-        {backlinks.length === 0 && <p className="panel-note">Сюди ще ніхто не посилається.</p>}
+        {backlinks.length === 0 && <p className="panel-note">{t.noBacklinks}</p>}
         <ul className="result-list">
           {backlinks.map((b, i) => (
             <li key={`${b.path}-${i}`}>
@@ -49,7 +51,7 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
       </section>
       <section>
         <h3>
-          Посилання <span className="count">{outgoing.length}</span>
+          {t.outgoingLinks} <span className="count">{outgoing.length}</span>
         </h3>
         <ul className="result-list">
           {outgoing.map((target) => (
@@ -63,8 +65,8 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
       </section>
       {note.tags.length > 0 && (
         <section>
-          <h3>Теги</h3>
-          <p className="tag-line">{note.tags.map((t) => `#${t}`).join(" ")}</p>
+          <h3>{t.tags}</h3>
+          <p className="tag-line">{note.tags.map((tag) => `#${tag}`).join(" ")}</p>
         </section>
       )}
     </aside>

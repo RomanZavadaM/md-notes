@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { TreeEntry } from "../api";
+import { useI18n } from "../i18n";
 
 interface Props {
   entries: TreeEntry[];
@@ -10,6 +11,7 @@ interface Props {
 }
 
 export function FileTree(props: Props) {
+  const { t } = useI18n();
   const [expanded, setExpanded] = useState<Set<string>>(() => new Set());
 
   const toggle = (path: string) =>
@@ -21,7 +23,7 @@ export function FileTree(props: Props) {
     });
 
   if (props.entries.length === 0) {
-    return <p className="tree-empty">Тут ще немає нотаток.</p>;
+    return <p className="tree-empty">{t.treeEmpty}</p>;
   }
   return (
     <ul className="tree" role="tree">

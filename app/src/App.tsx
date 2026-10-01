@@ -10,6 +10,8 @@ import { Preview } from "./components/Preview";
 import { QuickSwitcher } from "./components/QuickSwitcher";
 import { SearchPanel } from "./components/SearchPanel";
 import { TagsPanel } from "./components/TagsPanel";
+import { AboutDialog, COPYRIGHT } from "./components/AboutDialog";
+import { LANGUAGES, useI18n, type LanguageCode } from "./i18n";
 import { storage, useStoredState } from "./storage";
 
 type ViewMode = "edit" | "split" | "preview";
@@ -25,6 +27,8 @@ const LAST_VAULT_KEY = "mdnotes.lastVault";
 const isNarrow = () => window.matchMedia("(max-width: 720px)").matches;
 
 export default function App() {
+  const { t, language, setLanguage } = useI18n();
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [vault, setVault] = useState<VaultInfo | null>(null);
   const [tree, setTree] = useState<TreeEntry[]>([]);
   const [note, setNote] = useState<Note | null>(null);
@@ -132,7 +136,7 @@ export default function App() {
   }, []);
 
   const pickVault = async () => {
-    const dir = await open({ directory: true, multiple: false, title: "Виберіть папку сховища" });
+    const dir = await open({ directory: true, multiple: false, title: t.pickFolderTitle });
     if (typeof dir === "string") await openVaultAt(dir);
   };
 
@@ -185,8 +189,8 @@ export default function App() {
       .catch(() => setTemplates([]));
   }, [vault, refreshKey]);
   const templateChoices = [
-    { value: "", label: "Порожня нотатка" },
-    ...templates.filter((t) => t.name !== "daily").map((t) => ({ value: t.name, label: t.label })),
+    { value: "", label: t.emptyTemplate },
+    ...templates.filter((tpl) => tpl.name !== "daily").map((tpl) => ({ value: tpl.name, label: tpl.label })),
   ];
 
   const openLink = useCallback(
@@ -216,7 +220,7 @@ export default function App() {
         const fresh = await api.readNote(current.path);
         if (fresh.content === savedRef.current) return;
         if (draftRef.current !== savedRef.current) {
-          setError("Нотатку змінено поза застосунком. Ваше збереження перезапише ті зміни.");
+          setError(t.externalChange);
           return;
         }
         showNote(fresh);
@@ -225,7 +229,7 @@ export default function App() {
         showNote(null);
       }
     },
-    [refreshTree, bump, showNote],
+    [refreshTree, bump, showNote, t],
   );
 
   useEffect(() => {
@@ -313,7 +317,7 @@ export default function App() {
           await openNote(current.path);
         }
         if (outcome.updated.length > 0) {
-          setError(`Оновлено посилання в нотатках: ${outcome.updated.length}`);
+          setError(t.linksUpdated(outcome.updated.length));
         }
       }
     } catch (e) {
@@ -323,8 +327,8 @@ export default function App() {
 
   const trashSelected = async () => {
     if (!selected) return;
-    const confirmed = await ask(`Перемістити «${selected.name}» у кошик сховища (.mdnotes/trash)?`, {
-      title: "Видалення",
+    const confirmed = await ask(t.trashConfirm(selected.name), {
+      title: t.trashTitle,
       kind: "warning",
     });
     if (!confirmed) return;
@@ -346,11 +350,28 @@ export default function App() {
     return (
       <div className="welcome">
         <h1>MD Notes</h1>
-        <p>Особиста база знань у звичайних Markdown-файлах.</p>
+        <p>{t.appTagline}</p>
         <button type="button" className="primary" onClick={() => void pickVault()}>
-          Відкрити папку
+          {t.openFolder}
         </button>
         {error && <p className="welcome-error">{error}</p>}
+        <select
+          className="welcome-language"
+          value={language}
+          onChange={(e) => setLanguage(e.target.value as LanguageCode)}
+          aria-label={t.language}
+        >
+          {LANGUAGES.map((lang) => (
+            <option key={lang.code} value={lang.code} title={lang.ukrainianDescription}>
+              {lang.flag} {lang.nativeName}
+            </option>
+          ))}
+        </select>
+        <button type="button" className="link-button" onClick={() => setAboutOpen(true)}>
+          {t.about}
+        </button>
+        <p className="welcome-copyright">{COPYRIGHT}</p>
+        {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
       </div>
     );
   }
@@ -358,24 +379,24 @@ export default function App() {
   return (
     <div className="app">
       <header className="toolbar">
-        <button type="button" className="icon" title="Бічна панель" onClick={() => setSidebarOpen((v) => !v)}>
+        <button type="button" className="icon" title={t.sidebarToggle} onClick={() => setSidebarOpen((v) => !v)}>
           ☰
         </button>
         <span className="vault-name" title={vault.root}>
           {vault.name}
         </span>
-        <button type="button" className="search-button" title="Перейти до нотатки (Ctrl+O)" onClick={() => setSwitcherOpen(true)}>
+        <button type="button" className="search-button" title={t.goToNote} onClick={() => setSwitcherOpen(true)}>
           <span className="note-title">
-            {note ? note.title : "Перейти до нотатки…"}
-            {dirty && <span className="dirty" title="Є незбережені зміни" />}
+            {note ? note.title : t.goToNotePlaceholder}
+            {dirty && <span className="dirty" title={t.unsavedChanges} />}
           </span>
         </button>
-        <div className="segmented" role="group" aria-label="Режим">
+        <div className="segmented" role="group" aria-label={t.modeGroup}>
           {(
             [
-              ["edit", "Редактор"],
-              ["split", "Поруч"],
-              ["preview", "Перегляд"],
+              ["edit", t.modeEdit],
+              ["split", t.modeSplit],
+              ["preview", t.modePreview],
             ] as const
           ).map(([value, label]) => (
             <button
@@ -391,16 +412,31 @@ export default function App() {
         <button
           type="button"
           className={`icon ${linksPanel === "on" ? "on" : ""}`}
-          title="Зв'язки нотатки"
+          title={t.linksPanelToggle}
           onClick={() => setLinksPanel(linksPanel === "on" ? "off" : "on")}
         >
           ⇆
         </button>
-        <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)} aria-label="Тема">
-          <option value="system">Системна</option>
-          <option value="light">Світла</option>
-          <option value="dark">Темна</option>
+        <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)} aria-label={t.theme}>
+          <option value="system">{t.themeSystem}</option>
+          <option value="light">{t.themeLight}</option>
+          <option value="dark">{t.themeDark}</option>
         </select>
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value as LanguageCode)}
+          aria-label={t.language}
+          title={t.language}
+        >
+          {LANGUAGES.map((lang) => (
+            <option key={lang.code} value={lang.code} title={lang.ukrainianDescription}>
+              {lang.flag} {lang.nativeName}
+            </option>
+          ))}
+        </select>
+        <button type="button" className="icon" title={t.about} onClick={() => setAboutOpen(true)}>
+          ⓘ
+        </button>
       </header>
 
       <div className="body">
@@ -409,9 +445,9 @@ export default function App() {
             <div className="tabs" role="tablist">
               {(
                 [
-                  ["files", "Файли"],
-                  ["search", "Пошук"],
-                  ["tags", "Теги"],
+                  ["files", t.tabFiles],
+                  ["search", t.tabSearch],
+                  ["tags", t.tabTags],
                 ] as const
               ).map(([value, label]) => (
                 <button
@@ -430,24 +466,24 @@ export default function App() {
             {sidebarTab === "files" && (
               <>
                 <div className="sidebar-actions">
-                  <button type="button" title="Нова нотатка" onClick={() => setDialog({ kind: "note", dir: targetDir() })}>
-                    + Нотатка
+                  <button type="button" title={t.newNote} onClick={() => setDialog({ kind: "note", dir: targetDir() })}>
+                    {t.newNoteButton}
                   </button>
-                  <button type="button" title="Щоденна нотатка на сьогодні" onClick={() => void openToday()}>
-                    Сьогодні
+                  <button type="button" title={t.todayTitle} onClick={() => void openToday()}>
+                    {t.today}
                   </button>
-                  <button type="button" title="Нова папка" onClick={() => setDialog({ kind: "folder", dir: targetDir() })}>
-                    + Папка
+                  <button type="button" title={t.newFolder} onClick={() => setDialog({ kind: "folder", dir: targetDir() })}>
+                    {t.newFolderButton}
                   </button>
                   <button
                     type="button"
-                    title="Перейменувати"
+                    title={t.rename}
                     disabled={!selected}
                     onClick={() => selected && setDialog({ kind: "rename", entry: selected })}
                   >
                     ✎
                   </button>
-                  <button type="button" title="У кошик" disabled={!selected} onClick={() => void trashSelected()}>
+                  <button type="button" title={t.moveToTrash} disabled={!selected} onClick={() => void trashSelected()}>
                     🗑
                   </button>
                 </div>
@@ -467,7 +503,7 @@ export default function App() {
 
             <div className="sidebar-footer">
               <button type="button" onClick={() => void pickVault()}>
-                Інше сховище…
+                {t.otherVault}
               </button>
             </div>
           </aside>
@@ -501,7 +537,7 @@ export default function App() {
             </>
           ) : (
             <div className="empty">
-              Виберіть нотатку зліва, натисніть Ctrl+O для швидкого переходу або створіть нову.
+              {t.workspaceEmpty}
             </div>
           )}
         </main>
@@ -511,7 +547,7 @@ export default function App() {
             note={note}
             refreshKey={refreshKey}
             onOpen={(p) => void openNote(p)}
-            onOpenLink={(t) => void openLink(t)}
+            onOpenLink={(target) => void openLink(target)}
           />
         )}
       </div>
@@ -520,20 +556,20 @@ export default function App() {
         <footer className="statusbar">
           <span>{note.path}</span>
           {note.tags.length > 0 && <span>{note.tags.map((tag) => `#${tag}`).join(" ")}</span>}
-          <span>Посилань: {note.links.length}</span>
-          {note.frontMatterError && <span className="warn">Помилка у властивостях: {note.frontMatterError}</span>}
-          <span className="save-state">{dirty ? "Не збережено" : "Збережено"}</span>
+          <span>{t.statusLinks(note.links.length)}</span>
+          {note.frontMatterError && <span className="warn">{t.statusPropertyError(note.frontMatterError)}</span>}
+          <span className="save-state">{dirty ? t.statusUnsaved : t.statusSaved}</span>
         </footer>
       )}
 
       {dialog && (
         <NameDialog
-          title={dialog.kind === "note" ? "Нова нотатка" : dialog.kind === "folder" ? "Нова папка" : "Перейменувати"}
-          label="Назва"
+          title={dialog.kind === "note" ? t.newNote : dialog.kind === "folder" ? t.newFolder : t.rename}
+          label={t.dialogName}
           initial={dialog.kind === "rename" ? dialog.entry.name.replace(/\.(md|markdown)$/i, "") : ""}
-          submitText={dialog.kind === "rename" ? "Перейменувати" : "Створити"}
+          submitText={dialog.kind === "rename" ? t.rename : t.create}
           choices={dialog.kind === "note" ? templateChoices : undefined}
-          choiceLabel="Шаблон"
+          choiceLabel={t.dialogTemplate}
           onSubmit={(value, choice) => void submitDialog(value, choice)}
           onCancel={() => setDialog(null)}
         />
@@ -552,6 +588,8 @@ export default function App() {
           onClose={() => setSwitcherOpen(false)}
         />
       )}
+
+      {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
 
       {error && (
         <div className="toast" role="alert" onClick={() => setError(null)}>
