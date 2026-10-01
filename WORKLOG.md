@@ -4,7 +4,23 @@
 
 ## STATUS
 
-**ACTIVE.** Checkpoint **v0.2.0** опубліковано — DONE.
+**ACTIVE.** Checkpoint **v0.2.0** опубліковано — DONE. Розпочато наступний slice залишку v0.2: **строга CSP**.
+
+## Поточний slice
+
+`security/csp-v0.2`: увімкнути restrictive Content Security Policy для Tauri webview без зовнішніх мережевих джерел.
+
+- база: `main` `86a654275f3f451904e284dede534914a8756f6b`;
+- гілка: `security/csp-v0.2`;
+- перший commit: `7b21d00987cd690956891a755a159c3616b8d883`;
+- `app/src-tauri/tauri.conf.json`: `csp: null` замінено на explicit policy;
+- заборонено виконання зовнішніх script, object/frame/form targets; мережеві підключення обмежено Tauri IPC;
+- зображення дозволені лише локально (`self`, Tauri asset protocol, `data:`, `blob:`);
+- `style-src 'unsafe-inline'` тимчасово залишено через runtime-style injection UI-компонентів/CodeMirror; наступне посилення можливе лише після runtime-перевірки без регресій.
+
+## Наступна дія
+
+Відкрити PR для CSP slice, дочекатися CI на Windows/macOS/Linux і license gate. Після зелених checks інтегрувати PR у `main`; runtime-перевірку `npm run tauri dev` позначити окремо, якщо її неможливо виконати в поточному середовищі. Після CSP — перейти до slice **вкладення**.
 
 ## Останній checkpoint
 
@@ -12,10 +28,6 @@
 - release PR #11, release commit `d3302b0527839ac2b5cbf0f09d14e6ed58500f51`;
 - release run #36913195476 — SUCCESS (Windows, macOS universal, Linux, assets);
 - assets: `.exe`, `.msi`, `.dmg`, `.app.tar.gz`, `.AppImage`, `.deb`, `.rpm`, `MD-Notes-0.2.0-START.zip`, `LICENSE.md`, `COPYRIGHT.md`, `THIRD_PARTY_NOTICES.md`, `SHA256SUMS.txt` (контрольні суми перевірено).
-
-## Наступна дія
-
-Після публікації v0.2.0 — визначити наступний slice з roadmap (рекомендовано: строга CSP, потім вкладення).
 
 ## Нещодавно завершено
 
