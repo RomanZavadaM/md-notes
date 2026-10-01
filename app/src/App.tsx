@@ -1,14 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { listen } from "@tauri-apps/api/event";
 import { ask, open } from "@tauri-apps/plugin-dialog";
-import { api, joinPath, parentPath, type Note, type TreeEntry, type VaultInfo } from "./api";
+import { api, joinPath, parentPath, VAULT_CHANGED, type Note, type TreeEntry, type VaultInfo } from "./api";
 import { Editor } from "./components/Editor";
 import { FileTree } from "./components/FileTree";
+import { LinksPanel } from "./components/LinksPanel";
 import { NameDialog } from "./components/NameDialog";
 import { Preview } from "./components/Preview";
+import { QuickSwitcher } from "./components/QuickSwitcher";
+import { SearchPanel } from "./components/SearchPanel";
+import { TagsPanel } from "./components/TagsPanel";
 import { storage, useStoredState } from "./storage";
 
 type ViewMode = "edit" | "split" | "preview";
 type Theme = "system" | "light" | "dark";
+type SidebarTab = "files" | "search" | "tags";
 type DialogState =
   | { kind: "note"; dir: string }
   | { kind: "folder"; dir: string }
@@ -25,10 +31,17 @@ export default function App() {
   const [draft, setDraft] = useState("");
   const [selected, setSelected] = useState<TreeEntry | null>(null);
   const [dialog, setDialog] = useState<DialogState | null>(null);
+  const [switcherOpen, setSwitcherOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(() => !isNarrow());
+  const [sidebarTab, setSidebarTab] = useState<SidebarTab>("files");
   const [mode, setMode] = useStoredState<ViewMode>("mdnotes.mode", isNarrow() ? "preview" : "split");
   const [theme, setTheme] = useStoredState<Theme>("mdnotes.theme", "system");
+  const [linksPanel, setLinksPanel] = useStoredState<"on" | "off">("mdnotes.linksPanel", isNarrow() ? "off" : "on");
+  // Bumped whenever the index may have changed, so panels reload.
+  const [refreshKey, setRefreshKey] = useState(0);
+  // Bumped when the open note is reloaded from disk, so the editor resets.
+  const [editorVersion, setEditorVersion] = useState(0);
 
   // Refs give async callbacks the latest values without re-subscribing.
   const noteRef = useRef<Note | null>(null);
@@ -38,6 +51,7 @@ export default function App() {
   const dirty = note !== null && draft !== savedContent;
 
   const report = useCallback((e: unknown) => setError(String(e)), []);
+  const bump = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme === "system" ? "" : theme;
@@ -72,10 +86,11 @@ export default function App() {
         noteRef.current = saved;
         setNote(saved);
       }
+      bump();
     } catch (e) {
       report(e);
     }
-  }, [report]);
+  }, [report, bump]);
 
   const openVaultAt = useCallback(
     async (path: string) => {
@@ -87,12 +102,13 @@ export default function App() {
         showNote(null);
         storage.set(LAST_VAULT_KEY, path);
         setTree(await api.getTree());
+        bump();
       } catch (e) {
         storage.remove(LAST_VAULT_KEY);
         report(e);
       }
     },
-    [save, showNote, report],
+    [save, showNote, report, bump],
   );
 
   useEffect(() => {
@@ -112,6 +128,7 @@ export default function App() {
       await save();
       try {
         showNote(await api.readNote(path));
+        setEditorVersion((v) => v + 1);
         if (isNarrow()) setSidebarOpen(false);
       } catch (e) {
         report(e);
@@ -120,26 +137,72 @@ export default function App() {
     [save, showNote, report],
   );
 
+  const createAndOpen = useCallback(
+    async (dir: string, title: string) => {
+      try {
+        const created = await api.createNote(dir, title);
+        await refreshTree();
+        bump();
+        await openNote(created.path);
+      } catch (e) {
+        report(e);
+      }
+    },
+    [openNote, refreshTree, bump, report],
+  );
+
   const openLink = useCallback(
     async (target: string) => {
       const name = target.split("#")[0].trim();
       if (!name) return;
       try {
         const path = await api.resolveLink(name);
-        if (path) {
-          await openNote(path);
-          return;
-        }
         // Like in most wiki tools, following a link to a missing note creates it.
-        const created = await api.createNote("", name);
-        await refreshTree();
-        await openNote(created.path);
+        if (path) await openNote(path);
+        else await createAndOpen("", name);
       } catch (e) {
         report(e);
       }
     },
-    [openNote, refreshTree, report],
+    [openNote, createAndOpen, report],
   );
+
+  // Files changed outside the app: refresh the tree and the open note.
+  const onExternalChange = useCallback(
+    async (paths: string[]) => {
+      await refreshTree();
+      bump();
+      const current = noteRef.current;
+      if (!current || !paths.includes(current.path)) return;
+      try {
+        const fresh = await api.readNote(current.path);
+        if (fresh.content === savedRef.current) return;
+        if (draftRef.current !== savedRef.current) {
+          setError("Нотатку змінено поза застосунком. Ваше збереження перезапише ті зміни.");
+          return;
+        }
+        showNote(fresh);
+        setEditorVersion((v) => v + 1);
+      } catch {
+        showNote(null);
+      }
+    },
+    [refreshTree, bump, showNote],
+  );
+
+  useEffect(() => {
+    if (!vault) return;
+    let disposed = false;
+    let unlisten: (() => void) | undefined;
+    void listen<string[]>(VAULT_CHANGED, (event) => void onExternalChange(event.payload)).then((fn) => {
+      if (disposed) fn();
+      else unlisten = fn;
+    });
+    return () => {
+      disposed = true;
+      unlisten?.();
+    };
+  }, [vault, onExternalChange]);
 
   // Autosave shortly after the user stops typing.
   useEffect(() => {
@@ -154,6 +217,26 @@ export default function App() {
     window.addEventListener("beforeunload", flush);
     return () => window.removeEventListener("beforeunload", flush);
   }, [save]);
+
+  // Global shortcuts.
+  useEffect(() => {
+    if (!vault) return;
+    const onKey = (e: KeyboardEvent) => {
+      const mod = e.ctrlKey || e.metaKey;
+      if (!mod) return;
+      const key = e.key.toLowerCase();
+      if (!e.shiftKey && (key === "o" || key === "p")) {
+        e.preventDefault();
+        setSwitcherOpen(true);
+      } else if (e.shiftKey && key === "f") {
+        e.preventDefault();
+        setSidebarOpen(true);
+        setSidebarTab("search");
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [vault]);
 
   const onChange = useCallback((value: string) => {
     draftRef.current = value;
@@ -170,9 +253,7 @@ export default function App() {
     setDialog(null);
     try {
       if (dialog.kind === "note") {
-        const created = await api.createNote(dialog.dir, value);
-        await refreshTree();
-        await openNote(created.path);
+        await createAndOpen(dialog.dir, value);
       } else if (dialog.kind === "folder") {
         await api.createFolder(dialog.dir, value);
         await refreshTree();
@@ -183,6 +264,7 @@ export default function App() {
         await save();
         const moved = await api.renameEntry(entry.path, joinPath(parentPath(entry.path), name));
         await refreshTree();
+        bump();
         setSelected(null);
         const current = noteRef.current;
         if (current && current.path === entry.path) await openNote(moved);
@@ -210,6 +292,7 @@ export default function App() {
       }
       setSelected(null);
       await refreshTree();
+      bump();
     } catch (e) {
       report(e);
     }
@@ -237,10 +320,12 @@ export default function App() {
         <span className="vault-name" title={vault.root}>
           {vault.name}
         </span>
-        <span className="note-title">
-          {note ? note.title : ""}
-          {dirty && <span className="dirty" title="Є незбережені зміни" />}
-        </span>
+        <button type="button" className="search-button" title="Перейти до нотатки (Ctrl+O)" onClick={() => setSwitcherOpen(true)}>
+          <span className="note-title">
+            {note ? note.title : "Перейти до нотатки…"}
+            {dirty && <span className="dirty" title="Є незбережені зміни" />}
+          </span>
+        </button>
         <div className="segmented" role="group" aria-label="Режим">
           {(
             [
@@ -259,6 +344,14 @@ export default function App() {
             </button>
           ))}
         </div>
+        <button
+          type="button"
+          className={`icon ${linksPanel === "on" ? "on" : ""}`}
+          title="Зв'язки нотатки"
+          onClick={() => setLinksPanel(linksPanel === "on" ? "off" : "on")}
+        >
+          ⇆
+        </button>
         <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)} aria-label="Тема">
           <option value="system">Системна</option>
           <option value="light">Світла</option>
@@ -269,34 +362,62 @@ export default function App() {
       <div className="body">
         {sidebarOpen && (
           <aside className="sidebar">
-            <div className="sidebar-actions">
-              <button type="button" title="Нова нотатка" onClick={() => setDialog({ kind: "note", dir: targetDir() })}>
-                + Нотатка
-              </button>
-              <button type="button" title="Нова папка" onClick={() => setDialog({ kind: "folder", dir: targetDir() })}>
-                + Папка
-              </button>
-              <button
-                type="button"
-                title="Перейменувати"
-                disabled={!selected}
-                onClick={() => selected && setDialog({ kind: "rename", entry: selected })}
-              >
-                ✎
-              </button>
-              <button type="button" title="У кошик" disabled={!selected} onClick={() => void trashSelected()}>
-                🗑
-              </button>
+            <div className="tabs" role="tablist">
+              {(
+                [
+                  ["files", "Файли"],
+                  ["search", "Пошук"],
+                  ["tags", "Теги"],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  role="tab"
+                  aria-selected={sidebarTab === value}
+                  className={sidebarTab === value ? "on" : ""}
+                  onClick={() => setSidebarTab(value)}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
-            <FileTree
-              entries={tree}
-              selectedPath={selected?.path ?? null}
-              activePath={note?.path ?? null}
-              onSelect={setSelected}
-              onOpen={(entry) => {
-                if (entry.kind === "note") void openNote(entry.path);
-              }}
-            />
+
+            {sidebarTab === "files" && (
+              <>
+                <div className="sidebar-actions">
+                  <button type="button" title="Нова нотатка" onClick={() => setDialog({ kind: "note", dir: targetDir() })}>
+                    + Нотатка
+                  </button>
+                  <button type="button" title="Нова папка" onClick={() => setDialog({ kind: "folder", dir: targetDir() })}>
+                    + Папка
+                  </button>
+                  <button
+                    type="button"
+                    title="Перейменувати"
+                    disabled={!selected}
+                    onClick={() => selected && setDialog({ kind: "rename", entry: selected })}
+                  >
+                    ✎
+                  </button>
+                  <button type="button" title="У кошик" disabled={!selected} onClick={() => void trashSelected()}>
+                    🗑
+                  </button>
+                </div>
+                <FileTree
+                  entries={tree}
+                  selectedPath={selected?.path ?? null}
+                  activePath={note?.path ?? null}
+                  onSelect={setSelected}
+                  onOpen={(entry) => {
+                    if (entry.kind === "note") void openNote(entry.path);
+                  }}
+                />
+              </>
+            )}
+            {sidebarTab === "search" && <SearchPanel refreshKey={refreshKey} onOpen={(p) => void openNote(p)} />}
+            {sidebarTab === "tags" && <TagsPanel refreshKey={refreshKey} onOpen={(p) => void openNote(p)} />}
+
             <div className="sidebar-footer">
               <button type="button" onClick={() => void pickVault()}>
                 Інше сховище…
@@ -310,7 +431,12 @@ export default function App() {
             <>
               {mode !== "preview" && (
                 <section className="pane pane-editor">
-                  <Editor docKey={note.path} value={note.content} onChange={onChange} onSave={() => void save()} />
+                  <Editor
+                    docKey={`${note.path}#${editorVersion}`}
+                    value={note.content}
+                    onChange={onChange}
+                    onSave={() => void save()}
+                  />
                 </section>
               )}
               {mode !== "edit" && (
@@ -320,9 +446,20 @@ export default function App() {
               )}
             </>
           ) : (
-            <div className="empty">Виберіть нотатку зліва або створіть нову.</div>
+            <div className="empty">
+              Виберіть нотатку зліва, натисніть Ctrl+O для швидкого переходу або створіть нову.
+            </div>
           )}
         </main>
+
+        {linksPanel === "on" && note && (
+          <LinksPanel
+            note={note}
+            refreshKey={refreshKey}
+            onOpen={(p) => void openNote(p)}
+            onOpenLink={(t) => void openLink(t)}
+          />
+        )}
       </div>
 
       {note && (
@@ -343,6 +480,20 @@ export default function App() {
           submitText={dialog.kind === "rename" ? "Перейменувати" : "Створити"}
           onSubmit={(value) => void submitDialog(value)}
           onCancel={() => setDialog(null)}
+        />
+      )}
+
+      {switcherOpen && (
+        <QuickSwitcher
+          onOpen={(path) => {
+            setSwitcherOpen(false);
+            void openNote(path);
+          }}
+          onCreate={(title) => {
+            setSwitcherOpen(false);
+            void createAndOpen("", title);
+          }}
+          onClose={() => setSwitcherOpen(false)}
         />
       )}
 
