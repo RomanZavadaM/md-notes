@@ -1,3 +1,4 @@
+use std::fmt::Write as _;
 use std::fs;
 use std::path::{Path, PathBuf};
 
@@ -63,16 +64,14 @@ impl Vault {
     }
 
     /// Returns notes whose raw Markdown contains a reference to an attachment.
-    /// Both normal and angle-bracket Markdown destinations are recognized by
-    /// matching the vault-relative attachment path.
+    /// Both literal and URL-encoded vault-relative paths are recognized.
     pub fn attachment_used_by(&self, attachment_path: &str) -> Result<Vec<String>> {
         let attachment_path = paths::normalize(attachment_path)?;
+        let encoded_path = markdown_url_path(&attachment_path);
         let mut used_by = Vec::new();
         for note_path in self.note_paths()? {
             let note = self.read_note(&note_path)?;
-            if note.content.contains(&attachment_path)
-                || note.content.contains(&attachment_path.replace(' ', "%20"))
-            {
+            if note.content.contains(&attachment_path) || note.content.contains(&encoded_path) {
                 used_by.push(note_path);
             }
         }
@@ -121,6 +120,21 @@ fn collect_attachments(vault_root: &Path, dir: &Path, out: &mut Vec<AttachmentIn
         }
     }
     Ok(())
+}
+
+fn markdown_url_path(path: &str) -> String {
+    let mut out = String::with_capacity(path.len());
+    for byte in path.as_bytes() {
+        match *byte {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' | b'/' => {
+                out.push(*byte as char)
+            }
+            other => {
+                write!(&mut out, "%{other:02X}").expect("writing to String cannot fail");
+            }
+        }
+    }
+    out
 }
 
 fn unique_attachment_path(root: &Path, dir: &str, file_name: &str) -> String {
@@ -200,5 +214,23 @@ mod tests {
 
         vault.write_note("linked.md", "no attachment here").unwrap();
         assert_eq!(vault.orphan_attachments().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn finds_url_encoded_unicode_attachment_usage() {
+        let (dir, vault) = vault();
+        let source = dir.path().join("схема руху 1.png");
+        fs::write(&source, b"png").unwrap();
+        let attachment = vault.import_attachment(&source).unwrap();
+        let encoded = markdown_url_path(&attachment.path);
+
+        vault
+            .write_note("linked.md", &format!("![scheme](</{encoded}>)"))
+            .unwrap();
+
+        assert_eq!(
+            vault.attachment_used_by(&attachment.path).unwrap(),
+            vec!["linked.md"]
+        );
     }
 }
