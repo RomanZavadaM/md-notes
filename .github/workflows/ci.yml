@@ -39,7 +39,10 @@ jobs:
 
   app:
     name: app (frontend + Tauri)
-    runs-on: ubuntu-latest
+    # Match the Linux environment used by the release build. ubuntu-latest
+    # currently resolves to 24.04, where Tauri system-package installation
+    # has been intermittently hanging on hosted runners.
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
