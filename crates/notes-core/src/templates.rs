@@ -124,7 +124,11 @@ mod tests {
         let templates = dir.path().join(".mdnotes/templates");
         let task = "---\nid: \"{{id}}\"\ntype: task\ncreated: {{date}}\n---\n\n# {{title}}\n";
         fs::write(templates.join("task.md"), task).unwrap();
-        fs::write(templates.join("daily.md"), "---\ntype: daily\n---\n# День {{date}}\n").unwrap();
+        fs::write(
+            templates.join("daily.md"),
+            "---\ntype: daily\n---\n# День {{date}}\n",
+        )
+        .unwrap();
         fs::write(templates.join("notes.txt"), "ignored").unwrap();
         let schema = r#"{"types": {"task": {"label": "Задача"}}}"#;
         fs::write(dir.path().join(".mdnotes/schema.json"), schema).unwrap();
@@ -147,7 +151,9 @@ mod tests {
     #[test]
     fn creates_notes_from_templates() {
         let (_dir, vault) = vault_with_templates();
-        let note = vault.create_from_template("Задачі", "Купити: молоко", "task").unwrap();
+        let note = vault
+            .create_from_template("Задачі", "Купити: молоко", "task")
+            .unwrap();
         assert_eq!(note.path, "Задачі/Купити молоко.md");
         assert_eq!(note.title, "Купити: молоко");
         let fm = note.front_matter.unwrap();
