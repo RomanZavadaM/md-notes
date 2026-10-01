@@ -143,8 +143,8 @@ mod tests {
         vault.write_note("c.md", "[[folder/Target]]").unwrap();
         vault.write_note("d.md", "[[Target.md]]").unwrap();
 
-        let outcome = rename_with_links(&vault, &mut index, "folder/Target.md", "other/New.md")
-            .unwrap();
+        let outcome =
+            rename_with_links(&vault, &mut index, "folder/Target.md", "other/New.md").unwrap();
         assert_eq!(outcome.path, "other/New.md");
         assert_eq!(outcome.updated, vec!["a.md", "b.md", "c.md", "d.md"]);
         assert_eq!(

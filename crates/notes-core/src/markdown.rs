@@ -225,7 +225,10 @@ fn parse_wikilink(inner: &str, embed: bool) -> Option<WikiLink> {
 /// Replaces link targets in `src`, keeping headings, aliases and code
 /// untouched. `rewrite` returns the new target for a link, or `None` to keep
 /// it as is.
-pub fn rewrite_wikilinks(src: &str, mut rewrite: impl FnMut(&WikiLink) -> Option<String>) -> String {
+pub fn rewrite_wikilinks(
+    src: &str,
+    mut rewrite: impl FnMut(&WikiLink) -> Option<String>,
+) -> String {
     let masked = mask_code(src);
     let mut out = String::with_capacity(src.len());
     let mut last = 0;
