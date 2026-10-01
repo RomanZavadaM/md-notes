@@ -123,11 +123,7 @@ fn create_folder(parent: String, name: String, state: State<'_, AppState>) -> Cm
 }
 
 #[tauri::command]
-fn rename_entry(
-    from: String,
-    to: String,
-    state: State<'_, AppState>,
-) -> CmdResult<RenameOutcome> {
+fn rename_entry(from: String, to: String, state: State<'_, AppState>) -> CmdResult<RenameOutcome> {
     with_session(&state, |s| {
         notes_core::rename_with_links(&s.vault, &mut s.index, &from, &to)
     })
