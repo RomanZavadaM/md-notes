@@ -3,8 +3,8 @@
 use std::sync::Mutex;
 
 use notes_core::{
-    Backlink, Index, Note, NoteSummary, RenameOutcome, SearchHit, TagCount, TemplateInfo,
-    TreeEntry, UnresolvedLink, Vault,
+    AttachmentInfo, Backlink, Index, Note, NoteSummary, RenameOutcome, SearchHit, TagCount,
+    TemplateInfo, TreeEntry, UnresolvedLink, Vault,
 };
 use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager, State};
@@ -57,7 +57,6 @@ fn open_vault(path: String, app: AppHandle, state: State<'_, AppState>) -> CmdRe
         root: vault.root().display().to_string(),
         name: vault.display_name(),
     };
-    // Lets the preview load images and other attachments from the vault.
     app.asset_protocol_scope()
         .allow_directory(vault.root(), true)
         .map_err(|e| e.to_string())?;
@@ -75,7 +74,6 @@ fn open_vault(path: String, app: AppHandle, state: State<'_, AppState>) -> CmdRe
     Ok(info)
 }
 
-/// Re-syncs the index and tells the UI which paths changed.
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 fn on_files_changed(app: &AppHandle, changed: Vec<String>) {
     let state = app.state::<AppState>();
@@ -130,7 +128,6 @@ fn list_templates(state: State<'_, AppState>) -> CmdResult<Vec<TemplateInfo>> {
     with_session(&state, |s| s.vault.templates())
 }
 
-/// Today's daily note, created from the `daily` template if needed.
 #[tauri::command]
 fn open_daily(state: State<'_, AppState>) -> CmdResult<Note> {
     with_session(&state, |s| {
@@ -191,6 +188,26 @@ fn search(query: String, limit: u32, state: State<'_, AppState>) -> CmdResult<Ve
     with_session(&state, |s| s.index.search(&query, limit))
 }
 
+#[tauri::command]
+fn import_attachment(source: String, state: State<'_, AppState>) -> CmdResult<AttachmentInfo> {
+    with_session(&state, |s| s.vault.import_attachment(source))
+}
+
+#[tauri::command]
+fn list_attachments(state: State<'_, AppState>) -> CmdResult<Vec<AttachmentInfo>> {
+    with_session(&state, |s| s.vault.attachments())
+}
+
+#[tauri::command]
+fn attachment_used_by(path: String, state: State<'_, AppState>) -> CmdResult<Vec<String>> {
+    with_session(&state, |s| s.vault.attachment_used_by(&path))
+}
+
+#[tauri::command]
+fn orphan_attachments(state: State<'_, AppState>) -> CmdResult<Vec<AttachmentInfo>> {
+    with_session(&state, |s| s.vault.orphan_attachments())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -213,7 +230,11 @@ pub fn run() {
             backlinks,
             unresolved_links,
             list_tags,
-            search
+            search,
+            import_attachment,
+            list_attachments,
+            attachment_used_by,
+            orphan_attachments
         ])
         .run(tauri::generate_context!())
         .expect("error while running MD Notes");
