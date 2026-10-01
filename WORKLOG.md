@@ -4,15 +4,14 @@
 
 ## STATUS
 
-**ACTIVE.** Checkpoint **v0.2.0** — повний цикл «злити у main».
+**ACTIVE.** Checkpoint **v0.2.0** опубліковано — DONE.
 
-## Поточний slice
+## Останній checkpoint
 
-`release v0.2.0`: інтеграція стеку, релізна документація 7 мовами, release PR, збірки всіх платформ, перевірка assets.
-
-- база: `main` після merge PR #10;
-- гілка документації: `docs/release-0.2.0`;
-- далі: release PR від release-please → tag `v0.2.0` → prerelease → перевірка assets → запис в Issue #8.
+- GitHub prerelease [`v0.2.0`](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.0), 01.10.2026;
+- release PR #11, release commit `d3302b0527839ac2b5cbf0f09d14e6ed58500f51`;
+- release run #36913195476 — SUCCESS (Windows, macOS universal, Linux, assets);
+- assets: `.exe`, `.msi`, `.dmg`, `.app.tar.gz`, `.AppImage`, `.deb`, `.rpm`, `MD-Notes-0.2.0-START.zip`, `LICENSE.md`, `COPYRIGHT.md`, `THIRD_PARTY_NOTICES.md`, `SHA256SUMS.txt` (контрольні суми перевірено).
 
 ## Наступна дія
 
