@@ -28,12 +28,24 @@ Application `app/src-tauri`:
 - CodeMirror 6 (`@codemirror/*`), Lezer (`@lezer/highlight`) — MIT, editor
 - react-markdown, remark-gfm, remark-math, rehype-katex — MIT, Markdown rendering
 - KaTeX — MIT, math rendering (includes fonts under the SIL Open Font License 1.1)
-- Mermaid — MIT, diagrams
+- Mermaid 11 — MIT, diagrams (Mermaid 12 is avoided because it bundles EPL-2.0 elkjs)
 - `@tauri-apps/api`, `@tauri-apps/plugin-dialog`, `@tauri-apps/plugin-opener`, `@tauri-apps/cli` — MIT OR Apache-2.0
 - Vite, `@vitejs/plugin-react` — MIT (build tools)
 - TypeScript — Apache-2.0 (build tool)
 
 Some packages listed here arrive with feature branches of v0.2 and apply once those changes are integrated.
+
+## License review
+
+MD Notes ships only dependencies that can be used in a proprietary distribution. Every release is checked automatically (`deny.toml`, `app/scripts/check-licenses.mjs`, CI job “Dependency licenses”). The full review of 01.10.2026 covered 501 Rust crates and 400 npm packages:
+
+- almost all components use MIT, Apache-2.0, BSD, ISC, Zlib, CC0, Unlicense or Unicode licenses;
+- dual-licensed components are used under their permissive option: `dompurify` (MPL-2.0 **or** Apache-2.0 → Apache-2.0), `r-efi` (MIT **or** Apache-2.0 **or** LGPL-2.1+ → MIT);
+- **replaced:** Mermaid 12 depends on `elkjs` (EPL-2.0, copyleft), so MD Notes uses Mermaid 11.17, which has no such dependency;
+- **MPL-2.0, used unmodified as part of the Tauri platform:** `cssparser`, `cssparser-macros`, `dtoa-short`, `selectors` (via `dom_query`), `option-ext` (via `dirs`). MPL-2.0 is file-level copyleft and allows inclusion in a proprietary larger work (MPL-2.0 §3.3); the source code of these crates is available on crates.io and their notices are preserved. Replacing them would require replacing Tauri;
+- `khroma` has no license field in the npm registry; its upstream repository is MIT-licensed;
+- `caniuse-lite` (CC-BY-4.0) is browser data used only by build tools and is not shipped;
+- on Linux the app links dynamically to system libraries such as WebKitGTK and GTK (LGPL-2.1+); they remain replaceable system components.
 
 ## Platform components
 

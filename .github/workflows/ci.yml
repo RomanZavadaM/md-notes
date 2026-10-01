@@ -64,6 +64,21 @@ jobs:
       - name: Clippy (Tauri app)
         run: cargo clippy -p md-notes --all-targets -- -D warnings
 
+  licenses:
+    name: Dependency licenses
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check licenses
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: npm licenses
+        working-directory: app
+        run: npm run licenses
+
   pr-title:
     name: Conventional PR title
     if: github.event_name == 'pull_request'

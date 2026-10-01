@@ -59,6 +59,8 @@
 - Сторонні бібліотеки, шрифти, іконки та цитовані матеріали зберігають власні права й умови; MD Notes не заявляє прав на них.
 - Нотатки та файли, які користувач створює в MD Notes, належать користувачу; ліцензія програми на них не поширюється.
 - При додаванні нової прямої залежності оновити `THIRD_PARTY_NOTICES.md`.
+- До складу програми можуть входити лише залежності з дозвільними ліцензіями (MIT, Apache-2.0, BSD, ISC, Zlib, CC0, Unlicense, Unicode тощо). Copyleft-ліцензії (GPL, LGPL, AGPL, MPL, EPL, CDDL) у пакеті програми не допускаються: для таких компонентів шукається заміна. Для подвійних ліцензій використовується дозвільна альтернатива.
+- Список дозволених ліцензій — `deny.toml` (Rust) і `app/scripts/check-licenses.mjs` (npm); CI job «Dependency licenses» блокує PR із недозволеною ліцензією.
 
 ## 7. Перед merge
 
@@ -68,6 +70,7 @@
 2. `cargo clippy --workspace --all-targets -- -D warnings`;
 3. `cargo test -p notes-core`;
 4. `npm ci` і `npm run build` у `app/` (перевірка типів TypeScript і збірка інтерфейсу);
+4a. license gate: `cargo deny check licenses` і `npm run licenses` у `app/`;
 5. lock-файли (`Cargo.lock`, `app/package-lock.json`) актуальні; за потреби оновити їх workflow `Lockfiles`;
 6. для user-visible змін — перевірити зміну в запущеному застосунку (`npm run tauri dev`) або чесно зазначити в PR, що runtime-перевірки не було;
 7. version, показана в інтерфейсі, походить з build metadata; hardcoded номери версій в UI заборонені;
