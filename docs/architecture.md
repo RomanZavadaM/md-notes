@@ -32,6 +32,8 @@
 | `markdown` | Front matter, `[[вікі-посилання]]`, `#теги`, заголовок. Перед пошуком маскує код (блоки й `inline`), щоб не знаходити посилання в прикладах коду. |
 | `note` | Структура `Note`: вміст, властивості, теги, посилання, заголовок. |
 | `vault` | Відкриття та ініціалізація сховища, дерево файлів, читання, атомарний запис, створення, перейменування, кошик, пошук нотатки за посиланням. |
+| `index` | Індекс SQLite: нотатки, посилання з контекстом, теги, `aliases`, повнотекстовий пошук FTS5. Інкрементальна синхронізація за часом зміни і розміром файлу. |
+| `refactor` | Зміни на рівні сховища: перейменування й переміщення з оновленням `[[посилань]]`. |
 
 ### Принципи
 
@@ -53,8 +55,15 @@
 | `get_tree()` | `Vault::tree` |
 | `read_note(path)` / `save_note(path, content)` | `read_note` / `write_note` |
 | `create_note(dir, title)` / `create_folder(parent, name)` | `create_note` / `create_folder` |
-| `rename_entry(from, to)` / `trash_entry(path)` | `rename` / `move_to_trash` |
-| `resolve_link(target)` | `resolve_link` |
+| `rename_entry(from, to)` | `refactor::rename_with_links` |
+| `trash_entry(path)` | `move_to_trash` + `Index::sync` |
+| `resolve_link(target)` | `Index::resolve` |
+| `list_notes()` / `list_tags()` | `Index::notes` / `Index::tags` |
+| `backlinks(path)` / `unresolved_links()` | `Index::backlinks` / `Index::unresolved_links` |
+| `search(query, limit)` | `Index::search` |
+
+Подія `vault-changed` надходить в інтерфейс, коли файли змінено поза
+застосунком (стеження через `notify`, лише настільні ОС).
 
 Права вікна задаються в `app/src-tauri/capabilities/default.json`: базові
 можливості Tauri, системний діалог вибору папки і відкриття зовнішніх
