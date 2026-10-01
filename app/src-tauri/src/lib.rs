@@ -56,6 +56,10 @@ fn open_vault(path: String, app: AppHandle, state: State<'_, AppState>) -> CmdRe
         root: vault.root().display().to_string(),
         name: vault.display_name(),
     };
+    // Lets the preview load images and other attachments from the vault.
+    app.asset_protocol_scope()
+        .allow_directory(vault.root(), true)
+        .map_err(|e| e.to_string())?;
 
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     {
@@ -66,9 +70,6 @@ fn open_vault(path: String, app: AppHandle, state: State<'_, AppState>) -> CmdRe
         .map_err(|e| e.to_string())?;
         *state.watcher.lock().map_err(|e| e.to_string())? = Some(watcher);
     }
-    #[cfg(any(target_os = "android", target_os = "ios"))]
-    let _ = app;
-
     *state.session.lock().map_err(|e| e.to_string())? = Some(Session { vault, index });
     Ok(info)
 }

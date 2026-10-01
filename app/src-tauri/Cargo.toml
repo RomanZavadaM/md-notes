@@ -18,7 +18,7 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 notes-core = { path = "../../crates/notes-core" }
 serde = { workspace = true }
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ["protocol-asset"] }
 tauri-plugin-dialog = "2"
 tauri-plugin-opener = "2"
 
