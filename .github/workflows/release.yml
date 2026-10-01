@@ -63,3 +63,32 @@ jobs:
           tagName: ${{ needs.release-please.outputs.tag_name }}
           releaseName: MD Notes ${{ needs.release-please.outputs.tag_name }}
           args: ${{ matrix.args }}
+
+  # START/source package, legal notices and SHA256SUMS.txt for every release
+  # (PROJECT_RULES.md, section 8).
+  assets:
+    needs: [release-please, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Upload START/source package and legal notices
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+        run: |
+          VERSION="${TAG#v}"
+          NAME="MD-Notes-${VERSION}-START"
+          mkdir -p dist
+          git archive --format=zip --prefix="${NAME}/" -o "dist/${NAME}.zip" HEAD
+          cp LICENSE.md COPYRIGHT.md THIRD_PARTY_NOTICES.md dist/
+          gh release upload "$TAG" dist/* --clobber
+      - name: Upload SHA256SUMS.txt
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+        run: |
+          mkdir -p all
+          gh release download "$TAG" -D all
+          (cd all && rm -f SHA256SUMS.txt && sha256sum * > ../SHA256SUMS.txt)
+          cat SHA256SUMS.txt
+          gh release upload "$TAG" SHA256SUMS.txt --clobber
