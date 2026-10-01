@@ -24,7 +24,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy, rustfmt
@@ -41,10 +41,12 @@ jobs:
     name: app (frontend + Tauri)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
@@ -55,19 +57,12 @@ jobs:
           sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev libssl-dev
       - name: Install npm packages
         working-directory: app
-        run: if [ -f package-lock.json ]; then npm ci; else npm install; fi
+        run: npm ci
       - name: Typecheck and build frontend
         working-directory: app
         run: npm run build
       - name: Clippy (Tauri app)
         run: cargo clippy -p md-notes --all-targets -- -D warnings
-      - name: Upload lockfiles
-        uses: actions/upload-artifact@v4
-        with:
-          name: lockfiles
-          path: |
-            Cargo.lock
-            app/package-lock.json
 
   pr-title:
     name: Conventional PR title
