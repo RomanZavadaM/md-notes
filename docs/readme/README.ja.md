@@ -27,7 +27,7 @@
 
 ## インストール
 
-[リリースページ](https://github.com/RomanZavadaM/md-notes/releases/latest) から OS 用のパッケージをダウンロードしてください。
+[リリースページ](https://github.com/RomanZavadaM/md-notes/releases) から OS 用のパッケージをダウンロードしてください。
 
 - **Windows** — `MD.Notes_<バージョン>_x64-setup.exe` または `.msi`。コード署名がないため、Windows が SmartScreen を表示することがあります。
 - **macOS** — `.dmg` / `.app.tar.gz` (universal)。公証 (notarization) されていないため、**システム設定 → プライバシーとセキュリティ → このまま開く** が必要な場合があります。

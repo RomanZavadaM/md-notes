@@ -27,7 +27,7 @@ En desarrollo (v0.2): índice y búsqueda de texto completo, enlaces entrantes, 
 
 ## Instalación
 
-Descarga el paquete para tu sistema desde la [página de la versión](https://github.com/RomanZavadaM/md-notes/releases/latest):
+Descarga el paquete para tu sistema desde la [página de la versión](https://github.com/RomanZavadaM/md-notes/releases):
 
 - **Windows** — `MD.Notes_<versión>_x64-setup.exe` o `.msi`. La compilación no está firmada, por lo que Windows puede mostrar SmartScreen.
 - **macOS** — `.dmg` / `.app.tar.gz` (universal). La compilación no está notarizada; puede ser necesario **Ajustes del Sistema → Privacidad y seguridad → Abrir igualmente**.

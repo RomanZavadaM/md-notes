@@ -27,7 +27,7 @@ In Arbeit (v0.2): Index und Volltextsuche, Rückverweise, Aktualisierung von Lin
 
 ## Installation
 
-Laden Sie das Paket für Ihr Betriebssystem von der [Release-Seite](https://github.com/RomanZavadaM/md-notes/releases/latest):
+Laden Sie das Paket für Ihr Betriebssystem von der [Release-Seite](https://github.com/RomanZavadaM/md-notes/releases):
 
 - **Windows** — `MD.Notes_<Version>_x64-setup.exe` oder `.msi`. Der Build ist nicht signiert, daher kann Windows SmartScreen anzeigen.
 - **macOS** — `.dmg` / `.app.tar.gz` (Universal). Der Build ist nicht notarisiert; eventuell ist **Systemeinstellungen → Datenschutz & Sicherheit → Dennoch öffnen** nötig.

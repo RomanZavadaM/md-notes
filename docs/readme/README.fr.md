@@ -27,7 +27,7 @@ En cours (v0.2) : index et recherche plein texte, rétroliens, mise à jour des 
 
 ## Installation
 
-Téléchargez le paquet de votre système depuis la [page de publication](https://github.com/RomanZavadaM/md-notes/releases/latest) :
+Téléchargez le paquet de votre système depuis la [page de publication](https://github.com/RomanZavadaM/md-notes/releases) :
 
 - **Windows** — `MD.Notes_<version>_x64-setup.exe` ou `.msi`. La version n'est pas signée ; Windows peut afficher SmartScreen.
 - **macOS** — `.dmg` / `.app.tar.gz` (universel). La version n'est pas notarisée ; il peut être nécessaire d'utiliser **Réglages Système → Confidentialité et sécurité → Ouvrir quand même**.

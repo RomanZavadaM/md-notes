@@ -29,7 +29,7 @@
 
 ## Встановлення
 
-Завантажте пакет для своєї ОС зі сторінки [релізу](https://github.com/RomanZavadaM/md-notes/releases/latest):
+Завантажте пакет для своєї ОС зі сторінки [релізу](https://github.com/RomanZavadaM/md-notes/releases):
 
 - **Windows** — `MD.Notes_<версія>_x64-setup.exe` або `.msi`. Збірка не підписана, тому Windows може показати SmartScreen.
 - **macOS** — `.dmg` / `.app.tar.gz` (universal). Збірка не нотаризована; можливо, знадобиться **System Settings → Privacy & Security → Open Anyway**.

@@ -27,7 +27,7 @@ In progress (v0.2): index and full-text search, backlinks, link updates on renam
 
 ## Install
 
-Download the package for your OS from the [release page](https://github.com/RomanZavadaM/md-notes/releases/latest):
+Download the package for your OS from the [release page](https://github.com/RomanZavadaM/md-notes/releases):
 
 - **Windows** — `MD.Notes_<version>_x64-setup.exe` or `.msi`. The build is not code-signed, so Windows may show SmartScreen.
 - **macOS** — `.dmg` / `.app.tar.gz` (universal). The build is not notarized; you may need **System Settings → Privacy & Security → Open Anyway**.
