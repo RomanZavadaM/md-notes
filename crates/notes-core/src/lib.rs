@@ -4,6 +4,7 @@
 //! Markdown notes), list its contents, read, write and parse notes. The
 //! Tauri application and any future tools are thin layers on top of it.
 
+pub mod attachments;
 pub mod error;
 pub mod index;
 pub mod markdown;
@@ -13,6 +14,7 @@ pub mod refactor;
 pub mod templates;
 pub mod vault;
 
+pub use attachments::AttachmentInfo;
 pub use error::{Error, Result};
 pub use index::{Backlink, Index, NoteSummary, SearchHit, SyncStats, TagCount, UnresolvedLink};
 pub use markdown::WikiLink;
