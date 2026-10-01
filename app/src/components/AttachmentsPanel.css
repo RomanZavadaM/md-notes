@@ -1,0 +1,125 @@
+.attachments-panel {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.65rem;
+  overflow: hidden;
+  padding: 0.65rem;
+}
+
+.attachment-toolbar,
+.attachment-detail-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.attachment-toolbar {
+  justify-content: space-between;
+}
+
+.attachment-summary {
+  font-size: 0.78rem;
+  opacity: 0.7;
+}
+
+.attachment-list {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.35rem;
+  overflow: auto;
+}
+
+.attachment-item {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 0.55rem;
+  align-items: center;
+  width: 100%;
+  padding: 0.45rem;
+  text-align: left;
+}
+
+.attachment-item.on {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+
+.attachment-item img,
+.attachment-file-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 0.35rem;
+}
+
+.attachment-item img {
+  object-fit: cover;
+}
+
+.attachment-file-icon {
+  display: grid;
+  place-items: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  border: 1px solid currentColor;
+  opacity: 0.75;
+}
+
+.attachment-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attachment-orphan {
+  grid-column: 2;
+  font-size: 0.72rem;
+  opacity: 0.72;
+}
+
+.attachment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 45%;
+  overflow: auto;
+  padding-top: 0.55rem;
+  border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.attachment-details ul {
+  margin: 0;
+  padding-left: 1.15rem;
+  font-size: 0.8rem;
+}
+
+.attachment-preview-image,
+.attachment-preview-pdf {
+  width: 100%;
+  border: 0;
+  border-radius: 0.4rem;
+  background: transparent;
+}
+
+.attachment-preview-image {
+  max-height: 220px;
+  object-fit: contain;
+}
+
+.attachment-preview-pdf {
+  min-height: 260px;
+}
+
+@media (max-width: 720px) {
+  .attachment-details {
+    max-height: 52%;
+  }
+
+  .attachment-preview-pdf {
+    min-height: 220px;
+  }
+}

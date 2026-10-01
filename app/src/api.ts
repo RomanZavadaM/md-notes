@@ -75,6 +75,12 @@ export interface TagCount {
   count: number;
 }
 
+export interface AttachmentInfo {
+  name: string;
+  path: string;
+  size: number;
+}
+
 export const MATCH_START = "\u0002";
 export const MATCH_END = "\u0003";
 
@@ -99,6 +105,10 @@ export const api = {
   unresolvedLinks: () => invoke<UnresolvedLink[]>("unresolved_links"),
   listTags: () => invoke<TagCount[]>("list_tags"),
   search: (query: string, limit = 50) => invoke<SearchHit[]>("search", { query, limit }),
+  importAttachment: (source: string) => invoke<AttachmentInfo>("import_attachment", { source }),
+  listAttachments: () => invoke<AttachmentInfo[]>("list_attachments"),
+  attachmentUsedBy: (path: string) => invoke<string[]>("attachment_used_by", { path }),
+  orphanAttachments: () => invoke<AttachmentInfo[]>("orphan_attachments"),
 };
 
 /** `a/b/c.md` -> `a/b`, `c.md` -> `` */

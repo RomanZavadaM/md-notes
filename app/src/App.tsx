@@ -1,7 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { ask, open } from "@tauri-apps/plugin-dialog";
-import { api, joinPath, parentPath, VAULT_CHANGED, type Note, type TemplateInfo, type TreeEntry, type VaultInfo } from "./api";
+import {
+  api,
+  joinPath,
+  parentPath,
+  VAULT_CHANGED,
+  type AttachmentInfo,
+  type Note,
+  type TemplateInfo,
+  type TreeEntry,
+  type VaultInfo,
+} from "./api";
 import { Editor } from "./components/Editor";
 import { FileTree } from "./components/FileTree";
 import { LinksPanel } from "./components/LinksPanel";
@@ -10,13 +20,14 @@ import { Preview } from "./components/Preview";
 import { QuickSwitcher } from "./components/QuickSwitcher";
 import { SearchPanel } from "./components/SearchPanel";
 import { TagsPanel } from "./components/TagsPanel";
+import { AttachmentsPanel } from "./components/AttachmentsPanel";
 import { AboutDialog, COPYRIGHT } from "./components/AboutDialog";
 import { LANGUAGES, useI18n, type LanguageCode } from "./i18n";
 import { storage, useStoredState } from "./storage";
 
 type ViewMode = "edit" | "split" | "preview";
 type Theme = "system" | "light" | "dark";
-type SidebarTab = "files" | "search" | "tags";
+type SidebarTab = "files" | "search" | "tags" | "attachments";
 type DialogState =
   | { kind: "note"; dir: string }
   | { kind: "folder"; dir: string }
@@ -24,6 +35,7 @@ type DialogState =
 
 const AUTOSAVE_MS = 800;
 const LAST_VAULT_KEY = "mdnotes.lastVault";
+const IMAGE_ATTACHMENT = /\.(png|jpe?g|gif|webp|svg|bmp|avif)$/i;
 const isNarrow = () => window.matchMedia("(max-width: 720px)").matches;
 
 export default function App() {
@@ -42,19 +54,15 @@ export default function App() {
   const [mode, setMode] = useStoredState<ViewMode>("mdnotes.mode", isNarrow() ? "preview" : "split");
   const [theme, setTheme] = useStoredState<Theme>("mdnotes.theme", "system");
   const [linksPanel, setLinksPanel] = useStoredState<"on" | "off">("mdnotes.linksPanel", isNarrow() ? "off" : "on");
-  // Bumped whenever the index may have changed, so panels reload.
   const [refreshKey, setRefreshKey] = useState(0);
-  // Bumped when the open note is reloaded from disk, so the editor resets.
   const [editorVersion, setEditorVersion] = useState(0);
 
-  // Refs give async callbacks the latest values without re-subscribing.
   const noteRef = useRef<Note | null>(null);
   const draftRef = useRef("");
   const savedRef = useRef("");
   const [savedContent, setSavedContent] = useState("");
   const dirty = note !== null && draft !== savedContent;
 
-  // Flat list of file paths (not folders), used to resolve `![[embeds]]`.
   const files = useMemo(() => {
     const out: string[] = [];
     const walk = (entries: TreeEntry[]) => {
@@ -179,7 +187,6 @@ export default function App() {
     }
   }, [openNote, refreshTree, bump, report]);
 
-  // Templates for the "new note" dialog; reloaded when the vault changes.
   const [templates, setTemplates] = useState<TemplateInfo[]>([]);
   useEffect(() => {
     if (!vault) return;
@@ -199,7 +206,6 @@ export default function App() {
       if (!name) return;
       try {
         const path = await api.resolveLink(name);
-        // Like in most wiki tools, following a link to a missing note creates it.
         if (path) await openNote(path);
         else await createAndOpen("", name);
       } catch (e) {
@@ -209,7 +215,6 @@ export default function App() {
     [openNote, createAndOpen, report],
   );
 
-  // Files changed outside the app: refresh the tree and the open note.
   const onExternalChange = useCallback(
     async (paths: string[]) => {
       await refreshTree();
@@ -246,21 +251,18 @@ export default function App() {
     };
   }, [vault, onExternalChange]);
 
-  // Autosave shortly after the user stops typing.
   useEffect(() => {
     if (!dirty) return;
     const timer = window.setTimeout(() => void save(), AUTOSAVE_MS);
     return () => window.clearTimeout(timer);
   }, [draft, dirty, save]);
 
-  // Do not lose edits when the window is closed or reloaded.
   useEffect(() => {
     const flush = () => void save();
     window.addEventListener("beforeunload", flush);
     return () => window.removeEventListener("beforeunload", flush);
   }, [save]);
 
-  // Global shortcuts.
   useEffect(() => {
     if (!vault) return;
     const onKey = (e: KeyboardEvent) => {
@@ -284,6 +286,22 @@ export default function App() {
     draftRef.current = value;
     setDraft(value);
   }, []);
+
+  const insertAttachment = useCallback(
+    (attachment: AttachmentInfo) => {
+      if (!noteRef.current) return;
+      const encodedPath = `/${attachment.path.split("/").map(encodeURIComponent).join("/")}`;
+      const link = IMAGE_ATTACHMENT.test(attachment.name)
+        ? `![${attachment.name}](<${encodedPath}>)`
+        : `[${attachment.name}](<${encodedPath}>)`;
+      const current = draftRef.current;
+      const separator = current.length === 0 || current.endsWith("\n") ? "" : "\n";
+      const next = `${current}${separator}${link}\n`;
+      onChange(next);
+      setError(t.attachmentInserted(attachment.name));
+    },
+    [onChange, t],
+  );
 
   const targetDir = () => {
     if (!selected) return "";
@@ -448,6 +466,7 @@ export default function App() {
                   ["files", t.tabFiles],
                   ["search", t.tabSearch],
                   ["tags", t.tabTags],
+                  ["attachments", t.tabAttachments],
                 ] as const
               ).map(([value, label]) => (
                 <button
@@ -500,6 +519,19 @@ export default function App() {
             )}
             {sidebarTab === "search" && <SearchPanel refreshKey={refreshKey} onOpen={(p) => void openNote(p)} />}
             {sidebarTab === "tags" && <TagsPanel refreshKey={refreshKey} onOpen={(p) => void openNote(p)} />}
+            {sidebarTab === "attachments" && (
+              <AttachmentsPanel
+                vaultRoot={vault.root}
+                refreshKey={refreshKey}
+                canInsert={note !== null}
+                onInserted={insertAttachment}
+                onChanged={() => {
+                  void refreshTree();
+                  bump();
+                }}
+                onError={report}
+              />
+            )}
 
             <div className="sidebar-footer">
               <button type="button" onClick={() => void pickVault()}>
@@ -536,9 +568,7 @@ export default function App() {
               )}
             </>
           ) : (
-            <div className="empty">
-              {t.workspaceEmpty}
-            </div>
+            <div className="empty">{t.workspaceEmpty}</div>
           )}
         </main>
 
