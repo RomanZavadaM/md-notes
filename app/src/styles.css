@@ -763,3 +763,30 @@ mark {
     box-shadow: -4px 0 16px rgb(0 0 0 / 0.2);
   }
 }
+
+/* Diagrams and math */
+.preview pre:has(> .mermaid) {
+  background: none;
+  padding: 0;
+}
+
+.preview .mermaid {
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+}
+
+.preview .mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.preview .mermaid-error {
+  color: var(--warn);
+  white-space: pre-wrap;
+}
+
+.preview .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}

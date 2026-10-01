@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { ask, open } from "@tauri-apps/plugin-dialog";
 import { api, joinPath, parentPath, VAULT_CHANGED, type Note, type TreeEntry, type VaultInfo } from "./api";
@@ -49,6 +49,19 @@ export default function App() {
   const savedRef = useRef("");
   const [savedContent, setSavedContent] = useState("");
   const dirty = note !== null && draft !== savedContent;
+
+  // Flat list of file paths (not folders), used to resolve `![[embeds]]`.
+  const files = useMemo(() => {
+    const out: string[] = [];
+    const walk = (entries: TreeEntry[]) => {
+      for (const entry of entries) {
+        if (entry.kind === "dir") walk(entry.children ?? []);
+        else out.push(entry.path);
+      }
+    };
+    walk(tree);
+    return out;
+  }, [tree]);
 
   const report = useCallback((e: unknown) => setError(String(e)), []);
   const bump = useCallback(() => setRefreshKey((k) => k + 1), []);
@@ -441,7 +454,14 @@ export default function App() {
               )}
               {mode !== "edit" && (
                 <section className="pane pane-preview">
-                  <Preview content={draft} onOpenLink={(target) => void openLink(target)} />
+                  <Preview
+                    content={draft}
+                    notePath={note.path}
+                    vaultRoot={vault.root}
+                    files={files}
+                    onOpenLink={(target) => void openLink(target)}
+                    onOpenPath={(path) => void openNote(path)}
+                  />
                 </section>
               )}
             </>
