@@ -60,8 +60,10 @@ fn open_vault(path: String, app: AppHandle, state: State<'_, AppState>) -> CmdRe
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     {
         let handle = app.clone();
-        let watcher = watch::watch(vault.root(), move |changed| on_files_changed(&handle, changed))
-            .map_err(|e| e.to_string())?;
+        let watcher = watch::watch(vault.root(), move |changed| {
+            on_files_changed(&handle, changed)
+        })
+        .map_err(|e| e.to_string())?;
         *state.watcher.lock().map_err(|e| e.to_string())? = Some(watcher);
     }
     #[cfg(any(target_os = "android", target_os = "ios"))]
