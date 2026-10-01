@@ -1,90 +1,69 @@
 # MD Notes
 
+**🇺🇦 Українська** · [🇬🇧 English](docs/readme/README.en.md) · [🇫🇷 Français](docs/readme/README.fr.md) · [🇩🇪 Deutsch](docs/readme/README.de.md) · [🇪🇸 Español](docs/readme/README.es.md) · [🇰🇷 한국어](docs/readme/README.ko.md) · [🇯🇵 日本語](docs/readme/README.ja.md)
+
 [![CI](https://github.com/RomanZavadaM/md-notes/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanZavadaM/md-notes/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Кросплатформний застосунок для особистої бази знань у форматі Markdown:
-перегляд, редагування, структурування й візуалізація звичайних `.md` файлів
-разом із вкладеннями.
+> **Поточний checkpoint: [MD Notes v0.1.0](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.1.0)**
+>
+> **Статус розвитку: ACTIVE — етап v0.2 «структура і зв'язки».**
 
-**Дані належать користувачу.** Нотатки — це відкриті текстові файли. Їх можна
-відкрити будь-яким редактором, переглянути на GitHub і версіонувати через Git.
-Застосунок не створює прихованих форматів.
+## Про продукт
 
-> Статус: рання розробка (v0.1 → v0.2). Працюють локальні сховища, редактор і
-> перегляд, індекс із пошуком, зворотні посилання, теги, оновлення посилань при
-> перейменуванні, Mermaid і KaTeX.
-> Повний план — у [docs/roadmap.md](docs/roadmap.md).
+**MD Notes** — кросплатформний local-first застосунок для особистої бази знань у форматі Markdown: перегляд, редагування, структурування й візуалізація звичайних `.md` файлів разом із вкладеннями.
 
-## Можливості
+**Дані належать користувачу.** Нотатки — це відкриті текстові файли. Їх можна відкрити будь-яким редактором, переглянути на GitHub і версіонувати через Git. Застосунок не створює прихованих форматів.
 
-| Є зараз | Заплановано |
-|---|---|
-| Локальна папка як сховище, стеження за змінами | Мережеві й хмарні сховища, Git |
-| Дерево файлів: створення, перейменування, кошик | Вкладення, «де використовується» |
-| Редактор CodeMirror 6, перегляд, режим «поруч» | Граф знань |
-| `[[Вікі-посилання]]`, зворотні посилання, `aliases` | Типи нотаток, шаблони, форми |
-| Оновлення посилань при перейменуванні | Таблиці й мова запитів |
-| Повнотекстовий пошук, теги, швидкий перехід `Ctrl+O` | Канбан, календар, полотно |
-| Mermaid, KaTeX, зображення зі сховища | Android та iOS |
-| Світла, темна і системна теми | |
+Платформи: **Windows, macOS, Linux**; Android та iOS — етап v0.3.
 
-## Платформи
+## Що входить у v0.1.0
 
-Windows, macOS, Linux, а пізніше Android та iOS. Усе з однієї кодової бази
-(Tauri 2).
+- локальна папка як сховище, дерево файлів, створення, перейменування, кошик;
+- редактор CodeMirror 6, перегляд, режим «поруч», автозбереження, атомарний запис;
+- `[[вікі-посилання]]` з переходом і створенням відсутньої нотатки;
+- `#теги` і властивості YAML front matter;
+- світла, темна і системна теми, компонування для вузьких екранів;
+- приклад бази знань `sample-vault/`.
 
-## Швидкий старт для розробника
+У роботі (v0.2): індекс і повнотекстовий пошук, зворотні посилання, оновлення посилань при перейменуванні, Mermaid і KaTeX, шаблони і щоденні нотатки, інтерфейс сімома мовами. Повний план — [docs/roadmap.md](docs/roadmap.md).
 
-Потрібні:
+## Встановлення
 
-- [Rust](https://rustup.rs/) (stable);
-- [Node.js](https://nodejs.org/) 20 або новіший;
-- системні залежності Tauri для вашої ОС:
-  [tauri.app/start/prerequisites](https://v2.tauri.app/start/prerequisites/).
+Завантажте пакет для своєї ОС зі сторінки [релізу](https://github.com/RomanZavadaM/md-notes/releases):
+
+- **Windows** — `MD.Notes_<версія>_x64-setup.exe` або `.msi`. Збірка не підписана, тому Windows може показати SmartScreen.
+- **macOS** — `.dmg` / `.app.tar.gz` (universal). Збірка не нотаризована; можливо, знадобиться **System Settings → Privacy & Security → Open Anyway**.
+- **Linux** — `.AppImage`, `.deb` або `.rpm`.
+
+Після запуску натисніть **«Відкрити папку»** і виберіть папку з нотатками або `sample-vault/` з цього репозиторію.
+
+## Для розробника
+
+Потрібні [Rust](https://rustup.rs/) (stable), [Node.js](https://nodejs.org/) 20+ і [системні залежності Tauri](https://v2.tauri.app/start/prerequisites/).
 
 ```bash
-git clone https://github.com/RomanZavadaM/md-notes.git
-cd md-notes/app
-npm install
+cd app
+npm ci
 npm run tauri dev
 ```
 
-Після запуску натисніть **«Відкрити папку»** і виберіть `sample-vault/`, щоб
-побачити приклад бази знань.
+Перевірки перед PR: `cargo fmt --all --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test -p notes-core`, `npm run build` у `app/`. Правила розробки — [PROJECT_RULES.md](PROJECT_RULES.md), вхід для нової сесії — [START_HERE.md](START_HERE.md).
 
-Корисні команди:
+## Керівництво і документація
 
-```bash
-cargo test -p notes-core          # тести ядра
-cargo clippy --workspace          # лінтер Rust
-cd app && npm run build           # перевірка типів і збірка інтерфейсу
-cd app && npm run tauri build     # інсталятор для поточної ОС
-```
+- [Керівництво користувача](docs/user-guide/USER_GUIDE.uk.md) · [усі мови](docs/user-guide/README.md)
+- [Архітектура](docs/architecture.md) · [Модель даних](docs/data-model.md) · [Мова запитів](docs/query-language.md) · [ADR](docs/adr/)
+- [Roadmap](docs/roadmap.md) · [Changelog](CHANGELOG.md) · [Release notes](docs/releases/)
+- [START_HERE](START_HERE.md) · [PROJECT_RULES](PROJECT_RULES.md) · [PROJECT_STATE](PROJECT_STATE.md) · [WORKLOG](WORKLOG.md)
 
-## Структура репозиторію
+## Дані та приватність
 
-```
-md-notes/
-├── .github/workflows/    CI і релізи
-├── crates/notes-core/    ядро на Rust: сховища, нотатки, розбір Markdown
-├── app/                  інтерфейс (React + TypeScript) і Tauri-застосунок
-│   └── src-tauri/        команди Tauri, конфігурація, іконки
-├── docs/                 архітектура, модель даних, roadmap, ADR
-├── sample-vault/         приклад бази знань
-├── CHANGELOG.md
-└── README.md
-```
+MD Notes працює local-first: нотатки, вкладення та індекс залишаються на вашому пристрої або у вибраному вами сховищі. Застосунок не має серверів, аналітики чи телеметрії. Конфлікти синхронізації ніколи не перезаписуються мовчки. Робіть резервні копії своїх сховищ.
 
-## Документація
+## Авторські права
 
-- [Архітектура](docs/architecture.md)
-- [Модель даних](docs/data-model.md)
-- [Мова запитів](docs/query-language.md)
-- [Roadmap](docs/roadmap.md)
-- [Архітектурні рішення (ADR)](docs/adr/)
-- [Як долучитися](CONTRIBUTING.md)
+**Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved.**
 
-## Ліцензія
+MD Notes — **proprietary software**. Публічний репозиторій не надає open-source ліцензії чи дозволу на копіювання, модифікацію, перепублікацію, продаж або створення похідних продуктів без письмового дозволу правовласника. Ваші нотатки належать вам.
 
-[MIT](LICENSE)
+Див. [LICENSE.md](LICENSE.md), [COPYRIGHT.md](COPYRIGHT.md), [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), [LEGAL_AND_COPYRIGHT.md](docs/LEGAL_AND_COPYRIGHT.md).
