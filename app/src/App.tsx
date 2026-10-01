@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { ask, open } from "@tauri-apps/plugin-dialog";
-import { api, joinPath, parentPath, VAULT_CHANGED, type Note, type TreeEntry, type VaultInfo } from "./api";
+import { api, joinPath, parentPath, VAULT_CHANGED, type Note, type TemplateInfo, type TreeEntry, type VaultInfo } from "./api";
 import { Editor } from "./components/Editor";
 import { FileTree } from "./components/FileTree";
 import { LinksPanel } from "./components/LinksPanel";
@@ -151,9 +151,9 @@ export default function App() {
   );
 
   const createAndOpen = useCallback(
-    async (dir: string, title: string) => {
+    async (dir: string, title: string, template?: string) => {
       try {
-        const created = await api.createNote(dir, title);
+        const created = await api.createNote(dir, title, template);
         await refreshTree();
         bump();
         await openNote(created.path);
@@ -163,6 +163,31 @@ export default function App() {
     },
     [openNote, refreshTree, bump, report],
   );
+
+  const openToday = useCallback(async () => {
+    try {
+      const daily = await api.openDaily();
+      await refreshTree();
+      bump();
+      await openNote(daily.path);
+    } catch (e) {
+      report(e);
+    }
+  }, [openNote, refreshTree, bump, report]);
+
+  // Templates for the "new note" dialog; reloaded when the vault changes.
+  const [templates, setTemplates] = useState<TemplateInfo[]>([]);
+  useEffect(() => {
+    if (!vault) return;
+    api
+      .listTemplates()
+      .then(setTemplates)
+      .catch(() => setTemplates([]));
+  }, [vault, refreshKey]);
+  const templateChoices = [
+    { value: "", label: "Порожня нотатка" },
+    ...templates.filter((t) => t.name !== "daily").map((t) => ({ value: t.name, label: t.label })),
+  ];
 
   const openLink = useCallback(
     async (target: string) => {
@@ -261,12 +286,12 @@ export default function App() {
     return selected.kind === "dir" ? selected.path : parentPath(selected.path);
   };
 
-  const submitDialog = async (value: string) => {
+  const submitDialog = async (value: string, template: string) => {
     if (!dialog) return;
     setDialog(null);
     try {
       if (dialog.kind === "note") {
-        await createAndOpen(dialog.dir, value);
+        await createAndOpen(dialog.dir, value, template || undefined);
       } else if (dialog.kind === "folder") {
         await api.createFolder(dialog.dir, value);
         await refreshTree();
@@ -408,6 +433,9 @@ export default function App() {
                   <button type="button" title="Нова нотатка" onClick={() => setDialog({ kind: "note", dir: targetDir() })}>
                     + Нотатка
                   </button>
+                  <button type="button" title="Щоденна нотатка на сьогодні" onClick={() => void openToday()}>
+                    Сьогодні
+                  </button>
                   <button type="button" title="Нова папка" onClick={() => setDialog({ kind: "folder", dir: targetDir() })}>
                     + Папка
                   </button>
@@ -504,7 +532,9 @@ export default function App() {
           label="Назва"
           initial={dialog.kind === "rename" ? dialog.entry.name.replace(/\.(md|markdown)$/i, "") : ""}
           submitText={dialog.kind === "rename" ? "Перейменувати" : "Створити"}
-          onSubmit={(value) => void submitDialog(value)}
+          choices={dialog.kind === "note" ? templateChoices : undefined}
+          choiceLabel="Шаблон"
+          onSubmit={(value, choice) => void submitDialog(value, choice)}
           onCancel={() => setDialog(null)}
         />
       )}

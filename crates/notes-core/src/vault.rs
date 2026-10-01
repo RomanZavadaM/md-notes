@@ -254,6 +254,13 @@ impl Vault {
     /// Creates a new note in `dir` with a unique file name derived from
     /// `title`, a stable `id` and the creation date.
     pub fn create_note(&self, dir: &str, title: &str) -> Result<Note> {
+        let (rel, title) = self.new_note_path(dir, title)?;
+        self.write_note(&rel, &new_note_content(&title))
+    }
+
+    /// Unique path for a new note titled `title` in `dir`, and the cleaned
+    /// title itself.
+    pub(crate) fn new_note_path(&self, dir: &str, title: &str) -> Result<(String, String)> {
         let dir = paths::normalize(dir)?;
         let title = title.trim();
         let title = if title.is_empty() {
@@ -265,8 +272,7 @@ impl Vault {
             name if name.is_empty() => "Без назви".to_string(),
             name => name,
         };
-        let rel = self.unique_path(&dir, &base, ".md");
-        self.write_note(&rel, &new_note_content(title))
+        Ok((self.unique_path(&dir, &base, ".md"), title.to_string()))
     }
 
     /// Creates a folder with a unique name and returns its path.

@@ -65,6 +65,11 @@ export interface RenameOutcome {
   updated: string[];
 }
 
+export interface TemplateInfo {
+  name: string;
+  label: string;
+}
+
 export interface TagCount {
   tag: string;
   count: number;
@@ -81,7 +86,10 @@ export const api = {
   getTree: () => invoke<TreeEntry[]>("get_tree"),
   readNote: (path: string) => invoke<Note>("read_note", { path }),
   saveNote: (path: string, content: string) => invoke<Note>("save_note", { path, content }),
-  createNote: (dir: string, title: string) => invoke<Note>("create_note", { dir, title }),
+  createNote: (dir: string, title: string, template?: string) =>
+    invoke<Note>("create_note", { dir, title, template: template ?? null }),
+  listTemplates: () => invoke<TemplateInfo[]>("list_templates"),
+  openDaily: () => invoke<Note>("open_daily"),
   createFolder: (parent: string, name: string) => invoke<string>("create_folder", { parent, name }),
   renameEntry: (from: string, to: string) => invoke<RenameOutcome>("rename_entry", { from, to }),
   trashEntry: (path: string) => invoke<string>("trash_entry", { path }),
