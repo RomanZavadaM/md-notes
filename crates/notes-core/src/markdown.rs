@@ -265,7 +265,10 @@ mod tests {
     fn unclosed_front_matter_is_body() {
         let src = "---\ntitle: A\n# no end";
         assert_eq!(split_front_matter(src), (None, src));
-        assert_eq!(split_front_matter("no front matter"), (None, "no front matter"));
+        assert_eq!(
+            split_front_matter("no front matter"),
+            (None, "no front matter")
+        );
     }
 
     #[test]

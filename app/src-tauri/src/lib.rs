@@ -18,7 +18,9 @@ fn with_vault<T>(
     f: impl FnOnce(&Vault) -> notes_core::Result<T>,
 ) -> CmdResult<T> {
     let guard = state.vault.lock().map_err(|e| e.to_string())?;
-    let vault = guard.as_ref().ok_or_else(|| "no vault is open".to_string())?;
+    let vault = guard
+        .as_ref()
+        .ok_or_else(|| "no vault is open".to_string())?;
     f(vault).map_err(|e| e.to_string())
 }
 

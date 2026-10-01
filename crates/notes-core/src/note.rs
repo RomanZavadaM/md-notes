@@ -46,7 +46,10 @@ impl Note {
             .or_else(|| extract_title(body, &masked))
             .unwrap_or_else(|| paths::file_stem(path).to_string());
 
-        let mut tags = front_matter.as_ref().map(front_matter_tags).unwrap_or_default();
+        let mut tags = front_matter
+            .as_ref()
+            .map(front_matter_tags)
+            .unwrap_or_default();
         for tag in extract_inline_tags(&masked) {
             if !tags.contains(&tag) {
                 tags.push(tag);
@@ -105,7 +108,10 @@ mod tests {
     #[test]
     fn falls_back_to_heading_and_file_name() {
         assert_eq!(Note::parse("a.md", "# Heading\n".into()).title, "Heading");
-        assert_eq!(Note::parse("dir/My note.md", "text".into()).title, "My note");
+        assert_eq!(
+            Note::parse("dir/My note.md", "text".into()).title,
+            "My note"
+        );
     }
 
     #[test]

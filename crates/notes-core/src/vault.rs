@@ -206,7 +206,11 @@ impl Vault {
         if wanted.contains('/') {
             return Ok(None);
         }
-        let stem = if wanted_has_ext { wanted_stem.as_str() } else { wanted.as_str() };
+        let stem = if wanted_has_ext {
+            wanted_stem.as_str()
+        } else {
+            wanted.as_str()
+        };
         Ok(notes
             .into_iter()
             .find(|p| paths::file_stem(p).to_lowercase() == stem))
@@ -239,7 +243,11 @@ impl Vault {
     pub fn create_note(&self, dir: &str, title: &str) -> Result<Note> {
         let dir = paths::normalize(dir)?;
         let title = title.trim();
-        let title = if title.is_empty() { "Без назви" } else { title };
+        let title = if title.is_empty() {
+            "Без назви"
+        } else {
+            title
+        };
         let base = match paths::sanitize_file_name(title) {
             name if name.is_empty() => "Без назви".to_string(),
             name => name,
@@ -387,15 +395,23 @@ mod tests {
         let tree = vault.tree().unwrap();
         let names: Vec<_> = tree.iter().map(|e| e.name.as_str()).collect();
         assert_eq!(names, vec!["b-folder", "A note.md", "image.png"]);
-        assert_eq!(tree[0].children.as_ref().unwrap()[0].path, "b-folder/inner.md");
+        assert_eq!(
+            tree[0].children.as_ref().unwrap()[0].path,
+            "b-folder/inner.md"
+        );
         assert_eq!(tree[2].kind, EntryKind::File);
-        assert_eq!(vault.note_paths().unwrap(), vec!["b-folder/inner.md", "A note.md"]);
+        assert_eq!(
+            vault.note_paths().unwrap(),
+            vec!["b-folder/inner.md", "A note.md"]
+        );
     }
 
     #[test]
     fn writes_and_reads_notes() {
         let (dir, vault) = vault();
-        let saved = vault.write_note("new/dir/Note.md", "# Hello\n[[Other]]").unwrap();
+        let saved = vault
+            .write_note("new/dir/Note.md", "# Hello\n[[Other]]")
+            .unwrap();
         assert_eq!(saved.title, "Hello");
         assert!(dir.path().join("new/dir/Note.md").is_file());
         let read = vault.read_note(r"new\dir\Note.md").unwrap();
@@ -408,7 +424,10 @@ mod tests {
         let (_dir, vault) = vault();
         assert!(vault.write_note("../outside.md", "x").is_err());
         assert!(vault.write_note("file.txt", "x").is_err());
-        assert!(matches!(vault.read_note("missing.md"), Err(Error::NotFound(_))));
+        assert!(matches!(
+            vault.read_note("missing.md"),
+            Err(Error::NotFound(_))
+        ));
     }
 
     #[test]

@@ -33,16 +33,37 @@ fn sample_notes_are_valid_and_linked() {
             "{path}: {:?}",
             note.front_matter_error
         );
-        let fm = note.front_matter.as_ref().expect("every sample note has properties");
-        assert!(fm.get("id").and_then(|v| v.as_str()).is_some(), "{path}: missing id");
-        assert!(fm.get("type").and_then(|v| v.as_str()).is_some(), "{path}: missing type");
+        let fm = note
+            .front_matter
+            .as_ref()
+            .expect("every sample note has properties");
+        assert!(
+            fm.get("id").and_then(|v| v.as_str()).is_some(),
+            "{path}: missing id"
+        );
+        assert!(
+            fm.get("type").and_then(|v| v.as_str()).is_some(),
+            "{path}: missing type"
+        );
 
-        for link in note.links.iter().filter(|l| !l.target.is_empty() && !l.embed) {
+        for link in note
+            .links
+            .iter()
+            .filter(|l| !l.target.is_empty() && !l.embed)
+        {
             let resolved = vault.resolve_link(&link.target).unwrap();
             if EXPECTED_MISSING.contains(&link.target.as_str()) {
-                assert!(resolved.is_none(), "{path}: {} should be missing", link.target);
+                assert!(
+                    resolved.is_none(),
+                    "{path}: {} should be missing",
+                    link.target
+                );
             } else {
-                assert!(resolved.is_some(), "{path}: broken link [[{}]]", link.target);
+                assert!(
+                    resolved.is_some(),
+                    "{path}: broken link [[{}]]",
+                    link.target
+                );
             }
         }
     }
@@ -54,7 +75,10 @@ fn sample_ids_are_unique() {
     let mut ids = Vec::new();
     for path in vault.note_paths().unwrap() {
         let note = vault.read_note(&path).unwrap();
-        let id = note.front_matter.unwrap()["id"].as_str().unwrap().to_string();
+        let id = note.front_matter.unwrap()["id"]
+            .as_str()
+            .unwrap()
+            .to_string();
         assert!(!ids.contains(&id), "duplicate id {id} in {path}");
         ids.push(id);
     }
