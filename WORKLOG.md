@@ -4,55 +4,66 @@
 
 ## STATUS
 
-**ACTIVE.** Checkpoint **v0.2.0** опубліковано — DONE. CSP slice інтегровано в `main` через PR #15. Активний slice залишку v0.2: **вкладення**.
-
-## Поточний slice
-
-`feature/attachments-v0.2`, PR #16 (ready for review): керування вкладеннями у відкритому файловому форматі.
-
-- база: `main` після merge PR #15 (`a8e1106b40b5552f453c410d96fbf5f1da9a243a`);
-- ядро: імпорт файлу в `attachments/YYYY/MM/` без мовчазного перезапису;
-- ядро: перелік вкладень;
-- ядро: «де використовується» через посилання у Markdown;
-- ядро: перелік вкладень без посилань;
-- ядро: розпізнавання URL-encoded Unicode-шляхів у Markdown;
-- unit-тести: імпорт, унікальні імена, usage/orphan detection, Unicode URL path;
-- Tauri bridge: `import_attachment`, `list_attachments`, `attachment_used_by`, `orphan_attachments`;
-- frontend API: типізовані wrappers для attachment commands;
-- UI: окрема вкладка sidebar «Вкладення»;
-- UI: системний file picker, список, image thumbnails, orphan marker, usage details і відкриття файлу;
-- UI: вставлення Markdown-посилання в поточну нотатку після імпорту або вручну для вибраного вкладення;
-- UI: inline preview зображень і локальний PDF preview;
-- CSP: `frame-src` дозволяє лише `self` та локальний Tauri asset protocol; зовнішні frame лишаються забороненими;
-- локалізація: attachment UI синхронізовано для UK / EN / FR / DE / ES / KO / JA;
-- стилі: окремий `AttachmentsPanel.css`, включно з вузьким layout.
-
-## Поточна перевірка
-
-- CI #77 виявив `clippy::unnecessary_sort_by` у `attachments.rs`; виправлено commit `7aad8c87a4a6c4c8c618e2d3a55987d8ffc57429` через `sort_by_key`.
-- CI #78: notes-core Windows/macOS/Linux — PASS; dependency licenses — PASS; Conventional PR title — PASS.
-- Linux `app (frontend + Tauri)` у #78 завис на системному `apt`-кроці до npm/build, без зафіксованої кодової помилки. Цей WORKLOG commit навмисно запускає новий clean CI run через `concurrency.cancel-in-progress`.
-- Runtime GUI-перевірка в поточному середовищі не виконувалась і не вважається виконаною.
-
-## Наступна дія
-
-Дочекатися нового clean CI. Якщо всі стандартні checks Windows/macOS/Linux, frontend/Tauri та license gate зелені — інтегрувати PR #16 у `main`, після чого виконати повний checkpoint за командою власника «зливай в main»: release-please, версія, tag/prerelease, Windows/macOS/Linux builds, START/source, legal notices, SHA256SUMS і синхронізація `START_HERE.md`, `PROJECT_STATE.md`, `WORKLOG.md`, `docs/roadmap.md`, Issue #8.
+**ACTIVE. Checkpoint v0.2.1 — DONE.** CSP та вкладення інтегровані в `main`, prerelease `v0.2.1` опубліковано з пакетами Windows/macOS/Linux, START/source, legal notices і SHA256SUMS.
 
 ## Останній checkpoint
 
-- GitHub prerelease [`v0.2.0`](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.0), 01.10.2026;
-- release PR #11, release commit `d3302b0527839ac2b5cbf0f09d14e6ed58500f51`;
-- release run #36913195476 — SUCCESS (Windows, macOS universal, Linux, assets);
-- assets: `.exe`, `.msi`, `.dmg`, `.app.tar.gz`, `.AppImage`, `.deb`, `.rpm`, `MD-Notes-0.2.0-START.zip`, `LICENSE.md`, `COPYRIGHT.md`, `THIRD_PARTY_NOTICES.md`, `SHA256SUMS.txt` (контрольні суми перевірено).
+- GitHub prerelease [`v0.2.1`](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.1), 01.10.2026;
+- attachment PR #16 → `main` squash commit `6b923369b8d5e3bb4e031f201dd9de7cd8c2c594`;
+- release PR #14 → release commit `26661d8c088df51ce162018d2a3b525502cf30e1`;
+- tag: `v0.2.1`, target `26661d8c088df51ce162018d2a3b525502cf30e1`;
+- release workflow #19 / run `36924302514` — **SUCCESS**;
+- Windows: `MD.Notes_0.2.1_x64-setup.exe`, `MD.Notes_0.2.1_x64_en-US.msi`;
+- macOS universal: `MD.Notes_0.2.1_universal.dmg`, `MD.Notes_universal.app.tar.gz`;
+- Linux: `MD.Notes_0.2.1_amd64.AppImage`, `MD.Notes_0.2.1_amd64.deb`, `MD.Notes-0.2.1-1.x86_64.rpm`;
+- source/test package: `MD-Notes-0.2.1-START.zip`;
+- legal/checksums: `LICENSE.md`, `COPYRIGHT.md`, `THIRD_PARTY_NOTICES.md`, `SHA256SUMS.txt`.
 
-## Нещодавно завершено
+## Завершено у v0.2.1
 
-- CSP: PR #15 — restrictive Tauri CSP, CI PASS, інтегровано в `main` (`a8e1106`).
-- v0.2.0 scope: PR #2 (індекс), #3 (пошук, теги, панель зв'язків, стеження), #4 (оновлення посилань), #5 (Mermaid/KaTeX/зображення), #6 (перейменування в застосунку), #7 (шаблони, щоденні нотатки), #9 (правила, ліцензія, документація 7 мовами, license gate), #10 (інтерфейс 7 мовами, «Про програму») — DONE.
-- v0.1.0: каркас, CI, release-please, реліз (PR #1, `447e8bf`).
-- Аудит ліцензій: 501 Rust-крейт і 400 npm-пакетів; Mermaid 12 → 11.17 через EPL-2.0 `elkjs`.
+### CSP
+- restrictive Tauri CSP замість `csp: null`;
+- scripts лише `self`, network connect лише Tauri IPC;
+- локальні vault assets через Tauri asset protocol;
+- local-only frame policy для PDF preview;
+- зовнішні object/frame/form targets заблоковані.
+
+### Вкладення
+- імпорт у `attachments/YYYY/MM/`;
+- повторний імпорт не перезаписує файл, створюється унікальне ім'я;
+- Tauri bridge + типізований frontend API;
+- окрема вкладка «Вкладення» у sidebar;
+- системний file picker;
+- автоматичне та ручне вставлення Markdown-посилання в нотатку;
+- image thumbnails та локальний PDF preview;
+- відкриття вкладення системною програмою;
+- «де використовується», кількість використань, вкладення без посилань;
+- URL-encoded Unicode paths;
+- attachment UI усіма 7 мовами;
+- unit-тести ядра.
+
+### CI / packaging
+- виправлено Clippy `unnecessary_sort_by`;
+- Tauri CI app-job вирівняно з release Linux environment (`ubuntu-22.04`);
+- PR #16 clean CI #80: Windows/macOS/Linux core, frontend/Tauri, license gates — PASS;
+- release builds Windows/macOS/Linux та assets job — PASS.
+
+## Поточний slice
+
+**Не розпочато.** Наступний незавершений пункт roadmap v0.2: **типи нотаток + `schema.json` + форма властивостей**.
+
+## Наступна дія
+
+Перед кодом нового slice:
+1. перечитати `docs/roadmap.md` і поточну модель front matter;
+2. спроєктувати мінімальний відкритий `schema.json` без vendor lock-in;
+3. визначити сумісність із наявними шаблонами та довільним YAML front matter;
+4. реалізувати через branch + PR з tests і локалізацією 7 мовами;
+5. не переходити до v0.3 без рішення власника.
 
 ## Відомі обмеження
 
-- runtime-перевірки у вікні застосунку не виконувалися (немає локального Rust/Node на робочій машині розробки);
-- збірки не підписані.
+- runtime GUI-перевірка v0.2.1 вручну не виконувалась; CI/build evidence не є runtime test;
+- збірки не підписані;
+- Android/iOS ще не збираються;
+- великі сховища індексуються синхронно під час відкриття.
