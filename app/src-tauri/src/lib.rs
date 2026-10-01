@@ -3,8 +3,8 @@
 use std::sync::Mutex;
 
 use notes_core::{
-    Backlink, Index, Note, NoteSummary, RenameOutcome, SearchHit, TagCount, TreeEntry,
-    UnresolvedLink, Vault,
+    Backlink, Index, Note, NoteSummary, RenameOutcome, SearchHit, TagCount, TemplateInfo,
+    TreeEntry, UnresolvedLink, Vault,
 };
 use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager, State};
@@ -109,9 +109,32 @@ fn save_note(path: String, content: String, state: State<'_, AppState>) -> CmdRe
 }
 
 #[tauri::command]
-fn create_note(dir: String, title: String, state: State<'_, AppState>) -> CmdResult<Note> {
+fn create_note(
+    dir: String,
+    title: String,
+    template: Option<String>,
+    state: State<'_, AppState>,
+) -> CmdResult<Note> {
     with_session(&state, |s| {
-        let note = s.vault.create_note(&dir, &title)?;
+        let note = match template.as_deref() {
+            Some(name) => s.vault.create_from_template(&dir, &title, name)?,
+            None => s.vault.create_note(&dir, &title)?,
+        };
+        s.index.update_note(&s.vault, &note)?;
+        Ok(note)
+    })
+}
+
+#[tauri::command]
+fn list_templates(state: State<'_, AppState>) -> CmdResult<Vec<TemplateInfo>> {
+    with_session(&state, |s| s.vault.templates())
+}
+
+/// Today's daily note, created from the `daily` template if needed.
+#[tauri::command]
+fn open_daily(state: State<'_, AppState>) -> CmdResult<Note> {
+    with_session(&state, |s| {
+        let note = s.vault.open_daily(chrono::Local::now().date_naive())?;
         s.index.update_note(&s.vault, &note)?;
         Ok(note)
     })
@@ -181,6 +204,8 @@ pub fn run() {
             save_note,
             create_note,
             create_folder,
+            list_templates,
+            open_daily,
             rename_entry,
             trash_entry,
             resolve_link,
