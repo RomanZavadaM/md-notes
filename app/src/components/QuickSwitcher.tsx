@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { api, type NoteSummary } from "../api";
+import { useI18n } from "../i18n";
 
 interface Props {
   onOpen: (path: string) => void;
@@ -21,6 +22,7 @@ function score(note: NoteSummary, q: string): number | null {
 
 /** Ctrl/Cmd+O: jump to a note by title, alias or path, or create it. */
 export function QuickSwitcher({ onOpen, onCreate, onClose }: Props) {
+  const { t } = useI18n();
   const [notes, setNotes] = useState<NoteSummary[]>([]);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
@@ -53,11 +55,11 @@ export function QuickSwitcher({ onOpen, onCreate, onClose }: Props) {
 
   return (
     <div className="dialog-backdrop" onMouseDown={onClose}>
-      <div className="dialog switcher" role="dialog" aria-label="Перехід до нотатки" onMouseDown={(e) => e.stopPropagation()}>
+      <div className="dialog switcher" role="dialog" aria-label={t.switcherLabel} onMouseDown={(e) => e.stopPropagation()}>
         <input
           autoFocus
-          placeholder="Назва нотатки…"
-          aria-label="Назва нотатки"
+          placeholder={t.switcherPlaceholder}
+          aria-label={t.switcherPlaceholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => {
@@ -91,7 +93,7 @@ export function QuickSwitcher({ onOpen, onCreate, onClose }: Props) {
           {results.length === 0 && query.trim() && (
             <li>
               <button type="button" className="result active" onClick={() => choose(0)}>
-                <span className="result-title">Створити «{query.trim()}»</span>
+                <span className="result-title">{t.switcherCreate(query.trim())}</span>
               </button>
             </li>
           )}

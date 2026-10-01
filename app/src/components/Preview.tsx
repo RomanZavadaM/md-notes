@@ -7,6 +7,7 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import "katex/dist/katex.min.css";
 import { parentPath } from "../api";
+import { useI18n } from "../i18n";
 
 const WIKI_SCHEME = "wikilink:";
 const EMBED_SCHEME = "wikiembed:";
@@ -118,6 +119,7 @@ interface Props {
 }
 
 export function Preview({ content, notePath, vaultRoot, files, onOpenLink, onOpenPath }: Props) {
+  const { t } = useI18n();
   const { frontMatter, body } = splitFrontMatter(content);
   const sep = vaultRoot.includes("\\") ? "\\" : "/";
   const assetUrl = (rel: string) => convertFileSrc(`${vaultRoot}${sep}${rel.split("/").join(sep)}`);
@@ -144,7 +146,7 @@ export function Preview({ content, notePath, vaultRoot, files, onOpenLink, onOpe
     <article className="preview">
       {frontMatter !== null && frontMatter.trim() !== "" && (
         <details className="front-matter">
-          <summary>Властивості</summary>
+          <summary>{t.properties}</summary>
           <pre>{frontMatter}</pre>
         </details>
       )}

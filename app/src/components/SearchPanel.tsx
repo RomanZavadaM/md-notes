@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { api, MATCH_END, MATCH_START, type SearchHit } from "../api";
+import { useI18n } from "../i18n";
 
 interface Props {
   /** Changes whenever the index changes, so results are refreshed. */
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export function SearchPanel({ refreshKey, onOpen }: Props) {
+  const { t } = useI18n();
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<SearchHit[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -41,14 +43,14 @@ export function SearchPanel({ refreshKey, onOpen }: Props) {
       <input
         className="panel-input"
         type="search"
-        placeholder="Пошук у нотатках…"
-        aria-label="Пошук у нотатках"
+        placeholder={t.searchPlaceholder}
+        aria-label={t.tabSearch}
         value={query}
         autoFocus
         onChange={(e) => setQuery(e.target.value)}
       />
       {error && <p className="panel-note warn">{error}</p>}
-      {query.trim() !== "" && hits.length === 0 && !error && <p className="panel-note">Нічого не знайдено.</p>}
+      {query.trim() !== "" && hits.length === 0 && !error && <p className="panel-note">{t.searchNothing}</p>}
       <ul className="result-list">
         {hits.map((hit) => (
           <li key={hit.path}>

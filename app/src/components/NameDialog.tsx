@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useI18n } from "../i18n";
 
 export interface Choice {
   value: string;
@@ -19,6 +20,7 @@ interface Props {
 
 /** Small modal with a text field: names for new notes, folders, renames. */
 export function NameDialog({ title, label, initial, submitText, choices, choiceLabel, onSubmit, onCancel }: Props) {
+  const { t } = useI18n();
   const [value, setValue] = useState(initial);
   const [choice, setChoice] = useState(choices?.[0]?.value ?? "");
   const trimmed = value.trim();
@@ -57,7 +59,7 @@ export function NameDialog({ title, label, initial, submitText, choices, choiceL
         )}
         <div className="dialog-actions">
           <button type="button" onClick={onCancel}>
-            Скасувати
+            {t.cancel}
           </button>
           <button type="submit" className="primary" disabled={!trimmed}>
             {submitText}
