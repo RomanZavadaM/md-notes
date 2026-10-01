@@ -32,6 +32,43 @@ export interface VaultInfo {
   name: string;
 }
 
+export interface NoteSummary {
+  path: string;
+  title: string;
+  noteType: string | null;
+  tags: string[];
+  aliases: string[];
+}
+
+export interface Backlink {
+  path: string;
+  title: string;
+  context: string;
+}
+
+export interface UnresolvedLink {
+  source: string;
+  target: string;
+}
+
+export interface SearchHit {
+  path: string;
+  title: string;
+  /** Matches are wrapped in MATCH_START / MATCH_END. */
+  snippet: string;
+}
+
+export interface TagCount {
+  tag: string;
+  count: number;
+}
+
+export const MATCH_START = "\u0002";
+export const MATCH_END = "\u0003";
+
+/** Event emitted by the backend with vault-relative paths changed on disk. */
+export const VAULT_CHANGED = "vault-changed";
+
 export const api = {
   openVault: (path: string) => invoke<VaultInfo>("open_vault", { path }),
   getTree: () => invoke<TreeEntry[]>("get_tree"),
@@ -42,6 +79,11 @@ export const api = {
   renameEntry: (from: string, to: string) => invoke<string>("rename_entry", { from, to }),
   trashEntry: (path: string) => invoke<string>("trash_entry", { path }),
   resolveLink: (target: string) => invoke<string | null>("resolve_link", { target }),
+  listNotes: () => invoke<NoteSummary[]>("list_notes"),
+  backlinks: (path: string) => invoke<Backlink[]>("backlinks", { path }),
+  unresolvedLinks: () => invoke<UnresolvedLink[]>("unresolved_links"),
+  listTags: () => invoke<TagCount[]>("list_tags"),
+  search: (query: string, limit = 50) => invoke<SearchHit[]>("search", { query, limit }),
 };
 
 /** `a/b/c.md` -> `a/b`, `c.md` -> `` */
