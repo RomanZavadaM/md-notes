@@ -4,6 +4,8 @@
 //! blocks are masked first (see [`mask_code`]) so that `[[links]]` and
 //! `#tags` inside code are ignored.
 
+use std::ops::Range;
+
 use serde::Serialize;
 use serde_json::Value;
 
@@ -41,8 +43,8 @@ pub fn parse_front_matter(yaml: &str) -> Result<Value, String> {
 }
 
 /// Replaces the contents of fenced code blocks and inline code spans with
-/// spaces. Line structure is preserved, so line `n` of the result corresponds
-/// to line `n` of the input.
+/// spaces. The result has the same byte length and line structure as the
+/// input, so byte offsets and line numbers apply to the original text.
 pub fn mask_code(src: &str) -> String {
     let mut out = String::with_capacity(src.len());
     let mut fence: Option<(char, usize)> = None;
@@ -86,9 +88,19 @@ fn fence_marker(s: &str) -> Option<(char, usize)> {
 }
 
 fn blank(line: &str) -> String {
-    line.chars()
-        .map(|c| if c == '\n' || c == '\r' { c } else { ' ' })
-        .collect()
+    let mut out = String::with_capacity(line.len());
+    for c in line.chars() {
+        if c == '\n' || c == '\r' {
+            out.push(c);
+        } else {
+            push_spaces(&mut out, c.len_utf8());
+        }
+    }
+    out
+}
+
+fn push_spaces(out: &mut String, n: usize) {
+    out.extend(std::iter::repeat_n(' ', n));
 }
 
 fn mask_inline_code(line: &str) -> String {
@@ -104,7 +116,8 @@ fn mask_inline_code(line: &str) -> String {
         let run = backtick_run(&chars, i);
         match closing_run(&chars, i + run, run) {
             Some(end) => {
-                out.extend(std::iter::repeat_n(' ', end + run - i));
+                let width = chars[i..end + run].iter().map(|c| c.len_utf8()).sum();
+                push_spaces(&mut out, width);
                 i = end + run;
             }
             None => {
@@ -153,6 +166,18 @@ pub struct WikiLink {
 /// Extracts unique wiki links from masked text (see [`mask_code`]).
 pub fn extract_wikilinks(masked: &str) -> Vec<WikiLink> {
     let mut links: Vec<WikiLink> = Vec::new();
+    for (_, link) in wikilink_spans(masked) {
+        if !links.contains(&link) {
+            links.push(link);
+        }
+    }
+    links
+}
+
+/// Every wiki link in masked text with the byte range of its inner text
+/// (between `[[` and `]]`).
+pub fn wikilink_spans(masked: &str) -> Vec<(Range<usize>, WikiLink)> {
+    let mut spans = Vec::new();
     let mut pos = 0;
     while let Some(start) = masked[pos..].find("[[") {
         let open = pos + start;
@@ -168,28 +193,62 @@ pub fn extract_wikilinks(masked: &str) -> Vec<WikiLink> {
         pos = inner_start + close + 2;
 
         let embed = open > 0 && masked.as_bytes()[open - 1] == b'!';
-        let (link, alias) = match inner.split_once('|') {
-            Some((l, a)) => (l, non_empty(a)),
-            None => (inner, None),
-        };
-        let (target, heading) = match link.split_once('#') {
-            Some((t, h)) => (t.trim(), non_empty(h)),
-            None => (link.trim(), None),
-        };
-        if target.is_empty() && heading.is_none() {
-            continue;
-        }
-        let link = WikiLink {
-            target: target.to_string(),
-            heading,
-            alias,
-            embed,
-        };
-        if !links.contains(&link) {
-            links.push(link);
+        if let Some(link) = parse_wikilink(inner, embed) {
+            spans.push((inner_start..inner_start + close, link));
         }
     }
-    links
+    spans
+}
+
+fn parse_wikilink(inner: &str, embed: bool) -> Option<WikiLink> {
+    let (link, alias) = match inner.split_once('|') {
+        Some((l, a)) => (l, non_empty(a)),
+        None => (inner, None),
+    };
+    // `[[Note\|alias]]` is how a link is written inside a Markdown table.
+    let link = link.strip_suffix('\\').unwrap_or(link);
+    let (target, heading) = match link.split_once('#') {
+        Some((t, h)) => (t.trim(), non_empty(h)),
+        None => (link.trim(), None),
+    };
+    if target.is_empty() && heading.is_none() {
+        return None;
+    }
+    Some(WikiLink {
+        target: target.to_string(),
+        heading,
+        alias,
+        embed,
+    })
+}
+
+/// Replaces link targets in `src`, keeping headings, aliases and code
+/// untouched. `rewrite` returns the new target for a link, or `None` to keep
+/// it as is.
+pub fn rewrite_wikilinks(
+    src: &str,
+    mut rewrite: impl FnMut(&WikiLink) -> Option<String>,
+) -> String {
+    let masked = mask_code(src);
+    let mut out = String::with_capacity(src.len());
+    let mut last = 0;
+    for (range, link) in wikilink_spans(&masked) {
+        let Some(new_target) = rewrite(&link) else {
+            continue;
+        };
+        let inner = &src[range.clone()];
+        let mut target_end = inner.find(['#', '|']).unwrap_or(inner.len());
+        if inner[..target_end].ends_with('\\') {
+            target_end -= 1;
+        }
+        let leading = inner.len() - inner.trim_start().len();
+        out.push_str(&src[last..range.start + leading]);
+        out.push_str(&new_target);
+        out.push_str(&inner[target_end..]);
+        last = range.end;
+    }
+    out.push_str(&src[last..]);
+    out
 }
 
 /// Like [`extract_wikilinks`], but pairs every link with the trimmed source
@@ -339,6 +398,34 @@ mod tests {
         assert!(links[2].embed);
         assert_eq!(links[3].target, "");
         assert_eq!(links[3].heading.as_deref(), Some("Local"));
+    }
+
+    #[test]
+    fn masking_keeps_byte_offsets() {
+        let src = "текст `код [[x]]` ще\n```\nблок\n```\n[[Ціль]]";
+        let masked = mask_code(src);
+        assert_eq!(masked.len(), src.len());
+        let spans = wikilink_spans(&masked);
+        assert_eq!(spans.len(), 1);
+        assert_eq!(&src[spans[0].0.clone()], "Ціль");
+    }
+
+    #[test]
+    fn rewrites_wikilinks() {
+        let src = "[[Old]] [[ Old#H|alias]] `[[Old]]` [[Other]] ![[Old]] | [[Old\\|t]] |";
+        let out = rewrite_wikilinks(src, |l| (l.target == "Old").then(|| "Нова".to_string()));
+        assert_eq!(
+            out,
+            "[[Нова]] [[ Нова#H|alias]] `[[Old]]` [[Other]] ![[Нова]] | [[Нова\\|t]] |"
+        );
+        assert_eq!(rewrite_wikilinks(src, |_| None), src);
+    }
+
+    #[test]
+    fn parses_table_escaped_pipe() {
+        let links = extract_wikilinks("| [[Note\\|text]] |");
+        assert_eq!(links[0].target, "Note");
+        assert_eq!(links[0].alias.as_deref(), Some("text"));
     }
 
     #[test]
