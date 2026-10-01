@@ -29,11 +29,14 @@
 
 ## Поточна перевірка
 
-PR #16 переведено з draft у ready for review. GitHub Actions CI run #36922336498 / run number 76 створено для head `3c776e5928d1178a7c54559676f3df2e330fc9d1`; на момент цього запису він очікує runner (`pending`). Runtime GUI-перевірка в поточному середовищі не виконувалась і не вважається виконаною.
+- CI #77 виявив `clippy::unnecessary_sort_by` у `attachments.rs`; виправлено commit `7aad8c87a4a6c4c8c618e2d3a55987d8ffc57429` через `sort_by_key`.
+- CI #78: notes-core Windows/macOS/Linux — PASS; dependency licenses — PASS; Conventional PR title — PASS.
+- Linux `app (frontend + Tauri)` у #78 завис на системному `apt`-кроці до npm/build, без зафіксованої кодової помилки. Цей WORKLOG commit навмисно запускає новий clean CI run через `concurrency.cancel-in-progress`.
+- Runtime GUI-перевірка в поточному середовищі не виконувалась і не вважається виконаною.
 
 ## Наступна дія
 
-Дочекатися результату CI #76. Якщо є помилки — виправити на цій самій гілці й повторити checks. Якщо всі стандартні checks Windows/macOS/Linux, frontend/Tauri та license gate зелені — інтегрувати PR #16 у `main`, синхронізувати `docs/roadmap.md`, `WORKLOG.md` та Issue #8 і перейти до наступного незавершеного slice v0.2.
+Дочекатися нового clean CI. Якщо всі стандартні checks Windows/macOS/Linux, frontend/Tauri та license gate зелені — інтегрувати PR #16 у `main`, після чого виконати повний checkpoint за командою власника «зливай в main»: release-please, версія, tag/prerelease, Windows/macOS/Linux builds, START/source, legal notices, SHA256SUMS і синхронізація `START_HERE.md`, `PROJECT_STATE.md`, `WORKLOG.md`, `docs/roadmap.md`, Issue #8.
 
 ## Останній checkpoint
 
