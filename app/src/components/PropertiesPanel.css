@@ -1,0 +1,73 @@
+.properties-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  overflow: auto;
+}
+
+.properties-empty {
+  padding: 16px 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.properties-empty code {
+  user-select: text;
+}
+
+.properties-schema-hint {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.property-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.property-field > span {
+  font-weight: 600;
+}
+
+.property-field input,
+.property-field select,
+.property-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.property-field textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+.property-checkbox {
+  flex-direction: row;
+  align-items: center;
+}
+
+.property-checkbox input {
+  width: auto;
+}
+
+.properties-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.properties-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.properties-saved {
+  color: var(--muted);
+  font-size: 12px;
+}
