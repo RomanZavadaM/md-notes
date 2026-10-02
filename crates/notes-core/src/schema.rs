@@ -1,7 +1,8 @@
 //! Open note-type schema stored in `.mdnotes/schema.json`.
 //!
-//! The schema only describes top-level YAML front-matter fields. Notes remain
-//! ordinary Markdown files and unknown front-matter properties are preserved.
+//! The format already used by MD Notes vaults has a global `fields` catalog
+//! and note types that reference field names. Notes themselves remain ordinary
+//! Markdown files with YAML front matter; unknown properties are preserved.
 
 use std::collections::BTreeMap;
 use std::fs;
@@ -15,13 +16,25 @@ use crate::markdown::{parse_front_matter, split_front_matter};
 use crate::note::Note;
 use crate::vault::{Vault, SERVICE_DIR};
 
-#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SchemaDocument {
     #[serde(default = "schema_version")]
     pub version: u32,
     #[serde(default)]
+    pub fields: BTreeMap<String, FieldSpec>,
+    #[serde(default)]
     pub types: BTreeMap<String, NoteTypeSpec>,
+}
+
+impl Default for SchemaDocument {
+    fn default() -> Self {
+        Self {
+            version: schema_version(),
+            fields: BTreeMap::new(),
+            types: BTreeMap::new(),
+        }
+    }
 }
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
@@ -32,42 +45,44 @@ pub struct NoteTypeSpec {
     #[serde(default)]
     pub template: Option<String>,
     #[serde(default)]
-    pub properties: BTreeMap<String, PropertySpec>,
+    pub fields: Vec<String>,
+    #[serde(default)]
+    pub required: Vec<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct PropertySpec {
+pub struct FieldSpec {
     #[serde(default)]
     pub label: Option<String>,
     #[serde(rename = "type")]
-    pub kind: PropertyKind,
+    pub kind: FieldKind,
     #[serde(default)]
-    pub required: bool,
+    pub readonly: bool,
     #[serde(default)]
-    pub options: Vec<String>,
+    pub values: Vec<String>,
+    #[serde(default)]
+    pub note_type: Option<String>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum PropertyKind {
-    String,
+pub enum FieldKind {
     Text,
+    String,
     Number,
     Boolean,
     Date,
-    Select,
-    Tags,
+    Enum,
+    List,
+    Link,
+    Links,
+    Url,
+    File,
 }
 
 fn schema_version() -> u32 {
     1
-}
-
-impl Default for PropertyKind {
-    fn default() -> Self {
-        Self::String
-    }
 }
 
 impl Vault {
@@ -75,14 +90,11 @@ impl Vault {
         self.root().join(SERVICE_DIR).join("schema.json")
     }
 
-    /// Reads `.mdnotes/schema.json`. A missing file means an empty schema.
+    /// Reads `.mdnotes/schema.json`. A missing file means an empty v1 schema.
     pub fn schema(&self) -> Result<SchemaDocument> {
         let path = self.schema_path();
         if !path.is_file() {
-            return Ok(SchemaDocument {
-                version: schema_version(),
-                types: BTreeMap::new(),
-            });
+            return Ok(SchemaDocument::default());
         }
         let raw = fs::read_to_string(&path).map_err(io_err(&path))?;
         let schema: SchemaDocument = serde_json::from_str(&raw)
@@ -98,8 +110,8 @@ impl Vault {
     }
 
     /// Applies top-level property changes to Markdown content without touching
-    /// the file system. This lets the editor preserve unsaved body changes and
-    /// keep its normal autosave path as the only writer.
+    /// the file system. This preserves unsaved editor body changes and leaves
+    /// the normal editor/autosave path as the only writer.
     pub fn format_note_properties(
         &self,
         content: &str,
@@ -145,7 +157,7 @@ impl Vault {
         ))
     }
 
-    /// File-writing variant used by non-editor callers.
+    /// File-writing variant for non-editor callers.
     pub fn update_note_properties(
         &self,
         path: &str,
@@ -158,19 +170,32 @@ impl Vault {
 }
 
 fn validate_schema(schema: &SchemaDocument) -> Result<()> {
+    for (name, spec) in &schema.fields {
+        if name.trim().is_empty() {
+            return Err(Error::Config("schema field name cannot be empty".into()));
+        }
+        if spec.kind == FieldKind::Enum && spec.values.is_empty() {
+            return Err(Error::Config(format!(
+                "enum field {name} must define values"
+            )));
+        }
+    }
+
     for (name, note_type) in &schema.types {
         if name.trim().is_empty() {
             return Err(Error::Config("schema type name cannot be empty".into()));
         }
-        for (property, spec) in &note_type.properties {
-            if property.trim().is_empty() {
+        for field in &note_type.fields {
+            if !schema.fields.contains_key(field) {
                 return Err(Error::Config(format!(
-                    "schema property name in type {name} cannot be empty"
+                    "type {name} references unknown field {field}"
                 )));
             }
-            if spec.kind == PropertyKind::Select && spec.options.is_empty() {
+        }
+        for field in &note_type.required {
+            if !note_type.fields.iter().any(|known| known == field) {
                 return Err(Error::Config(format!(
-                    "select property {name}.{property} must define options"
+                    "type {name} requires field {field} that is not in its fields list"
                 )));
             }
         }
@@ -183,14 +208,15 @@ fn validate_note_properties(schema: &SchemaDocument, object: &Map<String, Value>
         return Ok(());
     };
     let Some(note_type) = schema.types.get(type_name) else {
-        // Unknown types are allowed so existing/open YAML data is never locked out.
+        // Existing vaults may contain custom types not yet described by schema.
         return Ok(());
     };
 
-    for (name, spec) in &note_type.properties {
+    for name in &note_type.fields {
+        let spec = &schema.fields[name];
         match object.get(name) {
             Some(value) => validate_value(type_name, name, spec, value)?,
-            None if spec.required => {
+            None if note_type.required.iter().any(|required| required == name) => {
                 return Err(Error::Config(format!(
                     "required property is missing: {type_name}.{name}"
                 )))
@@ -201,14 +227,18 @@ fn validate_note_properties(schema: &SchemaDocument, object: &Map<String, Value>
     Ok(())
 }
 
-fn validate_value(type_name: &str, name: &str, spec: &PropertySpec, value: &Value) -> Result<()> {
+fn validate_value(type_name: &str, name: &str, spec: &FieldSpec, value: &Value) -> Result<()> {
     let valid = match spec.kind {
-        PropertyKind::String | PropertyKind::Text | PropertyKind::Date | PropertyKind::Select => {
-            value.is_string()
-        }
-        PropertyKind::Number => value.is_number(),
-        PropertyKind::Boolean => value.is_boolean(),
-        PropertyKind::Tags => {
+        FieldKind::Text
+        | FieldKind::String
+        | FieldKind::Date
+        | FieldKind::Enum
+        | FieldKind::Link
+        | FieldKind::Url
+        | FieldKind::File => value.is_string(),
+        FieldKind::Number => value.is_number(),
+        FieldKind::Boolean => value.is_boolean(),
+        FieldKind::List | FieldKind::Links => {
             value.is_string()
                 || value
                     .as_array()
@@ -220,18 +250,13 @@ fn validate_value(type_name: &str, name: &str, spec: &PropertySpec, value: &Valu
             "invalid value type for {type_name}.{name}"
         )));
     }
-    if spec.kind == PropertyKind::Select {
+    if spec.kind == FieldKind::Enum {
         let selected = value.as_str().unwrap_or_default();
-        if !spec.options.iter().any(|option| option == selected) {
+        if !spec.values.iter().any(|option| option == selected) {
             return Err(Error::Config(format!(
                 "invalid option for {type_name}.{name}: {selected}"
             )));
         }
-    }
-    if spec.required && value.as_str().is_some_and(|s| s.trim().is_empty()) {
-        return Err(Error::Config(format!(
-            "required property is empty: {type_name}.{name}"
-        )));
     }
     Ok(())
 }
@@ -243,17 +268,20 @@ mod tests {
     fn schema_json() -> &'static str {
         r#"{
   "version": 1,
+  "fields": {
+    "status": {"type": "enum", "values": ["todo", "done"]},
+    "due": {"type": "date"},
+    "estimate": {"type": "number"},
+    "done": {"type": "boolean"},
+    "tags": {"type": "list"},
+    "project": {"type": "link", "noteType": "project"}
+  },
   "types": {
     "task": {
       "label": "Задача",
-      "template": "task",
-      "properties": {
-        "status": {"type": "select", "required": true, "options": ["todo", "done"]},
-        "due": {"type": "date"},
-        "estimate": {"type": "number"},
-        "done": {"type": "boolean"},
-        "tags": {"type": "tags"}
-      }
+      "template": "task.md",
+      "fields": ["status", "due", "estimate", "done", "tags", "project"],
+      "required": ["status"]
     }
   }
 }"#
@@ -267,13 +295,14 @@ mod tests {
     }
 
     #[test]
-    fn reads_open_schema() {
+    fn reads_existing_schema_shape() {
         let (_dir, vault) = vault_with_schema();
         let schema = vault.schema().unwrap();
         let task = &schema.types["task"];
         assert_eq!(task.label.as_deref(), Some("Задача"));
-        assert_eq!(task.template.as_deref(), Some("task"));
-        assert_eq!(task.properties["status"].kind, PropertyKind::Select);
+        assert_eq!(task.template.as_deref(), Some("task.md"));
+        assert_eq!(schema.fields["status"].kind, FieldKind::Enum);
+        assert_eq!(schema.fields["project"].note_type.as_deref(), Some("project"));
     }
 
     #[test]
@@ -282,6 +311,7 @@ mod tests {
         let vault = Vault::open(dir.path()).unwrap();
         let schema = vault.schema().unwrap();
         assert_eq!(schema.version, 1);
+        assert!(schema.fields.is_empty());
         assert!(schema.types.is_empty());
     }
 
@@ -316,7 +346,7 @@ mod tests {
     }
 
     #[test]
-    fn rejects_invalid_select_and_required_removal() {
+    fn rejects_invalid_enum_and_required_removal() {
         let (_dir, vault) = vault_with_schema();
         let content = "---\ntype: task\nstatus: todo\n---\n";
         let bad = BTreeMap::from([("status".into(), Value::String("maybe".into()))]);
