@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.2.2](https://github.com/RomanZavadaM/md-notes/compare/v0.2.1...v0.2.2) (2026-10-02)
+
+
+### Нові можливості
+
+* add global and local knowledge graph ([#25](https://github.com/RomanZavadaM/md-notes/issues/25)) ([39040a4](https://github.com/RomanZavadaM/md-notes/commit/39040a461d0b29f09db382f7bca32483350c19ba))
+* add safe vault presets ([#23](https://github.com/RomanZavadaM/md-notes/issues/23)) ([c078d07](https://github.com/RomanZavadaM/md-notes/commit/c078d075d089257c83b903eea44c317f391b765c))
+* add schema-driven note properties ([7441259](https://github.com/RomanZavadaM/md-notes/commit/7441259a019eae1f7858898d8a29a9ac4d9ec7cd))
+
+
+### Виправлення
+
+* keep pre-1.0 releases on patch line ([8ca052c](https://github.com/RomanZavadaM/md-notes/commit/8ca052c6aa69c31f5af8afce186d606b97ffd22a))
+* prevent unsafe vault auto-reopen on startup ([de7b9d1](https://github.com/RomanZavadaM/md-notes/commit/de7b9d1b8fa7b9f5c7884b4082d977f4a1029b01))
+
+
+### Документація
+
+* record functional v0.2 completion ([#26](https://github.com/RomanZavadaM/md-notes/issues/26)) ([16b9d51](https://github.com/RomanZavadaM/md-notes/commit/16b9d51fc5164d0ec2331cd37d39a433b5562a00))
+* record the v0.2.1 release checkpoint ([#17](https://github.com/RomanZavadaM/md-notes/issues/17)) ([d74a964](https://github.com/RomanZavadaM/md-notes/commit/d74a9641edaa457203442d68d03e26996943961e))
+* sync state after schema integration ([d7d6313](https://github.com/RomanZavadaM/md-notes/commit/d7d63137447ff027caff3e7be77d99629d805740))
+* sync state after vault presets ([#24](https://github.com/RomanZavadaM/md-notes/issues/24)) ([e00a172](https://github.com/RomanZavadaM/md-notes/commit/e00a17272c3e5dd0cfd354bdb7bb344dc023fece))
+
 ## [0.2.1](https://github.com/RomanZavadaM/md-notes/compare/v0.2.0...v0.2.1) (2026-10-01)
 
 
