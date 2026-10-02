@@ -1,18 +1,19 @@
 //! Tauri shell of MD Notes: exposes `notes-core` to the web UI as commands.
 
+use std::collections::BTreeMap;
 use std::sync::Mutex;
 
 use notes_core::{
-    AttachmentInfo, Backlink, Index, Note, NoteSummary, RenameOutcome, SearchHit, TagCount,
-    TemplateInfo, TreeEntry, UnresolvedLink, Vault,
+    AttachmentInfo, Backlink, Index, Note, NoteSummary, RenameOutcome, SchemaDocument, SearchHit,
+    TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault,
 };
 use serde::Serialize;
+use serde_json::Value;
 use tauri::{AppHandle, Emitter, Manager, State};
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 mod watch;
 
-/// An open vault together with its index.
 struct Session {
     vault: Vault,
     index: Index,
@@ -38,7 +39,6 @@ fn with_session<T>(
     f(session).map_err(|e| e.to_string())
 }
 
-/// Event sent to the UI when files change outside the app.
 const VAULT_CHANGED: &str = "vault-changed";
 
 #[derive(Serialize)]
@@ -98,9 +98,41 @@ fn read_note(path: String, state: State<'_, AppState>) -> CmdResult<Note> {
 }
 
 #[tauri::command]
+fn parse_note_content(path: String, content: String) -> Note {
+    Note::parse(&path, content)
+}
+
+#[tauri::command]
 fn save_note(path: String, content: String, state: State<'_, AppState>) -> CmdResult<Note> {
     with_session(&state, |s| {
         let note = s.vault.write_note(&path, &content)?;
+        s.index.update_note(&s.vault, &note)?;
+        Ok(note)
+    })
+}
+
+#[tauri::command]
+fn get_schema(state: State<'_, AppState>) -> CmdResult<SchemaDocument> {
+    with_session(&state, |s| s.vault.schema())
+}
+
+#[tauri::command]
+fn format_note_properties(
+    content: String,
+    patch: BTreeMap<String, Value>,
+    state: State<'_, AppState>,
+) -> CmdResult<String> {
+    with_session(&state, |s| s.vault.format_note_properties(&content, &patch))
+}
+
+#[tauri::command]
+fn update_note_properties(
+    path: String,
+    patch: BTreeMap<String, Value>,
+    state: State<'_, AppState>,
+) -> CmdResult<Note> {
+    with_session(&state, |s| {
+        let note = s.vault.update_note_properties(&path, &patch)?;
         s.index.update_note(&s.vault, &note)?;
         Ok(note)
     })
@@ -218,7 +250,11 @@ pub fn run() {
             open_vault,
             get_tree,
             read_note,
+            parse_note_content,
             save_note,
+            get_schema,
+            format_note_properties,
+            update_note_properties,
             create_note,
             create_folder,
             list_templates,

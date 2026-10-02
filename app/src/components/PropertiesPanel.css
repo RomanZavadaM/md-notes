@@ -1,0 +1,119 @@
+.editor-shell {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-tools {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.editor-tools button {
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+.editor-tools button.on {
+  color: var(--accent);
+}
+
+.editor-properties {
+  flex: 0 1 45%;
+  min-height: 100px;
+  max-height: 45%;
+  overflow: auto;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.editor-shell > .editor {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.properties-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  overflow: auto;
+}
+
+.properties-empty {
+  padding: 16px 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.properties-empty code {
+  user-select: text;
+}
+
+.properties-schema-hint {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.property-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.property-field > span {
+  font-weight: 600;
+}
+
+.property-field input,
+.property-field select,
+.property-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.property-field textarea {
+  resize: vertical;
+  min-height: 72px;
+}
+
+.property-checkbox {
+  flex-direction: row;
+  align-items: center;
+}
+
+.property-checkbox input {
+  width: auto;
+}
+
+.properties-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.properties-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.properties-saved {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (max-width: 720px) {
+  .editor-properties {
+    flex-basis: 55%;
+    max-height: 55%;
+  }
+}

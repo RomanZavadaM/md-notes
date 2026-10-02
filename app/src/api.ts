@@ -81,6 +81,40 @@ export interface AttachmentInfo {
   size: number;
 }
 
+export type FieldKind =
+  | "text"
+  | "string"
+  | "number"
+  | "boolean"
+  | "date"
+  | "enum"
+  | "list"
+  | "link"
+  | "links"
+  | "url"
+  | "file";
+
+export interface FieldSpec {
+  label: string | null;
+  type: FieldKind;
+  readonly: boolean;
+  values: string[];
+  noteType: string | null;
+}
+
+export interface NoteTypeSpec {
+  label: string | null;
+  template: string | null;
+  fields: string[];
+  required: string[];
+}
+
+export interface SchemaDocument {
+  version: number;
+  fields: Record<string, FieldSpec>;
+  types: Record<string, NoteTypeSpec>;
+}
+
 export const MATCH_START = "\u0002";
 export const MATCH_END = "\u0003";
 
@@ -91,7 +125,13 @@ export const api = {
   openVault: (path: string) => invoke<VaultInfo>("open_vault", { path }),
   getTree: () => invoke<TreeEntry[]>("get_tree"),
   readNote: (path: string) => invoke<Note>("read_note", { path }),
+  parseNoteContent: (path: string, content: string) => invoke<Note>("parse_note_content", { path, content }),
   saveNote: (path: string, content: string) => invoke<Note>("save_note", { path, content }),
+  getSchema: () => invoke<SchemaDocument>("get_schema"),
+  formatNoteProperties: (content: string, patch: Record<string, unknown>) =>
+    invoke<string>("format_note_properties", { content, patch }),
+  updateNoteProperties: (path: string, patch: Record<string, unknown>) =>
+    invoke<Note>("update_note_properties", { path, patch }),
   createNote: (dir: string, title: string, template?: string) =>
     invoke<Note>("create_note", { dir, title, template: template ?? null }),
   listTemplates: () => invoke<TemplateInfo[]>("list_templates"),
