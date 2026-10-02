@@ -1,52 +1,60 @@
 # PROJECT_STATE — MD Notes
 
-Оновлено: **01.10.2026**
+Оновлено: **02.10.2026**
 
 ## Поточний стан
 
 - Статус розвитку: **ACTIVE**.
-- Версія в `main`: **v0.2.1**.
-- Статус релізу: **test / prerelease checkpoint**.
-- GitHub prerelease: **v0.2.1**, 01.10.2026. Попередній реліз: v0.2.0.
-- Release commit: `26661d8c088df51ce162018d2a3b525502cf30e1`; attachment integration: PR #16 / `6b923369b8d5e3bb4e031f201dd9de7cd8c2c594`; CSP integration: PR #15 / `a8e1106b40b5552f453c410d96fbf5f1da9a243a`.
+- Останній опублікований checkpoint: **v0.2.1** prerelease, 01.10.2026.
+- `main` уже містить сумісні зміни після v0.2.1 і тому випереджає опублікований release.
+- Release commit v0.2.1: `26661d8c088df51ce162018d2a3b525502cf30e1`.
+- Runtime startup hotfix: PR #21 / `de7b9d1b8fa7b9f5c7884b4082d977f4a1029b01`.
+- Windows portable packaging: PR #20 / `715e29dfcf3bace2480e6b2bd824cfc80c91a668`.
+- Schema/property form: PR #19 / `7441259a019eae1f7858898d8a29a9ac4d9ec7cd`.
 - Активний продукт: Tauri 2 + React (`app/`), ядро Rust (`crates/notes-core`).
 - Платформи збірки: Windows / macOS / Linux. Android та iOS — етап v0.3.
+- Наступні Windows release checkpoints: setup `.exe`, `.msi`, окремий `MD-Notes-<version>-Windows-x64-portable.zip`.
 - UI-мови: UK / EN / FR / DE / ES / KO / JA.
-- Ліцензійна модель: proprietary / All Rights Reserved (Roman Zavada), єдина ліцензія — `LICENSE.md`. Публічний репозиторій не надає open-source ліцензії.
+- Ліцензійна модель: proprietary / All Rights Reserved (Roman Zavada). Публічний репозиторій не надає open-source ліцензії.
 
 Детальна історія — у `CHANGELOG.md`, `docs/releases/`, merged PR і GitHub Issue #8.
 
-## Що працює у v0.2.1
+## Інтегровано в лінію v0.2
 
 - локальна папка як сховище, дерево файлів, створення, перейменування, кошик `.mdnotes/trash/`;
 - редактор CodeMirror 6, перегляд, режим «поруч», автозбереження, атомарний запис;
 - індекс SQLite (`.mdnotes/cache/index.db`), повнотекстовий пошук, теги, швидкий перехід;
-- `[[вікі-посилання]]`, `aliases`, посилання у властивостях, зворотні посилання з контекстом;
-- оновлення посилань при перейменуванні та переміщенні нотаток і папок;
-- стеження за змінами файлів ззовні (настільні ОС);
-- Mermaid 11, KaTeX, зображення зі сховища, відносні посилання на `.md`;
-- шаблони нотаток, щоденні нотатки;
-- інтерфейс сімома мовами, вікно «Про програму»;
-- світла, темна і системна теми, адаптивне компонування;
-- restrictive Tauri CSP: зовнішні scripts/frames/network sources не дозволені, локальний Tauri asset protocol дозволений для vault assets та PDF preview;
-- вкладення: імпорт у `attachments/YYYY/MM/`, унікальні імена без мовчазного перезапису, вставлення Markdown-посилання, image/PDF preview, відкриття файлу, «де використовується», пошук файлів без посилань, підтримка URL-encoded Unicode-шляхів.
+- `[[вікі-посилання]]`, aliases, property links, backlinks з контекстом;
+- оновлення посилань при перейменуванні та переміщенні;
+- file watcher для зовнішніх змін на desktop;
+- Mermaid 11, KaTeX, vault images, відносні `.md` links;
+- шаблони та щоденні нотатки;
+- 7 мов UI, About, light/dark/system themes, adaptive layout;
+- restrictive Tauri CSP;
+- вкладення: `attachments/YYYY/MM/`, preview, usage/orphans, Unicode paths;
+- типи нотаток і відкритий `.mdnotes/schema.json` v1;
+- schema-driven форма властивостей у редакторі;
+- збереження невідомих YAML-полів, підтримка невідомих note types, safe refusal при invalid YAML;
+- property form працює з поточним editor content, тому незбережене тіло нотатки не перезаписується окремим записом.
 
-## Verification v0.2.1
+## Перевірка
 
-- PR #16 CI #80: `cargo fmt`, `cargo clippy -D warnings`, тести `notes-core` на Windows/macOS/Linux, frontend build, Tauri clippy, cargo-deny + npm license gate — **PASS**;
-- release workflow #19 (`36924302514`) — **SUCCESS**;
-- Windows: `.exe` + `.msi` — зібрано й опубліковано;
-- macOS: universal `.dmg` + `.app.tar.gz` — зібрано й опубліковано;
-- Linux: `.AppImage` + `.deb` + `.rpm` — зібрано й опубліковано;
-- `MD-Notes-0.2.1-START.zip`, `LICENSE.md`, `COPYRIGHT.md`, `THIRD_PARTY_NOTICES.md`, `SHA256SUMS.txt` — опубліковано;
-- runtime-перевірки у вікні застосунку **не виконувалися** (CI/compile evidence не прирівнюється до runtime validation).
+- PR #21 runtime-startup hotfix: CI #92 — **PASS**;
+- PR #20 portable packaging: CI #95 — **PASS**;
+- PR #19 schema/property form: clean CI #97 — **PASS** після синхронізації з актуальним `main`;
+- notes-core перевірено на Windows/macOS/Linux; frontend build, Tauri clippy, cargo-deny та npm license gate — PASS;
+- runtime GUI-перевірка schema/property form у поточному середовищі не виконувалась.
 
-## Межа доказу
+## Runtime blocker / межа доказу
 
-- збірки не підписані: Windows SmartScreen, macOS Gatekeeper можуть попереджати;
-- мобільні платформи ще не збираються;
-- відкриття великого сховища індексує його синхронно під час відкриття.
+- користувач підтвердив сильне зависання звичайної Windows-збірки v0.2.1 після запуску;
+- hotfix блокує автоматичне читання `mdnotes.lastVault`, тому застосунок не повинен автоматично відкривати попередній vault на startup;
+- цей hotfix ще потребує повторної реальної Windows runtime-перевірки на новій збірці;
+- якщо зависання повториться після ручного вибору vault, наступний технічний напрям — оптимізація `note_paths()` / `get_tree()` і винесення дорогого index sync із критичного open path;
+- збірки не підписані;
+- великі сховища все ще індексуються синхронно при ручному відкритті;
+- Android/iOS ще не збираються.
 
 ## Наступний великий крок
 
-Залишок v0.2: типи нотаток і `schema.json` з формою властивостей, пресети сховища (PARA / Zettelkasten / порожнє), граф знань. Після завершення v0.2 — етап v0.3 (Android, iOS, Git/WebDAV sync). Поточна робота — `WORKLOG.md`.
+Залишок v0.2: **пресети сховища (PARA / Zettelkasten / порожнє)**, потім **граф знань**. Після завершення v0.2 — v0.3 (Android, iOS, Git/WebDAV sync). Поточна операційна дія — у `WORKLOG.md`.
