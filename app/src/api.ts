@@ -47,6 +47,22 @@ export interface Backlink {
   context: string;
 }
 
+export interface GraphNode {
+  path: string;
+  title: string;
+  noteType: string | null;
+}
+
+export interface GraphEdge {
+  source: string;
+  target: string;
+}
+
+export interface KnowledgeGraph {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+}
+
 export interface UnresolvedLink {
   source: string;
   target: string;
@@ -145,6 +161,8 @@ export const api = {
   resolveLink: (target: string) => invoke<string | null>("resolve_link", { target }),
   listNotes: () => invoke<NoteSummary[]>("list_notes"),
   backlinks: (path: string) => invoke<Backlink[]>("backlinks", { path }),
+  knowledgeGraph: (focus?: string) =>
+    invoke<KnowledgeGraph>("knowledge_graph_snapshot", { focus: focus ?? null }),
   unresolvedLinks: () => invoke<UnresolvedLink[]>("unresolved_links"),
   listTags: () => invoke<TagCount[]>("list_tags"),
   search: (query: string, limit = 50) => invoke<SearchHit[]>("search", { query, limit }),
