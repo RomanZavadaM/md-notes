@@ -1,10 +1,44 @@
 # WORKLOG — MD Notes
 
-Оновлено: **01.10.2026**
+Оновлено: **02.10.2026**
 
 ## STATUS
 
-**ACTIVE. Checkpoint v0.2.1 — DONE.** CSP та вкладення інтегровані в `main`, prerelease `v0.2.1` опубліковано з пакетами Windows/macOS/Linux, START/source, legal notices і SHA256SUMS.
+**ACTIVE. Checkpoint v0.2.1 — DONE.** Поточний пріоритет: **hotfix runtime-зависання звичайної Windows-збірки**. Функціональний slice schema/property form тимчасово не втрачається, але не має пріоритету над runtime blocker.
+
+## Runtime blocker 02.10.2026
+
+Користувач підтвердив на реальній Windows-збірці: застосунок встановлюється і запускається, але після запуску комп'ютер може сильно зависати; симптом видно навіть при спробі відкрити «Про програму».
+
+Аудит показав небезпечний startup path:
+
+- frontend автоматично відкривав `mdnotes.lastVault` одразу після старту;
+- backend `open_vault` синхронно індексує весь vault;
+- `Index::sync()` отримує `vault.note_paths()`, а поточний `note_paths()` будує повне рекурсивне дерево;
+- після `open_vault` frontend окремо викликає `get_tree()`, тобто велика папка може бути рекурсивно просканована ще раз;
+- будь-яка звичайна папка може бути обрана як vault, тому старий `lastVault` міг автоматично запускати дорогий обхід до того, як користувач отримає контроль над UI.
+
+Hotfix branch: `fix/runtime-startup-freeze`.
+
+Перший захисний крок уже реалізовано:
+
+- `mdnotes.lastVault` більше не читається автоматично під час startup;
+- шлях останнього vault продовжує записуватися для майбутньої явної дії «відкрити недавнє», але старт застосунку має залишатися idle, доки користувач сам не вибере vault.
+
+Це навмисно змінює convenience-поведінку заради безпеки запуску. Runtime GUI-перевірка у поточному середовищі ще не виконана; підтвердження має бути на реальній Windows-машині.
+
+## Паралельні PR
+
+- PR #19 — `feat: add schema-driven note properties`; CI доопрацьовується окремо, не merge до завершення blocker-а;
+- PR #20 — `build: add Windows portable release package`; portable додається як стандартний release artifact і не вважається виправленням runtime-зависання.
+
+## Наступна дія
+
+1. прогнати CI hotfix PR;
+2. інтегрувати hotfix у `main` після green checks;
+3. дати нову Windows-збірку для реального runtime-тесту;
+4. якщо зависання повториться після відключення auto-reopen — окремо оптимізувати `note_paths()` / `get_tree()` і винести дорогий index sync із startup path;
+5. після підтвердження runtime повернутися до PR #19 і PR #20.
 
 ## Останній checkpoint
 
@@ -19,51 +53,9 @@
 - source/test package: `MD-Notes-0.2.1-START.zip`;
 - legal/checksums: `LICENSE.md`, `COPYRIGHT.md`, `THIRD_PARTY_NOTICES.md`, `SHA256SUMS.txt`.
 
-## Завершено у v0.2.1
-
-### CSP
-- restrictive Tauri CSP замість `csp: null`;
-- scripts лише `self`, network connect лише Tauri IPC;
-- локальні vault assets через Tauri asset protocol;
-- local-only frame policy для PDF preview;
-- зовнішні object/frame/form targets заблоковані.
-
-### Вкладення
-- імпорт у `attachments/YYYY/MM/`;
-- повторний імпорт не перезаписує файл, створюється унікальне ім'я;
-- Tauri bridge + типізований frontend API;
-- окрема вкладка «Вкладення» у sidebar;
-- системний file picker;
-- автоматичне та ручне вставлення Markdown-посилання в нотатку;
-- image thumbnails та локальний PDF preview;
-- відкриття вкладення системною програмою;
-- «де використовується», кількість використань, вкладення без посилань;
-- URL-encoded Unicode paths;
-- attachment UI усіма 7 мовами;
-- unit-тести ядра.
-
-### CI / packaging
-- виправлено Clippy `unnecessary_sort_by`;
-- Tauri CI app-job вирівняно з release Linux environment (`ubuntu-22.04`);
-- PR #16 clean CI #80: Windows/macOS/Linux core, frontend/Tauri, license gates — PASS;
-- release builds Windows/macOS/Linux та assets job — PASS.
-
-## Поточний slice
-
-**Не розпочато.** Наступний незавершений пункт roadmap v0.2: **типи нотаток + `schema.json` + форма властивостей**.
-
-## Наступна дія
-
-Перед кодом нового slice:
-1. перечитати `docs/roadmap.md` і поточну модель front matter;
-2. спроєктувати мінімальний відкритий `schema.json` без vendor lock-in;
-3. визначити сумісність із наявними шаблонами та довільним YAML front matter;
-4. реалізувати через branch + PR з tests і локалізацією 7 мовами;
-5. не переходити до v0.3 без рішення власника.
-
 ## Відомі обмеження
 
-- runtime GUI-перевірка v0.2.1 вручну не виконувалась; CI/build evidence не є runtime test;
+- runtime GUI-перевірка v0.2.1 вручну виявила blocker із зависанням; автоматичні CI/build checks цього не виявили;
+- великі сховища індексуються синхронно під час відкриття;
 - збірки не підписані;
-- Android/iOS ще не збираються;
-- великі сховища індексуються синхронно під час відкриття.
+- Android/iOS ще не збираються.
