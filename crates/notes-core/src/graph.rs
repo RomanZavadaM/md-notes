@@ -35,7 +35,8 @@ pub struct KnowledgeGraph {
 /// the source of truth; this function only reads the rebuildable index cache.
 pub fn knowledge_graph(index: &Index, focus: Option<&str>) -> Result<KnowledgeGraph> {
     let notes = index.notes()?;
-    let focus_exists = focus.is_none_or(|focus_path| notes.iter().any(|note| note.path == focus_path));
+    let focus_exists =
+        focus.is_none_or(|focus_path| notes.iter().any(|note| note.path == focus_path));
 
     // A focus path can be stale (for example after an external delete). In
     // that case the local graph should simply be empty instead of inventing a
@@ -74,7 +75,11 @@ pub fn knowledge_graph(index: &Index, focus: Option<&str>) -> Result<KnowledgeGr
 
     let nodes = notes
         .into_iter()
-        .filter(|note| visible.as_ref().is_none_or(|paths| paths.contains(&note.path)))
+        .filter(|note| {
+            visible
+                .as_ref()
+                .is_none_or(|paths| paths.contains(&note.path))
+        })
         .map(|note| GraphNode {
             path: note.path,
             title: note.title,
