@@ -1,4 +1,4 @@
-use std::collections::{BTreeSet, HashMap, HashSet};
+use std::collections::{BTreeSet, HashSet};
 
 use serde::Serialize;
 
@@ -35,10 +35,17 @@ pub struct KnowledgeGraph {
 /// the source of truth; this function only reads the rebuildable index cache.
 pub fn knowledge_graph(index: &Index, focus: Option<&str>) -> Result<KnowledgeGraph> {
     let notes = index.notes()?;
-    let note_map: HashMap<_, _> = notes
-        .iter()
-        .map(|note| (note.path.as_str(), note))
-        .collect();
+    let focus_exists = focus.is_none_or(|focus_path| notes.iter().any(|note| note.path == focus_path));
+
+    // A focus path can be stale (for example after an external delete). In
+    // that case the local graph should simply be empty instead of inventing a
+    // node that is not present in the index.
+    if !focus_exists {
+        return Ok(KnowledgeGraph {
+            nodes: Vec::new(),
+            edges: Vec::new(),
+        });
+    }
 
     let mut edges = BTreeSet::new();
     for target in &notes {
@@ -82,18 +89,6 @@ pub fn knowledge_graph(index: &Index, focus: Option<&str>) -> Result<KnowledgeGr
             known_paths.contains(edge.source.as_str()) && known_paths.contains(edge.target.as_str())
         })
         .collect();
-
-    // A focus path can be stale (for example after an external delete). In
-    // that case the local graph should simply be empty instead of inventing a
-    // node that is not present in the index.
-    if let Some(focus_path) = focus {
-        if !note_map.contains_key(focus_path) {
-            return Ok(KnowledgeGraph {
-                nodes: Vec::new(),
-                edges: Vec::new(),
-            });
-        }
-    }
 
     Ok(KnowledgeGraph { nodes, edges })
 }
