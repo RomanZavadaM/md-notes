@@ -1,9 +1,13 @@
 # Manually refreshes Cargo.lock and app/package-lock.json on a branch after
 # dependencies were added or changed: Actions -> Lockfiles -> Run workflow.
+# The feature branch push trigger below is temporary and will be removed after
+# package-lock.json is refreshed for the knowledge graph dependencies.
 name: Lockfiles
 
 on:
   workflow_dispatch:
+  push:
+    branches: [feature/knowledge-graph-v0.2]
 
 permissions:
   contents: write
@@ -29,6 +33,6 @@ jobs:
             exit 0
           fi
           git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.email "4189826+github-actions[bot]@users.noreply.github.com"
           git commit -am "chore: update lockfiles"
           git push
