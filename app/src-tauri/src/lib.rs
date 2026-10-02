@@ -96,6 +96,11 @@ fn read_note(path: String, state: State<'_, AppState>) -> CmdResult<Note> {
 }
 
 #[tauri::command]
+fn parse_note_content(path: String, content: String) -> Note {
+    Note::parse(&path, content)
+}
+
+#[tauri::command]
 fn save_note(path: String, content: String, state: State<'_, AppState>) -> CmdResult<Note> {
     with_session(&state, |s| {
         let note = s.vault.write_note(&path, &content)?;
@@ -107,6 +112,15 @@ fn save_note(path: String, content: String, state: State<'_, AppState>) -> CmdRe
 #[tauri::command]
 fn get_schema(state: State<'_, AppState>) -> CmdResult<SchemaDocument> {
     with_session(&state, |s| s.vault.schema())
+}
+
+#[tauri::command]
+fn format_note_properties(
+    content: String,
+    patch: BTreeMap<String, Value>,
+    state: State<'_, AppState>,
+) -> CmdResult<String> {
+    with_session(&state, |s| s.vault.format_note_properties(&content, &patch))
 }
 
 #[tauri::command]
@@ -232,8 +246,10 @@ pub fn run() {
             open_vault,
             get_tree,
             read_note,
+            parse_note_content,
             save_note,
             get_schema,
+            format_note_properties,
             update_note_properties,
             create_note,
             create_folder,
