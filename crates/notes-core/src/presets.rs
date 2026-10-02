@@ -47,7 +47,9 @@ pub fn create_vault_with_preset(
     let vault = Vault::init(root, name)?;
     match preset {
         VaultPreset::Empty => {}
-        VaultPreset::Para => create_directories(root, &["Projects", "Areas", "Resources", "Archives"] )?,
+        VaultPreset::Para => {
+            create_directories(root, &["Projects", "Areas", "Resources", "Archives"])?
+        }
         VaultPreset::Zettelkasten => {
             create_directories(root, &["Notes", "Sources", "daily"])?;
             let template = root.join(".mdnotes/templates/zettel.md");
@@ -76,8 +78,8 @@ mod tests {
     #[test]
     fn empty_preset_only_initializes_service_metadata() {
         let dir = tempfile::tempdir().unwrap();
-        let vault = create_vault_with_preset(dir.path(), Some("Empty".into()), VaultPreset::Empty)
-            .unwrap();
+        let vault =
+            create_vault_with_preset(dir.path(), Some("Empty".into()), VaultPreset::Empty).unwrap();
         assert_eq!(vault.display_name(), "Empty");
         assert!(dir.path().join(".mdnotes/config.json").is_file());
         assert!(vault.tree().unwrap().is_empty());
