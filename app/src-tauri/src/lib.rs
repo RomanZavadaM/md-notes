@@ -49,7 +49,11 @@ struct VaultInfo {
     name: String,
 }
 
-fn activate_vault(vault: Vault, app: AppHandle, state: State<'_, AppState>) -> CmdResult<VaultInfo> {
+fn activate_vault(
+    vault: Vault,
+    app: AppHandle,
+    state: State<'_, AppState>,
+) -> CmdResult<VaultInfo> {
     let mut index = Index::open_for(&vault).map_err(|e| e.to_string())?;
     index.sync(&vault).map_err(|e| e.to_string())?;
     let info = VaultInfo {
