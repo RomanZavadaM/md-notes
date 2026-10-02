@@ -302,7 +302,10 @@ mod tests {
         assert_eq!(task.label.as_deref(), Some("Задача"));
         assert_eq!(task.template.as_deref(), Some("task.md"));
         assert_eq!(schema.fields["status"].kind, FieldKind::Enum);
-        assert_eq!(schema.fields["project"].note_type.as_deref(), Some("project"));
+        assert_eq!(
+            schema.fields["project"].note_type.as_deref(),
+            Some("project")
+        );
     }
 
     #[test]
