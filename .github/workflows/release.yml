@@ -75,9 +75,13 @@ jobs:
           $dir = Join-Path $PWD "dist/$name"
           New-Item -ItemType Directory -Force -Path $dir | Out-Null
 
-          $exe = Join-Path $PWD "app/src-tauri/target/release/md-notes.exe"
-          if (-not (Test-Path $exe)) {
-            throw "Portable executable not found: $exe"
+          $candidates = @(
+            (Join-Path $PWD "target/release/md-notes.exe"),
+            (Join-Path $PWD "app/src-tauri/target/release/md-notes.exe")
+          )
+          $exe = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $exe) {
+            throw "Portable executable not found. Checked: $($candidates -join ', ')"
           }
 
           Copy-Item $exe (Join-Path $dir "MD Notes.exe")
