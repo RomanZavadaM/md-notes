@@ -1,6 +1,6 @@
 # release-please keeps a release PR with the next version and CHANGELOG.
 # Merging that PR creates a tag and a GitHub release; the build job then
-# attaches desktop installers to it.
+# attaches desktop installers and portable packages to it.
 name: Release
 
 on:
@@ -63,6 +63,40 @@ jobs:
           tagName: ${{ needs.release-please.outputs.tag_name }}
           releaseName: MD Notes ${{ needs.release-please.outputs.tag_name }}
           args: ${{ matrix.args }}
+      - name: Upload Windows x64 portable package
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+        run: |
+          $version = $env:TAG.TrimStart('v')
+          $name = "MD-Notes-$version-Windows-x64-portable"
+          $dir = Join-Path $PWD "dist/$name"
+          New-Item -ItemType Directory -Force -Path $dir | Out-Null
+
+          $exe = Join-Path $PWD "app/src-tauri/target/release/md-notes.exe"
+          if (-not (Test-Path $exe)) {
+            throw "Portable executable not found: $exe"
+          }
+
+          Copy-Item $exe (Join-Path $dir "MD Notes.exe")
+          Copy-Item "LICENSE.md" $dir
+          Copy-Item "COPYRIGHT.md" $dir
+          Copy-Item "THIRD_PARTY_NOTICES.md" $dir
+
+          @"
+          MD Notes $version — Windows x64 portable
+
+          Запуск: відкрийте "MD Notes.exe" без інсталяції.
+          Дані сховища не зберігаються всередині цієї папки: MD Notes працює з вибраними Markdown-сховищами.
+          Для роботи застосунку Windows має мати доступний Microsoft Edge WebView2 Runtime.
+          Збірка не підписана, доки в release notes прямо не вказано інше.
+          "@ | Set-Content -Encoding UTF8 (Join-Path $dir "README-PORTABLE.txt")
+
+          $zip = Join-Path $PWD "dist/$name.zip"
+          Compress-Archive -Path "$dir/*" -DestinationPath $zip -Force
+          gh release upload "$env:TAG" "$zip" --clobber
 
   # START/source package, legal notices and SHA256SUMS.txt for every release
   # (PROJECT_RULES.md, section 8).
