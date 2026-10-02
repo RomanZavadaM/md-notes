@@ -37,7 +37,7 @@ export function StartupGate() {
     if (typeof dir !== "string") return;
     setCreating(true);
     try {
-      await api.createVault(dir, name.trim() || undefined, preset);
+      await api.createVault(dir, name.trim() || null, preset);
       enterVault(dir);
     } catch (e) {
       setError(String(e));
