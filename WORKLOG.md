@@ -4,13 +4,12 @@
 
 ## STATUS
 
-**ACTIVE. Checkpoint v0.2.1 — DONE; `main` випереджає опублікований checkpoint.** Runtime hotfix, Windows portable packaging і schema/property form уже інтегровані. Поточний slice v0.2: **створення vault із пресетом PARA / Zettelkasten / порожнє**.
+**ACTIVE. Checkpoint v0.2.1 — DONE; `main` випереджає опублікований checkpoint.** Runtime hotfix, Windows portable packaging, schema/property form і vault presets уже інтегровані. Поточний наступний slice v0.2: **граф знань — глобальний і локальний**.
 
 ## Нещодавно завершено
 
 ### Runtime startup hotfix
 - користувач на реальній Windows-збірці v0.2.1 підтвердив сильне зависання після запуску;
-- аудит показав небезпечне автоматичне відкриття `mdnotes.lastVault` перед поверненням контролю UI;
 - PR #21 заблокував неявне startup-відкриття останнього vault;
 - CI #92 — **PASS**;
 - merge: `de7b9d1b8fa7b9f5c7884b4082d977f4a1029b01`.
@@ -24,57 +23,47 @@
 
 ### Note types / schema / property form
 - PR #19: `feat: add schema-driven note properties`;
-- використано наявний відкритий `.mdnotes/schema.json` v1 без міграції формату;
 - schema-driven форма «Властивості», thin Tauri bridge, typed frontend API, UI 7 мовами, `docs/SCHEMA.md` і unit-тести;
 - clean CI #97 — **PASS**;
 - merge: `7441259a019eae1f7858898d8a29a9ac4d9ec7cd`.
 
-Runtime GUI-перевірка schema/property form у поточному середовищі не виконувалась.
+### Vault presets / startup gate
+- PR #23: `feat: add safe vault presets`;
+- Empty, PARA, Zettelkasten у `notes-core`;
+- preset creation дозволено лише в порожній папці; refusal відбувається до створення `.mdnotes` і не змінює existing files;
+- startup gate: явні дії «відкрити останнє / відкрити існуюче / створити нове»;
+- `lastVault` читається тільки через одноразовий explicit-open marker після дії користувача;
+- optional vault name, системний folder picker, UI 7 мовами, scroll-friendly layout;
+- `docs/VAULT_PRESETS.md` + unit-тести;
+- перший CI #103 знайшов лише rustfmt; виправлено;
+- clean CI #114 — **PASS**: Windows/macOS/Linux core, frontend/Tauri, dependency licenses, PR title;
+- merge: `c078d075d089257c83b903eea44c317f391b765c`.
 
-## Поточний slice — vault presets
+Runtime GUI-перевірка startup/preset flow у поточному середовищі **не виконувалась**.
 
-Branch: `feature/vault-presets-v0.2`.
-Draft PR #23: `feat: add safe vault presets`.
+## Поточний slice — knowledge graph
 
-Реалізовано у candidate:
+**Ще не розпочато в коді.** Це останній незавершений функціональний пункт roadmap v0.2.
 
-- новий core-модуль presets у `notes-core`;
-- `empty` — стандартна `.mdnotes` service metadata без нав'язаної видимої структури;
-- `PARA` — `Projects / Areas / Resources / Archives`;
-- `Zettelkasten` — `Notes / Sources / daily` + відкритий Markdown-шаблон `.mdnotes/templates/zettel.md`;
-- preset creation дозволено лише у **порожній існуючій папці**;
-- якщо папка непорожня, операція відмовляє **до створення `.mdnotes`** і не змінює наявні файли;
-- unit-тести покривають Empty, PARA, Zettelkasten і refusal/non-modification safety case;
-- Tauri `create_vault` + typed frontend `VaultPreset` API;
-- startup-gate перед основним App: явні дії «відкрити останнє», «відкрити існуюче», «створити нове»;
-- небезпечне автоматичне відкриття `lastVault` не повернуто: startup дозволяє його прочитати лише через одноразовий explicit-open marker після кліку користувача;
-- створення нового vault: optional name + Empty/PARA/Zettelkasten + системний вибір порожньої папки;
-- startup UI локалізовано UK / EN / FR / DE / ES / KO / JA;
-- startup layout має вертикальну прокрутку і компактну картку для вузьких/малих екранів.
-
-### Перевірка PR #23
-
-Перший CI #103:
-- frontend + Tauri — **PASS**;
-- notes-core Windows — **PASS**;
-- notes-core macOS — **PASS**;
-- dependency licenses — **PASS**;
-- Conventional PR title — **PASS**;
-- Ubuntu зупинився лише на `cargo fmt --check`;
-- rustfmt diff виправлено на цій самій гілці; функціональна помилка не виявлена.
-
-Після UI/localization змін потрібен новий повний clean CI.
-Runtime GUI-перевірка startup/preset flow у поточному середовищі **не виконувалась** і не вважається виконаною.
+Очікуваний scope:
+- глобальний граф усіх нотаток і внутрішніх зв'язків vault;
+- локальний граф для активної нотатки: сама нотатка, прямі вихідні та зворотні зв'язки;
+- клік по вузлу відкриває відповідну нотатку;
+- граф не створює окремий закритий формат даних — джерело істини лишається Markdown + індекс;
+- використати вже наявні index/link дані через `notes-core` / thin Tauri bridge;
+- UI локалізувати UK / EN / FR / DE / ES / KO / JA;
+- на вузьких екранах граф має бути доступний без прихованих кнопок і без горизонтального блокування;
+- нова dependency допускається лише після license gate і оновлення `THIRD_PARTY_NOTICES.md`.
 
 ## Наступна дія
 
-1. додати коротку документацію preset-ів і safety-умови;
-2. прогнати clean CI після завершеного UI;
-3. виправити всі Rust/TypeScript/API нестикування на цій самій гілці;
-4. після green checks перевести PR #23 з draft у ready і технічно інтегрувати в `main`;
-5. синхронізувати roadmap / PROJECT_STATE / Issue #8 після merge;
-6. наступний незавершений пункт v0.2 — **граф знань**;
-7. **не створювати release checkpoint без окремої команди власника «зливай у main»**.
+1. перевірити `app/package.json`, current index APIs і наявність/відсутність sigma.js / graphology;
+2. спроєктувати мінімальний `GraphNode` / `GraphEdge` API в `notes-core` або Tauri без дублювання даних;
+3. створити окрему branch + draft PR;
+4. реалізувати global/local graph і навігацію по вузлах;
+5. пройти стандартний CI + license gates;
+6. після green checks технічно інтегрувати graph slice в `main`;
+7. після graph slice етап v0.2 функціонально завершений; release checkpoint робити лише за окремою командою власника **«зливай у main»**.
 
 ## Останній опублікований checkpoint
 
@@ -88,7 +77,6 @@ Runtime GUI-перевірка startup/preset flow у поточному сер�
 - runtime freeze hotfix інтегровано, але ще не підтверджено реальною новою Windows-збіркою;
 - великі сховища все ще індексуються синхронно при ручному відкритті;
 - startup/preset UI ще не перевірений вручну в реальному Tauri runtime;
-- форма властивостей може нормалізувати YAML formatting; YAML-коментарі всередині front matter не гарантуються після застосування форми;
-- окремого GUI-редактора `schema.json` поки немає;
+- schema/property form також не пройшов manual runtime validation у поточному середовищі;
 - збірки не підписані;
 - Android/iOS ще не збираються.
