@@ -97,23 +97,22 @@ impl Vault {
         Ok(schema)
     }
 
-    /// Merges top-level properties into a note's YAML front matter.
-    ///
-    /// `null` removes a property. Unknown existing fields remain untouched.
-    /// Invalid existing YAML is never overwritten.
-    pub fn update_note_properties(
+    /// Applies top-level property changes to Markdown content without touching
+    /// the file system. This lets the editor preserve unsaved body changes and
+    /// keep its normal autosave path as the only writer.
+    pub fn format_note_properties(
         &self,
-        path: &str,
+        content: &str,
         patch: &BTreeMap<String, Value>,
-    ) -> Result<Note> {
-        let note = self.read_note(path)?;
-        if let Some(error) = &note.front_matter_error {
+    ) -> Result<String> {
+        let parsed = Note::parse("note.md", content.to_string());
+        if let Some(error) = &parsed.front_matter_error {
             return Err(Error::Config(format!(
                 "cannot edit properties while front matter is invalid: {error}"
             )));
         }
 
-        let (yaml, body) = split_front_matter(&note.content);
+        let (yaml, body) = split_front_matter(content);
         let mut object = match yaml {
             Some(raw) => match parse_front_matter(raw).map_err(Error::Config)? {
                 Value::Object(map) => map,
@@ -139,7 +138,21 @@ impl Vault {
 
         let yaml = serde_yaml::to_string(&Value::Object(object))
             .map_err(|e| Error::Config(format!("cannot serialize front matter: {e}")))?;
-        let content = format!("---\n{}---\n{}", yaml.trim_start_matches("---\n"), body);
+        Ok(format!(
+            "---\n{}---\n{}",
+            yaml.trim_start_matches("---\n"),
+            body
+        ))
+    }
+
+    /// File-writing variant used by non-editor callers.
+    pub fn update_note_properties(
+        &self,
+        path: &str,
+        patch: &BTreeMap<String, Value>,
+    ) -> Result<Note> {
+        let note = self.read_note(path)?;
+        let content = self.format_note_properties(&note.content, patch)?;
         self.write_note(path, &content)
     }
 }
@@ -273,35 +286,31 @@ mod tests {
     }
 
     #[test]
-    fn updates_properties_without_dropping_unknown_fields_or_body() {
+    fn formats_properties_without_dropping_unknown_fields_body_or_unsaved_text() {
         let (_dir, vault) = vault_with_schema();
-        vault
-            .write_note(
-                "Task.md",
-                "---\ntype: task\nstatus: todo\ncustom: keep\n---\n# Body\ntext\n",
-            )
-            .unwrap();
+        let content = "---\ntype: task\nstatus: todo\ncustom: keep\n---\n# Body\nunsaved text\n";
         let patch = BTreeMap::from([
             ("status".into(), Value::String("done".into())),
             ("due".into(), Value::String("2026-10-02".into())),
         ]);
-        let note = vault.update_note_properties("Task.md", &patch).unwrap();
+        let formatted = vault.format_note_properties(content, &patch).unwrap();
+        let note = Note::parse("Task.md", formatted);
         let fm = note.front_matter.unwrap();
         assert_eq!(fm["status"], "done");
         assert_eq!(fm["custom"], "keep");
         assert_eq!(fm["due"], "2026-10-02");
-        assert!(note.content.ends_with("# Body\ntext\n"));
+        assert!(note.content.ends_with("# Body\nunsaved text\n"));
     }
 
     #[test]
-    fn can_add_front_matter_to_plain_note() {
+    fn can_add_front_matter_to_plain_content() {
         let (_dir, vault) = vault_with_schema();
-        vault.write_note("Task.md", "# Body\n").unwrap();
         let patch = BTreeMap::from([
             ("type".into(), Value::String("task".into())),
             ("status".into(), Value::String("todo".into())),
         ]);
-        let note = vault.update_note_properties("Task.md", &patch).unwrap();
+        let formatted = vault.format_note_properties("# Body\n", &patch).unwrap();
+        let note = Note::parse("Task.md", formatted);
         assert_eq!(note.front_matter.unwrap()["type"], "task");
         assert!(note.content.ends_with("# Body\n"));
     }
@@ -309,22 +318,19 @@ mod tests {
     #[test]
     fn rejects_invalid_select_and_required_removal() {
         let (_dir, vault) = vault_with_schema();
-        vault
-            .write_note("Task.md", "---\ntype: task\nstatus: todo\n---\n")
-            .unwrap();
+        let content = "---\ntype: task\nstatus: todo\n---\n";
         let bad = BTreeMap::from([("status".into(), Value::String("maybe".into()))]);
-        assert!(vault.update_note_properties("Task.md", &bad).is_err());
+        assert!(vault.format_note_properties(content, &bad).is_err());
         let remove = BTreeMap::from([("status".into(), Value::Null)]);
-        assert!(vault.update_note_properties("Task.md", &remove).is_err());
+        assert!(vault.format_note_properties(content, &remove).is_err());
     }
 
     #[test]
     fn refuses_to_overwrite_invalid_yaml() {
         let (_dir, vault) = vault_with_schema();
-        vault
-            .write_note("Broken.md", "---\ntags: [oops\n---\nbody\n")
-            .unwrap();
         let patch = BTreeMap::from([("title".into(), Value::String("x".into()))]);
-        assert!(vault.update_note_properties("Broken.md", &patch).is_err());
+        assert!(vault
+            .format_note_properties("---\ntags: [oops\n---\nbody\n", &patch)
+            .is_err());
     }
 }
