@@ -4,9 +4,9 @@ use std::collections::BTreeMap;
 use std::sync::Mutex;
 
 use notes_core::{
-    create_vault_with_preset, AttachmentInfo, Backlink, Index, Note, NoteSummary, RenameOutcome,
-    SchemaDocument, SearchHit, TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault,
-    VaultPreset,
+    create_vault_with_preset, knowledge_graph, AttachmentInfo, Backlink, Index, KnowledgeGraph,
+    Note, NoteSummary, RenameOutcome, SchemaDocument, SearchHit, TagCount, TemplateInfo, TreeEntry,
+    UnresolvedLink, Vault, VaultPreset,
 };
 use serde::Serialize;
 use serde_json::Value;
@@ -227,6 +227,14 @@ fn backlinks(path: String, state: State<'_, AppState>) -> CmdResult<Vec<Backlink
 }
 
 #[tauri::command]
+fn knowledge_graph_snapshot(
+    focus: Option<String>,
+    state: State<'_, AppState>,
+) -> CmdResult<KnowledgeGraph> {
+    with_session(&state, |s| knowledge_graph(&s.index, focus.as_deref()))
+}
+
+#[tauri::command]
 fn unresolved_links(state: State<'_, AppState>) -> CmdResult<Vec<UnresolvedLink>> {
     with_session(&state, |s| s.index.unresolved_links())
 }
@@ -286,6 +294,7 @@ pub fn run() {
             resolve_link,
             list_notes,
             backlinks,
+            knowledge_graph_snapshot,
             unresolved_links,
             list_tags,
             search,
