@@ -4,16 +4,21 @@
 
 ## Статус
 
-**ACTIVE — функціональний scope v0.2 завершений у `main`; перед наступним checkpoint потрібен Windows runtime evidence.**
+**ACTIVE — checkpoint v0.2.2 опублікований; функціональний scope v0.2 завершений.**
 
-Останній опублікований checkpoint: **v0.2.1** (GitHub prerelease `v0.2.1`, 01.10.2026).
-`main` уже випереджає цей release: інтегровані runtime-startup hotfix, Windows portable packaging, schema-driven properties, safe vault presets/startup gate і global/local knowledge graph.
+Останній опублікований checkpoint: **v0.2.2** (GitHub prerelease `v0.2.2`, 02.10.2026).
+Release commit: `b422b497b4e3980c665f7ae7017f34e73788218d`.
+Release workflow #30 / `36990461869` — **SUCCESS**.
 
-Поточна перша дія: **реальний Windows runtime-повторний тест актуального `main`**, особливо startup freeze hotfix. Green CI/build не прирівнюється до runtime validation.
+У v0.2.2 входять runtime-startup hotfix, Windows portable packaging, schema-driven properties, safe vault presets/startup gate і global/local knowledge graph.
+
+Поточна перша дія: **реальний Windows runtime-тест v0.2.2**, особливо перевірка попереднього freeze blocker. Green CI/build не прирівнюється до runtime validation.
+
+Якщо після ручного відкриття vault зависання повторюється — пріоритетно оптимізувати `note_paths()` / `get_tree()` і винести дорогий index sync із критичного open path. Якщо runtime стабільний — наступний roadmap stage v0.3: Android/iOS + Git/WebDAV sync.
 
 Деталі стану — `PROJECT_STATE.md`, точний чек-лист — `WORKLOG.md`.
 
-Не відновлювати старі work/feature branches як джерело коду і не повторювати merged slices.
+Не відновлювати старі work/feature/test branches як джерело коду і не повторювати merged slices.
 
 ## Startup protocol
 
@@ -35,11 +40,13 @@
 - `docs/releases/` — нотатки опублікованих релізів.
 - `docs/roadmap.md` — план етапів.
 
+## Правило версій до 1.0
+
+У межах поточного roadmap stage звичайні `feat:` checkpoint-и **не повинні автоматично переводити minor-версію**. Наприклад, `0.2.1 → 0.2.2`. Перехід `0.2 → 0.3` означає зміну roadmap stage і має бути свідомим рішенням власника.
+
 ## Команда власника «злити у main»
 
 **«Злити у main / зливай у main»** означає повний test-release checkpoint: нова версія, зелені checks, merge, збірки всіх підтримуваних платформ + START/source, checksums/legal, tag + GitHub prerelease, синхронізація документації та ledger. Для простого merge — «інтегрувати PR у main».
-
-Функціональне завершення v0.2 саме по собі **не створює release**. До наступного release checkpoint треба закрити Windows runtime evidence gate або явно зафіксувати відоме обмеження за рішенням власника.
 
 ## Для нового чату
 

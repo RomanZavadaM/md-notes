@@ -18,7 +18,7 @@
 - [x] Приклад сховища, документація, ADR
 - [x] Строга CSP для вебвікна — завершено у v0.2.1
 
-## v0.2 — структура і зв'язки ✅ функціональний scope завершено в `main`
+## v0.2 — структура і зв'язки ✅ checkpoint v0.2.2 опублікований
 
 - [x] Індекс SQLite у `.mdnotes/cache/index.db`, інкрементальне оновлення
 - [x] Повнотекстовий пошук (FTS5), швидкий перехід `Ctrl+O`
@@ -33,8 +33,10 @@
 - [x] Типи нотаток, `.mdnotes/schema.json` v1 і schema-driven форма властивостей — PR #19
 - [x] Створення сховища з пресетом: PARA, Zettelkasten, порожнє — PR #23
 - [x] Граф знань: глобальний і локальний, Sigma.js + Graphology — PR #25
+- [x] Windows portable як стандартний release artifact — v0.2.2
+- [x] Повний test-release checkpoint `v0.2.2`: Windows/macOS/Linux + START/legal/checksums
 
-**Evidence gate перед наступним release checkpoint:** повторний реальний Windows runtime-тест нового startup flow / hotfix зависання. Green CI не замінює runtime validation.
+**Runtime evidence лишається відкритим:** v0.2.2 опубліковано за рішенням власника, але повторний реальний Windows-тест startup-freeze hotfix ще потрібен. Green CI/build не замінює runtime validation. Якщо freeze відтворюється після відкриття vault, цей blocker має пріоритет над стартом великої роботи v0.3.
 
 ## v0.3 — мобільні платформи і синхронізація
 
