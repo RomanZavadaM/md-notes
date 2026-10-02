@@ -1,0 +1,165 @@
+import type { LanguageCode } from "./index";
+
+export interface StartupStrings {
+  openRecent: string;
+  openExisting: string;
+  recentPath: string;
+  createHeading: string;
+  vaultName: string;
+  vaultNamePlaceholder: string;
+  preset: string;
+  presetEmpty: string;
+  presetEmptyHelp: string;
+  presetPara: string;
+  presetParaHelp: string;
+  presetZettelkasten: string;
+  presetZettelkastenHelp: string;
+  createButton: string;
+  emptyFolderOnly: string;
+  pickExistingTitle: string;
+  pickNewTitle: string;
+  creating: string;
+}
+
+export const STARTUP_STRINGS: Record<LanguageCode, StartupStrings> = {
+  uk: {
+    openRecent: "Відкрити останнє сховище",
+    openExisting: "Відкрити існуюче сховище…",
+    recentPath: "Останнє сховище",
+    createHeading: "Створити нове сховище",
+    vaultName: "Назва сховища",
+    vaultNamePlaceholder: "Необов’язково — інакше назва папки",
+    preset: "Структура",
+    presetEmpty: "Порожнє",
+    presetEmptyHelp: "Лише службові файли MD Notes, без нав’язаних папок.",
+    presetPara: "PARA",
+    presetParaHelp: "Projects / Areas / Resources / Archives.",
+    presetZettelkasten: "Zettelkasten",
+    presetZettelkastenHelp: "Notes / Sources / daily та Markdown-шаблон zettel.",
+    createButton: "Вибрати порожню папку й створити",
+    emptyFolderOnly: "Безпека: пресет створюється лише в порожній папці й ніколи не накладається на наявні файли.",
+    pickExistingTitle: "Виберіть папку існуючого сховища",
+    pickNewTitle: "Виберіть порожню папку для нового сховища",
+    creating: "Створення сховища…",
+  },
+  en: {
+    openRecent: "Open recent vault",
+    openExisting: "Open existing vault…",
+    recentPath: "Recent vault",
+    createHeading: "Create a new vault",
+    vaultName: "Vault name",
+    vaultNamePlaceholder: "Optional — folder name is used otherwise",
+    preset: "Structure",
+    presetEmpty: "Empty",
+    presetEmptyHelp: "Only MD Notes service metadata, with no imposed folders.",
+    presetPara: "PARA",
+    presetParaHelp: "Projects / Areas / Resources / Archives.",
+    presetZettelkasten: "Zettelkasten",
+    presetZettelkastenHelp: "Notes / Sources / daily plus a Markdown zettel template.",
+    createButton: "Choose empty folder and create",
+    emptyFolderOnly: "Safety: a preset can only be created in an empty folder and never overlays existing files.",
+    pickExistingTitle: "Choose an existing vault folder",
+    pickNewTitle: "Choose an empty folder for the new vault",
+    creating: "Creating vault…",
+  },
+  fr: {
+    openRecent: "Ouvrir le coffre récent",
+    openExisting: "Ouvrir un coffre existant…",
+    recentPath: "Coffre récent",
+    createHeading: "Créer un nouveau coffre",
+    vaultName: "Nom du coffre",
+    vaultNamePlaceholder: "Facultatif — sinon le nom du dossier est utilisé",
+    preset: "Structure",
+    presetEmpty: "Vide",
+    presetEmptyHelp: "Uniquement les métadonnées de MD Notes, sans dossiers imposés.",
+    presetPara: "PARA",
+    presetParaHelp: "Projects / Areas / Resources / Archives.",
+    presetZettelkasten: "Zettelkasten",
+    presetZettelkastenHelp: "Notes / Sources / daily et un modèle Markdown zettel.",
+    createButton: "Choisir un dossier vide et créer",
+    emptyFolderOnly: "Sécurité : un préréglage ne peut être créé que dans un dossier vide et ne remplace jamais des fichiers existants.",
+    pickExistingTitle: "Choisissez le dossier d’un coffre existant",
+    pickNewTitle: "Choisissez un dossier vide pour le nouveau coffre",
+    creating: "Création du coffre…",
+  },
+  de: {
+    openRecent: "Letzten Tresor öffnen",
+    openExisting: "Vorhandenen Tresor öffnen…",
+    recentPath: "Letzter Tresor",
+    createHeading: "Neuen Tresor erstellen",
+    vaultName: "Tresorname",
+    vaultNamePlaceholder: "Optional — sonst wird der Ordnername verwendet",
+    preset: "Struktur",
+    presetEmpty: "Leer",
+    presetEmptyHelp: "Nur MD-Notes-Metadaten, ohne vorgegebene Ordner.",
+    presetPara: "PARA",
+    presetParaHelp: "Projects / Areas / Resources / Archives.",
+    presetZettelkasten: "Zettelkasten",
+    presetZettelkastenHelp: "Notes / Sources / daily plus Markdown-Zettelvorlage.",
+    createButton: "Leeren Ordner wählen und erstellen",
+    emptyFolderOnly: "Sicherheit: Ein Preset wird nur in einem leeren Ordner erstellt und niemals über vorhandene Dateien gelegt.",
+    pickExistingTitle: "Ordner eines vorhandenen Tresors wählen",
+    pickNewTitle: "Leeren Ordner für den neuen Tresor wählen",
+    creating: "Tresor wird erstellt…",
+  },
+  es: {
+    openRecent: "Abrir bóveda reciente",
+    openExisting: "Abrir bóveda existente…",
+    recentPath: "Bóveda reciente",
+    createHeading: "Crear una bóveda nueva",
+    vaultName: "Nombre de la bóveda",
+    vaultNamePlaceholder: "Opcional — si no, se usa el nombre de la carpeta",
+    preset: "Estructura",
+    presetEmpty: "Vacía",
+    presetEmptyHelp: "Solo metadatos de MD Notes, sin carpetas impuestas.",
+    presetPara: "PARA",
+    presetParaHelp: "Projects / Areas / Resources / Archives.",
+    presetZettelkasten: "Zettelkasten",
+    presetZettelkastenHelp: "Notes / Sources / daily y una plantilla Markdown zettel.",
+    createButton: "Elegir carpeta vacía y crear",
+    emptyFolderOnly: "Seguridad: un preset solo se crea en una carpeta vacía y nunca se superpone a archivos existentes.",
+    pickExistingTitle: "Elige la carpeta de una bóveda existente",
+    pickNewTitle: "Elige una carpeta vacía para la nueva bóveda",
+    creating: "Creando bóveda…",
+  },
+  ko: {
+    openRecent: "최근 보관함 열기",
+    openExisting: "기존 보관함 열기…",
+    recentPath: "최근 보관함",
+    createHeading: "새 보관함 만들기",
+    vaultName: "보관함 이름",
+    vaultNamePlaceholder: "선택 사항 — 비워 두면 폴더 이름 사용",
+    preset: "구조",
+    presetEmpty: "빈 보관함",
+    presetEmptyHelp: "MD Notes 서비스 메타데이터만 만들고 폴더 구조는 강제하지 않습니다.",
+    presetPara: "PARA",
+    presetParaHelp: "Projects / Areas / Resources / Archives.",
+    presetZettelkasten: "Zettelkasten",
+    presetZettelkastenHelp: "Notes / Sources / daily 및 Markdown zettel 템플릿.",
+    createButton: "빈 폴더를 선택해 만들기",
+    emptyFolderOnly: "안전: 프리셋은 빈 폴더에만 만들 수 있으며 기존 파일 위에 덮어쓰지 않습니다.",
+    pickExistingTitle: "기존 보관함 폴더 선택",
+    pickNewTitle: "새 보관함용 빈 폴더 선택",
+    creating: "보관함 만드는 중…",
+  },
+  ja: {
+    openRecent: "最近の保管庫を開く",
+    openExisting: "既存の保管庫を開く…",
+    recentPath: "最近の保管庫",
+    createHeading: "新しい保管庫を作成",
+    vaultName: "保管庫名",
+    vaultNamePlaceholder: "任意 — 空欄ならフォルダー名を使用",
+    preset: "構成",
+    presetEmpty: "空",
+    presetEmptyHelp: "MD Notes の管理メタデータのみを作成し、フォルダー構成は強制しません。",
+    presetPara: "PARA",
+    presetParaHelp: "Projects / Areas / Resources / Archives.",
+    presetZettelkasten: "Zettelkasten",
+    presetZettelkastenHelp: "Notes / Sources / daily と Markdown の zettel テンプレート。",
+    createButton: "空のフォルダーを選んで作成",
+    emptyFolderOnly: "安全性: プリセットは空のフォルダーにのみ作成でき、既存ファイルには重ねません。",
+    pickExistingTitle: "既存の保管庫フォルダーを選択",
+    pickNewTitle: "新しい保管庫用の空フォルダーを選択",
+    creating: "保管庫を作成中…",
+  },
+};

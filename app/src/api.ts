@@ -2,6 +2,7 @@
 import { invoke } from "@tauri-apps/api/core";
 
 export type EntryKind = "dir" | "note" | "file";
+export type VaultPreset = "empty" | "para" | "zettelkasten";
 
 export interface TreeEntry {
   name: string;
@@ -123,6 +124,8 @@ export const VAULT_CHANGED = "vault-changed";
 
 export const api = {
   openVault: (path: string) => invoke<VaultInfo>("open_vault", { path }),
+  createVault: (path: string, name: string | null, preset: VaultPreset) =>
+    invoke<VaultInfo>("create_vault", { path, name, preset }),
   getTree: () => invoke<TreeEntry[]>("get_tree"),
   readNote: (path: string) => invoke<Note>("read_note", { path }),
   parseNoteContent: (path: string, content: string) => invoke<Note>("parse_note_content", { path, content }),

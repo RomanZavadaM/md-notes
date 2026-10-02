@@ -4,8 +4,9 @@ use std::collections::BTreeMap;
 use std::sync::Mutex;
 
 use notes_core::{
-    AttachmentInfo, Backlink, Index, Note, NoteSummary, RenameOutcome, SchemaDocument, SearchHit,
-    TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault,
+    create_vault_with_preset, AttachmentInfo, Backlink, Index, Note, NoteSummary, RenameOutcome,
+    SchemaDocument, SearchHit, TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault,
+    VaultPreset,
 };
 use serde::Serialize;
 use serde_json::Value;
@@ -48,9 +49,11 @@ struct VaultInfo {
     name: String,
 }
 
-#[tauri::command]
-fn open_vault(path: String, app: AppHandle, state: State<'_, AppState>) -> CmdResult<VaultInfo> {
-    let vault = Vault::open(&path).map_err(|e| e.to_string())?;
+fn activate_vault(
+    vault: Vault,
+    app: AppHandle,
+    state: State<'_, AppState>,
+) -> CmdResult<VaultInfo> {
     let mut index = Index::open_for(&vault).map_err(|e| e.to_string())?;
     index.sync(&vault).map_err(|e| e.to_string())?;
     let info = VaultInfo {
@@ -72,6 +75,24 @@ fn open_vault(path: String, app: AppHandle, state: State<'_, AppState>) -> CmdRe
     }
     *state.session.lock().map_err(|e| e.to_string())? = Some(Session { vault, index });
     Ok(info)
+}
+
+#[tauri::command]
+fn open_vault(path: String, app: AppHandle, state: State<'_, AppState>) -> CmdResult<VaultInfo> {
+    let vault = Vault::open(&path).map_err(|e| e.to_string())?;
+    activate_vault(vault, app, state)
+}
+
+#[tauri::command]
+fn create_vault(
+    path: String,
+    name: Option<String>,
+    preset: VaultPreset,
+    app: AppHandle,
+    state: State<'_, AppState>,
+) -> CmdResult<VaultInfo> {
+    let vault = create_vault_with_preset(&path, name, preset).map_err(|e| e.to_string())?;
+    activate_vault(vault, app, state)
 }
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
@@ -248,6 +269,7 @@ pub fn run() {
         .manage(AppState::default())
         .invoke_handler(tauri::generate_handler![
             open_vault,
+            create_vault,
             get_tree,
             read_note,
             parse_note_content,
