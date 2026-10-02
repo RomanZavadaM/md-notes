@@ -30,47 +30,17 @@ jobs:
         run: |
           $out = Join-Path $PWD 'runtime-test'
           New-Item -ItemType Directory -Force -Path $out | Out-Null
-          $exeCandidates = @(
-            (Join-Path $PWD 'target\release\md-notes.exe'),
-            (Join-Path $PWD 'app\src-tauri\target\release\md-notes.exe')
-          )
+          $exeCandidates = @((Join-Path $PWD 'target\release\md-notes.exe'), (Join-Path $PWD 'app\src-tauri\target\release\md-notes.exe'))
           $exe = $exeCandidates | Where-Object { Test-Path $_ } | Select-Object -First 1
           if (-not $exe) { throw 'md-notes.exe not found' }
           Copy-Item $exe (Join-Path $out 'MD Notes.exe')
           Copy-Item LICENSE.md,COPYRIGHT.md,THIRD_PARTY_NOTICES.md -Destination $out
-          @'
-MD Notes — Windows runtime test build
-
-Purpose: verify the reported startup/runtime freeze on Windows before publishing the next normal checkpoint.
-
-Test sequence:
-1. Start MD Notes and confirm the app opens without freezing the PC.
-2. Open the About dialog.
-3. Open an existing vault manually.
-4. Confirm whether the freeze appears after vault selection.
-5. Report the result in the development chat.
-
-This is a temporary unsigned test build, not a stable release.
-'@ | Set-Content -Encoding UTF8 (Join-Path $out 'README-RUNTIME-TEST.txt')
+          $readme = @('MD Notes - Windows runtime test build','','Purpose: verify the reported startup/runtime freeze on Windows before the next normal checkpoint.','','Test: startup; About dialog; manually open an existing vault; report whether freezing occurs before or after vault selection.','','Temporary unsigned test build, not a stable release.')
+          $readme | Set-Content -Encoding UTF8 (Join-Path $out 'README-RUNTIME-TEST.txt')
           Compress-Archive -Path "$out\*" -DestinationPath 'MD-Notes-Windows-x64-runtime-test.zip' -Force
       - name: Publish prerelease
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = 'runtime-test-windows-2026-10-02'
-          $title = 'MD Notes — Windows runtime test (2026-10-02)'
-          $notes = @'
-Temporary Windows prerelease for validating the reported runtime freeze.
-
-Built from the current `main` after v0.2 functional completion. This is **not** a normal version checkpoint and does not replace v0.2.1.
-
-Please test:
-- startup without opening a vault;
-- About dialog;
-- manual opening of an existing vault;
-- whether the machine/app freezes before or after vault selection.
-
-Unsigned test build.
-'@
-          gh release create $tag 'MD-Notes-Windows-x64-runtime-test.zip' --repo '${{ github.repository }}' --target main --title $title --notes $notes --prerelease
+          gh release create runtime-test-windows-2026-10-02 'MD-Notes-Windows-x64-runtime-test.zip' --repo '${{ github.repository }}' --target main --title 'MD Notes - Windows runtime test (2026-10-02)' --notes 'Temporary Windows prerelease for validating the reported runtime freeze. Built from current main after v0.2 functional completion. This is not a normal version checkpoint and does not replace v0.2.1. Please test startup, About, and manual vault opening. Unsigned test build.' --prerelease
