@@ -1,0 +1,71 @@
+name: Windows Runtime Test Build
+
+on:
+  push:
+    branches: [test/windows-runtime-v0.2]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install npm packages
+        working-directory: app
+        run: npm ci
+      - name: Build Tauri app
+        working-directory: app
+        run: npm run tauri build -- --no-bundle
+      - name: Assemble portable runtime-test package
+        shell: pwsh
+        run: |
+          $name = "MD-Notes-v0.2-current-Windows-x64-runtime-test"
+          $dir = Join-Path $PWD "dist/$name"
+          New-Item -ItemType Directory -Force -Path $dir | Out-Null
+
+          $candidates = @(
+            (Join-Path $PWD "target/release/md-notes.exe"),
+            (Join-Path $PWD "app/src-tauri/target/release/md-notes.exe")
+          )
+          $exe = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $exe) {
+            throw "Runtime-test executable not found. Checked: $($candidates -join ', ')"
+          }
+
+          Copy-Item $exe (Join-Path $dir "MD Notes.exe")
+          Copy-Item "LICENSE.md" $dir
+          Copy-Item "COPYRIGHT.md" $dir
+          Copy-Item "THIRD_PARTY_NOTICES.md" $dir
+          @"
+          MD Notes — Windows x64 runtime test build
+
+          Source baseline: main commit 39040a461d0b29f09db382f7bca32483350c19ba
+          Purpose: manual Windows runtime validation after the startup-freeze hotfix and completion of functional v0.2.
+          This is NOT a GitHub Release and is NOT code-signed.
+
+          Run: "MD Notes.exe"
+          Windows requires Microsoft Edge WebView2 Runtime.
+
+          Check especially:
+          1. startup remains responsive before opening any vault;
+          2. About opens before a vault is selected;
+          3. manually open a small existing vault;
+          4. create Empty / PARA / Zettelkasten in an empty folder;
+          5. verify preset refusal on a non-empty folder;
+          6. schema/property form;
+          7. Local / Global knowledge graph and node navigation;
+          8. restart and explicitly choose Open recent vault.
+          "@ | Set-Content -Encoding UTF8 (Join-Path $dir "README-RUNTIME-TEST.txt")
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MD-Notes-v0.2-current-Windows-x64-runtime-test
+          path: dist/MD-Notes-v0.2-current-Windows-x64-runtime-test/
+          if-no-files-found: error
+          retention-days: 14
