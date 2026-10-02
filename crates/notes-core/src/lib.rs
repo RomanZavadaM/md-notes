@@ -11,6 +11,7 @@ pub mod markdown;
 pub mod note;
 pub mod paths;
 pub mod refactor;
+pub mod schema;
 pub mod templates;
 pub mod vault;
 
@@ -20,5 +21,6 @@ pub use index::{Backlink, Index, NoteSummary, SearchHit, SyncStats, TagCount, Un
 pub use markdown::WikiLink;
 pub use note::Note;
 pub use refactor::{rename_with_links, RenameOutcome};
+pub use schema::{NoteTypeSpec, PropertyKind, PropertySpec, SchemaDocument};
 pub use templates::TemplateInfo;
 pub use vault::{EntryKind, TreeEntry, Vault, VaultConfig};
