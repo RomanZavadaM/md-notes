@@ -21,6 +21,6 @@ pub use index::{Backlink, Index, NoteSummary, SearchHit, SyncStats, TagCount, Un
 pub use markdown::WikiLink;
 pub use note::Note;
 pub use refactor::{rename_with_links, RenameOutcome};
-pub use schema::{NoteTypeSpec, PropertyKind, PropertySpec, SchemaDocument};
+pub use schema::{FieldKind, FieldSpec, NoteTypeSpec, SchemaDocument};
 pub use templates::TemplateInfo;
 pub use vault::{EntryKind, TreeEntry, Vault, VaultConfig};
