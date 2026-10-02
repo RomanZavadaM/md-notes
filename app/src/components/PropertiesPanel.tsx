@@ -4,10 +4,10 @@ import { useI18n } from "../i18n";
 import "./PropertiesPanel.css";
 
 interface Props {
-  note: Note | null;
+  path: string;
+  content: string;
   refreshKey: number;
-  onApply: (patch: Record<string, unknown>) => Promise<void>;
-  onError: (error: unknown) => void;
+  onContentChange: (content: string) => void;
 }
 
 type FormValues = Record<string, string | boolean>;
@@ -40,28 +40,50 @@ function toPatchValue(value: string | boolean, spec: PropertySpec): unknown {
   return text;
 }
 
-export function PropertiesPanel({ note, refreshKey, onApply, onError }: Props) {
+export function PropertiesPanel({ path, content, refreshKey, onContentChange }: Props) {
   const { t } = useI18n();
   const [schema, setSchema] = useState<SchemaDocument | null>(null);
+  const [parsed, setParsed] = useState<Note | null>(null);
   const [selectedType, setSelectedType] = useState("");
   const [values, setValues] = useState<FormValues>({});
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-  const frontMatter = useMemo(() => frontMatterObject(note), [note]);
+  const frontMatter = useMemo(() => frontMatterObject(parsed), [parsed]);
   const currentType = typeof frontMatter.type === "string" ? frontMatter.type : "";
 
   useEffect(() => {
-    api.getSchema().then(setSchema).catch((error) => {
+    api.getSchema().then(setSchema).catch((reason) => {
       setSchema(null);
-      onError(error);
+      setError(String(reason));
     });
-  }, [refreshKey, onError]);
+  }, [refreshKey]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      api.parseNoteContent(path, content)
+        .then((note) => {
+          if (!cancelled) {
+            setParsed(note);
+            setError("");
+          }
+        })
+        .catch((reason) => {
+          if (!cancelled) setError(String(reason));
+        });
+    }, 120);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [path, content]);
 
   useEffect(() => {
     setSelectedType(currentType);
     setMessage("");
-  }, [note?.path, currentType]);
+  }, [path, currentType]);
 
   const typeSpec: NoteTypeSpec | undefined = schema?.types[selectedType];
 
@@ -77,13 +99,10 @@ export function PropertiesPanel({ note, refreshKey, onApply, onError }: Props) {
     setValues(next);
   }, [typeSpec, frontMatter, selectedType]);
 
-  if (!note) return <div className="properties-empty">{t.propertyNoNote}</div>;
-  if (note.frontMatterError) {
-    return (
-      <div className="properties-empty warn">
-        {t.propertyInvalidFrontMatter(note.frontMatterError)}
-      </div>
-    );
+  if (error) return <div className="properties-empty warn">{error}</div>;
+  if (!parsed) return <div className="properties-empty">{t.propertyNoNote}</div>;
+  if (parsed.frontMatterError) {
+    return <div className="properties-empty warn">{t.propertyInvalidFrontMatter(parsed.frontMatterError)}</div>;
   }
   if (!schema || Object.keys(schema.types).length === 0) {
     return (
@@ -105,11 +124,14 @@ export function PropertiesPanel({ note, refreshKey, onApply, onError }: Props) {
     }
     setSaving(true);
     setMessage("");
+    setError("");
     try {
-      await onApply(patch);
+      const formatted = await api.formatNoteProperties(content, patch);
+      onContentChange(formatted);
+      setParsed(await api.parseNoteContent(path, formatted));
       setMessage(t.propertySaved);
-    } catch (error) {
-      onError(error);
+    } catch (reason) {
+      setError(String(reason));
     } finally {
       setSaving(false);
     }
