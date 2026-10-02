@@ -19,6 +19,7 @@ tauri-build = { version = "2", features = [] }
 notes-core = { path = "../../crates/notes-core" }
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
 serde = { workspace = true }
+serde_json = { workspace = true }
 tauri = { version = "2", features = ["protocol-asset"] }
 tauri-plugin-dialog = "2"
 tauri-plugin-opener = "2"
