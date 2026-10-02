@@ -4,9 +4,14 @@
 
 ## Статус
 
-**ACTIVE — далі залишок етапу v0.2 і етап v0.3.**
+**ACTIVE — завершуємо залишок етапу v0.2, потім v0.3.**
 
-Поточний опублікований checkpoint: **v0.2.1** (GitHub prerelease `v0.2.1`, 01.10.2026).
+Останній опублікований checkpoint: **v0.2.1** (GitHub prerelease `v0.2.1`, 01.10.2026).
+`main` уже випереджає цей release: інтегровані runtime-startup hotfix, Windows portable packaging і schema-driven properties.
+
+Поточна наступна функціональна дія: **vault presets — PARA / Zettelkasten / порожнє**.
+Окремо лишається обов'язковий реальний Windows runtime-повторний тест hotfix-а зависання.
+
 Деталі стану — `PROJECT_STATE.md`, активна робота — `WORKLOG.md`.
 
 Не відновлювати старі work/feature branches як джерело коду і не повторювати merged slices.
@@ -24,8 +29,8 @@
 ## Джерела істини
 
 - `PROJECT_RULES.md` — постійні правила.
-- `PROJECT_STATE.md` — підтверджений стан продукту.
-- `WORKLOG.md` — активний slice і наступна дія.
+- `PROJECT_STATE.md` — підтверджений інтегрований стан продукту.
+- `WORKLOG.md` — активний slice, blockers і наступна дія.
 - GitHub Issue #8 — append-only development ledger.
 - `Cargo.toml`, `app/package.json`, `app/src-tauri/tauri.conf.json` — machine source версії.
 - `docs/releases/` — нотатки опублікованих релізів.
