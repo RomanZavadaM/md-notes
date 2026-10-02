@@ -111,8 +111,11 @@ export const api = {
   openVault: (path: string) => invoke<VaultInfo>("open_vault", { path }),
   getTree: () => invoke<TreeEntry[]>("get_tree"),
   readNote: (path: string) => invoke<Note>("read_note", { path }),
+  parseNoteContent: (path: string, content: string) => invoke<Note>("parse_note_content", { path, content }),
   saveNote: (path: string, content: string) => invoke<Note>("save_note", { path, content }),
   getSchema: () => invoke<SchemaDocument>("get_schema"),
+  formatNoteProperties: (content: string, patch: Record<string, unknown>) =>
+    invoke<string>("format_note_properties", { content, patch }),
   updateNoteProperties: (path: string, patch: Record<string, unknown>) =>
     invoke<Note>("update_note_properties", { path, patch }),
   createNote: (dir: string, title: string, template?: string) =>
