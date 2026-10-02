@@ -4,82 +4,79 @@
 
 ## STATUS
 
-**ACTIVE. Checkpoint v0.2.1 — DONE.** Runtime-startup hotfix уже інтегровано в `main`; поточний функціональний candidate: **типи нотаток + `schema.json` + форма властивостей**.
+**ACTIVE. Checkpoint v0.2.1 — DONE; `main` випереджає опублікований checkpoint.** Runtime hotfix, Windows portable packaging і schema/property form уже інтегровані. Наступний функціональний slice v0.2: **створення vault із пресетом PARA / Zettelkasten / порожнє**.
 
-## Runtime blocker 02.10.2026
+## Нещодавно завершено
 
-Користувач підтвердив на реальній Windows-збірці: застосунок встановлюється і запускається, але після запуску комп'ютер може сильно зависати; симптом видно навіть при спробі відкрити «Про програму».
-
-Аудит показав небезпечний startup path: frontend автоматично відкривав `mdnotes.lastVault`, backend синхронно індексував vault, а дерево файлів після цього будувалося ще раз. Hotfix PR #21 прибрав автоматичне відкриття останнього vault під час startup.
-
-- PR #21 — `fix: prevent unsafe vault auto-reopen on startup`;
+### Runtime startup hotfix
+- користувач на реальній Windows-збірці v0.2.1 підтвердив сильне зависання після запуску;
+- аудит показав небезпечне автоматичне відкриття `mdnotes.lastVault` перед поверненням контролю UI;
+- PR #21 блокує читання цього ключа через `storage.get`, залишаючи шлях write-only для майбутньої явної дії «відкрити недавнє»;
 - CI #92 — **PASS**;
-- merge у `main`: `de7b9d1b8fa7b9f5c7884b4082d977f4a1029b01`.
+- merge: `de7b9d1b8fa7b9f5c7884b4082d977f4a1029b01`.
 
-Hotfix ще потребує реального Windows runtime-підтвердження. Якщо зависання лишиться після ручного вибору vault, наступний крок — оптимізація `note_paths()` / `get_tree()` та винесення дорогого index sync із критичного startup/open path.
+**Не закрито доказом:** hotfix ще треба перевірити реальною новою Windows-збіркою. Якщо після ручного вибору vault зависання повториться — оптимізувати `note_paths()` / `get_tree()` і винести дорогий index sync із критичного open path.
+
+### Windows portable
+- PR #20 додає стандартний release artifact `MD-Notes-<version>-Windows-x64-portable.zip` поряд із `.exe` та `.msi`;
+- portable містить `MD Notes.exe`, README та legal notices;
+- виправлено пошук executable у workspace `target/release` із fallback;
+- CI #95 — **PASS**;
+- merge: `715e29dfcf3bace2480e6b2bd824cfc80c91a668`.
+
+### Note types / schema / property form
+- PR #19: `feat: add schema-driven note properties`;
+- використано наявний відкритий `.mdnotes/schema.json` v1 без міграції формату;
+- глобальні `fields`, `types.<name>.fields`, `required`, `template`;
+- field types: text/string/number/boolean/date/enum/list/link/links/url/file;
+- підтримка readonly/values/noteType;
+- невідомі YAML-поля і невідомі note types зберігаються;
+- invalid YAML не переписується формою;
+- formatter працює з поточним editor content, тому незбережене тіло нотатки не губиться;
+- thin Tauri bridge + typed frontend API;
+- schema-driven «Властивості» в CodeMirror;
+- UI UK / EN / FR / DE / ES / KO / JA;
+- `docs/SCHEMA.md` + unit-тести;
+- попередній CI #91 — PASS; після синхронізації з hotfix + portable clean CI #97 — **PASS**;
+- merge: `7441259a019eae1f7858898d8a29a9ac4d9ec7cd`.
+
+Runtime GUI-перевірка schema/property form у поточному середовищі не виконувалась.
 
 ## Поточний slice
 
-Branch: `feature/note-types-schema-v0.2`.
-PR #19: `feat: add schema-driven note properties`.
+**Ще не розпочато в коді.** Наступний незавершений пункт roadmap v0.2: **створення сховища з пресетом**.
 
-Реалізовано у candidate:
-
-- `notes-core`: типізована модель наявного `.mdnotes/schema.json` v1 без міграції формату;
-- сумісність із фактичним `sample-vault`: глобальні `fields`, `types.<name>.fields`, `required`, `template`;
-- типи полів: `text`, `string`, `number`, `boolean`, `date`, `enum`, `list`, `link`, `links`, `url`, `file`;
-- підтримка `readonly`, `values`, `noteType`;
-- невідомі YAML-поля і невідомі note types не блокують відкриті дані;
-- при помилковому YAML форма не переписує front matter;
-- formatter працює з поточним текстом редактора у пам'яті, тому незбережене тіло нотатки не перезаписується окремим записом у файл;
-- Tauri bridge: читання схеми, parse поточного editor content, safe formatting властивостей;
-- типізований frontend API;
-- schema-driven форма «Властивості» інтегрована в CodeMirror editor;
-- форма підтримує required/readonly/enum/list/links/date/url/file/number/boolean/text;
-- після застосування зміни повертаються у CodeMirror і проходять через звичайний autosave;
-- UI локалізовано UK / EN / FR / DE / ES / KO / JA;
-- додано `docs/SCHEMA.md` з форматом, прикладом і межами сумісності;
-- unit-тести ядра: existing schema shape, missing schema, required/enum validation, invalid YAML, збереження невідомих полів, тіла і незбереженого тексту.
-
-Важливе уточнення: `sample-vault/.mdnotes/schema.json` уже мав визначений формат. Candidate приведено до цього існуючого формату; міграція сховищ не потрібна.
-
-## Перевірка PR #19
-
-- перший прогін виявив `cargo fmt` і відсутній direct dependency `serde_json` у Tauri crate;
-- обидві проблеми виправлено на цій самій гілці;
-- CI #91 — **PASS**: notes-core Windows/macOS/Linux, frontend build + Tauri clippy, dependency licenses, Conventional PR title;
-- runtime GUI-перевірка schema/property form у поточному середовищі не виконувалась і не вважається виконаною.
-
-## Паралельний packaging slice
-
-- PR #20 — `build: add Windows portable release package`;
-- portable додається як стандартний release artifact поряд із `.exe` та `.msi`;
-- після аудиту виправлено пошук binary у Cargo workspace `target/release` із fallback;
-- portable не вважається виправленням runtime-зависання.
+Очікуваний scope:
+- `empty` — мінімальне відкрите сховище без нав'язаної структури;
+- `PARA` — Projects / Areas / Resources / Archives;
+- `Zettelkasten` — мінімальна структура і стартові шаблони без vendor lock-in;
+- усі пресети створюють тільки звичайні папки, Markdown, JSON та `.mdnotes` service metadata;
+- не змінювати існуючий vault без явної дії користувача;
+- UI та документація — 7 мов;
+- логіка створення структури в `notes-core`, Tauri thin wrapper, tests.
 
 ## Наступна дія
 
-1. дочекатися clean CI оновленого PR #20;
-2. інтегрувати PR #20 у `main` після green checks;
-3. переконатися, що PR #19 не конфліктує з runtime-hotfix і не повертає auto-reopen;
-4. перевести PR #19 з draft у ready та інтегрувати після green/mergeability checks;
-5. після merge оновити roadmap/state і Issue #8;
-6. **не створювати release checkpoint без окремої команди власника «зливай у main»**;
-7. наступний незавершений пункт v0.2 після schema slice — пресети сховища: PARA / Zettelkasten / порожнє.
+1. перевірити існуючий flow відкриття/ініціалізації vault і `Vault::init`;
+2. описати точний склад трьох preset-ів і безпечну поведінку при непорожній папці;
+3. реалізувати через нову branch + PR;
+4. пройти стандартний CI і license gates;
+5. після зеленого CI інтегрувати slice технічно в `main`;
+6. після preset slice наступний незавершений пункт v0.2 — **граф знань**;
+7. **не створювати release checkpoint без окремої команди власника «зливай у main»**.
 
-## Останній checkpoint
+## Останній опублікований checkpoint
 
 - GitHub prerelease [`v0.2.1`](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.1), 01.10.2026;
-- attachment PR #16 → `main` squash commit `6b923369b8d5e3bb4e031f201dd9de7cd8c2c594`;
-- release PR #14 → release commit `26661d8c088df51ce162018d2a3b525502cf30e1`;
-- tag `v0.2.1`, release workflow #19 / run `36924302514` — **SUCCESS**;
+- release commit `26661d8c088df51ce162018d2a3b525502cf30e1`;
+- release workflow #19 / run `36924302514` — **SUCCESS**;
 - Windows/macOS/Linux packages + `MD-Notes-0.2.1-START.zip` + legal notices + `SHA256SUMS.txt` published.
 
 ## Відомі обмеження
 
-- runtime GUI-перевірка v0.2.1 виявила blocker із зависанням; hotfix інтегровано, але ще не підтверджено реальною Windows-перевіркою;
-- великі сховища все ще індексуються синхронно під час ручного відкриття;
-- форма властивостей може нормалізувати форматування YAML front matter; YAML-коментарі всередині front matter не гарантуються після застосування форми;
-- окремого GUI-редактора самого `schema.json` поки немає;
+- runtime freeze hotfix інтегровано, але ще не підтверджено реальною новою Windows-збіркою;
+- великі сховища все ще індексуються синхронно при ручному відкритті;
+- форма властивостей може нормалізувати YAML formatting; YAML-коментарі всередині front matter не гарантуються після застосування форми;
+- окремого GUI-редактора `schema.json` поки немає;
 - збірки не підписані;
 - Android/iOS ще не збираються.
