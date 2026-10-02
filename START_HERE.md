@@ -4,12 +4,12 @@
 
 ## Статус
 
-**ACTIVE — завершуємо залишок етапу v0.2, потім v0.3.**
+**ACTIVE — завершуємо останній функціональний пункт v0.2, потім v0.3.**
 
 Останній опублікований checkpoint: **v0.2.1** (GitHub prerelease `v0.2.1`, 01.10.2026).
-`main` уже випереджає цей release: інтегровані runtime-startup hotfix, Windows portable packaging і schema-driven properties.
+`main` уже випереджає цей release: інтегровані runtime-startup hotfix, Windows portable packaging, schema-driven properties і safe vault presets/startup gate.
 
-Поточна наступна функціональна дія: **vault presets — PARA / Zettelkasten / порожнє**.
+Поточна наступна функціональна дія: **граф знань — глобальний і локальний**.
 Окремо лишається обов'язковий реальний Windows runtime-повторний тест hotfix-а зависання.
 
 Деталі стану — `PROJECT_STATE.md`, активна робота — `WORKLOG.md`.
