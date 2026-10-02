@@ -29,6 +29,8 @@ Application `app/src-tauri`:
 - react-markdown, remark-gfm, remark-math, rehype-katex — MIT, Markdown rendering
 - KaTeX — MIT, math rendering (includes fonts under the SIL Open Font License 1.1)
 - Mermaid 11 — MIT, diagrams (Mermaid 12 is avoided because it bundles EPL-2.0 elkjs)
+- Sigma.js — MIT, WebGL knowledge-graph rendering
+- Graphology — MIT, in-memory graph model used by Sigma.js
 - `@tauri-apps/api`, `@tauri-apps/plugin-dialog`, `@tauri-apps/plugin-opener`, `@tauri-apps/cli` — MIT OR Apache-2.0
 - Vite, `@vitejs/plugin-react` — MIT (build tools)
 - TypeScript — Apache-2.0 (build tool)

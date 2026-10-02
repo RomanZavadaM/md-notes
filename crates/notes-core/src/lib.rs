@@ -6,6 +6,7 @@
 
 pub mod attachments;
 pub mod error;
+pub mod graph;
 pub mod index;
 pub mod markdown;
 pub mod note;
@@ -18,6 +19,7 @@ pub mod vault;
 
 pub use attachments::AttachmentInfo;
 pub use error::{Error, Result};
+pub use graph::{knowledge_graph, GraphEdge, GraphNode, KnowledgeGraph};
 pub use index::{Backlink, Index, NoteSummary, SearchHit, SyncStats, TagCount, UnresolvedLink};
 pub use markdown::WikiLink;
 pub use note::Note;
