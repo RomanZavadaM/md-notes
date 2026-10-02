@@ -1,0 +1,61 @@
+.startup-gate {
+  justify-content: flex-start;
+  overflow-y: auto;
+  padding-block: clamp(1rem, 5vh, 3rem);
+}
+
+.startup-card {
+  width: min(100%, 34rem);
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-soft);
+  text-align: left;
+}
+
+.startup-card h2,
+.startup-card p {
+  margin: 0;
+}
+
+.startup-card label {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 600;
+}
+
+.startup-card input,
+.startup-card select {
+  width: 100%;
+  min-width: 0;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+}
+
+.startup-card small {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.startup-actions {
+  display: grid;
+  gap: 0.5rem;
+  width: min(100%, 34rem);
+}
+
+.startup-recent-path {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.startup-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
