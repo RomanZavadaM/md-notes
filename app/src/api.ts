@@ -81,23 +81,37 @@ export interface AttachmentInfo {
   size: number;
 }
 
-export type PropertyKind = "string" | "text" | "number" | "boolean" | "date" | "select" | "tags";
+export type FieldKind =
+  | "text"
+  | "string"
+  | "number"
+  | "boolean"
+  | "date"
+  | "enum"
+  | "list"
+  | "link"
+  | "links"
+  | "url"
+  | "file";
 
-export interface PropertySpec {
+export interface FieldSpec {
   label: string | null;
-  type: PropertyKind;
-  required: boolean;
-  options: string[];
+  type: FieldKind;
+  readonly: boolean;
+  values: string[];
+  noteType: string | null;
 }
 
 export interface NoteTypeSpec {
   label: string | null;
   template: string | null;
-  properties: Record<string, PropertySpec>;
+  fields: string[];
+  required: string[];
 }
 
 export interface SchemaDocument {
   version: number;
+  fields: Record<string, FieldSpec>;
   types: Record<string, NoteTypeSpec>;
 }
 
