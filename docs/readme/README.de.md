@@ -2,51 +2,64 @@
 
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · **🇩🇪 Deutsch** · [🇪🇸 Español](README.es.md) · [🇰🇷 한국어](README.ko.md) · [🇯🇵 日本語](README.ja.md)
 
-> **Aktueller Checkpoint: [MD Notes v0.2.0](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.0)**
+> **Letzter veröffentlichter Checkpoint: [MD Notes v0.2.2](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.2)**
 >
-> **Entwicklungsstatus: ACTIVE — nächste Stufe v0.3 „mobile Plattformen und Synchronisation“.**
+> **Entwicklungsstatus: ACTIVE — Roadmap-Stufe v0.3 „mobile Plattformen und Synchronisierung“.**
 
 ## Über das Produkt
 
-**MD Notes** ist eine plattformübergreifende Local-first-App für eine persönliche Wissensdatenbank in Markdown: einfache `.md`-Dateien samt Anhängen ansehen, bearbeiten, strukturieren und visualisieren.
+**MD Notes** ist eine plattformübergreifende Local-first-App für eine Markdown-Wissensdatenbank. Sie arbeitet mit normalen `.md`-Dateien und Anhängen ohne verstecktes proprietäres Datenformat.
 
-**Ihre Daten gehören Ihnen.** Notizen sind offene Textdateien. Sie lassen sich in jedem Editor öffnen, auf GitHub ansehen und mit Git versionieren. Die App erzeugt keine versteckten Formate.
+**Ihre Daten gehören Ihnen.** Notizen können mit jedem Editor geöffnet, im eigenen Dateisystem gespeichert und mit Git versioniert werden. MD Notes hat keinen eigenen Anwendungsserver, keine Analyse und keine Telemetrie.
 
-Plattformen: **Windows, macOS, Linux**; Android und iOS sind für v0.3 geplant.
+Plattformen: **Windows, macOS, Linux**. Android und iOS werden in v0.3 aktiv entwickelt; CI bestätigt die Buildbarkeit, die Laufzeit auf physischen Geräten ist jedoch noch nicht als validiert ausgewiesen.
 
-## Neu in v0.2.0
+## Bereits umgesetzt
 
-- ein lokaler Ordner als Tresor; Dateibaum mit Anlegen, Umbenennen und Papierkorb;
-- CodeMirror-6-Editor, Vorschau, Nebeneinander-Modus, automatisches Speichern, atomares Schreiben;
-- `[[Wiki-Links]]`, `aliases`, Rückverweis-Leiste mit Kontext;
-- **Aktualisierung von Links beim Umbenennen oder Verschieben** von Notizen und Ordnern;
-- Volltextsuche, Tags mit Notizanzahl, Schnellwechsler `Ctrl+O`;
-- Mermaid, KaTeX und Bilder aus dem Tresor;
-- Notizvorlagen und Tagesnotizen;
-- Überwachung von Dateien, die außerhalb der App geändert werden (Desktop);
-- Oberfläche in sieben Sprachen und Fenster „Über“;
-- helles, dunkles und System-Design; die Beispiel-Wissensdatenbank `sample-vault/`.
+### v0.2 — abgeschlossene funktionale Basis
 
-Nächste Stufe — v0.3: Android und iOS, Synchronisation über Git und WebDAV, Tabellen und Abfragesprache. Vollständiger Plan: [Roadmap](../roadmap.md) (Ukrainisch).
+- lokaler Vault, Dateibaum, Erstellen/Umbenennen/Papierkorb;
+- CodeMirror 6, Vorschau/Split, Autosave und atomare Schreibvorgänge;
+- SQLite/FTS5-Index, Suche, Tags und Quick Open;
+- Wiki-Links, Aliases, Backlinks und Link-Rewrite bei Rename/Move;
+- Mermaid 11, KaTeX, Bilder, Anhänge, Vorlagen und Daily Notes;
+- schema-gesteuerte Eigenschaften über `.mdnotes/schema.json`;
+- Empty / PARA / Zettelkasten Presets;
+- globaler/lokaler Wissensgraph;
+- Oberfläche in sieben Sprachen sowie Hell/Dunkel/System-Theme.
+
+### v0.3 — aktive Entwicklung
+
+Bereits in `main` integriert:
+
+- provider-neutrales `StorageProvider` / `VaultStorage`;
+- Mobile-Sandbox-Vault für Android/iOS;
+- Android- und iOS-Build-Smoke in CI;
+- Local-first Sync-Entscheidungsgrundlage und persistenter Sync-State;
+- HTTPS-Git-Grundlage mit `gix`/gitoxide;
+- Erkennung eines veränderten Worktrees;
+- lokaler Git-Commit-Pipeline ohne Abhängigkeit von User/System-Git-Konfiguration;
+- sicherer öffentlicher HTTPS-Fetch;
+- In-Memory-HTTPS-Authentifizierung ohne Token in Git config, Vault oder Remote-URL.
+
+Der aktuelle Security-Checkpoint ergänzt **systemweiten Git-Credential-Speicher** in der Tauri-Schicht: Windows Credential Manager, macOS Keychain, iOS Protected Data, Android Keystore-backed storage und Linux Secret Service. Das Frontend kann Credentials speichern/prüfen/löschen, aber den Token nicht zurücklesen; authentifizierter Fetch liest das Secret nur intern in Rust direkt vor dem Netzwerkaufruf.
+
+Noch **nicht abgeschlossen**: Git Pull/Merge-Policy, Push, vollständige Integration mit der Konfliktpolitik, WebDAV, Runtime-Validierung auf physischen Android/iOS-Geräten sowie optionale Android-SAF-/iOS-security-scoped externe Ordner.
+
+Vollständiger Plan: [Roadmap](../roadmap.md) (Ukrainisch, maßgeblich).
 
 ## Installation
 
-Laden Sie das Paket für Ihr Betriebssystem von der [Release-Seite](https://github.com/RomanZavadaM/md-notes/releases):
+Pakete gibt es auf der [Release-Seite](https://github.com/RomanZavadaM/md-notes/releases): Windows (`.exe`, `.msi`, portable ZIP), macOS (`.dmg`, `.app.tar.gz`) und Linux (`.AppImage`, `.deb`, `.rpm`).
 
-- **Windows** — `MD.Notes_<Version>_x64-setup.exe` oder `.msi`. Der Build ist nicht signiert, daher kann Windows SmartScreen anzeigen.
-- **macOS** — `.dmg` / `.app.tar.gz` (Universal). Der Build ist nicht notarisiert; eventuell ist **Systemeinstellungen → Datenschutz & Sicherheit → Dennoch öffnen** nötig.
-- **Linux** — `.AppImage`, `.deb` oder `.rpm`.
-
-Klicken Sie nach dem Start auf **„Ordner öffnen“** und wählen Sie einen Ordner mit Notizen oder `sample-vault/` aus diesem Repository.
+Der letzte veröffentlichte Prerelease ist **v0.2.2**. Die Builds sind derzeit nicht signiert/notarisiert, daher kann das Betriebssystem normale Sicherheitswarnungen anzeigen.
 
 Vollständige Anleitung: **[Benutzerhandbuch](../user-guide/USER_GUIDE.de.md)**.
 
-## Für Entwickler
+## Entwicklung, Datenschutz und Rechtliches
 
-Benötigt werden [Rust](https://rustup.rs/) (stable), [Node.js](https://nodejs.org/) 20+ und die [Tauri-Systemvoraussetzungen](https://v2.tauri.app/start/prerequisites/). In `app/` `npm ci` und `npm run tauri dev` ausführen. Entwicklungsregeln: [PROJECT_RULES.md](../../PROJECT_RULES.md) (Ukrainisch, maßgeblich).
+Benötigt werden Rust stable, Node.js 20+ und die Tauri-Systemvoraussetzungen. Integrations-Gates umfassen Rust format/clippy/tests, Frontend-Build, Lizenzprüfung, Desktop-CI sowie Android/iOS-Mobile-Smoke bei Änderungen an der Mobile/Tauri-Grenze.
 
-## Datenschutz und Rechtliches
+MD Notes arbeitet local-first. Sync-Secrets dürfen niemals im Vault, in Markdown-Dateien, Remote-URLs, Git config, Logs oder `localStorage` gespeichert werden; sie gehören in den Credential Store des Betriebssystems. Synchronisationskonflikte dürfen niemals stillschweigend überschrieben werden.
 
-MD Notes arbeitet local-first: Notizen, Anhänge und der Index bleiben auf Ihrem Gerät oder in dem von Ihnen gewählten Speicher. Es gibt keine Server, keine Analyse und keine Telemetrie. Synchronisationskonflikte werden nie stillschweigend überschrieben. Erstellen Sie Sicherungen Ihrer Tresore.
-
-Copyright © 2026 Roman Zavada (Роман Завада). Alle Rechte vorbehalten. MD Notes ist proprietäre Software; das öffentliche Repository gewährt keine Open-Source-Lizenz. Ihre Notizen gehören Ihnen. Siehe [LICENSE.md](../../LICENSE.md) und die [rechtlichen Hinweise](../LEGAL_AND_COPYRIGHT.md).
+Copyright © 2026 Roman Zavada (Роман Завада). Alle Rechte vorbehalten. MD Notes ist proprietäre Software; das öffentliche Repository gewährt keine Open-Source-Lizenz. Ihre Notizen gehören Ihnen. Siehe [LICENSE.md](../../LICENSE.md) und [rechtliche Hinweise](../LEGAL_AND_COPYRIGHT.md).

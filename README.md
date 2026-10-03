@@ -4,46 +4,65 @@
 
 [![CI](https://github.com/RomanZavadaM/md-notes/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanZavadaM/md-notes/actions/workflows/ci.yml)
 
-> **Поточний checkpoint: [MD Notes v0.2.0](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.0)**
+> **Останній опублікований checkpoint: [MD Notes v0.2.2](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.2)**
 >
-> **Статус розвитку: ACTIVE — наступний етап v0.3 «мобільні платформи і синхронізація».**
+> **Статус розвитку: ACTIVE — roadmap stage v0.3 «мобільні платформи і синхронізація».**
 
 ## Про продукт
 
-**MD Notes** — кросплатформний local-first застосунок для особистої бази знань у форматі Markdown: перегляд, редагування, структурування й візуалізація звичайних `.md` файлів разом із вкладеннями.
+**MD Notes** — кросплатформний local-first застосунок для особистої бази знань у Markdown. Він працює зі звичайними `.md` файлами та вкладеннями без прихованого формату даних.
 
-**Дані належать користувачу.** Нотатки — це відкриті текстові файли. Їх можна відкрити будь-яким редактором, переглянути на GitHub і версіонувати через Git. Застосунок не створює прихованих форматів.
+**Дані належать користувачу.** Нотатки можна відкрити будь-яким редактором, зберігати у власній файловій системі та версіонувати через Git. MD Notes не має власного сервера, аналітики чи телеметрії.
 
-Платформи: **Windows, macOS, Linux**; Android та iOS — етап v0.3.
+Платформи: **Windows, macOS, Linux**. Android та iOS активно розробляються у v0.3; CI вже підтверджує їх buildability, але runtime на фізичних пристроях ще не заявляється як підтверджений.
 
-## Що входить у v0.2.0
+## Що вже є
 
-- локальна папка як сховище; дерево файлів, створення, перейменування, кошик;
-- редактор CodeMirror 6, перегляд, режим «поруч», автозбереження, атомарний запис;
-- `[[вікі-посилання]]`, `aliases`, панель зворотних посилань із контекстом;
-- **оновлення посилань при перейменуванні й переміщенні** нотаток і папок;
-- повнотекстовий пошук, теги з кількістю нотаток, швидкий перехід `Ctrl+O`;
-- Mermaid, KaTeX, зображення зі сховища;
-- шаблони нотаток і щоденні нотатки;
-- стеження за змінами файлів поза застосунком (настільні ОС);
-- інтерфейс сімома мовами, вікно «Про програму»;
-- світла, темна і системна теми; приклад бази знань `sample-vault/`.
+### v0.2 — завершений функціональний baseline
 
-Наступний етап — v0.3: Android та iOS, синхронізація через Git і WebDAV, таблиці й мова запитів. Повний план — [docs/roadmap.md](docs/roadmap.md).
+- локальна папка як vault, дерево файлів, створення, перейменування та `.mdnotes/trash/`;
+- CodeMirror 6, preview/split, autosave й атомарні записи;
+- SQLite/FTS5 індекс, пошук, теги, quick open;
+- `[[вікі-посилання]]`, aliases, backlinks і автоматичне оновлення посилань при rename/move;
+- Mermaid 11, KaTeX, зображення, вкладення, шаблони та daily notes;
+- schema-driven properties через відкритий `.mdnotes/schema.json`;
+- Empty / PARA / Zettelkasten presets;
+- global/local knowledge graph;
+- UI сімома мовами, світла/темна/системна теми.
+
+### v0.3 — активна розробка
+
+У `main` уже інтегровано:
+
+- provider-neutral `StorageProvider` / `VaultStorage`;
+- mobile sandbox vault для Android/iOS;
+- Android + iOS build smoke у CI;
+- local-first sync decision foundation і persistent sync state;
+- `gix`/gitoxide HTTPS Git foundation;
+- визначення dirty worktree;
+- локальний Git commit pipeline без залежності від user/system Git config;
+- safe public HTTPS fetch;
+- in-memory HTTPS authentication без запису token у Git config, vault або URL.
+
+Поточний security checkpoint додає **системне сховище Git credentials** на рівні Tauri: Windows Credential Manager, macOS Keychain, iOS Protected Data, Android Keystore-backed storage і Linux Secret Service. Frontend може зберегти/перевірити/очистити credentials, але не отримує token назад; authenticated fetch читає секрет тільки всередині Rust перед network call.
+
+Ще **не завершено**: Git pull/merge policy, push, повна інтеграція Git sync з conflict policy, WebDAV, runtime-перевірка на фізичних Android/iOS пристроях та optional Android SAF / iOS security-scoped external folders.
+
+Повний план — [docs/roadmap.md](docs/roadmap.md).
 
 ## Встановлення
 
-Завантажте пакет для своєї ОС зі сторінки [релізу](https://github.com/RomanZavadaM/md-notes/releases):
+Завантажте пакет зі сторінки [релізів](https://github.com/RomanZavadaM/md-notes/releases):
 
-- **Windows** — `MD.Notes_<версія>_x64-setup.exe` або `.msi`. Збірка не підписана, тому Windows може показати SmartScreen.
-- **macOS** — `.dmg` / `.app.tar.gz` (universal). Збірка не нотаризована; можливо, знадобиться **System Settings → Privacy & Security → Open Anyway**.
+- **Windows** — `.exe`, `.msi` або portable ZIP;
+- **macOS** — `.dmg` / `.app.tar.gz`;
 - **Linux** — `.AppImage`, `.deb` або `.rpm`.
 
-Після запуску натисніть **«Відкрити папку»** і виберіть папку з нотатками або `sample-vault/` з цього репозиторію.
+Останній опублікований prerelease — **v0.2.2**. Збірки поки не підписані/не нотаризовані, тому ОС може показувати стандартні попередження безпеки.
 
 ## Для розробника
 
-Потрібні [Rust](https://rustup.rs/) (stable), [Node.js](https://nodejs.org/) 20+ і [системні залежності Tauri](https://v2.tauri.app/start/prerequisites/).
+Потрібні Rust stable, Node.js 20+ і системні залежності Tauri.
 
 ```bash
 cd app
@@ -51,18 +70,21 @@ npm ci
 npm run tauri dev
 ```
 
-Перевірки перед PR: `cargo fmt --all --check`, `cargo clippy --workspace --all-targets -- -D warnings`, `cargo test -p notes-core`, `npm run build` у `app/`. Правила розробки — [PROJECT_RULES.md](PROJECT_RULES.md), вхід для нової сесії — [START_HERE.md](START_HERE.md).
+Обов’язкові gates перед інтеграцією: Rust format/clippy/tests, frontend build, dependency-license checks, desktop CI та Android/iOS mobile smoke для змін, що зачіпають mobile/Tauri boundary.
+
+Джерела істини: [START_HERE.md](START_HERE.md), [PROJECT_RULES.md](PROJECT_RULES.md), [PROJECT_STATE.md](PROJECT_STATE.md), [WORKLOG.md](WORKLOG.md) і GitHub Issue #8.
 
 ## Керівництво і документація
 
 - [Керівництво користувача](docs/user-guide/USER_GUIDE.uk.md) · [усі мови](docs/user-guide/README.md)
 - [Архітектура](docs/architecture.md) · [Модель даних](docs/data-model.md) · [Мова запитів](docs/query-language.md) · [ADR](docs/adr/)
 - [Roadmap](docs/roadmap.md) · [Changelog](CHANGELOG.md) · [Release notes](docs/releases/)
-- [START_HERE](START_HERE.md) · [PROJECT_RULES](PROJECT_RULES.md) · [PROJECT_STATE](PROJECT_STATE.md) · [WORKLOG](WORKLOG.md)
 
-## Дані та приватність
+## Дані, приватність і Git credentials
 
-MD Notes працює local-first: нотатки, вкладення та індекс залишаються на вашому пристрої або у вибраному вами сховищі. Застосунок не має серверів, аналітики чи телеметрії. Конфлікти синхронізації ніколи не перезаписуються мовчки. Робіть резервні копії своїх сховищ.
+MD Notes працює local-first. Нотатки, вкладення та rebuildable index залишаються на пристрої або у вибраному користувачем сховищі. Секрети синхронізації не повинні зберігатися у vault, `.md` файлах, remote URL, Git config, логах чи `localStorage`; для них використовується системне credential storage.
+
+Конфлікти синхронізації не повинні перезаписуватися мовчки. Робіть резервні копії важливих vault-ів.
 
 ## Авторські права
 

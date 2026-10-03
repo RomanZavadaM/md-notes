@@ -2,51 +2,64 @@
 
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · [🇩🇪 Deutsch](README.de.md) · [🇪🇸 Español](README.es.md) · **🇰🇷 한국어** · [🇯🇵 日本語](README.ja.md)
 
-> **현재 checkpoint: [MD Notes v0.2.0](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.0)**
+> **최신 공개 checkpoint: [MD Notes v0.2.2](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.2)**
 >
-> **개발 상태: ACTIVE — 다음 단계 v0.3 「모바일 플랫폼과 동기화」.**
+> **개발 상태: ACTIVE — roadmap 단계 v0.3 「모바일 플랫폼과 동기화」.**
 
 ## 제품 소개
 
-**MD Notes**는 Markdown 기반 개인 지식 베이스를 위한 크로스 플랫폼 local-first 앱입니다. 일반 `.md` 파일과 첨부 파일을 보고, 편집하고, 구조화하고, 시각화할 수 있습니다.
+**MD Notes**는 Markdown 개인 지식 베이스를 위한 크로스 플랫폼 local-first 앱입니다. 일반 `.md` 파일과 첨부 파일을 사용하며 숨겨진 독점 데이터 형식을 만들지 않습니다.
 
-**데이터는 사용자의 것입니다.** 노트는 열린 텍스트 파일입니다. 어떤 편집기에서도 열 수 있고, GitHub에서 볼 수 있으며, Git으로 버전 관리할 수 있습니다. 앱은 숨겨진 형식을 만들지 않습니다.
+**데이터는 사용자의 것입니다.** 노트는 어떤 편집기에서도 열 수 있고, 사용자의 파일 시스템에 저장할 수 있으며 Git으로 버전 관리할 수 있습니다. MD Notes에는 자체 애플리케이션 서버, 분석, 원격 측정이 없습니다.
 
-플랫폼: **Windows, macOS, Linux**; Android와 iOS는 v0.3에서 지원할 예정입니다.
+플랫폼: **Windows, macOS, Linux**. Android와 iOS는 v0.3에서 활발히 개발 중이며 CI가 빌드 가능성을 확인하지만, 실제 기기 런타임 검증이 완료되었다고 주장하지는 않습니다.
 
-## v0.2.0 주요 기능
+## 이미 구현된 기능
 
-- 로컬 폴더를 보관함으로 사용; 파일 트리에서 생성, 이름 변경, 휴지통;
-- CodeMirror 6 편집기, 미리보기, 나란히 보기, 자동 저장, 원자적 쓰기;
-- `[[위키 링크]]`, `aliases`, 문맥이 표시되는 백링크 패널;
-- **노트와 폴더의 이름 변경·이동 시 링크 자동 갱신**;
-- 전문 검색, 노트 수가 표시되는 태그, `Ctrl+O` 빠른 이동;
-- Mermaid, KaTeX, 보관함의 이미지;
-- 노트 템플릿과 데일리 노트;
-- 앱 밖에서 바뀐 파일 감지(데스크톱);
-- 7개 언어 인터페이스와 「정보」 창;
-- 라이트, 다크, 시스템 테마; 예제 지식 베이스 `sample-vault/`.
+### v0.2 — 완료된 기능 기준선
 
-다음 단계 — v0.3: Android와 iOS, Git·WebDAV 동기화, 표와 쿼리 언어. 전체 계획: [roadmap](../roadmap.md) (우크라이나어).
+- 로컬 vault, 파일 트리, 생성/이름 변경/휴지통;
+- CodeMirror 6, 미리보기/split, 자동 저장, 원자적 쓰기;
+- SQLite/FTS5 인덱스, 검색, 태그, 빠른 열기;
+- wiki link, aliases, backlinks, rename/move 시 링크 갱신;
+- Mermaid 11, KaTeX, 이미지, 첨부 파일, 템플릿, daily notes;
+- 열린 `.mdnotes/schema.json` 기반 속성;
+- Empty / PARA / Zettelkasten preset;
+- global/local knowledge graph;
+- 7개 언어 UI와 라이트/다크/시스템 테마.
+
+### v0.3 — 개발 중
+
+이미 `main`에 통합됨:
+
+- provider-neutral `StorageProvider` / `VaultStorage`;
+- Android/iOS용 mobile sandbox vault;
+- CI의 Android + iOS build smoke;
+- local-first sync decision foundation 및 persistent sync state;
+- `gix`/gitoxide 기반 HTTPS Git foundation;
+- dirty worktree 감지;
+- 사용자/시스템 Git config에 의존하지 않는 로컬 Git commit pipeline;
+- 안전한 public HTTPS fetch;
+- token을 Git config, vault, remote URL에 저장하지 않는 in-memory HTTPS authentication.
+
+현재 security checkpoint는 Tauri 계층에 **시스템 Git credential storage**를 추가합니다: Windows Credential Manager, macOS Keychain, iOS Protected Data, Android Keystore-backed storage, Linux Secret Service. 프런트엔드는 credential을 저장/확인/삭제할 수 있지만 token을 다시 읽을 수는 없습니다. 인증 fetch는 네트워크 호출 직전에 Rust 내부에서만 secret을 읽습니다.
+
+아직 **완료되지 않음**: Git pull/merge 정책, push, conflict policy와의 완전한 통합, WebDAV, 실제 Android/iOS 기기 runtime 검증, optional Android SAF / iOS security-scoped 외부 폴더.
+
+전체 계획: [roadmap](../roadmap.md) (우크라이나어, 기준 문서).
 
 ## 설치
 
-[릴리스 페이지](https://github.com/RomanZavadaM/md-notes/releases)에서 OS에 맞는 패키지를 내려받으세요.
+[릴리스 페이지](https://github.com/RomanZavadaM/md-notes/releases)에서 Windows (`.exe`, `.msi`, portable ZIP), macOS (`.dmg`, `.app.tar.gz`), Linux (`.AppImage`, `.deb`, `.rpm`) 패키지를 받을 수 있습니다.
 
-- **Windows** — `MD.Notes_<버전>_x64-setup.exe` 또는 `.msi`. 코드 서명이 없으므로 Windows가 SmartScreen을 표시할 수 있습니다.
-- **macOS** — `.dmg` / `.app.tar.gz` (universal). 공증(notarization)되지 않았으므로 **시스템 설정 → 개인정보 보호 및 보안 → 그래도 열기**가 필요할 수 있습니다.
-- **Linux** — `.AppImage`, `.deb` 또는 `.rpm`.
-
-실행 후 **「폴더 열기」**를 누르고 노트 폴더나 이 저장소의 `sample-vault/`를 선택하세요.
+최신 공개 prerelease는 **v0.2.2**입니다. 현재 빌드는 서명/공증되지 않았으므로 운영체제가 일반적인 보안 경고를 표시할 수 있습니다.
 
 전체 안내: **[사용자 가이드](../user-guide/USER_GUIDE.ko.md)**.
 
-## 개발자용
+## 개발, 개인정보 및 법적 고지
 
-[Rust](https://rustup.rs/) (stable), [Node.js](https://nodejs.org/) 20+, [Tauri 시스템 요구 사항](https://v2.tauri.app/start/prerequisites/)이 필요합니다. `app/`에서 `npm ci`와 `npm run tauri dev`를 실행하세요. 개발 규칙: [PROJECT_RULES.md](../../PROJECT_RULES.md) (우크라이나어, 기준 문서).
+Rust stable, Node.js 20+, Tauri 시스템 요구 사항이 필요합니다. 통합 gate에는 Rust format/clippy/tests, frontend build, dependency license check, desktop CI, mobile/Tauri 경계 변경 시 Android/iOS mobile smoke가 포함됩니다.
 
-## 개인정보 및 법적 고지
+MD Notes는 local-first입니다. 동기화 secret은 vault, Markdown 파일, remote URL, Git config, 로그, `localStorage`에 저장해서는 안 되며 운영체제 credential store에만 보관해야 합니다. 동기화 충돌은 조용히 덮어쓰면 안 됩니다.
 
-MD Notes는 local-first로 동작합니다. 노트, 첨부 파일, 인덱스는 사용자의 기기 또는 사용자가 선택한 저장소에 남습니다. 서버, 분석, 원격 측정이 없습니다. 동기화 충돌은 절대 조용히 덮어쓰지 않습니다. 보관함을 백업해 두세요.
-
-Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved. MD Notes는 독점 소프트웨어이며, 공개 저장소는 오픈 소스 라이선스를 부여하지 않습니다. 노트는 사용자의 것입니다. [LICENSE.md](../../LICENSE.md)와 [법적 고지](../LEGAL_AND_COPYRIGHT.md)를 참고하세요.
+Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved. MD Notes는 독점 소프트웨어이며 공개 저장소는 오픈 소스 라이선스를 부여하지 않습니다. 노트는 사용자의 것입니다. [LICENSE.md](../../LICENSE.md)와 [법적 고지](../LEGAL_AND_COPYRIGHT.md)를 참고하세요.
