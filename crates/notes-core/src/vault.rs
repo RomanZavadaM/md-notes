@@ -1,11 +1,14 @@
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 
 use crate::error::{io_err, Error, Result};
 use crate::note::Note;
 use crate::paths;
+use crate::storage::LocalFsProvider;
+use crate::vault_storage::VaultStorage;
 
 /// Service folder inside every vault.
 pub const SERVICE_DIR: &str = ".mdnotes";
@@ -55,27 +58,23 @@ pub struct TreeEntry {
 }
 
 /// A knowledge base stored in a local folder.
+///
+/// Provider-neutral content I/O is delegated to `VaultStorage`; cache, rename
+/// and trash remain local-only until mobile/native adapters provide equivalent
+/// operations.
 #[derive(Debug, Clone)]
 pub struct Vault {
     root: PathBuf,
-    config: VaultConfig,
+    storage: VaultStorage,
 }
 
 impl Vault {
     /// Opens an existing folder as a vault. The folder is not modified.
     pub fn open(root: impl AsRef<Path>) -> Result<Self> {
         let root = root.as_ref().to_path_buf();
-        if !root.is_dir() {
-            return Err(Error::NotFound(root.display().to_string()));
-        }
-        let config_path = root.join(SERVICE_DIR).join("config.json");
-        let config = if config_path.is_file() {
-            let raw = fs::read_to_string(&config_path).map_err(io_err(&config_path))?;
-            serde_json::from_str(&raw).map_err(|e| Error::Config(e.to_string()))?
-        } else {
-            VaultConfig::default()
-        };
-        Ok(Self { root, config })
+        let provider = Arc::new(LocalFsProvider::new(&root)?);
+        let storage = VaultStorage::open(provider)?;
+        Ok(Self { root, storage })
     }
 
     /// Creates the service folder (if missing) and opens the vault.
@@ -108,7 +107,7 @@ impl Vault {
     }
 
     pub fn config(&self) -> &VaultConfig {
-        &self.config
+        self.storage.config()
     }
 
     /// `.mdnotes/cache`, created on demand. Also makes sure the service
@@ -126,7 +125,7 @@ impl Vault {
 
     /// Config name or the folder name.
     pub fn display_name(&self) -> String {
-        self.config.name.clone().unwrap_or_else(|| {
+        self.storage.config().name.clone().unwrap_or_else(|| {
             self.root
                 .file_name()
                 .map(|n| n.to_string_lossy().into_owned())
@@ -138,64 +137,12 @@ impl Vault {
     /// also hides `.mdnotes` and `.git`. Folders come first, then files, both
     /// sorted case-insensitively.
     pub fn tree(&self) -> Result<Vec<TreeEntry>> {
-        self.read_dir("")
-    }
-
-    fn read_dir(&self, rel: &str) -> Result<Vec<TreeEntry>> {
-        let dir = paths::resolve(&self.root, rel)?;
-        let mut entries = Vec::new();
-        for item in fs::read_dir(&dir).map_err(io_err(&dir))? {
-            let item = item.map_err(io_err(&dir))?;
-            let name = item.file_name().to_string_lossy().into_owned();
-            if name.starts_with('.') || name.ends_with(TMP_SUFFIX) {
-                continue;
-            }
-            let path = paths::join(rel, &name);
-            let file_type = item.file_type().map_err(io_err(&item.path()))?;
-            if file_type.is_dir() {
-                let children = self.read_dir(&path)?;
-                entries.push(TreeEntry {
-                    name,
-                    path,
-                    kind: EntryKind::Dir,
-                    children: Some(children),
-                });
-            } else if file_type.is_file() {
-                let kind = if paths::is_note(&name) {
-                    EntryKind::Note
-                } else {
-                    EntryKind::File
-                };
-                entries.push(TreeEntry {
-                    name,
-                    path,
-                    kind,
-                    children: None,
-                });
-            }
-        }
-        entries.sort_by(|a, b| {
-            (a.kind != EntryKind::Dir)
-                .cmp(&(b.kind != EntryKind::Dir))
-                .then_with(|| a.name.to_lowercase().cmp(&b.name.to_lowercase()))
-        });
-        Ok(entries)
+        self.storage.tree()
     }
 
     /// Paths of all notes in the vault.
     pub fn note_paths(&self) -> Result<Vec<String>> {
-        fn collect(entries: &[TreeEntry], out: &mut Vec<String>) {
-            for entry in entries {
-                match entry.kind {
-                    EntryKind::Note => out.push(entry.path.clone()),
-                    EntryKind::Dir => collect(entry.children.as_deref().unwrap_or_default(), out),
-                    EntryKind::File => {}
-                }
-            }
-        }
-        let mut out = Vec::new();
-        collect(&self.tree()?, &mut out);
-        Ok(out)
+        self.storage.note_paths()
     }
 
     /// Finds the note a `[[target]]` points to: first by path, then by file
@@ -230,25 +177,12 @@ impl Vault {
     }
 
     pub fn read_note(&self, rel: &str) -> Result<Note> {
-        let rel = note_path(rel)?;
-        let path = paths::resolve(&self.root, &rel)?;
-        if !path.is_file() {
-            return Err(Error::NotFound(rel));
-        }
-        let content = fs::read_to_string(&path).map_err(io_err(&path))?;
-        Ok(Note::parse(&rel, content))
+        self.storage.read_note(rel)
     }
 
-    /// Saves a note atomically (write to a temp file, then rename), creating
-    /// parent folders when needed.
+    /// Saves a note atomically through the storage provider.
     pub fn write_note(&self, rel: &str, content: &str) -> Result<Note> {
-        let rel = note_path(rel)?;
-        let path = paths::resolve(&self.root, &rel)?;
-        if let Some(parent) = path.parent() {
-            fs::create_dir_all(parent).map_err(io_err(parent))?;
-        }
-        write_atomic(&path, content.as_bytes())?;
-        Ok(Note::parse(&rel, content.to_string()))
+        self.storage.write_note(rel, content)
     }
 
     /// Creates a new note in `dir` with a unique file name derived from
@@ -272,7 +206,10 @@ impl Vault {
             name if name.is_empty() => "Без назви".to_string(),
             name => name,
         };
-        Ok((self.unique_path(&dir, &base, ".md"), title.to_string()))
+        Ok((
+            self.storage.unique_path(&dir, &base, ".md")?,
+            title.to_string(),
+        ))
     }
 
     /// Creates a folder with a unique name and returns its path.
@@ -282,7 +219,7 @@ impl Vault {
         if base.is_empty() {
             return Err(Error::InvalidPath(name.to_string()));
         }
-        let rel = self.unique_path(&parent, &base, "");
+        let rel = self.storage.unique_path(&parent, &base, "")?;
         let path = paths::resolve(&self.root, &rel)?;
         fs::create_dir_all(&path).map_err(io_err(&path))?;
         Ok(rel)
@@ -332,34 +269,10 @@ impl Vault {
         fs::rename(&source, &target).map_err(io_err(&source))?;
         Ok(trash_rel)
     }
-
-    fn unique_path(&self, dir: &str, base: &str, ext: &str) -> String {
-        let mut n = 0;
-        loop {
-            let name = if n == 0 {
-                format!("{base}{ext}")
-            } else {
-                format!("{base} {n}{ext}")
-            };
-            let rel = paths::join(dir, &name);
-            if !self.root.join(&rel).exists() {
-                return rel;
-            }
-            n += 1;
-        }
-    }
 }
 
 const TMP_SUFFIX: &str = ".mdnotes-tmp";
 const SERVICE_GITIGNORE: &[u8] = b"cache/\ntrash/\n";
-
-fn note_path(rel: &str) -> Result<String> {
-    let norm = paths::normalize(rel)?;
-    if !paths::is_note(&norm) {
-        return Err(Error::InvalidPath(rel.to_string()));
-    }
-    Ok(norm)
-}
 
 /// Content of a freshly created note.
 pub fn new_note_content(title: &str) -> String {
