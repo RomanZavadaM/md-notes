@@ -35,8 +35,7 @@
 - [x] Граф знань: глобальний і локальний, Sigma.js + Graphology — PR #25
 - [x] Windows portable як стандартний release artifact — v0.2.2
 - [x] Повний test-release checkpoint `v0.2.2`: Windows/macOS/Linux + START/legal/checksums
-
-**Runtime evidence лишається відкритим:** v0.2.2 опубліковано за рішенням власника, але повторний реальний Windows-тест startup-freeze hotfix ще потрібен. Green CI/build не замінює runtime validation. Якщо freeze відтворюється після відкриття vault, цей blocker має пріоритет над стартом великої роботи v0.3.
+- [x] Реальний Windows runtime-test v0.2.2 — **PASS 03.10.2026**; попередній startup-freeze blocker v0.2.1 не відтворився.
 
 ## v0.3 — мобільні платформи і синхронізація
 
