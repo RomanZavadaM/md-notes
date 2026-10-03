@@ -139,7 +139,7 @@ pub fn commit_git_worktree(path: impl AsRef<Path>, message: &str) -> Result<Opti
     let signature = gix::actor::SignatureRef {
         name: "MD Notes".into(),
         email: "md-notes@local".into(),
-        time: timestamp.as_str().into(),
+        time: timestamp.as_str(),
     };
     let commit_id = repo
         .commit_as(
@@ -148,7 +148,7 @@ pub fn commit_git_worktree(path: impl AsRef<Path>, message: &str) -> Result<Opti
             "HEAD",
             message.trim(),
             tree_id,
-            parent.into_iter(),
+            parent,
         )
         .map_err(git_err)?;
 
