@@ -21,8 +21,8 @@ Application `app/src-tauri`:
 
 - tauri, tauri-build — MIT OR Apache-2.0, application shell
 - tauri-plugin-dialog, tauri-plugin-opener — MIT OR Apache-2.0
-- keyring / keyring-core — MIT OR Apache-2.0, platform credential-store abstraction for Git HTTPS secrets
-- platform keyring backends selected by target: Windows Credential Manager, Apple Keychain / Protected Data, Android Keystore-backed storage, Linux Secret Service — permissively licensed components from the Rust keyring ecosystem
+- keyring-core — MIT OR Apache-2.0, common credential-store API used for Git HTTPS secrets
+- target-specific native credential-store crates: `windows-native-keyring-store`, `apple-native-keyring-store`, `android-native-keyring-store`, `zbus-secret-service-keyring-store`; only the backend for the target platform is linked, and its license is enforced by the Cargo license gate
 - notify-debouncer-mini / notify — MIT OR Apache-2.0 / CC0-1.0, file watching (desktop)
 
 ## npm packages (direct dependencies)
