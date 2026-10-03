@@ -39,8 +39,28 @@ pub fn validate_git_remote(remote: &str) -> Result<()> {
 }
 
 pub fn open_git_repository(path: impl AsRef<Path>) -> Result<GitRepositoryInfo> {
-    let repo = gix::open_opts(path.as_ref(), gix::open::Options::isolated()).map_err(git_err)?;
+    let repo = open_isolated(path.as_ref())?;
     repository_info(&repo)
+}
+
+/// Return whether the repository has tracked or untracked worktree changes.
+///
+/// This deliberately uses isolated repository config so system/user Git config
+/// cannot silently alter status behavior or load credential helpers.
+pub fn git_has_changes(path: impl AsRef<Path>) -> Result<bool> {
+    let repo = open_isolated(path.as_ref())?;
+    let mut items = repo
+        .status(gix::progress::Discard)
+        .map_err(git_err)?
+        .untracked_files(gix::status::UntrackedFiles::Files)
+        .into_iter(std::iter::empty::<gix::bstr::BString>())
+        .map_err(git_err)?;
+
+    match items.next() {
+        Some(Ok(_)) => Ok(true),
+        Some(Err(error)) => Err(git_err(error)),
+        None => Ok(false),
+    }
 }
 
 /// Clone a public HTTPS repository and check out its main worktree.
@@ -73,6 +93,10 @@ pub fn clone_git_repository(
     repository_info(&repo)
 }
 
+fn open_isolated(path: &Path) -> Result<gix::Repository> {
+    gix::open_opts(path, gix::open::Options::isolated()).map_err(git_err)
+}
+
 fn repository_info(repo: &gix::Repository) -> Result<GitRepositoryInfo> {
     let workdir = repo
         .workdir()
@@ -90,6 +114,8 @@ fn git_err(error: impl std::fmt::Display) -> Error {
 
 #[cfg(test)]
 mod tests {
+    use std::fs;
+
     use super::*;
 
     #[test]
@@ -111,6 +137,16 @@ mod tests {
         let info = open_git_repository(dir.path()).unwrap();
         assert_eq!(Path::new(&info.workdir), dir.path());
         assert!(info.head.is_none());
+    }
+
+    #[test]
+    fn detects_untracked_changes() {
+        let dir = tempfile::tempdir().unwrap();
+        gix::init(dir.path()).unwrap();
+        assert!(!git_has_changes(dir.path()).unwrap());
+
+        fs::write(dir.path().join("note.md"), "# Note\n").unwrap();
+        assert!(git_has_changes(dir.path()).unwrap());
     }
 
     #[test]
