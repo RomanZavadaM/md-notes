@@ -19,6 +19,8 @@ pub enum Error {
     Config(String),
     #[error("invalid sync state: {0}")]
     Sync(String),
+    #[error("Git sync error: {0}")]
+    Git(String),
     #[error("index error: {0}")]
     Index(#[from] rusqlite::Error),
 }

@@ -6,6 +6,7 @@
 
 pub mod attachments;
 pub mod error;
+pub mod git_sync;
 pub mod graph;
 pub mod index;
 pub mod markdown;
@@ -22,6 +23,9 @@ pub mod vault_storage;
 
 pub use attachments::AttachmentInfo;
 pub use error::{Error, Result};
+pub use git_sync::{
+    clone_git_repository, open_git_repository, validate_git_remote, GitRepositoryInfo,
+};
 pub use graph::{knowledge_graph, GraphEdge, GraphNode, KnowledgeGraph};
 pub use index::{Backlink, Index, NoteSummary, SearchHit, SyncStats, TagCount, UnresolvedLink};
 pub use markdown::WikiLink;
