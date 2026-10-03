@@ -30,7 +30,7 @@ pub fn validate_git_remote(remote: &str) -> Result<()> {
             "credentials must not be embedded in the Git remote URL".into(),
         ));
     }
-    if remote.chars().any(char::is_whitespace) || remote.contains(['?', '#']) {
+    if remote.chars().any(char::is_whitespace) || remote.contains('?') || remote.contains('#') {
         return Err(Error::Git(
             "Git remote URL must not contain whitespace, query parameters or fragments".into(),
         ));
