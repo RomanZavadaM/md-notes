@@ -1,7 +1,40 @@
 # Changelog
 
-## [0.2.2](https://github.com/RomanZavadaM/md-notes/compare/v0.2.1...v0.2.2) (2026-10-02)
+## Unreleased — v0.3 development
 
+### Нові можливості
+
+- provider-neutral storage foundation (`StorageProvider`, `VaultStorage`);
+- mobile sandbox vault flow for Android/iOS;
+- local-first sync decision/conflict foundation and persistent sync state;
+- `gix`/gitoxide HTTPS Git clone/open foundation;
+- local Git dirty-state detection and local commit pipeline;
+- safe public HTTPS fetch;
+- in-memory Git HTTPS authentication without persisting credentials in Git config, vault files or remote URLs;
+- system Git credential storage in the Tauri layer: Windows Credential Manager, macOS Keychain, iOS Protected Data, Android Keystore-backed storage and Linux Secret Service;
+- authenticated fetch using credentials loaded only inside Rust.
+
+### CI / платформи
+
+- Android aarch64 debug build smoke;
+- iOS simulator debug build smoke;
+- dependency-license validation for newly added Git and credential-store dependencies.
+
+### Документація
+
+- README status refreshed for the v0.2.2 published baseline and active v0.3 development;
+- localized README descriptions synchronized for UK / EN / FR / DE / ES / KO / JA;
+- `START_HERE.md`, `PROJECT_STATE.md` and `WORKLOG.md` synchronized with Git PRs #30–#45.
+
+### Ще не завершено у v0.3
+
+- Git pull/merge policy and full conflict integration;
+- Git push;
+- WebDAV;
+- physical-device Android/iOS runtime validation;
+- optional Android SAF / iOS security-scoped external-folder adapters.
+
+## [0.2.2](https://github.com/RomanZavadaM/md-notes/compare/v0.2.1...v0.2.2) (2026-10-02)
 
 ### Нові можливості
 
@@ -9,12 +42,10 @@
 * add safe vault presets ([#23](https://github.com/RomanZavadaM/md-notes/issues/23)) ([c078d07](https://github.com/RomanZavadaM/md-notes/commit/c078d075d089257c83b903eea44c317f391b765c))
 * add schema-driven note properties ([7441259](https://github.com/RomanZavadaM/md-notes/commit/7441259a019eae1f7858898d8a29a9ac4d9ec7cd))
 
-
 ### Виправлення
 
 * keep pre-1.0 releases on patch line ([8ca052c](https://github.com/RomanZavadaM/md-notes/commit/8ca052c6aa69c31f5af8afce186d606b97ffd22a))
 * prevent unsafe vault auto-reopen on startup ([de7b9d1](https://github.com/RomanZavadaM/md-notes/commit/de7b9d1b8fa7b9f5c7884b4082d977f4a1029b01))
-
 
 ### Документація
 
@@ -25,12 +56,10 @@
 
 ## [0.2.1](https://github.com/RomanZavadaM/md-notes/compare/v0.2.0...v0.2.1) (2026-10-01)
 
-
 ### Виправлення
 
 * complete v0.2 attachment management ([#16](https://github.com/RomanZavadaM/md-notes/issues/16)) ([6b92336](https://github.com/RomanZavadaM/md-notes/commit/6b923369b8d5e3bb4e031f201dd9de7cd8c2c594))
 * enable restrictive Tauri CSP ([a8e1106](https://github.com/RomanZavadaM/md-notes/commit/a8e1106b40b5552f453c410d96fbf5f1da9a243a))
-
 
 ### Документація
 
@@ -38,7 +67,6 @@
 * record the v0.2.0 release checkpoint in WORKLOG ([014f82b](https://github.com/RomanZavadaM/md-notes/commit/014f82b7160bd3bd4675fffa1b28a192ef0d8b5f))
 
 ## [0.2.0](https://github.com/RomanZavadaM/md-notes/compare/v0.1.0...v0.2.0) (2026-10-01)
-
 
 ### Нові можливості
 
@@ -51,11 +79,9 @@
 * **core:** SQLite index with backlinks, search, tags and aliases ([b47dd70](https://github.com/RomanZavadaM/md-notes/commit/b47dd70237df77fccc777a7ce1434c61755f3e7f))
 * note templates and daily notes ([a19c6e6](https://github.com/RomanZavadaM/md-notes/commit/a19c6e6b5d3a536679e5a0337ddfe6194d0d0a2c))
 
-
 ### Виправлення
 
 * **app:** use Mermaid 11, which does not bundle EPL-2.0 elkjs ([4f13e37](https://github.com/RomanZavadaM/md-notes/commit/4f13e37bb1b659c706b0c0293ce11211f903cd96))
-
 
 ### Документація
 
@@ -68,7 +94,6 @@
 * update WORKLOG ([cdc6648](https://github.com/RomanZavadaM/md-notes/commit/cdc664885eab30f3d9b99163d3b273c6d2018261))
 
 ## 0.1.0 (2026-10-01)
-
 
 ### Нові можливості
 
