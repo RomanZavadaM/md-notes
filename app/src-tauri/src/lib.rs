@@ -4,9 +4,9 @@ use std::collections::BTreeMap;
 use std::sync::Mutex;
 
 use notes_core::{
-    create_vault_with_preset, knowledge_graph, AttachmentInfo, Backlink, Index, KnowledgeGraph,
-    Note, NoteSummary, RenameOutcome, SchemaDocument, SearchHit, TagCount, TemplateInfo, TreeEntry,
-    UnresolvedLink, Vault, VaultPreset,
+    create_vault_with_preset, fetch_git_remote_authenticated, knowledge_graph, AttachmentInfo,
+    Backlink, Index, KnowledgeGraph, Note, NoteSummary, RenameOutcome, SchemaDocument, SearchHit,
+    TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault, VaultPreset,
 };
 use serde::Serialize;
 use serde_json::Value;
@@ -105,6 +105,39 @@ fn create_vault(
 ) -> CmdResult<VaultInfo> {
     let vault = create_vault_with_preset(&path, name, preset).map_err(|e| e.to_string())?;
     activate_vault(vault, app, state)
+}
+
+#[tauri::command]
+fn save_git_credentials(username: String, token: String) -> CmdResult<()> {
+    mobile::secret_store::save_git_credentials(username, token)
+}
+
+#[tauri::command]
+fn has_git_credentials() -> CmdResult<bool> {
+    mobile::secret_store::has_git_credentials()
+}
+
+#[tauri::command]
+fn clear_git_credentials() -> CmdResult<()> {
+    mobile::secret_store::clear_git_credentials()
+}
+
+#[tauri::command]
+fn git_fetch_with_stored_credentials(
+    remote_name: Option<String>,
+    state: State<'_, AppState>,
+) -> CmdResult<()> {
+    let vault_root = {
+        let guard = state.session.lock().map_err(|e| e.to_string())?;
+        let session = guard
+            .as_ref()
+            .ok_or_else(|| "no vault is open".to_string())?;
+        session.vault.root().to_path_buf()
+    };
+    let credentials = mobile::secret_store::load_git_credentials()?
+        .ok_or_else(|| "Git HTTPS credentials are not configured".to_string())?;
+    fetch_git_remote_authenticated(&vault_root, remote_name.as_deref(), &credentials)
+        .map_err(|e| e.to_string())
 }
 
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
@@ -292,6 +325,10 @@ pub fn run() {
             open_mobile_sandbox_vault,
             open_vault,
             create_vault,
+            save_git_credentials,
+            has_git_credentials,
+            clear_git_credentials,
+            git_fetch_with_stored_credentials,
             get_tree,
             read_note,
             parse_note_content,
