@@ -1,5 +1,42 @@
 # Changelog
 
+## [0.2.3](https://github.com/RomanZavadaM/md-notes/compare/v0.2.2...v0.2.3) (2026-10-03)
+
+
+### Нові можливості
+
+* add local-first sync decision foundation ([e91734d](https://github.com/RomanZavadaM/md-notes/commit/e91734df8f37d2be1a776fcad7883bbd30160b01))
+* add local-first sync decision model ([c0a01db](https://github.com/RomanZavadaM/md-notes/commit/c0a01dbf2a8765fa92b1483d2cc199a2daf6fb57))
+* add mobile sandbox startup path ([91ae42b](https://github.com/RomanZavadaM/md-notes/commit/91ae42b59875ba9ae6ef6943ee8ea89c447ddf9c))
+* add mobile sandbox vault bootstrap ([588219e](https://github.com/RomanZavadaM/md-notes/commit/588219e2310e94f2fbd04a3ba97288b8ba94813f))
+* add mobile sandbox vault bootstrap ([9c69557](https://github.com/RomanZavadaM/md-notes/commit/9c69557869dbc13ce91ae91af62aaa6d8cb9580a))
+* add provider-backed vault storage ([230ee8e](https://github.com/RomanZavadaM/md-notes/commit/230ee8e4373fe909c178c44865c5b5cd9d7bcd3e))
+* add provider-backed vault storage ([172b3c6](https://github.com/RomanZavadaM/md-notes/commit/172b3c6c660248c1317b833d4470dc15cdf38a45))
+* export provider-backed vault storage ([623066d](https://github.com/RomanZavadaM/md-notes/commit/623066dbfd2e7a3a4fd2c4c473cc52f66d540cd1))
+* export sync foundation ([8dac6d5](https://github.com/RomanZavadaM/md-notes/commit/8dac6d5f0079d2657d74b99f1d6dcd033907eee2))
+* expose mobile sandbox api ([873b8fc](https://github.com/RomanZavadaM/md-notes/commit/873b8fce8efa13cb46f3f07c24db364deb27c6b2))
+* expose mobile sandbox vault commands ([c3a915d](https://github.com/RomanZavadaM/md-notes/commit/c3a915de76489ac910002ae7d1b0bae59728eacd))
+* localize mobile sandbox startup ([19f19f7](https://github.com/RomanZavadaM/md-notes/commit/19f19f74b65a8c36d1a111e7fccaa3d2f1df0449))
+* make vault storage debuggable ([c546601](https://github.com/RomanZavadaM/md-notes/commit/c5466018691ff87a5e20626d4da28b0eac5e8590))
+* start v0.3 storage provider foundation ([4545c93](https://github.com/RomanZavadaM/md-notes/commit/4545c938fcb70c80caa9e7595b4d89e8eead27aa))
+
+
+### Виправлення
+
+* format mobile sandbox command ([7018596](https://github.com/RomanZavadaM/md-notes/commit/7018596e204ebbb7487ee6329c2f8f6a564bd362))
+* format provider-backed vault storage ([1770f85](https://github.com/RomanZavadaM/md-notes/commit/1770f85e149fbd9d010a7904dabaac2be02af730))
+* format sync planner ([4315df1](https://github.com/RomanZavadaM/md-notes/commit/4315df155c62a8579de658b1e7b77fa82ceea7a8))
+
+
+### Документація
+
+* advance v0.3 mobile sandbox worklog ([fd4ede4](https://github.com/RomanZavadaM/md-notes/commit/fd4ede4d9e0e12574435f5c581cc06036a490664))
+* checkpoint active v0.3 development ([1633c32](https://github.com/RomanZavadaM/md-notes/commit/1633c3297fdc720ada8e97b288f59d22dc668d38))
+* move startup handoff to v0.3 ([73a759e](https://github.com/RomanZavadaM/md-notes/commit/73a759e6707312e322c5f2a38d895532569c2be4))
+* record integrated v0.3 state ([15e2b57](https://github.com/RomanZavadaM/md-notes/commit/15e2b57593e1173f5685ca71b4e2d85769f295f9))
+* record the v0.2.2 release checkpoint ([6393cf5](https://github.com/RomanZavadaM/md-notes/commit/6393cf5125f924d0b00c2d68bbde90d7e5bc88b1))
+* set v0.3 operational queue ([088d4fc](https://github.com/RomanZavadaM/md-notes/commit/088d4fc9d91fa9c94d58da20070012bfa95aac79))
+
 ## [0.2.2](https://github.com/RomanZavadaM/md-notes/compare/v0.2.1...v0.2.2) (2026-10-02)
 
 
