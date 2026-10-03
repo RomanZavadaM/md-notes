@@ -104,6 +104,16 @@ mod tests {
     }
 
     #[test]
+    fn opens_isolated_local_repository() {
+        let dir = tempfile::tempdir().unwrap();
+        gix::init(dir.path()).unwrap();
+
+        let info = open_git_repository(dir.path()).unwrap();
+        assert_eq!(Path::new(&info.workdir), dir.path());
+        assert!(info.head.is_none());
+    }
+
+    #[test]
     fn open_rejects_non_repository() {
         let dir = tempfile::tempdir().unwrap();
         assert!(matches!(
