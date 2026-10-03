@@ -125,15 +125,10 @@ pub fn commit_git_worktree(path: impl AsRef<Path>, message: &str) -> Result<Opti
                 )));
             }
             Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
-                editor
-                    .remove_leaf(rela_path.as_bstr())
-                    .map_err(git_err)?;
+                editor.remove_leaf(rela_path.as_bstr()).map_err(git_err)?;
             }
             Err(error) => {
-                return Err(Error::Git(format!(
-                    "cannot inspect {}: {error}",
-                    rela_path
-                )));
+                return Err(Error::Git(format!("cannot inspect {}: {error}", rela_path)));
             }
         }
     }
@@ -195,9 +190,7 @@ pub fn clone_git_repository(
     repository_info(&repo)
 }
 
-fn status_items(
-    repo: &gix::Repository,
-) -> Result<gix::status::Iter<'_, gix::progress::Discard>> {
+fn status_items(repo: &gix::Repository) -> Result<gix::status::Iter<'_, gix::progress::Discard>> {
     repo.status(gix::progress::Discard)
         .map_err(git_err)?
         .untracked_files(gix::status::UntrackedFiles::Files)
