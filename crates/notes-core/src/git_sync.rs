@@ -165,10 +165,7 @@ pub fn commit_git_worktree(path: impl AsRef<Path>, message: &str) -> Result<Opti
 /// `remote_name == None` follows gix/Git remote selection rules (typically
 /// `origin`). This operation only fetches objects/remote refs. It does not merge,
 /// reset, checkout or otherwise modify the current worktree.
-pub fn fetch_git_remote_public(
-    path: impl AsRef<Path>,
-    remote_name: Option<&str>,
-) -> Result<()> {
+pub fn fetch_git_remote_public(path: impl AsRef<Path>, remote_name: Option<&str>) -> Result<()> {
     let repo = open_isolated(path.as_ref())?;
     let remote_name = remote_name.map(|name| name.as_bytes().as_bstr());
     let remote = repo.find_fetch_remote(remote_name).map_err(git_err)?;
