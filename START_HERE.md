@@ -4,19 +4,25 @@
 
 ## Статус
 
-**ACTIVE — checkpoint v0.2.2 опублікований; функціональний scope v0.2 завершений.**
+**ACTIVE — v0.2.2 лишається останнім опублікованим prerelease; roadmap stage v0.3 активно розробляється.**
 
 Останній опублікований checkpoint: **v0.2.2** (GitHub prerelease `v0.2.2`, 02.10.2026).
 Release commit: `b422b497b4e3980c665f7ae7017f34e73788218d`.
 Release workflow #30 / `36990461869` — **SUCCESS**.
 
-У v0.2.2 входять runtime-startup hotfix, Windows portable packaging, schema-driven properties, safe vault presets/startup gate і global/local knowledge graph.
+03.10.2026 власник повторно протестував v0.2.2 на реальній Windows і підтвердив: **працює нормально**. Попередній startup-freeze blocker закритий для v0.2.2.
 
-Поточна перша дія: **реальний Windows runtime-тест v0.2.2**, особливо перевірка попереднього freeze blocker. Green CI/build не прирівнюється до runtime validation.
+Власник погодив перехід до roadmap stage **v0.3**. Уже інтегровано в `main`:
+- PR #30 — `StorageProvider` + `LocalFsProvider`, merge `4545c938fcb70c80caa9e7595b4d89e8eead27aa`, CI #147 PASS;
+- PR #31 — provider-backed `VaultStorage` і делегування provider-neutral Vault I/O, merge `230ee8e4373fe909c178c44865c5b5cd9d7bcd3e`, CI #153 PASS;
+- PR #32 — default mobile sandbox vault + mobile startup flow 7 мовами, merge `588219e2310e94f2fbd04a3ba97288b8ba94813f`, CI #161 PASS;
+- PR #33 — local-first sync decision/conflict foundation за ADR-0005, merge `e91734df8f37d2be1a776fcad7883bbd30160b01`, CI #162 PASS.
 
-Якщо після ручного відкриття vault зависання повторюється — пріоритетно оптимізувати `note_paths()` / `get_tree()` і винести дорогий index sync із критичного open path. Якщо runtime стабільний — наступний roadmap stage v0.3: Android/iOS + Git/WebDAV sync.
+Поточна перша дія: **mobile build validation PR #35**, який перевіряє Android debug build та iOS simulator debug build. Це build evidence, не runtime evidence на фізичному пристрої.
 
-Деталі стану — `PROJECT_STATE.md`, точний чек-лист — `WORKLOG.md`.
+Після clean mobile-build CI наступний функціональний напрям — **Git sync (`gix`/gitoxide)** поверх уже інтегрованого sync foundation, потім WebDAV. Optional external-folder adapters (Android SAF та iOS security-scoped bookmarks) — після стабільного sandbox + sync згідно ADR-0006.
+
+Деталі стану — `PROJECT_STATE.md`, operational queue — `WORKLOG.md`.
 
 Не відновлювати старі work/feature/test branches як джерело коду і не повторювати merged slices.
 
@@ -42,7 +48,9 @@ Release workflow #30 / `36990461869` — **SUCCESS**.
 
 ## Правило версій до 1.0
 
-У межах поточного roadmap stage звичайні `feat:` checkpoint-и **не повинні автоматично переводити minor-версію**. Наприклад, `0.2.1 → 0.2.2`. Перехід `0.2 → 0.3` означає зміну roadmap stage і має бути свідомим рішенням власника.
+У межах поточного roadmap stage звичайні `feat:` checkpoint-и **не повинні автоматично переводити minor-версію**. Наприклад, `0.3.0 → 0.3.1`. Перехід `0.2 → 0.3` означає зміну roadmap stage і має бути свідомим рішенням власника. Такий перехід власником уже погоджений 03.10.2026.
+
+Застарілий release-please PR #29 на `0.2.3` закрито без merge, оскільки він суперечив погодженому переходу до v0.3.
 
 ## Команда власника «злити у main»
 
