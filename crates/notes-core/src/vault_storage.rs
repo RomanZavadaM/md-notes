@@ -47,7 +47,12 @@ impl VaultStorage {
     fn read_dir(&self, rel: &str) -> Result<Vec<TreeEntry>> {
         let mut entries = Vec::new();
         for item in self.provider.list(rel)? {
-            let name = item.path.rsplit('/').next().unwrap_or(&item.path).to_string();
+            let name = item
+                .path
+                .rsplit('/')
+                .next()
+                .unwrap_or(&item.path)
+                .to_string();
             if name.starts_with('.') || name.ends_with(".mdnotes-tmp") {
                 continue;
             }
