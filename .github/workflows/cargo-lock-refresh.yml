@@ -1,0 +1,32 @@
+name: Cargo lock refresh
+
+on:
+  push:
+    branches:
+      - feature/system-secret-store-v0.3
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: feature/system-secret-store-v0.3
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Resolve Cargo dependency graph
+        run: cargo check --manifest-path app/src-tauri/Cargo.toml
+      - name: Commit Cargo.lock if changed
+        shell: bash
+        run: |
+          if git diff --quiet -- Cargo.lock; then
+            echo "Cargo.lock is already current"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Cargo.lock
+          git commit -m "chore: refresh Cargo lockfile"
+          git push origin HEAD:feature/system-secret-store-v0.3
