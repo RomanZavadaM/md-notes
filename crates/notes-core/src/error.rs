@@ -17,6 +17,8 @@ pub enum Error {
     AlreadyExists(String),
     #[error("invalid vault config: {0}")]
     Config(String),
+    #[error("invalid sync state: {0}")]
+    Sync(String),
     #[error("index error: {0}")]
     Index(#[from] rusqlite::Error),
 }
