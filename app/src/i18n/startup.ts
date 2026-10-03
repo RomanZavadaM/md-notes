@@ -19,6 +19,9 @@ export interface StartupStrings {
   pickExistingTitle: string;
   pickNewTitle: string;
   creating: string;
+  mobileLocal: string;
+  mobileLocalHelp: string;
+  openingLocal: string;
 }
 
 export const STARTUP_STRINGS: Record<LanguageCode, StartupStrings> = {
@@ -41,6 +44,9 @@ export const STARTUP_STRINGS: Record<LanguageCode, StartupStrings> = {
     pickExistingTitle: "Виберіть папку існуючого сховища",
     pickNewTitle: "Виберіть порожню папку для нового сховища",
     creating: "Створення сховища…",
+    mobileLocal: "Відкрити локальне сховище на пристрої",
+    mobileLocalHelp: "Сховище зберігається у приватній папці MD Notes. Git/WebDAV синхронізація додається в цьому етапі v0.3.",
+    openingLocal: "Відкриття локального сховища…",
   },
   en: {
     openRecent: "Open recent vault",
@@ -61,6 +67,9 @@ export const STARTUP_STRINGS: Record<LanguageCode, StartupStrings> = {
     pickExistingTitle: "Choose an existing vault folder",
     pickNewTitle: "Choose an empty folder for the new vault",
     creating: "Creating vault…",
+    mobileLocal: "Open local vault on this device",
+    mobileLocalHelp: "The vault is stored in MD Notes private app storage. Git/WebDAV sync is being added in v0.3.",
+    openingLocal: "Opening local vault…",
   },
   fr: {
     openRecent: "Ouvrir le coffre récent",
@@ -81,6 +90,9 @@ export const STARTUP_STRINGS: Record<LanguageCode, StartupStrings> = {
     pickExistingTitle: "Choisissez le dossier d’un coffre existant",
     pickNewTitle: "Choisissez un dossier vide pour le nouveau coffre",
     creating: "Création du coffre…",
+    mobileLocal: "Ouvrir le coffre local sur cet appareil",
+    mobileLocalHelp: "Le coffre est conservé dans le stockage privé de MD Notes. La synchronisation Git/WebDAV arrive dans v0.3.",
+    openingLocal: "Ouverture du coffre local…",
   },
   de: {
     openRecent: "Letzten Tresor öffnen",
@@ -101,6 +113,9 @@ export const STARTUP_STRINGS: Record<LanguageCode, StartupStrings> = {
     pickExistingTitle: "Ordner eines vorhandenen Tresors wählen",
     pickNewTitle: "Leeren Ordner für den neuen Tresor wählen",
     creating: "Tresor wird erstellt…",
+    mobileLocal: "Lokalen Tresor auf diesem Gerät öffnen",
+    mobileLocalHelp: "Der Tresor liegt im privaten MD-Notes-Appspeicher. Git/WebDAV-Synchronisierung wird in v0.3 ergänzt.",
+    openingLocal: "Lokaler Tresor wird geöffnet…",
   },
   es: {
     openRecent: "Abrir bóveda reciente",
@@ -121,6 +136,9 @@ export const STARTUP_STRINGS: Record<LanguageCode, StartupStrings> = {
     pickExistingTitle: "Elige la carpeta de una bóveda existente",
     pickNewTitle: "Elige una carpeta vacía para la nueva bóveda",
     creating: "Creando bóveda…",
+    mobileLocal: "Abrir bóveda local en este dispositivo",
+    mobileLocalHelp: "La bóveda se guarda en el almacenamiento privado de MD Notes. La sincronización Git/WebDAV se añade en v0.3.",
+    openingLocal: "Abriendo bóveda local…",
   },
   ko: {
     openRecent: "최근 보관함 열기",
@@ -141,6 +159,9 @@ export const STARTUP_STRINGS: Record<LanguageCode, StartupStrings> = {
     pickExistingTitle: "기존 보관함 폴더 선택",
     pickNewTitle: "새 보관함용 빈 폴더 선택",
     creating: "보관함 만드는 중…",
+    mobileLocal: "이 기기의 로컬 보관함 열기",
+    mobileLocalHelp: "보관함은 MD Notes의 비공개 앱 저장소에 보관됩니다. Git/WebDAV 동기화는 v0.3에서 추가됩니다.",
+    openingLocal: "로컬 보관함 여는 중…",
   },
   ja: {
     openRecent: "最近の保管庫を開く",
@@ -161,5 +182,8 @@ export const STARTUP_STRINGS: Record<LanguageCode, StartupStrings> = {
     pickExistingTitle: "既存の保管庫フォルダーを選択",
     pickNewTitle: "新しい保管庫用の空フォルダーを選択",
     creating: "保管庫を作成中…",
+    mobileLocal: "この端末のローカル保管庫を開く",
+    mobileLocalHelp: "保管庫は MD Notes のプライベート領域に保存されます。Git/WebDAV 同期は v0.3 で追加されます。",
+    openingLocal: "ローカル保管庫を開いています…",
   },
 };

@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { open } from "@tauri-apps/plugin-dialog";
 import App from "./App";
-import { api, type VaultPreset } from "./api";
+import { api, type RuntimePlatform, type VaultPreset } from "./api";
 import { AboutDialog, COPYRIGHT } from "./components/AboutDialog";
 import { LANGUAGES, useI18n, type LanguageCode } from "./i18n";
 import { STARTUP_STRINGS } from "./i18n/startup";
@@ -16,8 +16,17 @@ export function StartupGate() {
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [platform, setPlatform] = useState<RuntimePlatform | null>(null);
   const pending = useMemo(() => hasPendingVaultOpen(), []);
   const remembered = useMemo(() => getRememberedVault(), []);
+  const mobile = platform === "android" || platform === "ios";
+
+  useEffect(() => {
+    void api
+      .runtimePlatform()
+      .then(setPlatform)
+      .catch((e) => setError(String(e)));
+  }, []);
 
   if (pending) return <App />;
 
@@ -46,6 +55,18 @@ export function StartupGate() {
     }
   };
 
+  const openMobileLocal = async () => {
+    setError(null);
+    setCreating(true);
+    try {
+      const info = await api.openMobileSandboxVault();
+      enterVault(info.root);
+    } catch (e) {
+      setError(String(e));
+      setCreating(false);
+    }
+  };
+
   const presetHelp =
     preset === "para" ? s.presetParaHelp : preset === "zettelkasten" ? s.presetZettelkastenHelp : s.presetEmptyHelp;
 
@@ -54,46 +75,57 @@ export function StartupGate() {
       <h1>MD Notes</h1>
       <p>{t.appTagline}</p>
 
-      <div className="startup-actions">
-        {remembered && (
-          <>
-            <button type="button" className="primary" onClick={() => enterVault(remembered)}>
-              {s.openRecent}
+      {mobile ? (
+        <section className="startup-card">
+          <button type="button" className="primary" disabled={creating} onClick={() => void openMobileLocal()}>
+            {creating ? s.openingLocal : s.mobileLocal}
+          </button>
+          <small>{s.mobileLocalHelp}</small>
+        </section>
+      ) : (
+        <>
+          <div className="startup-actions">
+            {remembered && (
+              <>
+                <button type="button" className="primary" onClick={() => enterVault(remembered)}>
+                  {s.openRecent}
+                </button>
+                <small className="startup-recent-path" title={remembered}>
+                  {s.recentPath}: {remembered}
+                </small>
+              </>
+            )}
+            <button type="button" className={remembered ? "" : "primary"} onClick={() => void openExisting()}>
+              {s.openExisting}
             </button>
-            <small className="startup-recent-path" title={remembered}>
-              {s.recentPath}: {remembered}
-            </small>
-          </>
-        )}
-        <button type="button" className={remembered ? "" : "primary"} onClick={() => void openExisting()}>
-          {s.openExisting}
-        </button>
-      </div>
+          </div>
 
-      <section className="startup-card">
-        <h2>{s.createHeading}</h2>
-        <label>
-          {s.vaultName}
-          <input
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder={s.vaultNamePlaceholder}
-          />
-        </label>
-        <label>
-          {s.preset}
-          <select value={preset} onChange={(event) => setPreset(event.target.value as VaultPreset)}>
-            <option value="empty">{s.presetEmpty}</option>
-            <option value="para">{s.presetPara}</option>
-            <option value="zettelkasten">{s.presetZettelkasten}</option>
-          </select>
-        </label>
-        <small>{presetHelp}</small>
-        <button type="button" className="primary" disabled={creating} onClick={() => void createVault()}>
-          {creating ? s.creating : s.createButton}
-        </button>
-        <small>{s.emptyFolderOnly}</small>
-      </section>
+          <section className="startup-card">
+            <h2>{s.createHeading}</h2>
+            <label>
+              {s.vaultName}
+              <input
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder={s.vaultNamePlaceholder}
+              />
+            </label>
+            <label>
+              {s.preset}
+              <select value={preset} onChange={(event) => setPreset(event.target.value as VaultPreset)}>
+                <option value="empty">{s.presetEmpty}</option>
+                <option value="para">{s.presetPara}</option>
+                <option value="zettelkasten">{s.presetZettelkasten}</option>
+              </select>
+            </label>
+            <small>{presetHelp}</small>
+            <button type="button" className="primary" disabled={creating} onClick={() => void createVault()}>
+              {creating ? s.creating : s.createButton}
+            </button>
+            <small>{s.emptyFolderOnly}</small>
+          </section>
+        </>
+      )}
 
       {error && <p className="welcome-error">{error}</p>}
 
