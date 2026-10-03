@@ -17,7 +17,7 @@ jobs:
           ref: feature/system-secret-store-v0.3
       - uses: dtolnay/rust-toolchain@stable
       - name: Resolve Cargo dependency graph
-        run: cargo check --manifest-path app/src-tauri/Cargo.toml
+        run: cargo metadata --format-version 1 --manifest-path app/src-tauri/Cargo.toml > /dev/null
       - name: Commit Cargo.lock if changed
         shell: bash
         run: |
