@@ -1,3 +1,4 @@
+use std::fmt;
 use std::sync::Arc;
 
 use crate::error::{Error, Result};
@@ -15,6 +16,14 @@ use crate::vault::{EntryKind, TreeEntry, VaultConfig, SERVICE_DIR};
 pub struct VaultStorage {
     provider: Arc<dyn StorageProvider>,
     config: VaultConfig,
+}
+
+impl fmt::Debug for VaultStorage {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("VaultStorage")
+            .field("config", &self.config)
+            .finish_non_exhaustive()
+    }
 }
 
 impl VaultStorage {
