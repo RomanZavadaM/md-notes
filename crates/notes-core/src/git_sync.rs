@@ -30,26 +30,36 @@ pub fn validate_git_remote(remote: &str) -> Result<()> {
             "credentials must not be embedded in the Git remote URL".into(),
         ));
     }
-    if remote.chars().any(char::is_whitespace) {
-        return Err(Error::Git("Git remote URL contains whitespace".into()));
+    if remote.chars().any(char::is_whitespace) || remote.contains(['?', '#']) {
+        return Err(Error::Git(
+            "Git remote URL must not contain whitespace, query parameters or fragments".into(),
+        ));
     }
     Ok(())
 }
 
 pub fn open_git_repository(path: impl AsRef<Path>) -> Result<GitRepositoryInfo> {
-    let repo = gix::open(path).map_err(git_err)?;
+    let repo = gix::open_opts(path.as_ref(), gix::open::Options::isolated()).map_err(git_err)?;
     repository_info(&repo)
 }
 
 /// Clone a public HTTPS repository and check out its main worktree.
 ///
-/// Authentication is deliberately not accepted here. A later credential
-/// boundary will provide secrets at connection time without storing them in the
-/// vault or remote URL.
+/// Authentication is deliberately not accepted here. The isolated open options
+/// prevent system/user Git credential helpers from being consulted implicitly.
+/// A later credential boundary will provide secrets at connection time without
+/// storing them in the vault or remote URL.
 pub fn clone_git_repository(remote: &str, destination: impl AsRef<Path>) -> Result<GitRepositoryInfo> {
     validate_git_remote(remote)?;
 
-    let mut prepare = gix::prepare_clone(remote, destination.as_ref()).map_err(git_err)?;
+    let mut prepare = gix::clone::PrepareFetch::new(
+        remote,
+        destination.as_ref(),
+        gix::create::Kind::WithWorktree,
+        gix::create::Options::default(),
+        gix::open::Options::isolated(),
+    )
+    .map_err(git_err)?;
     let interrupt = AtomicBool::new(false);
     let (mut checkout, _) = prepare
         .fetch_then_checkout(gix::progress::Discard, &interrupt)
@@ -86,6 +96,8 @@ mod tests {
         assert!(validate_git_remote("ssh://git@github.com/example/repo.git").is_err());
         assert!(validate_git_remote("https://token@github.com/example/repo.git").is_err());
         assert!(validate_git_remote("https://github.com/example/my repo.git").is_err());
+        assert!(validate_git_remote("https://github.com/example/repo.git?token=secret").is_err());
+        assert!(validate_git_remote("https://github.com/example/repo.git#secret").is_err());
     }
 
     #[test]
