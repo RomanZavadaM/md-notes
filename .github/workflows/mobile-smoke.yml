@@ -1,0 +1,74 @@
+name: Mobile smoke
+
+on:
+  pull_request:
+    paths:
+      - "app/**"
+      - "crates/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - ".github/workflows/mobile-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    name: Android debug build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Add Android Rust target
+        run: rustup target add aarch64-linux-android
+      - name: Resolve Android NDK
+        run: |
+          NDK_DIR="$(find "$ANDROID_HOME/ndk" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -n 1)"
+          test -n "$NDK_DIR"
+          echo "NDK_HOME=$NDK_DIR" >> "$GITHUB_ENV"
+      - name: Install npm packages
+        working-directory: app
+        run: npm ci
+      - name: Initialize Android project
+        working-directory: app
+        run: npm run tauri android init -- --ci
+      - name: Build Android debug APK
+        working-directory: app
+        run: npm run tauri android build -- --debug --target aarch64
+
+  ios:
+    name: iOS simulator debug build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Add iOS simulator Rust target
+        run: rustup target add aarch64-apple-ios-sim
+      - name: Install npm packages
+        working-directory: app
+        run: npm ci
+      - name: Initialize iOS project
+        working-directory: app
+        run: npm run tauri ios init -- --ci
+      - name: Build iOS simulator app
+        working-directory: app
+        run: npm run tauri ios build -- --debug --target aarch64-sim
