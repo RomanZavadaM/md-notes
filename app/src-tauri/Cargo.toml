@@ -18,6 +18,8 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 notes-core = { path = "../../crates/notes-core" }
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
+keyring = { version = "4.2", default-features = false, features = ["cli"] }
+keyring-core = "1"
 serde = { workspace = true }
 serde_json = { workspace = true }
 tauri = { version = "2", features = ["protocol-asset"] }
