@@ -49,7 +49,10 @@ pub fn open_git_repository(path: impl AsRef<Path>) -> Result<GitRepositoryInfo> 
 /// prevent system/user Git credential helpers from being consulted implicitly.
 /// A later credential boundary will provide secrets at connection time without
 /// storing them in the vault or remote URL.
-pub fn clone_git_repository(remote: &str, destination: impl AsRef<Path>) -> Result<GitRepositoryInfo> {
+pub fn clone_git_repository(
+    remote: &str,
+    destination: impl AsRef<Path>,
+) -> Result<GitRepositoryInfo> {
     validate_git_remote(remote)?;
 
     let mut prepare = gix::clone::PrepareFetch::new(
