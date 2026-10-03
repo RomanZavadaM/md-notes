@@ -19,7 +19,9 @@ pub(crate) fn save_git_credentials(username: String, token: String) -> Result<()
     GitHttpsCredentials::new(username.clone(), token.clone()).map_err(|error| error.to_string())?;
     let payload = serde_json::to_string(&StoredGitCredential { username, token })
         .map_err(|error| format!("cannot encode Git credentials: {error}"))?;
-    credential_entry()?.set_password(&payload).map_err(store_error)
+    credential_entry()?
+        .set_password(&payload)
+        .map_err(store_error)
 }
 
 pub(crate) fn has_git_credentials() -> Result<bool, String> {
