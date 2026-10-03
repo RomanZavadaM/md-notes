@@ -243,7 +243,7 @@ fn fetch_git_remote(
 fn credential_response(
     action: gix::credentials::helper::Action,
     credentials: Option<&GitHttpsCredentials>,
-) -> gix::Result<Option<gix::credentials::protocol::Outcome>> {
+) -> gix::ExnResult<Option<gix::credentials::protocol::Outcome>> {
     match action {
         gix::credentials::helper::Action::Get(context) => match credentials {
             Some(credentials) => Ok(Some(gix::credentials::protocol::Outcome {
