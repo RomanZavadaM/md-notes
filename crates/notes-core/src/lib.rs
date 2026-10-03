@@ -17,6 +17,7 @@ pub mod schema;
 pub mod storage;
 pub mod templates;
 pub mod vault;
+pub mod vault_storage;
 
 pub use attachments::AttachmentInfo;
 pub use error::{Error, Result};
@@ -30,3 +31,4 @@ pub use schema::{FieldKind, FieldSpec, NoteTypeSpec, SchemaDocument};
 pub use storage::{LocalFsProvider, StorageEntry, StorageEntryKind, StorageProvider};
 pub use templates::TemplateInfo;
 pub use vault::{EntryKind, TreeEntry, Vault, VaultConfig};
+pub use vault_storage::VaultStorage;
