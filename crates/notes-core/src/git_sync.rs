@@ -190,7 +190,7 @@ pub fn clone_git_repository(
     repository_info(&repo)
 }
 
-fn status_items(repo: &gix::Repository) -> Result<gix::status::Iter<'_, gix::progress::Discard>> {
+fn status_items(repo: &gix::Repository) -> Result<gix::status::Iter> {
     repo.status(gix::progress::Discard)
         .map_err(git_err)?
         .untracked_files(gix::status::UntrackedFiles::Files)
