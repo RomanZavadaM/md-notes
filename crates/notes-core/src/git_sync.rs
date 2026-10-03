@@ -365,18 +365,16 @@ mod tests {
     #[test]
     fn credential_callback_returns_only_in_memory_identity() {
         let credentials = GitHttpsCredentials::new("roman", "top-secret").unwrap();
-        let action = gix::credentials::helper::Action::get_for_url(
-            "https://github.com/example/repo.git",
-        );
+        let action =
+            gix::credentials::helper::Action::get_for_url("https://github.com/example/repo.git");
         let outcome = credential_response(action, Some(&credentials))
             .unwrap()
             .unwrap();
         assert_eq!(outcome.identity.username, "roman");
         assert_eq!(outcome.identity.password, "top-secret");
 
-        let public_action = gix::credentials::helper::Action::get_for_url(
-            "https://github.com/example/repo.git",
-        );
+        let public_action =
+            gix::credentials::helper::Action::get_for_url("https://github.com/example/repo.git");
         assert!(credential_response(public_action, None).unwrap().is_none());
     }
 
