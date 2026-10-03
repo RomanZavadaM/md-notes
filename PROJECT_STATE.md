@@ -7,129 +7,93 @@
 - Статус розвитку: **ACTIVE**.
 - Останній опублікований checkpoint: **v0.2.2** prerelease, 02.10.2026.
 - Release commit: `b422b497b4e3980c665f7ae7017f34e73788218d`.
-- Release workflow #30 / run `36990461869` — **SUCCESS**.
-- 03.10.2026 власник повторно протестував v0.2.2 на реальній Windows і підтвердив: **працює нормально**.
-- Startup-freeze blocker v0.2.1 для v0.2.2 закритий ручним runtime evidence.
-- Функціональний roadmap v0.2 завершений; власник погодив перехід до roadmap stage **v0.3**.
-- Активний продукт: Tauri 2 + React (`app/`), ядро Rust (`crates/notes-core`).
-- Desktop платформи: Windows / macOS / Linux. Android та iOS — активний v0.3 development target.
-- UI-мови: UK / EN / FR / DE / ES / KO / JA.
-- Ліцензійна модель: proprietary / All Rights Reserved (Roman Zavada). Публічний репозиторій не надає open-source ліцензії.
+- Release workflow `36990461869` — **SUCCESS**.
+- 03.10.2026 власник підтвердив v0.2.2 реальним Windows runtime-тестом; startup-freeze blocker закритий.
+- Roadmap v0.2 завершений; активний roadmap stage — **v0.3**.
+- Активний продукт: Tauri 2 + React (`app/`) + Rust core (`crates/notes-core`).
+- Desktop: Windows / macOS / Linux. Android/iOS — active development target.
+- UI/README languages: UK / EN / FR / DE / ES / KO / JA.
+- Ліцензійна модель: proprietary / All Rights Reserved, Roman Zavada / Роман Завада.
 
-## Інтегровано у v0.3
+## Інтегрований v0.3 baseline
 
-### PR #30 — StorageProvider foundation
+### Storage / mobile
 
-Merge: `4545c938fcb70c80caa9e7595b4d89e8eead27aa`.
-CI #147 — **PASS**.
+- PR #30 — provider-neutral `StorageProvider` + `LocalFsProvider`;
+- PR #31 — provider-backed `VaultStorage`;
+- PR #32 — mobile sandbox vault + mobile startup flow;
+- PR #35 — Android aarch64 + iOS simulator build smoke у CI.
 
-- provider-neutral `StorageProvider`;
-- `LocalFsProvider`;
-- `list`, `read`, `write`, `remove`, `metadata`, `changes_since`;
-- atomic writes;
-- path escape rejection;
-- unit-тести.
+### Sync foundation
 
-### PR #31 — provider-backed Vault I/O
+- PR #33 — `SyncManifest`, snapshots, upload/download/delete planning, visible conflict-copy policy;
+- PR #37 — persistent atomic `.mdnotes/cache/sync-state.json`.
 
-Merge: `230ee8e4373fe909c178c44865c5b5cd9d7bcd3e`.
-CI #153 — **PASS**.
+### Git foundation
 
-- `VaultStorage` поверх `StorageProvider`;
-- provider-backed tree traversal, note paths, config, read/write notes, unique paths;
-- існуючий `Vault` делегує provider-neutral I/O через `VaultStorage`;
-- local cache/rename/trash поки лишаються локальними операціями.
+- PR #39 — `gix` 0.88 HTTPS clone/open foundation з isolated config і safe URL validation;
+- PR #41 — dirty worktree detection;
+- PR #42 — local Git commit pipeline з explicit application identity і clean-index rebuild;
+- PR #43 — safe public HTTPS fetch without credential-helper fallback;
+- PR #44 — in-memory HTTPS authentication; credentials існують лише в callback під час network call.
 
-### PR #32 — mobile sandbox bootstrap
+PR #44 інтегрований у `main` merge commit `b142973ea4315987b28aa3a4e6563506c219c255`; PR head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f` пройшов CI #211 та Mobile smoke #29.
 
-Merge: `588219e2310e94f2fbd04a3ba97288b8ba94813f`.
-CI #161 — **PASS**.
+## Активний checkpoint — PR #45
 
-- runtime platform detection;
-- app-data `vault` як default mobile sandbox за ADR-0006;
-- safe open-or-create local mobile vault;
-- Tauri command `open_mobile_sandbox_vault`;
-- typed frontend API;
-- mobile startup gate без desktop folder picker;
-- startup UI локалізовано UK/EN/FR/DE/ES/KO/JA.
+PR #45 додає system credential storage у Tauri layer:
 
-### PR #33 — local-first sync decision foundation
+- Windows Credential Manager;
+- macOS Keychain;
+- iOS Protected Data;
+- Android Keystore-backed storage;
+- Linux Secret Service;
+- target-specific native backend dependencies замість broad CLI wrapper;
+- `save_git_credentials`, `has_git_credentials`, `clear_git_credentials`;
+- token не експонується командою читання у frontend;
+- `git_fetch_with_stored_credentials` завантажує token лише всередині Rust;
+- vault mutex не утримується під час credential/network роботи;
+- `Cargo.lock` оновлений Cargo-generated dependency graph;
+- `THIRD_PARTY_NOTICES.md` оновлений;
+- README UK/EN/FR/DE/ES/KO/JA синхронізовані з active v0.3 state.
 
-Merge: `e91734df8f37d2be1a776fcad7883bbd30160b01`.
-CI #162 — **PASS**.
-
-- `SyncManifest`, `SyncSnapshot`, `SyncDecision`;
-- planning upload/download/delete/no-change;
-- concurrent deletion vs modification: modification wins;
-- divergent edits => merge-or-conflict decision;
-- visible conflict-copy filename;
-- unit-тести за політикою ADR-0005;
-- без нових sync dependencies на цьому foundation slice.
-
-## Поточна перевірка mobile
-
-Draft PR #35 — `ci: validate Android and iOS mobile builds`.
-
-Мета:
-- Android: `tauri android init --ci` + aarch64 debug build;
-- iOS: `tauri ios init --ci` + arm64 simulator debug build;
-- не видавати build evidence за runtime validation на реальному пристрої.
+Не вважати PR #45 інтегрованим до green final CI + Mobile smoke + merge.
 
 ## Функціонально завершено у v0.2
 
-- локальна папка як vault, дерево файлів, створення, перейменування, `.mdnotes/trash/`;
+- local-folder vault, tree, create/rename/trash;
 - CodeMirror 6, preview/split, autosave, atomic writes;
-- SQLite index, FTS5, теги, quick open;
-- wiki-links, aliases, property links, backlinks, link rewrite при rename/move;
-- desktop file watcher;
-- Mermaid 11, KaTeX, vault images, relative `.md` links;
-- templates і daily notes;
-- 7 мов UI, About, light/dark/system themes, adaptive layout;
+- SQLite/FTS5 search/tags/index;
+- wiki-links, aliases, backlinks, link rewrite;
+- file watcher на desktop;
+- Mermaid 11, KaTeX, images, attachments;
+- templates + daily notes;
+- 7 мов UI, About, light/dark/system themes;
 - restrictive Tauri CSP;
-- attachments: `attachments/YYYY/MM/`, image/PDF preview, usage/orphans, Unicode paths;
-- відкритий `.mdnotes/schema.json` v1 і schema-driven property form;
-- safe Empty / PARA / Zettelkasten vault presets;
-- startup gate без silent auto-reopen останнього vault;
-- global/local knowledge graph із Sigma.js 3.0.3 + Graphology 0.26.0.
-
-## Опубліковано у v0.2.2
-
-### Windows x64
-- `MD.Notes_0.2.2_x64-setup.exe`
-- `MD.Notes_0.2.2_x64_en-US.msi`
-- `MD-Notes-0.2.2-Windows-x64-portable.zip`
-
-### macOS universal
-- `MD.Notes_0.2.2_universal.dmg`
-- `MD.Notes_universal.app.tar.gz`
-
-### Linux x86_64
-- `MD.Notes_0.2.2_amd64.AppImage`
-- `MD.Notes_0.2.2_amd64.deb`
-- `MD.Notes-0.2.2-1.x86_64.rpm`
-
-### Source / legal / verification
-- `MD-Notes-0.2.2-START.zip`
-- `LICENSE.md`
-- `COPYRIGHT.md`
-- `THIRD_PARTY_NOTICES.md`
-- `SHA256SUMS.txt`
+- open schema v1 + schema-driven properties;
+- Empty / PARA / Zettelkasten presets;
+- startup gate без silent auto-reopen;
+- global/local knowledge graph.
 
 ## Межа доказу / відомі обмеження
 
-- v0.2.2 Windows runtime вручну підтверджений власником;
-- Android/iOS runtime на реальних пристроях ще не підтверджений;
-- mobile build smoke PR #35 є лише build evidence;
-- Git/WebDAV sync ще не реалізований, лише provider-neutral sync decision foundation;
-- optional Android SAF / iOS security-scoped bookmark adapters ще не реалізовані;
-- local cache/rename/trash ще не узагальнені під external mobile providers;
-- великі vault-и все ще можуть індексуватися синхронно при відкритті;
-- збірки не підписані.
+- Windows v0.2.2 runtime — підтверджено власником;
+- Android/iOS buildability — підтверджується CI; physical-device runtime ще не підтверджений;
+- Git pull/merge policy ще не завершена;
+- Git push ще не реалізований;
+- Git sync ще не зв’язаний повністю з `SyncManifest` / ADR-0005 conflict resolution;
+- WebDAV ще не реалізований;
+- Android SAF / iOS security-scoped bookmarks ще не реалізовані;
+- large vault open/indexing може лишатися синхронним;
+- релізні builds не підписані.
 
-## Наступна дія
+## Наступний напрям після PR #45
 
-1. Завершити mobile build smoke PR #35 і зафіксувати фактичний результат Android/iOS build.
-2. Далі реалізувати Git sync через `gix`/gitoxide поверх `SyncManifest` / `plan_sync`.
-3. Після Git — WebDAV через OpenDAL.
-4. Після стабільного sandbox + sync — optional external-folder adapters: Android SAF і iOS security-scoped bookmarks.
-5. Перед додаванням нових dependency перевіряти licenses і оновлювати `THIRD_PARTY_NOTICES.md`.
+1. Git pull/merge policy без silent overwrite.
+2. Git push.
+3. Integration Git state ↔ `SyncManifest` / ADR-0005.
+4. WebDAV.
+5. Physical-device Android/iOS runtime validation.
+6. Optional external-folder adapters: Android SAF / iOS security-scoped bookmarks.
+
+Перед новими dependency обов’язково проходити license gates та оновлювати `THIRD_PARTY_NOTICES.md`.
