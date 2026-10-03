@@ -185,7 +185,7 @@ pub fn fetch_git_remote_public(path: impl AsRef<Path>, remote_name: Option<&str>
     let prepare = connection
         .prepare_fetch(
             gix::progress::Discard,
-            gix::remote::fetch::Options::default(),
+            gix::remote::ref_map::Options::default(),
         )
         .map_err(git_err)?;
     let interrupt = AtomicBool::new(false);
