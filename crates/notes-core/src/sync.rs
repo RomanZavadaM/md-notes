@@ -84,8 +84,8 @@ impl SyncStateStore {
         if let Some(parent) = self.path.parent() {
             fs::create_dir_all(parent).map_err(io_err(parent))?;
         }
-        let mut bytes = serde_json::to_vec_pretty(manifest)
-            .map_err(|error| Error::Sync(error.to_string()))?;
+        let mut bytes =
+            serde_json::to_vec_pretty(manifest).map_err(|error| Error::Sync(error.to_string()))?;
         bytes.push(b'\n');
 
         let mut tmp = self.path.as_os_str().to_owned();
