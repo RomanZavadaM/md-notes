@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::sync::OnceLock;
 
+use keyring_core::set_default_store;
 use notes_core::GitHttpsCredentials;
 use serde::{Deserialize, Serialize};
 
@@ -69,23 +70,38 @@ fn configure_native_store() -> Result<(), String> {
 
     #[cfg(target_os = "android")]
     {
-        return keyring::cli::use_android_native_store(&config).map_err(store_error);
+        use android_native_keyring_store::Store;
+        let store = Store::new_with_configuration(&config).map_err(store_error)?;
+        set_default_store(store);
+        return Ok(());
     }
     #[cfg(target_os = "ios")]
     {
-        return keyring::cli::use_apple_protected_store(&config).map_err(store_error);
+        use apple_native_keyring_store::protected::Store;
+        let store = Store::new_with_configuration(&config).map_err(store_error)?;
+        set_default_store(store);
+        return Ok(());
     }
     #[cfg(target_os = "macos")]
     {
-        return keyring::cli::use_apple_keychain_store(&config).map_err(store_error);
+        use apple_native_keyring_store::keychain::Store;
+        let store = Store::new_with_configuration(&config).map_err(store_error)?;
+        set_default_store(store);
+        return Ok(());
     }
     #[cfg(target_os = "windows")]
     {
-        return keyring::cli::use_windows_native_store(&config).map_err(store_error);
+        use windows_native_keyring_store::Store;
+        let store = Store::new_with_configuration(&config).map_err(store_error)?;
+        set_default_store(store);
+        return Ok(());
     }
     #[cfg(target_os = "linux")]
     {
-        return keyring::cli::use_zbus_secret_service_store(&config).map_err(store_error);
+        use zbus_secret_service_keyring_store::Store;
+        let store = Store::new_with_configuration(&config).map_err(store_error)?;
+        set_default_store(store);
+        return Ok(());
     }
     #[cfg(not(any(
         target_os = "android",
