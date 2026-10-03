@@ -21,6 +21,8 @@ Application `app/src-tauri`:
 
 - tauri, tauri-build — MIT OR Apache-2.0, application shell
 - tauri-plugin-dialog, tauri-plugin-opener — MIT OR Apache-2.0
+- keyring / keyring-core — MIT OR Apache-2.0, platform credential-store abstraction for Git HTTPS secrets
+- platform keyring backends selected by target: Windows Credential Manager, Apple Keychain / Protected Data, Android Keystore-backed storage, Linux Secret Service — permissively licensed components from the Rust keyring ecosystem
 - notify-debouncer-mini / notify — MIT OR Apache-2.0 / CC0-1.0, file watching (desktop)
 
 ## npm packages (direct dependencies)
@@ -52,7 +54,7 @@ MD Notes ships only dependencies that can be used in a proprietary distribution.
 
 ## Platform components
 
-Platform runtimes, system webviews (WebView2, WKWebView, WebKitGTK), operating-system libraries, build tools, transitive dependencies and packaging/signing tools have separate copyright and licensing terms. The authoritative dependency versions for a source/build checkpoint are recorded in `Cargo.lock` and `app/package-lock.json`.
+Platform runtimes, system webviews (WebView2, WKWebView, WebKitGTK), operating-system credential managers, operating-system libraries, build tools, transitive dependencies and packaging/signing tools have separate copyright and licensing terms. The authoritative dependency versions for a source/build checkpoint are recorded in `Cargo.lock` and `app/package-lock.json`.
 
 For executable or test distributions, applicable third-party notices must be preserved as required by those projects.
 
