@@ -12,6 +12,7 @@ use serde::Serialize;
 use serde_json::Value;
 use tauri::{AppHandle, Emitter, Manager, State};
 
+mod mobile;
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 mod watch;
 
@@ -75,6 +76,20 @@ fn activate_vault(
     }
     *state.session.lock().map_err(|e| e.to_string())? = Some(Session { vault, index });
     Ok(info)
+}
+
+#[tauri::command]
+fn runtime_platform() -> &'static str {
+    mobile::runtime_platform()
+}
+
+#[tauri::command]
+fn open_mobile_sandbox_vault(
+    app: AppHandle,
+    state: State<'_, AppState>,
+) -> CmdResult<VaultInfo> {
+    let vault = mobile::open_or_create_sandbox_vault(&app)?;
+    activate_vault(vault, app, state)
 }
 
 #[tauri::command]
@@ -276,6 +291,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .manage(AppState::default())
         .invoke_handler(tauri::generate_handler![
+            runtime_platform,
+            open_mobile_sandbox_vault,
             open_vault,
             create_vault,
             get_tree,
