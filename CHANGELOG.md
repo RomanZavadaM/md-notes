@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.2.3](https://github.com/RomanZavadaM/md-notes/compare/v0.2.2...v0.2.3) (2026-10-03)
+
+
+### Нові можливості
+
+* add provider-backed vault storage ([230ee8e](https://github.com/RomanZavadaM/md-notes/commit/230ee8e4373fe909c178c44865c5b5cd9d7bcd3e))
+* add provider-backed vault storage ([172b3c6](https://github.com/RomanZavadaM/md-notes/commit/172b3c6c660248c1317b833d4470dc15cdf38a45))
+* export provider-backed vault storage ([623066d](https://github.com/RomanZavadaM/md-notes/commit/623066dbfd2e7a3a4fd2c4c473cc52f66d540cd1))
+* make vault storage debuggable ([c546601](https://github.com/RomanZavadaM/md-notes/commit/c5466018691ff87a5e20626d4da28b0eac5e8590))
+* start v0.3 storage provider foundation ([4545c93](https://github.com/RomanZavadaM/md-notes/commit/4545c938fcb70c80caa9e7595b4d89e8eead27aa))
+
+
+### Виправлення
+
+* format provider-backed vault storage ([1770f85](https://github.com/RomanZavadaM/md-notes/commit/1770f85e149fbd9d010a7904dabaac2be02af730))
+
+
+### Документація
+
+* record the v0.2.2 release checkpoint ([6393cf5](https://github.com/RomanZavadaM/md-notes/commit/6393cf5125f924d0b00c2d68bbde90d7e5bc88b1))
+
 ## [0.2.2](https://github.com/RomanZavadaM/md-notes/compare/v0.2.1...v0.2.2) (2026-10-02)
 
 
