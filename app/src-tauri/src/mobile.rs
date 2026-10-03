@@ -3,6 +3,8 @@ use std::path::PathBuf;
 use notes_core::{create_vault_with_preset, Vault, VaultPreset};
 use tauri::{AppHandle, Manager};
 
+pub(crate) mod secret_store;
+
 pub fn runtime_platform() -> &'static str {
     #[cfg(target_os = "android")]
     {
