@@ -76,7 +76,11 @@ impl LocalFsProvider {
             } else {
                 StorageEntryKind::File
             },
-            size: if metadata.is_file() { metadata.len() } else { 0 },
+            size: if metadata.is_file() {
+                metadata.len()
+            } else {
+                0
+            },
             modified_ms: modified_ms(&metadata),
         })
     }
@@ -112,7 +116,7 @@ impl StorageProvider for LocalFsProvider {
             let child_rel = paths::join(&rel, &name);
             out.push(self.entry(&child_rel, &item.path())?);
         }
-        out.sort_by(|a, b| a.path.to_lowercase().cmp(&b.path.to_lowercase()));
+        out.sort_by_key(|entry| entry.path.to_lowercase());
         Ok(out)
     }
 
@@ -175,7 +179,7 @@ impl StorageProvider for LocalFsProvider {
     fn changes_since(&self, since_ms: u64) -> Result<Vec<StorageEntry>> {
         let mut out = Vec::new();
         self.collect_changes("", since_ms, &mut out)?;
-        out.sort_by(|a, b| a.path.to_lowercase().cmp(&b.path.to_lowercase()));
+        out.sort_by_key(|entry| entry.path.to_lowercase());
         Ok(out)
     }
 }
