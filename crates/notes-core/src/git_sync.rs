@@ -16,6 +16,30 @@ pub struct GitRepositoryInfo {
     pub head: Option<String>,
 }
 
+/// HTTPS credentials supplied by the application at call time.
+///
+/// Intentionally does not implement `Debug` or `Serialize` so tokens are harder
+/// to leak into logs, diagnostics or persisted vault state by accident.
+#[derive(Clone, PartialEq, Eq)]
+pub struct GitHttpsCredentials {
+    username: String,
+    token: String,
+}
+
+impl GitHttpsCredentials {
+    pub fn new(username: impl Into<String>, token: impl Into<String>) -> Result<Self> {
+        let username = username.into();
+        let token = token.into();
+        if username.trim().is_empty() {
+            return Err(Error::Git("Git HTTPS username must not be empty".into()));
+        }
+        if token.is_empty() {
+            return Err(Error::Git("Git HTTPS token must not be empty".into()));
+        }
+        Ok(Self { username, token })
+    }
+}
+
 /// Validate a remote before it reaches the Git transport.
 ///
 /// v0.3 starts with HTTPS only. Credentials embedded in the URL are forbidden:
@@ -166,6 +190,27 @@ pub fn commit_git_worktree(path: impl AsRef<Path>, message: &str) -> Result<Opti
 /// `origin`). This operation only fetches objects/remote refs. It does not merge,
 /// reset, checkout or otherwise modify the current worktree.
 pub fn fetch_git_remote_public(path: impl AsRef<Path>, remote_name: Option<&str>) -> Result<()> {
+    fetch_git_remote(path, remote_name, None)
+}
+
+/// Fetch one configured HTTPS remote using credentials supplied only in memory.
+///
+/// MD Notes does not invoke system Git credential helpers and does not persist
+/// the supplied token in the remote URL, vault, repository config or credential
+/// helper storage. `Store`/`Erase` callback actions are deliberately no-ops.
+pub fn fetch_git_remote_authenticated(
+    path: impl AsRef<Path>,
+    remote_name: Option<&str>,
+    credentials: &GitHttpsCredentials,
+) -> Result<()> {
+    fetch_git_remote(path, remote_name, Some(credentials))
+}
+
+fn fetch_git_remote(
+    path: impl AsRef<Path>,
+    remote_name: Option<&str>,
+    credentials: Option<&GitHttpsCredentials>,
+) -> Result<()> {
     let repo = open_isolated(path.as_ref())?;
     let remote_name = remote_name.map(|name| name.as_bytes().as_bstr());
     let remote = repo.find_fetch_remote(remote_name).map_err(git_err)?;
@@ -181,7 +226,7 @@ pub fn fetch_git_remote_public(path: impl AsRef<Path>, remote_name: Option<&str>
     let connection = remote
         .connect(gix::remote::Direction::Fetch)
         .map_err(git_err)?
-        .with_credentials(|_action| Ok(None));
+        .with_credentials(|action| credential_response(action, credentials));
     let prepare = connection
         .prepare_fetch(
             gix::progress::Discard,
@@ -193,6 +238,28 @@ pub fn fetch_git_remote_public(path: impl AsRef<Path>, remote_name: Option<&str>
         .receive(gix::progress::Discard, &interrupt)
         .map_err(git_err)?;
     Ok(())
+}
+
+fn credential_response(
+    action: gix::credentials::helper::Action,
+    credentials: Option<&GitHttpsCredentials>,
+) -> gix::Result<Option<gix::credentials::protocol::Outcome>> {
+    match action {
+        gix::credentials::helper::Action::Get(context) => match credentials {
+            Some(credentials) => Ok(Some(gix::credentials::protocol::Outcome {
+                identity: gix::sec::identity::Account {
+                    username: credentials.username.clone(),
+                    password: credentials.token.clone(),
+                    oauth_refresh_token: None,
+                },
+                next: context.into(),
+            })),
+            None => Ok(None),
+        },
+        gix::credentials::helper::Action::Store(_) | gix::credentials::helper::Action::Erase(_) => {
+            Ok(None)
+        }
+    }
 }
 
 /// Clone a public HTTPS repository and check out its main worktree.
@@ -286,6 +353,31 @@ mod tests {
         assert!(validate_git_remote("https://github.com/example/my repo.git").is_err());
         assert!(validate_git_remote("https://github.com/example/repo.git?token=secret").is_err());
         assert!(validate_git_remote("https://github.com/example/repo.git#secret").is_err());
+    }
+
+    #[test]
+    fn https_credentials_require_non_empty_values() {
+        assert!(GitHttpsCredentials::new("roman", "token").is_ok());
+        assert!(GitHttpsCredentials::new(" ", "token").is_err());
+        assert!(GitHttpsCredentials::new("roman", "").is_err());
+    }
+
+    #[test]
+    fn credential_callback_returns_only_in_memory_identity() {
+        let credentials = GitHttpsCredentials::new("roman", "top-secret").unwrap();
+        let action = gix::credentials::helper::Action::get_for_url(
+            "https://github.com/example/repo.git",
+        );
+        let outcome = credential_response(action, Some(&credentials))
+            .unwrap()
+            .unwrap();
+        assert_eq!(outcome.identity.username, "roman");
+        assert_eq!(outcome.identity.password, "top-secret");
+
+        let public_action = gix::credentials::helper::Action::get_for_url(
+            "https://github.com/example/repo.git",
+        );
+        assert!(credential_response(public_action, None).unwrap().is_none());
     }
 
     #[test]
