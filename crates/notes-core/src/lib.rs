@@ -14,6 +14,7 @@ pub mod paths;
 pub mod presets;
 pub mod refactor;
 pub mod schema;
+pub mod storage;
 pub mod templates;
 pub mod vault;
 
@@ -26,5 +27,6 @@ pub use note::Note;
 pub use presets::{create_vault_with_preset, VaultPreset};
 pub use refactor::{rename_with_links, RenameOutcome};
 pub use schema::{FieldKind, FieldSpec, NoteTypeSpec, SchemaDocument};
+pub use storage::{LocalFsProvider, StorageEntry, StorageEntryKind, StorageProvider};
 pub use templates::TemplateInfo;
 pub use vault::{EntryKind, TreeEntry, Vault, VaultConfig};
