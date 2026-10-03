@@ -30,7 +30,9 @@ pub use presets::{create_vault_with_preset, VaultPreset};
 pub use refactor::{rename_with_links, RenameOutcome};
 pub use schema::{FieldKind, FieldSpec, NoteTypeSpec, SchemaDocument};
 pub use storage::{LocalFsProvider, StorageEntry, StorageEntryKind, StorageProvider};
-pub use sync::{conflict_copy_path, plan_sync, SyncDecision, SyncManifest, SyncSnapshot};
+pub use sync::{
+    conflict_copy_path, plan_sync, SyncDecision, SyncManifest, SyncSnapshot, SyncStateStore,
+};
 pub use templates::TemplateInfo;
 pub use vault::{EntryKind, TreeEntry, Vault, VaultConfig};
 pub use vault_storage::VaultStorage;
