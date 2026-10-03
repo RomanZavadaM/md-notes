@@ -160,6 +160,41 @@ pub fn commit_git_worktree(path: impl AsRef<Path>, message: &str) -> Result<Opti
     Ok(Some(commit_id.to_string()))
 }
 
+/// Fetch one configured public HTTPS remote without consulting credential helpers.
+///
+/// `remote_name == None` follows gix/Git remote selection rules (typically
+/// `origin`). This operation only fetches objects/remote refs. It does not merge,
+/// reset, checkout or otherwise modify the current worktree.
+pub fn fetch_git_remote_public(path: impl AsRef<Path>, remote_name: Option<&str>) -> Result<()> {
+    let repo = open_isolated(path.as_ref())?;
+    let remote_name = remote_name.map(|name| name.as_bytes().as_bstr());
+    let remote = repo.find_fetch_remote(remote_name).map_err(git_err)?;
+    let url = remote
+        .url(gix::remote::Direction::Fetch)
+        .ok_or_else(|| Error::Git("Git fetch remote has no URL".into()))?;
+    let raw_url = url.to_bstring();
+    let raw_url = raw_url
+        .to_str()
+        .map_err(|_| Error::Git("Git remote URL must be valid UTF-8".into()))?;
+    validate_git_remote(raw_url)?;
+
+    let connection = remote
+        .connect(gix::remote::Direction::Fetch)
+        .map_err(git_err)?
+        .with_credentials(|_action| Ok(None));
+    let prepare = connection
+        .prepare_fetch(
+            gix::progress::Discard,
+            gix::remote::ref_map::Options::default(),
+        )
+        .map_err(git_err)?;
+    let interrupt = AtomicBool::new(false);
+    prepare
+        .receive(gix::progress::Discard, &interrupt)
+        .map_err(git_err)?;
+    Ok(())
+}
+
 /// Clone a public HTTPS repository and check out its main worktree.
 ///
 /// Authentication is deliberately not accepted here. The isolated open options
@@ -296,6 +331,16 @@ mod tests {
         assert!(!git_has_changes(dir.path()).unwrap());
 
         assert_eq!(commit_git_worktree(dir.path(), "No changes").unwrap(), None);
+    }
+
+    #[test]
+    fn public_fetch_requires_a_configured_remote() {
+        let dir = tempfile::tempdir().unwrap();
+        gix::init(dir.path()).unwrap();
+        assert!(matches!(
+            fetch_git_remote_public(dir.path(), None),
+            Err(Error::Git(_))
+        ));
     }
 
     #[test]
