@@ -1,6 +1,13 @@
 use std::collections::BTreeMap;
+use std::fs;
+use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
+
+use crate::error::{io_err, Error, Result};
+
+const SYNC_STATE_FILE: &str = "sync-state.json";
+const TMP_SUFFIX: &str = ".mdnotes-tmp";
 
 /// Last-known state of one side of a synchronized path.
 ///
@@ -27,6 +34,65 @@ impl SyncManifest {
             version: 1,
             files: BTreeMap::new(),
         }
+    }
+}
+
+/// Local persistence for rebuildable sync metadata.
+///
+/// The store lives under the vault cache directory and is deliberately kept
+/// separate from user Markdown. Writes are atomic so an interrupted sync cannot
+/// leave a partially written manifest.
+#[derive(Debug, Clone)]
+pub struct SyncStateStore {
+    path: PathBuf,
+}
+
+impl SyncStateStore {
+    pub fn in_cache_dir(cache_dir: impl AsRef<Path>) -> Self {
+        Self {
+            path: cache_dir.as_ref().join(SYNC_STATE_FILE),
+        }
+    }
+
+    pub fn path(&self) -> &Path {
+        &self.path
+    }
+
+    pub fn load(&self) -> Result<SyncManifest> {
+        if !self.path.exists() {
+            return Ok(SyncManifest::v1());
+        }
+        let raw = fs::read(&self.path).map_err(io_err(&self.path))?;
+        let manifest: SyncManifest =
+            serde_json::from_slice(&raw).map_err(|error| Error::Sync(error.to_string()))?;
+        if manifest.version != 1 {
+            return Err(Error::Sync(format!(
+                "unsupported sync manifest version: {}",
+                manifest.version
+            )));
+        }
+        Ok(manifest)
+    }
+
+    pub fn save(&self, manifest: &SyncManifest) -> Result<()> {
+        if manifest.version != 1 {
+            return Err(Error::Sync(format!(
+                "unsupported sync manifest version: {}",
+                manifest.version
+            )));
+        }
+        if let Some(parent) = self.path.parent() {
+            fs::create_dir_all(parent).map_err(io_err(parent))?;
+        }
+        let mut bytes =
+            serde_json::to_vec_pretty(manifest).map_err(|error| Error::Sync(error.to_string()))?;
+        bytes.push(b'\n');
+
+        let mut tmp = self.path.as_os_str().to_owned();
+        tmp.push(TMP_SUFFIX);
+        let tmp = PathBuf::from(tmp);
+        fs::write(&tmp, bytes).map_err(io_err(&tmp))?;
+        fs::rename(&tmp, &self.path).map_err(io_err(&self.path))
     }
 }
 
@@ -105,6 +171,39 @@ mod tests {
             content_hash: hash.map(str::to_string),
             remote_revision: None,
         }
+    }
+
+    #[test]
+    fn sync_state_store_round_trips_and_defaults_when_missing() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = SyncStateStore::in_cache_dir(dir.path());
+        assert_eq!(store.load().unwrap(), SyncManifest::v1());
+
+        let mut manifest = SyncManifest::v1();
+        manifest.files.insert(
+            "Notes/Idea.md".into(),
+            SyncSnapshot {
+                content_hash: Some("abc".into()),
+                remote_revision: Some("etag-1".into()),
+            },
+        );
+        store.save(&manifest).unwrap();
+        assert_eq!(store.load().unwrap(), manifest);
+        assert!(store.path().is_file());
+    }
+
+    #[test]
+    fn sync_state_store_rejects_invalid_or_unknown_versions() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = SyncStateStore::in_cache_dir(dir.path());
+        fs::write(store.path(), b"not json").unwrap();
+        assert!(matches!(store.load(), Err(Error::Sync(_))));
+
+        let invalid = SyncManifest {
+            version: 2,
+            files: BTreeMap::new(),
+        };
+        assert!(matches!(store.save(&invalid), Err(Error::Sync(_))));
     }
 
     #[test]
