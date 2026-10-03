@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 export type EntryKind = "dir" | "note" | "file";
 export type VaultPreset = "empty" | "para" | "zettelkasten";
+export type RuntimePlatform = "android" | "ios" | "windows" | "macos" | "linux" | "unknown";
 
 export interface TreeEntry {
   name: string;
@@ -139,6 +140,8 @@ export const MATCH_END = "\u0003";
 export const VAULT_CHANGED = "vault-changed";
 
 export const api = {
+  runtimePlatform: () => invoke<RuntimePlatform>("runtime_platform"),
+  openMobileSandboxVault: () => invoke<VaultInfo>("open_mobile_sandbox_vault"),
   openVault: (path: string) => invoke<VaultInfo>("open_vault", { path }),
   createVault: (path: string, name: string | null, preset: VaultPreset) =>
     invoke<VaultInfo>("create_vault", { path, name, preset }),
