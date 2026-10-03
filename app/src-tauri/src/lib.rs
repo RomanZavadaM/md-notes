@@ -84,10 +84,7 @@ fn runtime_platform() -> &'static str {
 }
 
 #[tauri::command]
-fn open_mobile_sandbox_vault(
-    app: AppHandle,
-    state: State<'_, AppState>,
-) -> CmdResult<VaultInfo> {
+fn open_mobile_sandbox_vault(app: AppHandle, state: State<'_, AppState>) -> CmdResult<VaultInfo> {
     let vault = mobile::open_or_create_sandbox_vault(&app)?;
     activate_vault(vault, app, state)
 }
