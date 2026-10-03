@@ -1,6 +1,6 @@
 # PROJECT_STATE — MD Notes
 
-Оновлено: **02.10.2026**
+Оновлено: **03.10.2026**
 
 ## Поточний стан
 
@@ -8,19 +8,72 @@
 - Останній опублікований checkpoint: **v0.2.2** prerelease, 02.10.2026.
 - Release commit: `b422b497b4e3980c665f7ae7017f34e73788218d`.
 - Release workflow #30 / run `36990461869` — **SUCCESS**.
-- Main CI run `36990461817` — **PASS**.
-- Функціональний roadmap v0.2 завершений.
-- Runtime startup hotfix: PR #21 / `de7b9d1b8fa7b9f5c7884b4082d977f4a1029b01`.
-- Windows portable packaging: PR #20 / `715e29dfcf3bace2480e6b2bd824cfc80c91a668`.
-- Schema/property form: PR #19 / `7441259a019eae1f7858898d8a29a9ac4d9ec7cd`.
-- Vault presets/startup gate: PR #23 / `c078d075d089257c83b903eea44c317f391b765c`.
-- Knowledge graph: PR #25 / `39040a461d0b29f09db382f7bca32483350c19ba`.
-- Version policy: PR #27 / `8ca052c6aa69c31f5af8afce186d606b97ffd22a`; feature-checkpoint-и pre-1.0 лишаються на patch line всередині поточного roadmap stage.
+- 03.10.2026 власник повторно протестував v0.2.2 на реальній Windows і підтвердив: **працює нормально**.
+- Startup-freeze blocker v0.2.1 для v0.2.2 закритий ручним runtime evidence.
+- Функціональний roadmap v0.2 завершений; власник погодив перехід до roadmap stage **v0.3**.
 - Активний продукт: Tauri 2 + React (`app/`), ядро Rust (`crates/notes-core`).
-- Платформи збірки: Windows / macOS / Linux. Android та iOS — roadmap v0.3.
-- Windows release artifacts: setup `.exe`, `.msi`, `MD-Notes-<version>-Windows-x64-portable.zip`.
+- Desktop платформи: Windows / macOS / Linux. Android та iOS — активний v0.3 development target.
 - UI-мови: UK / EN / FR / DE / ES / KO / JA.
 - Ліцензійна модель: proprietary / All Rights Reserved (Roman Zavada). Публічний репозиторій не надає open-source ліцензії.
+
+## Інтегровано у v0.3
+
+### PR #30 — StorageProvider foundation
+
+Merge: `4545c938fcb70c80caa9e7595b4d89e8eead27aa`.
+CI #147 — **PASS**.
+
+- provider-neutral `StorageProvider`;
+- `LocalFsProvider`;
+- `list`, `read`, `write`, `remove`, `metadata`, `changes_since`;
+- atomic writes;
+- path escape rejection;
+- unit-тести.
+
+### PR #31 — provider-backed Vault I/O
+
+Merge: `230ee8e4373fe909c178c44865c5b5cd9d7bcd3e`.
+CI #153 — **PASS**.
+
+- `VaultStorage` поверх `StorageProvider`;
+- provider-backed tree traversal, note paths, config, read/write notes, unique paths;
+- існуючий `Vault` делегує provider-neutral I/O через `VaultStorage`;
+- local cache/rename/trash поки лишаються локальними операціями.
+
+### PR #32 — mobile sandbox bootstrap
+
+Merge: `588219e2310e94f2fbd04a3ba97288b8ba94813f`.
+CI #161 — **PASS**.
+
+- runtime platform detection;
+- app-data `vault` як default mobile sandbox за ADR-0006;
+- safe open-or-create local mobile vault;
+- Tauri command `open_mobile_sandbox_vault`;
+- typed frontend API;
+- mobile startup gate без desktop folder picker;
+- startup UI локалізовано UK/EN/FR/DE/ES/KO/JA.
+
+### PR #33 — local-first sync decision foundation
+
+Merge: `e91734df8f37d2be1a776fcad7883bbd30160b01`.
+CI #162 — **PASS**.
+
+- `SyncManifest`, `SyncSnapshot`, `SyncDecision`;
+- planning upload/download/delete/no-change;
+- concurrent deletion vs modification: modification wins;
+- divergent edits => merge-or-conflict decision;
+- visible conflict-copy filename;
+- unit-тести за політикою ADR-0005;
+- без нових sync dependencies на цьому foundation slice.
+
+## Поточна перевірка mobile
+
+Draft PR #35 — `ci: validate Android and iOS mobile builds`.
+
+Мета:
+- Android: `tauri android init --ci` + aarch64 debug build;
+- iOS: `tauri ios init --ci` + arm64 simulator debug build;
+- не видавати build evidence за runtime validation на реальному пристрої.
 
 ## Функціонально завершено у v0.2
 
@@ -37,10 +90,7 @@
 - відкритий `.mdnotes/schema.json` v1 і schema-driven property form;
 - safe Empty / PARA / Zettelkasten vault presets;
 - startup gate без silent auto-reopen останнього vault;
-- global/local knowledge graph із Sigma.js 3.0.3 + Graphology 0.26.0;
-- graph source — rebuildable SQLite index; Markdown лишається джерелом істини;
-- global graph включає всі indexed notes, local graph — active note + one-hop incoming/outgoing neighbors;
-- click graph node відкриває нотатку; graph UI локалізовано 7 мовами.
+- global/local knowledge graph із Sigma.js 3.0.3 + Graphology 0.26.0.
 
 ## Опубліковано у v0.2.2
 
@@ -65,28 +115,21 @@
 - `THIRD_PARTY_NOTICES.md`
 - `SHA256SUMS.txt`
 
-## Перевірка
+## Межа доказу / відомі обмеження
 
-- PR #21 runtime-startup hotfix: CI #92 — **PASS**;
-- PR #20 portable packaging: CI #95 — **PASS**;
-- PR #19 schema/property form: CI #97 — **PASS**;
-- PR #23 vault presets/startup gate: CI #114 — **PASS**;
-- PR #25 knowledge graph: clean CI #132 — **PASS**;
-- PR #27 version policy: CI #138 — **PASS**;
-- release commit main CI `36990461817` — **PASS**;
-- release workflow #30 / `36990461869` — **SUCCESS**;
-- Windows/macOS/Linux build jobs, dependency licenses, START/legal/checksums — PASS/SUCCESS.
-
-## Межа доказу / runtime blocker
-
-- користувач на реальній Windows v0.2.1 підтвердив сильне зависання після запуску;
-- v0.2.2 містить startup hotfix: silent auto-reopen останнього vault заблоковано, startup flow вимагає явної дії;
-- **ручний runtime test v0.2.2 ще не підтверджено**; green CI/build не вважається runtime validation;
-- startup/preset UI, schema/property form і graph UI також не проходили manual runtime validation у поточному середовищі;
-- якщо зависання повториться після ручного відкриття vault, наступний технічний напрям — оптимізація `note_paths()` / `get_tree()` і перенесення дорогого index sync з критичного open path;
-- великі vault-и все ще індексуються синхронно при ручному відкритті;
+- v0.2.2 Windows runtime вручну підтверджений власником;
+- Android/iOS runtime на реальних пристроях ще не підтверджений;
+- mobile build smoke PR #35 є лише build evidence;
+- Git/WebDAV sync ще не реалізований, лише provider-neutral sync decision foundation;
+- optional Android SAF / iOS security-scoped bookmark adapters ще не реалізовані;
+- local cache/rename/trash ще не узагальнені під external mobile providers;
+- великі vault-и все ще можуть індексуватися синхронно при відкритті;
 - збірки не підписані.
 
 ## Наступна дія
 
-**Перший операційний пріоритет — реальна Windows runtime-перевірка v0.2.2**: startup, «Про програму», ручне відкриття vault, presets, schema/property form, local/global graph. Якщо freeze відтворюється — спочатку закрити performance blocker. Якщо базовий runtime стабільний — переходити до roadmap v0.3 (Android/iOS + Git/WebDAV sync) за рішенням власника.
+1. Завершити mobile build smoke PR #35 і зафіксувати фактичний результат Android/iOS build.
+2. Далі реалізувати Git sync через `gix`/gitoxide поверх `SyncManifest` / `plan_sync`.
+3. Після Git — WebDAV через OpenDAL.
+4. Після стабільного sandbox + sync — optional external-folder adapters: Android SAF і iOS security-scoped bookmarks.
+5. Перед додаванням нових dependency перевіряти licenses і оновлювати `THIRD_PARTY_NOTICES.md`.
