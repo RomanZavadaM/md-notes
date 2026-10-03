@@ -73,35 +73,35 @@ fn configure_native_store() -> Result<(), String> {
         use android_native_keyring_store::Store;
         let store = Store::new_with_configuration(&config).map_err(store_error)?;
         set_default_store(store);
-        return Ok(());
+        Ok(())
     }
     #[cfg(target_os = "ios")]
     {
         use apple_native_keyring_store::protected::Store;
         let store = Store::new_with_configuration(&config).map_err(store_error)?;
         set_default_store(store);
-        return Ok(());
+        Ok(())
     }
     #[cfg(target_os = "macos")]
     {
         use apple_native_keyring_store::keychain::Store;
         let store = Store::new_with_configuration(&config).map_err(store_error)?;
         set_default_store(store);
-        return Ok(());
+        Ok(())
     }
     #[cfg(target_os = "windows")]
     {
         use windows_native_keyring_store::Store;
         let store = Store::new_with_configuration(&config).map_err(store_error)?;
         set_default_store(store);
-        return Ok(());
+        Ok(())
     }
     #[cfg(target_os = "linux")]
     {
         use zbus_secret_service_keyring_store::Store;
         let store = Store::new_with_configuration(&config).map_err(store_error)?;
         set_default_store(store);
-        return Ok(());
+        Ok(())
     }
     #[cfg(not(any(
         target_os = "android",
