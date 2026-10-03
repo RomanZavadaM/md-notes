@@ -47,11 +47,7 @@ pub enum SyncDecision {
 ///
 /// `base` is the last synchronized state; `local` and `remote` are current
 /// states. A missing state is represented by `content_hash: None`.
-pub fn plan_sync(
-    base: &SyncSnapshot,
-    local: &SyncSnapshot,
-    remote: &SyncSnapshot,
-) -> SyncDecision {
+pub fn plan_sync(base: &SyncSnapshot, local: &SyncSnapshot, remote: &SyncSnapshot) -> SyncDecision {
     let local_changed = local.content_hash != base.content_hash;
     let remote_changed = remote.content_hash != base.content_hash;
 
