@@ -18,13 +18,27 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 notes-core = { path = "../../crates/notes-core" }
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
-keyring = { version = "4.2", default-features = false, features = ["cli"] }
 keyring-core = "1"
 serde = { workspace = true }
 serde_json = { workspace = true }
 tauri = { version = "2", features = ["protocol-asset"] }
 tauri-plugin-dialog = "2"
 tauri-plugin-opener = "2"
+
+[target.'cfg(target_os = "android")'.dependencies]
+android-native-keyring-store = "1"
+
+[target.'cfg(target_os = "ios")'.dependencies]
+apple-native-keyring-store = { version = "1", features = ["protected"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+apple-native-keyring-store = { version = "1", features = ["keychain"] }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows-native-keyring-store = "1"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+zbus-secret-service-keyring-store = { version = "1", features = ["crypto-rust"] }
 
 # File watching is desktop-only for now; mobile vaults live in the app sandbox.
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
