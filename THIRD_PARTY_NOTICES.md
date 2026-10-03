@@ -9,6 +9,7 @@ The MD Notes proprietary license does **not** replace, restrict, or relicense th
 Core library `crates/notes-core`:
 
 - chrono — MIT OR Apache-2.0, dates for notes and templates
+- gix (Gitoxide) — MIT OR Apache-2.0, Git repository and HTTPS synchronization foundation
 - rusqlite — MIT, SQLite bindings for the vault index; bundles **SQLite** (public domain)
 - serde, serde_json — MIT OR Apache-2.0, serialization
 - serde_yaml — MIT OR Apache-2.0, YAML front matter parsing
@@ -35,11 +36,11 @@ Application `app/src-tauri`:
 - Vite, `@vitejs/plugin-react` — MIT (build tools)
 - TypeScript — Apache-2.0 (build tool)
 
-Some packages listed here arrive with feature branches of v0.2 and apply once those changes are integrated.
+Some packages listed here arrive with feature branches of v0.2/v0.3 and apply once those changes are integrated.
 
 ## License review
 
-MD Notes ships only dependencies that can be used in a proprietary distribution. Every release is checked automatically (`deny.toml`, `app/scripts/check-licenses.mjs`, CI job “Dependency licenses”). The full review of 01.10.2026 covered 501 Rust crates and 400 npm packages:
+MD Notes ships only dependencies that can be used in a proprietary distribution. Every release is checked automatically (`deny.toml`, `app/scripts/check-licenses.mjs`, CI job “Dependency licenses”). The full review of 01.10.2026 covered 501 Rust crates and 400 npm packages; every newly added dependency must pass the same automated gates before integration.
 
 - almost all components use MIT, Apache-2.0, BSD, ISC, Zlib, CC0, Unlicense or Unicode licenses;
 - dual-licensed components are used under their permissive option: `dompurify` (MPL-2.0 **or** Apache-2.0 → Apache-2.0), `r-efi` (MIT **or** Apache-2.0 **or** LGPL-2.1+ → MIT);
