@@ -8,6 +8,7 @@ import {
   VAULT_CHANGED,
   type AttachmentInfo,
   type Note,
+  type StandaloneMarkdown,
   type TemplateInfo,
   type TreeEntry,
   type VaultInfo,
@@ -42,6 +43,7 @@ export default function App() {
   const { t, language, setLanguage } = useI18n();
   const [aboutOpen, setAboutOpen] = useState(false);
   const [vault, setVault] = useState<VaultInfo | null>(null);
+  const [standalone, setStandalone] = useState<StandaloneMarkdown | null>(null);
   const [tree, setTree] = useState<TreeEntry[]>([]);
   const [note, setNote] = useState<Note | null>(null);
   const [draft, setDraft] = useState("");
@@ -104,24 +106,25 @@ export default function App() {
     const content = draftRef.current;
     if (!current || content === savedRef.current) return;
     try {
-      const saved = await api.saveNote(current.path, content);
+      const saved = standalone
+        ? (await api.saveMarkdownFile(standalone.path, content)).note
+        : await api.saveNote(current.path, content);
       savedRef.current = content;
       setSavedContent(content);
-      if (noteRef.current?.path === saved.path) {
-        noteRef.current = saved;
-        setNote(saved);
-      }
+      noteRef.current = saved;
+      setNote(saved);
       bump();
     } catch (e) {
       report(e);
     }
-  }, [report, bump]);
+  }, [standalone, report, bump]);
 
   const openVaultAt = useCallback(
     async (path: string) => {
       try {
         await save();
         const info = await api.openVault(path);
+        setStandalone(null);
         setVault(info);
         setSelected(null);
         showNote(null);
@@ -146,6 +149,34 @@ export default function App() {
   const pickVault = async () => {
     const dir = await open({ directory: true, multiple: false, title: t.pickFolderTitle });
     if (typeof dir === "string") await openVaultAt(dir);
+  };
+
+  const openStandaloneAt = useCallback(
+    async (path: string) => {
+      try {
+        await save();
+        const document = await api.openMarkdownFile(path);
+        setVault(null);
+        setTree([]);
+        setSelected(null);
+        setStandalone(document);
+        showNote(document.note);
+        setEditorVersion((v) => v + 1);
+      } catch (e) {
+        report(e);
+      }
+    },
+    [save, showNote, report],
+  );
+
+  const pickMarkdownFile = async () => {
+    const file = await open({
+      directory: false,
+      multiple: false,
+      title: t.pickMarkdownFileTitle,
+      filters: [{ name: "Markdown", extensions: ["md", "markdown"] }],
+    });
+    if (typeof file === "string") await openStandaloneAt(file);
   };
 
   const openNote = useCallback(
@@ -364,13 +395,16 @@ export default function App() {
     }
   };
 
-  if (!vault) {
+  if (!vault && !standalone) {
     return (
       <div className="welcome">
         <h1>MD Notes</h1>
         <p>{t.appTagline}</p>
         <button type="button" className="primary" onClick={() => void pickVault()}>
           {t.openFolder}
+        </button>
+        <button type="button" onClick={() => void pickMarkdownFile()}>
+          {t.openMarkdownFile}
         </button>
         {error && <p className="welcome-error">{error}</p>}
         <select
@@ -390,6 +424,78 @@ export default function App() {
         </button>
         <p className="welcome-copyright">{COPYRIGHT}</p>
         {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
+      </div>
+    );
+  }
+
+  if (standalone && note) {
+    return (
+      <div className="app">
+        <header className="toolbar">
+          <span className="vault-name" title={standalone.path}>
+            {standalone.name}
+          </span>
+          <div className="segmented" role="group" aria-label={t.modeGroup}>
+            {(
+              [
+                ["edit", t.modeEdit],
+                ["split", t.modeSplit],
+                ["preview", t.modePreview],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                className={`${mode === value ? "on" : ""} mode-${value}`}
+                onClick={() => setMode(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          <button type="button" onClick={() => void pickMarkdownFile()}>
+            {t.openMarkdownFile}
+          </button>
+          <button type="button" onClick={() => void pickVault()}>
+            {t.openFolder}
+          </button>
+        </header>
+
+        <main className={`workspace mode-${mode}`}>
+          {mode !== "preview" && (
+            <section className="pane pane-editor">
+              <Editor
+                docKey={`${standalone.path}#${editorVersion}`}
+                value={note.content}
+                onChange={onChange}
+                onSave={() => void save()}
+              />
+            </section>
+          )}
+          {mode !== "edit" && (
+            <section className="pane pane-preview">
+              <Preview
+                content={draft}
+                notePath={standalone.name}
+                vaultRoot={standalone.directory}
+                files={[]}
+                onOpenLink={() => {}}
+                onOpenPath={() => {}}
+              />
+            </section>
+          )}
+        </main>
+
+        <footer className="statusbar">
+          <span>{standalone.path}</span>
+          <span className="save-state">{dirty ? t.statusUnsaved : t.statusSaved}</span>
+        </footer>
+
+        {error && (
+          <div className="toast" role="alert" onClick={() => setError(null)}>
+            {error}
+          </div>
+        )}
       </div>
     );
   }
@@ -534,6 +640,9 @@ export default function App() {
             )}
 
             <div className="sidebar-footer">
+              <button type="button" onClick={() => void pickMarkdownFile()}>
+                {t.openMarkdownFile}
+              </button>
               <button type="button" onClick={() => void pickVault()}>
                 {t.otherVault}
               </button>
