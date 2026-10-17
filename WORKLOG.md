@@ -1,6 +1,6 @@
 # WORKLOG — MD Notes
 
-Оновлено: **03.10.2026**
+Оновлено: **17.10.2026**
 
 ## STATUS
 
@@ -30,6 +30,8 @@ Release baseline:
 - PR #42 — local Git commit pipeline.
 - PR #43 — safe public HTTPS fetch.
 - PR #44 — in-memory Git HTTPS authentication.
+- PR #47 — safe Git pull relation planner.
+- PR #54 — standalone Markdown reader/editor + opt-in Windows/Linux file association.
 
 PR #44 merge checkpoint: `b142973ea4315987b28aa3a4e6563506c219c255`.
 Validation on PR #44 head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f`: CI #211 SUCCESS + Mobile smoke #29 SUCCESS.
@@ -43,6 +45,16 @@ Validation on PR #44 head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f`: CI #211 SU
 - iOS simulator debug build: SUCCESS.
 - Release PR #40 інтегрований у `main`: `42656f0075d0072e295bee33c74f059c3ae6e656`.
 - GitHub prerelease `v0.3.0`: published.
+
+## Standalone Markdown checkpoint
+
+- PR #54 merged: `c940dcc7aa2f8a4028b7ba4a8a15862070b7907b`.
+- Final head `937047ada68cf38626a0cb35bd75457c2efab700`.
+- CI #270: SUCCESS.
+- Mobile smoke #78: SUCCESS.
+- `.md/.markdown` можна відкрити зсередини MD Notes без vault і зберегти назад.
+- Windows/Linux: системна прив'язка Markdown виконується тільки після явної команди користувача; portable та installer поводяться однаково з точки зору opt-in.
+- macOS runtime default-association лишається окремою незавершеною платформною задачею.
 
 ## Next work when MD Notes resumes
 

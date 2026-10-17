@@ -26,9 +26,23 @@ Roadmap stage **v0.3** продовжується після релізного 
 - PR #41 — local Git dirty-state detection;
 - PR #42 — local Git commit pipeline;
 - PR #43 — safe public HTTPS fetch;
-- PR #44 — in-memory Git HTTPS authentication.
+- PR #44 — in-memory Git HTTPS authentication;
+- PR #47 — safe Git pull relation planner;
+- PR #54 — standalone `.md/.markdown` reader/editor + opt-in Windows/Linux Markdown association.
 
 PR #44 merge checkpoint: `b142973ea4315987b28aa3a4e6563506c219c255`; його PR head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f` пройшов desktop CI #211 і Mobile smoke #29.
+
+## Останні інтегровані зміни після v0.3.0
+
+PR #54 `feat: open standalone Markdown files` інтегровано у `main` commit `c940dcc7aa2f8a4028b7ba4a8a15862070b7907b`.
+
+- одиночний `.md/.markdown` відкривається без vault;
+- файл можна читати, редагувати і зберігати на місце;
+- installer і portable мають однакову кнопку «Відкрити Markdown-файл…»;
+- Windows/Linux system association — лише за явною командою користувача;
+- portable самостійно системні асоціації не змінює;
+- CI #270 + Mobile smoke #78 — SUCCESS;
+- macOS runtime default-association ще не реалізована.
 
 ## Завершений release checkpoint — v0.3.0
 
