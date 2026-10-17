@@ -1,0 +1,12 @@
+{
+  "bundle": {
+    "fileAssociations": [
+      {
+        "ext": ["md", "markdown"],
+        "mimeType": "text/markdown",
+        "role": "Editor",
+        "rank": "Alternate"
+      }
+    ]
+  }
+}

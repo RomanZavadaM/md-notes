@@ -5,6 +5,7 @@ import {
   api,
   joinPath,
   parentPath,
+  OPENED_MARKDOWN_FILES,
   VAULT_CHANGED,
   type AttachmentInfo,
   type Note,
@@ -164,24 +165,54 @@ export default function App() {
     [save, showNote, report],
   );
 
+  const openStandaloneAtRef = useRef(openStandaloneAt);
+  const openVaultAtRef = useRef(openVaultAt);
+  useEffect(() => {
+    openStandaloneAtRef.current = openStandaloneAt;
+  }, [openStandaloneAt]);
+  useEffect(() => {
+    openVaultAtRef.current = openVaultAt;
+  }, [openVaultAt]);
+
   useEffect(() => {
     void api.runtimePlatform().then(setPlatform).catch(() => setPlatform("unknown"));
-    void api
-      .startupMarkdownFiles()
-      .then((paths) => {
-        if (paths.length > 0) {
-          void openStandaloneAt(paths[0]);
+    let disposed = false;
+    let unlisten: (() => void) | undefined;
+
+    const openPendingMarkdown = async (fallbackToLastVault: boolean) => {
+      try {
+        const paths = await api.startupMarkdownFiles();
+        if (disposed) return;
+        const path = paths[0];
+        if (path) {
+          await openStandaloneAtRef.current(path);
           return;
         }
-        const last = storage.get(LAST_VAULT_KEY);
-        if (last) void openVaultAt(last);
-      })
-      .catch(() => {
-        const last = storage.get(LAST_VAULT_KEY);
-        if (last) void openVaultAt(last);
-      });
-    // Only on startup.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+      } catch {
+        // Fall back to the previous vault only during initial startup.
+      }
+      if (disposed || !fallbackToLastVault) return;
+      const last = storage.get(LAST_VAULT_KEY);
+      if (last) await openVaultAtRef.current(last);
+    };
+
+    // Attach the OS-open listener before draining startup files. On macOS this
+    // closes the race between Finder's open event and frontend initialization.
+    void listen<string[]>(OPENED_MARKDOWN_FILES, () => {
+      void openPendingMarkdown(false);
+    }).then((fn) => {
+      if (disposed) {
+        fn();
+        return;
+      }
+      unlisten = fn;
+      void openPendingMarkdown(true);
+    });
+
+    return () => {
+      disposed = true;
+      unlisten?.();
+    };
   }, []);
 
   const configureMarkdownAssociation = async () => {
@@ -432,7 +463,7 @@ export default function App() {
         <button type="button" onClick={() => void pickMarkdownFile()}>
           {t.openMarkdownFile}
         </button>
-        {(platform === "windows" || platform === "linux") && (
+        {(platform === "windows" || platform === "linux" || platform === "macos") && (
           <button type="button" onClick={() => void configureMarkdownAssociation()}>
             {t.makeMarkdownDefault}
           </button>
@@ -490,7 +521,7 @@ export default function App() {
           <button type="button" onClick={() => void pickVault()}>
             {t.openFolder}
           </button>
-          {(platform === "windows" || platform === "linux") && (
+          {(platform === "windows" || platform === "linux" || platform === "macos") && (
             <button type="button" onClick={() => void configureMarkdownAssociation()}>
               {t.makeMarkdownDefault}
             </button>
@@ -681,7 +712,7 @@ export default function App() {
               <button type="button" onClick={() => void pickMarkdownFile()}>
                 {t.openMarkdownFile}
               </button>
-              {(platform === "windows" || platform === "linux") && (
+              {(platform === "windows" || platform === "linux" || platform === "macos") && (
                 <button type="button" onClick={() => void configureMarkdownAssociation()}>
                   {t.makeMarkdownDefault}
                 </button>
