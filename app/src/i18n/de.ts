@@ -4,6 +4,12 @@ export const de: Strings = {
   appTagline: "Eine persönliche Wissensdatenbank in einfachen Markdown-Dateien.",
   openFolder: "Ordner öffnen",
   pickFolderTitle: "Tresor-Ordner auswählen",
+  openMarkdownFile: "Markdown-Datei öffnen…",
+  pickMarkdownFileTitle: "Markdown-Datei auswählen",
+  makeMarkdownDefault: "MD Notes als Markdown-App festlegen",
+  markdownAssociationSystemChoice: "MD Notes wurde als Markdown-App hinzugefügt. Wählen Sie es im Systemfenster als Standard-App aus.",
+  markdownAssociationDefaultSet: "MD Notes ist jetzt die Standard-App für Markdown.",
+  markdownAssociationUnsupported: "Die automatische Markdown-Zuordnung ist für dieses System noch nicht verfügbar.",
 
   sidebarToggle: "Seitenleiste",
   goToNote: "Zur Notiz springen (Ctrl+O)",

@@ -34,6 +34,13 @@ export interface VaultInfo {
   name: string;
 }
 
+export interface StandaloneMarkdown {
+  path: string;
+  directory: string;
+  name: string;
+  note: Note;
+}
+
 export interface NoteSummary {
   path: string;
   title: string;
@@ -142,6 +149,11 @@ export const VAULT_CHANGED = "vault-changed";
 export const api = {
   runtimePlatform: () => invoke<RuntimePlatform>("runtime_platform"),
   openMobileSandboxVault: () => invoke<VaultInfo>("open_mobile_sandbox_vault"),
+  openMarkdownFile: (path: string) => invoke<StandaloneMarkdown>("open_markdown_file", { path }),
+  saveMarkdownFile: (path: string, content: string) =>
+    invoke<StandaloneMarkdown>("save_markdown_file", { path, content }),
+  startupMarkdownFiles: () => invoke<string[]>("startup_markdown_files"),
+  configureMarkdownAssociation: () => invoke<"systemChoice" | "defaultSet" | "unsupported">("configure_markdown_association"),
   openVault: (path: string) => invoke<VaultInfo>("open_vault", { path }),
   createVault: (path: string, name: string | null, preset: VaultPreset) =>
     invoke<VaultInfo>("create_vault", { path, name, preset }),

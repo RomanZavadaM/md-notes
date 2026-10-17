@@ -1,12 +1,15 @@
 //! Tauri shell of MD Notes: exposes `notes-core` to the web UI as commands.
 
 use std::collections::BTreeMap;
-use std::sync::Mutex;
+use std::path::{Path, PathBuf};
+use std::process::Command;
+use std::sync::{Arc, Mutex};
 
 use notes_core::{
     create_vault_with_preset, fetch_git_remote_authenticated, knowledge_graph, AttachmentInfo,
-    Backlink, Index, KnowledgeGraph, Note, NoteSummary, RenameOutcome, SchemaDocument, SearchHit,
-    TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault, VaultPreset,
+    Backlink, Index, KnowledgeGraph, LocalFsProvider, Note, NoteSummary, RenameOutcome,
+    SchemaDocument, SearchHit, TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault,
+    VaultPreset, VaultStorage,
 };
 use serde::Serialize;
 use serde_json::Value;
@@ -48,6 +51,223 @@ const VAULT_CHANGED: &str = "vault-changed";
 struct VaultInfo {
     root: String,
     name: String,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct StandaloneMarkdown {
+    path: String,
+    directory: String,
+    name: String,
+    note: Note,
+}
+
+fn standalone_markdown_path(path: &str) -> CmdResult<(PathBuf, PathBuf, String)> {
+    let path = Path::new(path);
+    let extension = path
+        .extension()
+        .and_then(|value| value.to_str())
+        .unwrap_or_default();
+    if !matches!(extension.to_ascii_lowercase().as_str(), "md" | "markdown") {
+        return Err("only .md and .markdown files are supported".into());
+    }
+    let absolute = path.canonicalize().map_err(|error| error.to_string())?;
+    if !absolute.is_file() {
+        return Err("Markdown path is not a file".into());
+    }
+    let directory = absolute
+        .parent()
+        .ok_or_else(|| "Markdown file has no parent directory".to_string())?
+        .to_path_buf();
+    let name = absolute
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| "Markdown filename must be valid UTF-8".to_string())?
+        .to_string();
+    Ok((absolute, directory, name))
+}
+
+fn load_standalone_markdown(path: &str) -> CmdResult<StandaloneMarkdown> {
+    let (absolute, directory, name) = standalone_markdown_path(path)?;
+    let provider = Arc::new(LocalFsProvider::new(&directory).map_err(|error| error.to_string())?);
+    let storage = VaultStorage::open(provider).map_err(|error| error.to_string())?;
+    let note = storage
+        .read_note(&name)
+        .map_err(|error| error.to_string())?;
+    Ok(StandaloneMarkdown {
+        path: absolute.display().to_string(),
+        directory: directory.display().to_string(),
+        name,
+        note,
+    })
+}
+
+#[tauri::command]
+fn open_markdown_file(path: String) -> CmdResult<StandaloneMarkdown> {
+    load_standalone_markdown(&path)
+}
+
+#[tauri::command]
+fn save_markdown_file(path: String, content: String) -> CmdResult<StandaloneMarkdown> {
+    let (_, directory, name) = standalone_markdown_path(&path)?;
+    let provider = Arc::new(LocalFsProvider::new(&directory).map_err(|error| error.to_string())?);
+    let storage = VaultStorage::open(provider).map_err(|error| error.to_string())?;
+    storage
+        .write_note(&name, &content)
+        .map_err(|error| error.to_string())?;
+    load_standalone_markdown(&path)
+}
+
+#[tauri::command]
+fn startup_markdown_files() -> Vec<String> {
+    #[cfg(any(target_os = "windows", target_os = "linux"))]
+    {
+        std::env::args()
+            .skip(1)
+            .filter(|arg| {
+                let path = Path::new(arg);
+                path.is_file()
+                    && path
+                        .extension()
+                        .and_then(|value| value.to_str())
+                        .is_some_and(|ext| {
+                            matches!(ext.to_ascii_lowercase().as_str(), "md" | "markdown")
+                        })
+            })
+            .collect()
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux")))]
+    Vec::new()
+}
+
+#[tauri::command]
+fn configure_markdown_association() -> CmdResult<String> {
+    #[cfg(target_os = "windows")]
+    {
+        let exe = std::env::current_exe().map_err(|error| error.to_string())?;
+        let exe_text = exe.display().to_string();
+        let command = format!("\"{exe_text}\" \"%1\"");
+        let icon = format!("\"{exe_text}\",0");
+        let exe_name = exe
+            .file_name()
+            .and_then(|value| value.to_str())
+            .ok_or_else(|| "MD Notes executable name must be valid UTF-8".to_string())?;
+        let application_key = format!(r"HKCU\Software\Classes\Applications\{exe_name}");
+        let application_command_key = format!(r"{application_key}\shell\open\command");
+        let application_types_key = format!(r"{application_key}\SupportedTypes");
+        let registrations = [
+            vec![
+                "add",
+                r"HKCU\Software\Classes\MDNotes.Markdown",
+                "/ve",
+                "/d",
+                "Markdown Document",
+                "/f",
+            ],
+            vec![
+                "add",
+                r"HKCU\Software\Classes\MDNotes.Markdown\DefaultIcon",
+                "/ve",
+                "/d",
+                &icon,
+                "/f",
+            ],
+            vec![
+                "add",
+                r"HKCU\Software\Classes\MDNotes.Markdown\shell\open\command",
+                "/ve",
+                "/d",
+                &command,
+                "/f",
+            ],
+            vec![
+                "add",
+                r"HKCU\Software\Classes\.md\OpenWithProgids",
+                "/v",
+                "MDNotes.Markdown",
+                "/t",
+                "REG_NONE",
+                "/f",
+            ],
+            vec![
+                "add",
+                r"HKCU\Software\Classes\.markdown\OpenWithProgids",
+                "/v",
+                "MDNotes.Markdown",
+                "/t",
+                "REG_NONE",
+                "/f",
+            ],
+            vec!["add", &application_key, "/ve", "/d", "MD Notes", "/f"],
+            vec!["add", &application_command_key, "/ve", "/d", &command, "/f"],
+            vec![
+                "add",
+                &application_types_key,
+                "/v",
+                ".md",
+                "/t",
+                "REG_SZ",
+                "/d",
+                "",
+                "/f",
+            ],
+            vec![
+                "add",
+                &application_types_key,
+                "/v",
+                ".markdown",
+                "/t",
+                "REG_SZ",
+                "/d",
+                "",
+                "/f",
+            ],
+        ];
+        for args in registrations {
+            let status = Command::new("reg.exe")
+                .args(args)
+                .status()
+                .map_err(|error| error.to_string())?;
+            if !status.success() {
+                return Err("Windows could not register MD Notes for Markdown files".into());
+            }
+        }
+        let _ = Command::new("explorer.exe")
+            .arg("ms-settings:defaultapps")
+            .spawn();
+        Ok("systemChoice".into())
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        let exe = std::env::current_exe().map_err(|error| error.to_string())?;
+        let home = std::env::var_os("HOME").ok_or_else(|| "HOME is not available".to_string())?;
+        let applications = PathBuf::from(home).join(".local/share/applications");
+        std::fs::create_dir_all(&applications).map_err(|error| error.to_string())?;
+        let desktop_path = applications.join("md-notes.desktop");
+        let exe_text = exe.display().to_string().replace('"', "\\\"");
+        let desktop = format!(
+            "[Desktop Entry]\nType=Application\nName=MD Notes\nExec=\"{exe_text}\" %f\nMimeType=text/markdown;text/x-markdown;\nNoDisplay=true\nTerminal=false\n"
+        );
+        std::fs::write(&desktop_path, desktop).map_err(|error| error.to_string())?;
+        let _ = Command::new("update-desktop-database")
+            .arg(&applications)
+            .status();
+        for mime in ["text/markdown", "text/x-markdown"] {
+            let status = Command::new("xdg-mime")
+                .args(["default", "md-notes.desktop", mime])
+                .status()
+                .map_err(|error| error.to_string())?;
+            if !status.success() {
+                return Err(format!("xdg-mime could not set MD Notes for {mime}"));
+            }
+        }
+        Ok("defaultSet".into())
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux")))]
+    Ok("unsupported".into())
 }
 
 fn activate_vault(
@@ -323,6 +543,10 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             runtime_platform,
             open_mobile_sandbox_vault,
+            open_markdown_file,
+            save_markdown_file,
+            startup_markdown_files,
+            configure_markdown_association,
             open_vault,
             create_vault,
             save_git_credentials,

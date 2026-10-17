@@ -4,6 +4,12 @@ export const uk = {
   appTagline: "Особиста база знань у звичайних Markdown-файлах.",
   openFolder: "Відкрити папку",
   pickFolderTitle: "Виберіть папку сховища",
+  openMarkdownFile: "Відкрити Markdown-файл…",
+  pickMarkdownFileTitle: "Виберіть Markdown-файл",
+  makeMarkdownDefault: "Зробити MD Notes програмою для Markdown",
+  markdownAssociationSystemChoice: "MD Notes додано до програм для Markdown. У системному вікні виберіть її типовою програмою.",
+  markdownAssociationDefaultSet: "MD Notes призначено типовою програмою для Markdown.",
+  markdownAssociationUnsupported: "Для цієї системи автоматичне призначення ще не реалізоване.",
 
   sidebarToggle: "Бічна панель",
   goToNote: "Перейти до нотатки (Ctrl+O)",

@@ -4,6 +4,12 @@ export const ja: Strings = {
   appTagline: "通常の Markdown ファイルによる個人ナレッジベース。",
   openFolder: "フォルダーを開く",
   pickFolderTitle: "保管庫のフォルダーを選択",
+  openMarkdownFile: "Markdownファイルを開く…",
+  pickMarkdownFileTitle: "Markdownファイルを選択",
+  makeMarkdownDefault: "MD NotesをMarkdownの既定アプリにする",
+  markdownAssociationSystemChoice: "MD NotesをMarkdown対応アプリとして登録しました。システム画面で既定のアプリとして選択してください。",
+  markdownAssociationDefaultSet: "MD NotesをMarkdownの既定アプリに設定しました。",
+  markdownAssociationUnsupported: "このシステムではMarkdownの自動関連付けはまだ実装されていません。",
 
   sidebarToggle: "サイドバー",
   goToNote: "ノートへ移動 (Ctrl+O)",
