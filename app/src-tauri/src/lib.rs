@@ -134,7 +134,7 @@ fn startup_markdown_files() -> Vec<String> {
                             matches!(ext.to_ascii_lowercase().as_str(), "md" | "markdown")
                         })
             })
-            .collect();
+            .collect()
     }
 
     #[cfg(not(any(target_os = "windows", target_os = "linux")))]
