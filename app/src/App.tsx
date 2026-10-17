@@ -500,6 +500,8 @@ export default function App() {
     );
   }
 
+  if (!vault) return null;
+
   return (
     <div className="app">
       <header className="toolbar">
