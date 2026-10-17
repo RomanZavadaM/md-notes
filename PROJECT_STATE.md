@@ -94,7 +94,7 @@ Release PR #40 інтегрований у `main` commit `42656f0075d0072e295bee
 - Git sync ще не зв’язаний повністю з `SyncManifest` / ADR-0005 conflict resolution;
 - WebDAV ще не реалізований;
 - Android SAF / iOS security-scoped bookmarks ще не реалізовані;
-- macOS runtime-опція призначення MD Notes типовою Markdown-програмою ще не реалізована;
+- macOS Finder/open-event + explicit handler action реалізовані у PR #56; desktop CI та Android green, final iOS rerun pending before merge;
 - large vault open/indexing може лишатися синхронним;
 - релізні builds не підписані.
 
