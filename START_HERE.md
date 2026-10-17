@@ -29,6 +29,7 @@ Roadmap stage **v0.3** продовжується після релізного 
 - PR #44 — in-memory Git HTTPS authentication;
 - PR #47 — safe Git pull relation planner;
 - PR #54 — standalone `.md/.markdown` reader/editor + opt-in Windows/Linux Markdown association.
+- PR #56 — macOS Finder/open-event + explicit Markdown handler action, merged to `main` as `a6429a40f87827e710dbd2e6ebb7b9e6df194375`; CI #283 + Mobile smoke #88 SUCCESS on final head `41d51db7ea5631b51a024fbf790bcc82758a4894`.
 
 PR #44 merge checkpoint: `b142973ea4315987b28aa3a4e6563506c219c255`; його PR head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f` пройшов desktop CI #211 і Mobile smoke #29.
 
@@ -42,7 +43,7 @@ PR #54 `feat: open standalone Markdown files` інтегровано у `main` c
 - Windows/Linux system association — лише за явною командою користувача;
 - portable самостійно системні асоціації не змінює;
 - CI #270 + Mobile smoke #78 — SUCCESS;
-- macOS runtime default-association ще не реалізована.
+- macOS integration merged in PR #56 (`a6429a40f87827e710dbd2e6ebb7b9e6df194375`); no automatic default takeover; CI #283 + Mobile smoke #88 SUCCESS.
 
 ## Завершений release checkpoint — v0.3.0
 
