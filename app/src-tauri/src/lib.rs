@@ -147,12 +147,23 @@ fn configure_markdown_association() -> CmdResult<String> {
         let exe_text = exe.display().to_string();
         let command = format!("\"{exe_text}\" \"%1\"");
         let icon = format!("\"{exe_text}\",0");
+        let exe_name = exe
+            .file_name()
+            .and_then(|value| value.to_str())
+            .ok_or_else(|| "MD Notes executable name must be valid UTF-8".to_string())?;
+        let application_key = format!(r"HKCU\Software\Classes\Applications\{exe_name}");
+        let application_command_key = format!(r"{application_key}\shell\open\command");
+        let application_types_key = format!(r"{application_key}\SupportedTypes");
         let registrations = [
             vec!["add", r"HKCU\Software\Classes\MDNotes.Markdown", "/ve", "/d", "Markdown Document", "/f"],
             vec!["add", r"HKCU\Software\Classes\MDNotes.Markdown\DefaultIcon", "/ve", "/d", &icon, "/f"],
             vec!["add", r"HKCU\Software\Classes\MDNotes.Markdown\shell\open\command", "/ve", "/d", &command, "/f"],
             vec!["add", r"HKCU\Software\Classes\.md\OpenWithProgids", "/v", "MDNotes.Markdown", "/t", "REG_NONE", "/f"],
             vec!["add", r"HKCU\Software\Classes\.markdown\OpenWithProgids", "/v", "MDNotes.Markdown", "/t", "REG_NONE", "/f"],
+            vec!["add", &application_key, "/ve", "/d", "MD Notes", "/f"],
+            vec!["add", &application_command_key, "/ve", "/d", &command, "/f"],
+            vec!["add", &application_types_key, "/v", ".md", "/t", "REG_SZ", "/d", "", "/f"],
+            vec!["add", &application_types_key, "/v", ".markdown", "/t", "REG_SZ", "/d", "", "/f"],
         ];
         for args in registrations {
             let status = Command::new("reg.exe")
