@@ -67,6 +67,18 @@ jobs:
       - name: Clippy (Tauri app)
         run: cargo clippy -p md-notes --all-targets -- -D warnings
 
+  app-macos:
+    name: app (macOS Tauri)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Clippy (macOS Tauri app)
+        run: cargo clippy -p md-notes --all-targets -- -D warnings
+
   licenses:
     name: Dependency licenses
     runs-on: ubuntu-latest
