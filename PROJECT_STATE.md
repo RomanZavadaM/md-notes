@@ -34,11 +34,13 @@
 - PR #54 — відкриття одиночних `.md/.markdown` файлів без створення vault;
 - читання, редагування і збереження назад у той самий файл;
 - кнопка «Відкрити Markdown-файл…» доступна незалежно від installer/portable;
-- Windows/Linux можуть добровільно зареєструвати саме запущену MD Notes як програму для Markdown;
+- Windows/Linux/macOS підтримують добровільне призначення MD Notes для Markdown лише після явної команди користувача;
 - Windows після реєстрації відкриває штатне системне вікно вибору типової програми;
 - Linux після явної команди користувача встановлює MD Notes типовим handler-ом через XDG;
-- portable нічого не змінює в системі без натискання користувача;
-- PR #54 merge: `c940dcc7aa2f8a4028b7ba4a8a15862070b7907b`; CI #270 SUCCESS + Mobile smoke #78 SUCCESS.
+- macOS оголошує підтримку Markdown як `Alternate` handler, приймає Finder open-events і змінює default handler тільки після натискання користувача;
+- installer і portable не перехоплюють Markdown автоматично; відкриття файлу зсередини MD Notes доступне в обох;
+- PR #54 merge: `c940dcc7aa2f8a4028b7ba4a8a15862070b7907b`; CI #270 SUCCESS + Mobile smoke #78 SUCCESS;
+- PR #56 merge: `a6429a40f87827e710dbd2e6ebb7b9e6df194375`; final head `41d51db7ea5631b51a024fbf790bcc82758a4894`; CI #283 SUCCESS + Mobile smoke #88 SUCCESS.
 
 ### Git foundation
 
@@ -94,7 +96,6 @@ Release PR #40 інтегрований у `main` commit `42656f0075d0072e295bee
 - Git sync ще не зв’язаний повністю з `SyncManifest` / ADR-0005 conflict resolution;
 - WebDAV ще не реалізований;
 - Android SAF / iOS security-scoped bookmarks ще не реалізовані;
-- macOS runtime-опція призначення MD Notes типовою Markdown-програмою ще не реалізована;
 - large vault open/indexing може лишатися синхронним;
 - релізні builds не підписані.
 
