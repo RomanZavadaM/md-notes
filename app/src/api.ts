@@ -152,6 +152,8 @@ export const api = {
   openMarkdownFile: (path: string) => invoke<StandaloneMarkdown>("open_markdown_file", { path }),
   saveMarkdownFile: (path: string, content: string) =>
     invoke<StandaloneMarkdown>("save_markdown_file", { path, content }),
+  startupMarkdownFiles: () => invoke<string[]>("startup_markdown_files"),
+  configureMarkdownAssociation: () => invoke<"systemChoice" | "defaultSet" | "unsupported">("configure_markdown_association"),
   openVault: (path: string) => invoke<VaultInfo>("open_vault", { path }),
   createVault: (path: string, name: string | null, preset: VaultPreset) =>
     invoke<VaultInfo>("create_vault", { path, name, preset }),
