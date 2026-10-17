@@ -165,41 +165,55 @@ export default function App() {
     [save, showNote, report],
   );
 
+  const openStandaloneAtRef = useRef(openStandaloneAt);
+  const openVaultAtRef = useRef(openVaultAt);
   useEffect(() => {
-    void api.runtimePlatform().then(setPlatform).catch(() => setPlatform("unknown"));
-    void api
-      .startupMarkdownFiles()
-      .then((paths) => {
-        if (paths.length > 0) {
-          void openStandaloneAt(paths[0]);
-          return;
-        }
-        const last = storage.get(LAST_VAULT_KEY);
-        if (last) void openVaultAt(last);
-      })
-      .catch(() => {
-        const last = storage.get(LAST_VAULT_KEY);
-        if (last) void openVaultAt(last);
-      });
-    // Only on startup.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    openStandaloneAtRef.current = openStandaloneAt;
+  }, [openStandaloneAt]);
+  useEffect(() => {
+    openVaultAtRef.current = openVaultAt;
+  }, [openVaultAt]);
 
   useEffect(() => {
+    void api.runtimePlatform().then(setPlatform).catch(() => setPlatform("unknown"));
     let disposed = false;
     let unlisten: (() => void) | undefined;
-    void listen<string[]>(OPENED_MARKDOWN_FILES, (event) => {
-      const path = event.payload[0];
-      if (path) void openStandaloneAt(path);
+
+    const openPendingMarkdown = async (fallbackToLastVault: boolean) => {
+      try {
+        const paths = await api.startupMarkdownFiles();
+        if (disposed) return;
+        const path = paths[0];
+        if (path) {
+          await openStandaloneAtRef.current(path);
+          return;
+        }
+      } catch {
+        // Fall back to the previous vault only during initial startup.
+      }
+      if (disposed || !fallbackToLastVault) return;
+      const last = storage.get(LAST_VAULT_KEY);
+      if (last) await openVaultAtRef.current(last);
+    };
+
+    // Attach the OS-open listener before draining startup files. On macOS this
+    // closes the race between Finder's open event and frontend initialization.
+    void listen<string[]>(OPENED_MARKDOWN_FILES, () => {
+      void openPendingMarkdown(false);
     }).then((fn) => {
-      if (disposed) fn();
-      else unlisten = fn;
+      if (disposed) {
+        fn();
+        return;
+      }
+      unlisten = fn;
+      void openPendingMarkdown(true);
     });
+
     return () => {
       disposed = true;
       unlisten?.();
     };
-  }, [openStandaloneAt]);
+  }, []);
 
   const configureMarkdownAssociation = async () => {
     try {
