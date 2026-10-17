@@ -4,6 +4,8 @@ export const en: Strings = {
   appTagline: "A personal knowledge base in plain Markdown files.",
   openFolder: "Open folder",
   pickFolderTitle: "Choose the vault folder",
+  openMarkdownFile: "Open Markdown file…",
+  pickMarkdownFileTitle: "Choose a Markdown file",
 
   sidebarToggle: "Sidebar",
   goToNote: "Go to note (Ctrl+O)",
