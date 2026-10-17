@@ -130,7 +130,9 @@ fn startup_markdown_files() -> Vec<String> {
                     && path
                         .extension()
                         .and_then(|value| value.to_str())
-                        .is_some_and(|ext| matches!(ext.to_ascii_lowercase().as_str(), "md" | "markdown"))
+                        .is_some_and(|ext| {
+                            matches!(ext.to_ascii_lowercase().as_str(), "md" | "markdown")
+                        })
             })
             .collect();
     }
@@ -155,15 +157,72 @@ fn configure_markdown_association() -> CmdResult<String> {
         let application_command_key = format!(r"{application_key}\shell\open\command");
         let application_types_key = format!(r"{application_key}\SupportedTypes");
         let registrations = [
-            vec!["add", r"HKCU\Software\Classes\MDNotes.Markdown", "/ve", "/d", "Markdown Document", "/f"],
-            vec!["add", r"HKCU\Software\Classes\MDNotes.Markdown\DefaultIcon", "/ve", "/d", &icon, "/f"],
-            vec!["add", r"HKCU\Software\Classes\MDNotes.Markdown\shell\open\command", "/ve", "/d", &command, "/f"],
-            vec!["add", r"HKCU\Software\Classes\.md\OpenWithProgids", "/v", "MDNotes.Markdown", "/t", "REG_NONE", "/f"],
-            vec!["add", r"HKCU\Software\Classes\.markdown\OpenWithProgids", "/v", "MDNotes.Markdown", "/t", "REG_NONE", "/f"],
+            vec![
+                "add",
+                r"HKCU\Software\Classes\MDNotes.Markdown",
+                "/ve",
+                "/d",
+                "Markdown Document",
+                "/f",
+            ],
+            vec![
+                "add",
+                r"HKCU\Software\Classes\MDNotes.Markdown\DefaultIcon",
+                "/ve",
+                "/d",
+                &icon,
+                "/f",
+            ],
+            vec![
+                "add",
+                r"HKCU\Software\Classes\MDNotes.Markdown\shell\open\command",
+                "/ve",
+                "/d",
+                &command,
+                "/f",
+            ],
+            vec![
+                "add",
+                r"HKCU\Software\Classes\.md\OpenWithProgids",
+                "/v",
+                "MDNotes.Markdown",
+                "/t",
+                "REG_NONE",
+                "/f",
+            ],
+            vec![
+                "add",
+                r"HKCU\Software\Classes\.markdown\OpenWithProgids",
+                "/v",
+                "MDNotes.Markdown",
+                "/t",
+                "REG_NONE",
+                "/f",
+            ],
             vec!["add", &application_key, "/ve", "/d", "MD Notes", "/f"],
             vec!["add", &application_command_key, "/ve", "/d", &command, "/f"],
-            vec!["add", &application_types_key, "/v", ".md", "/t", "REG_SZ", "/d", "", "/f"],
-            vec!["add", &application_types_key, "/v", ".markdown", "/t", "REG_SZ", "/d", "", "/f"],
+            vec![
+                "add",
+                &application_types_key,
+                "/v",
+                ".md",
+                "/t",
+                "REG_SZ",
+                "/d",
+                "",
+                "/f",
+            ],
+            vec![
+                "add",
+                &application_types_key,
+                "/v",
+                ".markdown",
+                "/t",
+                "REG_SZ",
+                "/d",
+                "",
+                "/f",
+            ],
         ];
         for args in registrations {
             let status = Command::new("reg.exe")
@@ -174,7 +233,9 @@ fn configure_markdown_association() -> CmdResult<String> {
                 return Err("Windows could not register MD Notes for Markdown files".into());
             }
         }
-        let _ = Command::new("explorer.exe").arg("ms-settings:defaultapps").spawn();
+        let _ = Command::new("explorer.exe")
+            .arg("ms-settings:defaultapps")
+            .spawn();
         return Ok("systemChoice".into());
     }
 
@@ -190,7 +251,9 @@ fn configure_markdown_association() -> CmdResult<String> {
             "[Desktop Entry]\nType=Application\nName=MD Notes\nExec=\"{exe_text}\" %f\nMimeType=text/markdown;text/x-markdown;\nNoDisplay=true\nTerminal=false\n"
         );
         std::fs::write(&desktop_path, desktop).map_err(|error| error.to_string())?;
-        let _ = Command::new("update-desktop-database").arg(&applications).status();
+        let _ = Command::new("update-desktop-database")
+            .arg(&applications)
+            .status();
         for mime in ["text/markdown", "text/x-markdown"] {
             let status = Command::new("xdg-mime")
                 .args(["default", "md-notes.desktop", mime])
