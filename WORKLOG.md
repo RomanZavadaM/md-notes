@@ -32,6 +32,7 @@ Release baseline:
 - PR #44 — in-memory Git HTTPS authentication.
 - PR #47 — safe Git pull relation planner.
 - PR #54 — standalone Markdown reader/editor + opt-in Windows/Linux file association.
+- PR #56 — macOS Finder open + explicit opt-in Markdown default handler.
 
 PR #44 merge checkpoint: `b142973ea4315987b28aa3a4e6563506c219c255`.
 Validation on PR #44 head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f`: CI #211 SUCCESS + Mobile smoke #29 SUCCESS.
@@ -53,8 +54,13 @@ Validation on PR #44 head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f`: CI #211 SU
 - CI #270: SUCCESS.
 - Mobile smoke #78: SUCCESS.
 - `.md/.markdown` можна відкрити зсередини MD Notes без vault і зберегти назад.
-- Windows/Linux: системна прив'язка Markdown виконується тільки після явної команди користувача; portable та installer поводяться однаково з точки зору opt-in.
-- macOS runtime default-association лишається окремою незавершеною платформною задачею.
+- Windows/Linux/macOS: системна прив'язка Markdown виконується тільки після явної команди користувача; portable та installer поводяться однаково з точки зору opt-in.
+- PR #56 merged: `a6429a40f87827e710dbd2e6ebb7b9e6df194375`.
+- Final PR #56 head `41d51db7ea5631b51a024fbf790bcc82758a4894`.
+- CI #283: SUCCESS.
+- Mobile smoke #88: SUCCESS.
+- macOS: Finder open-events підтримані; bundle оголошує Markdown як `Alternate` handler, але default не змінюється автоматично; explicit user action використовує Launch Services.
+- Виправлено startup race: frontend спочатку підписується на OS-open event, потім дренує чергу pending Markdown files.
 
 ## Next work when MD Notes resumes
 
