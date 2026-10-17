@@ -52,6 +52,7 @@ pub fn classify_git_pull_relation(
     }
 }
 
+/// Combine repository relation planning with the clean-worktree safety gate.
 pub fn plan_git_pull_preflight(
     path: impl AsRef<Path>,
     remote_revision: &str,
@@ -67,9 +68,6 @@ pub fn plan_git_pull_preflight(
 }
 
 /// Plan a pull against an already-fetched revision without mutating repository state.
-///
-/// The caller is responsible for fetching first. `remote_revision` is typically
-/// a remote-tracking ref such as `refs/remotes/origin/main`.
 ///
 /// The caller is responsible for fetching first. `remote_revision` is typically
 /// a remote-tracking ref such as `refs/remotes/origin/main`.
