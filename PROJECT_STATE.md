@@ -5,9 +5,9 @@
 ## Поточний стан
 
 - Статус розвитку: **ACTIVE**.
-- Останній опублікований checkpoint: **v0.2.2** prerelease, 02.10.2026.
-- Release commit: `b422b497b4e3980c665f7ae7017f34e73788218d`.
-- Release workflow `36990461869` — **SUCCESS**.
+- Останній опублікований checkpoint: **v0.3.0** prerelease, 03.10.2026.
+- Release commit: `42656f0075d0072e295bee33c74f059c3ae6e656`.
+- v0.3.0 release published with Windows/macOS/Linux packages, START/source, legal files and checksums.
 - 03.10.2026 власник підтвердив v0.2.2 реальним Windows runtime-тестом; startup-freeze blocker закритий.
 - Roadmap v0.2 завершений; активний roadmap stage — **v0.3**.
 - Активний продукт: Tauri 2 + React (`app/`) + Rust core (`crates/notes-core`).
@@ -39,25 +39,24 @@
 
 PR #44 інтегрований у `main` merge commit `b142973ea4315987b28aa3a4e6563506c219c255`; PR head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f` пройшов CI #211 та Mobile smoke #29.
 
-## Активний checkpoint — PR #45
+## Завершений v0.3 Git/security checkpoint
 
-PR #45 додає system credential storage у Tauri layer:
-
+- PR #45 — native system credential storage у Tauri layer;
 - Windows Credential Manager;
 - macOS Keychain;
 - iOS Protected Data;
 - Android Keystore-backed storage;
 - Linux Secret Service;
-- target-specific native backend dependencies замість broad CLI wrapper;
-- `save_git_credentials`, `has_git_credentials`, `clear_git_credentials`;
-- token не експонується командою читання у frontend;
-- `git_fetch_with_stored_credentials` завантажує token лише всередині Rust;
-- vault mutex не утримується під час credential/network роботи;
-- `Cargo.lock` оновлений Cargo-generated dependency graph;
-- `THIRD_PARTY_NOTICES.md` оновлений;
-- README UK/EN/FR/DE/ES/KO/JA синхронізовані з active v0.3 state.
+- save / has / clear API без IPC read-back секрету;
+- authenticated fetch читає secret тільки всередині Rust;
+- target-specific native dependency backends;
+- Cargo-generated lockfile + legal notices;
+- README UK/EN/FR/DE/ES/KO/JA синхронізовані.
 
-Не вважати PR #45 інтегрованим до green final CI + Mobile smoke + merge.
+PR #45 merge commit: `70d81622574b365334046520f534a9c3be8784af`.
+Фінальний PR head `78e159c02691973cb9caa7468e40d3d1ea982cc5`: CI #235 SUCCESS + Android/iOS Mobile smoke SUCCESS.
+
+Release PR #40 інтегрований у `main` commit `42656f0075d0072e295bee33c74f059c3ae6e656`; prerelease `v0.3.0` опублікований.
 
 ## Функціонально завершено у v0.2
 
