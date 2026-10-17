@@ -6,6 +6,10 @@ export const es: Strings = {
   pickFolderTitle: "Elige la carpeta de la bóveda",
   openMarkdownFile: "Abrir archivo Markdown…",
   pickMarkdownFileTitle: "Elegir un archivo Markdown",
+  makeMarkdownDefault: "Usar MD Notes para Markdown",
+  markdownAssociationSystemChoice: "MD Notes se añadió como aplicación para Markdown. Selecciónala como predeterminada en la ventana del sistema.",
+  markdownAssociationDefaultSet: "MD Notes es ahora la aplicación predeterminada para Markdown.",
+  markdownAssociationUnsupported: "La asociación automática de Markdown aún no está disponible en este sistema.",
 
   sidebarToggle: "Panel lateral",
   goToNote: "Ir a una nota (Ctrl+O)",
