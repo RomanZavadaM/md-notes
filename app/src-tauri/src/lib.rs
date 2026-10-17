@@ -2,6 +2,7 @@
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
+#[cfg(any(target_os = "windows", target_os = "linux"))]
 use std::process::Command;
 use std::sync::{Arc, Mutex};
 
@@ -27,6 +28,7 @@ struct Session {
 #[derive(Default)]
 struct AppState {
     session: Mutex<Option<Session>>,
+    #[cfg(target_os = "macos")]
     opened_markdown: Mutex<Vec<String>>,
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     watcher: Mutex<Option<watch::VaultWatcher>>,
@@ -123,7 +125,7 @@ fn save_markdown_file(path: String, content: String) -> CmdResult<StandaloneMark
 fn startup_markdown_files(state: State<'_, AppState>) -> Vec<String> {
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     {
-        return std::env::args()
+        std::env::args()
             .skip(1)
             .filter(|arg| {
                 let path = Path::new(arg);
@@ -135,16 +137,16 @@ fn startup_markdown_files(state: State<'_, AppState>) -> Vec<String> {
                             matches!(ext.to_ascii_lowercase().as_str(), "md" | "markdown")
                         })
             })
-            .collect();
+            .collect()
     }
 
     #[cfg(target_os = "macos")]
     {
-        return state
+        state
             .opened_markdown
             .lock()
             .map(|mut paths| std::mem::take(&mut *paths))
-            .unwrap_or_default();
+            .unwrap_or_default()
     }
 
     #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
@@ -334,7 +336,7 @@ fn configure_markdown_association() -> CmdResult<String> {
     #[cfg(target_os = "macos")]
     {
         set_macos_markdown_default()?;
-        return Ok("defaultSet".into());
+        Ok("defaultSet".into())
     }
 
     #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
@@ -651,7 +653,9 @@ pub fn run() {
         ])
         .build(tauri::generate_context!())
         .expect("error while building MD Notes")
-        .run(|app, event| {
+        .run(|_app, _event| {
+            #[cfg(target_os = "macos")]
+            let (app, event) = (_app, _event);
             #[cfg(target_os = "macos")]
             if let tauri::RunEvent::Opened { urls } = event {
                 let paths = urls
