@@ -122,7 +122,7 @@ fn save_markdown_file(path: String, content: String) -> CmdResult<StandaloneMark
 }
 
 #[tauri::command]
-fn startup_markdown_files(state: State<'_, AppState>) -> Vec<String> {
+fn startup_markdown_files(_state: State<'_, AppState>) -> Vec<String> {
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     {
         std::env::args()
@@ -142,6 +142,7 @@ fn startup_markdown_files(state: State<'_, AppState>) -> Vec<String> {
 
     #[cfg(target_os = "macos")]
     {
+        let state = _state;
         state
             .opened_markdown
             .lock()
@@ -151,7 +152,7 @@ fn startup_markdown_files(state: State<'_, AppState>) -> Vec<String> {
 
     #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
     {
-        let _ = state;
+        let _ = _state;
         Vec::new()
     }
 }
