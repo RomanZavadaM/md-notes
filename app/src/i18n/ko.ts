@@ -4,6 +4,8 @@ export const ko: Strings = {
   appTagline: "일반 Markdown 파일로 된 개인 지식 베이스.",
   openFolder: "폴더 열기",
   pickFolderTitle: "보관함 폴더 선택",
+  openMarkdownFile: "Markdown 파일 열기…",
+  pickMarkdownFileTitle: "Markdown 파일 선택",
 
   sidebarToggle: "사이드바",
   goToNote: "노트로 이동 (Ctrl+O)",
