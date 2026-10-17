@@ -4,6 +4,8 @@ export const ja: Strings = {
   appTagline: "通常の Markdown ファイルによる個人ナレッジベース。",
   openFolder: "フォルダーを開く",
   pickFolderTitle: "保管庫のフォルダーを選択",
+  openMarkdownFile: "Markdownファイルを開く…",
+  pickMarkdownFileTitle: "Markdownファイルを選択",
 
   sidebarToggle: "サイドバー",
   goToNote: "ノートへ移動 (Ctrl+O)",
