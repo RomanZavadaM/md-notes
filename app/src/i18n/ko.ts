@@ -6,6 +6,10 @@ export const ko: Strings = {
   pickFolderTitle: "보관함 폴더 선택",
   openMarkdownFile: "Markdown 파일 열기…",
   pickMarkdownFileTitle: "Markdown 파일 선택",
+  makeMarkdownDefault: "MD Notes를 Markdown 기본 앱으로 설정",
+  markdownAssociationSystemChoice: "MD Notes가 Markdown 앱으로 등록되었습니다. 시스템 창에서 기본 앱으로 선택하세요.",
+  markdownAssociationDefaultSet: "MD Notes가 Markdown 기본 앱으로 설정되었습니다.",
+  markdownAssociationUnsupported: "이 시스템에서는 Markdown 자동 연결을 아직 지원하지 않습니다.",
 
   sidebarToggle: "사이드바",
   goToNote: "노트로 이동 (Ctrl+O)",
