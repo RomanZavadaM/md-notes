@@ -94,7 +94,7 @@ Release PR #40 інтегрований у `main` commit `42656f0075d0072e295bee
 - Git sync ще не зв’язаний повністю з `SyncManifest` / ADR-0005 conflict resolution;
 - WebDAV ще не реалізований;
 - Android SAF / iOS security-scoped bookmarks ще не реалізовані;
-- macOS Finder/open-event + explicit handler action реалізовані у PR #56; desktop CI та Android green, final iOS rerun pending before merge;
+- macOS Finder/open-event + explicit handler action інтегровані у PR #56, merge `a6429a40f87827e710dbd2e6ebb7b9e6df194375`; desktop CI та Android green, final iOS rerun pending as evidence;
 - large vault open/indexing може лишатися синхронним;
 - релізні builds не підписані.
 
