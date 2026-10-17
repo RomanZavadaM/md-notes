@@ -90,7 +90,9 @@ fn load_standalone_markdown(path: &str) -> CmdResult<StandaloneMarkdown> {
     let (absolute, directory, name) = standalone_markdown_path(path)?;
     let provider = Arc::new(LocalFsProvider::new(&directory).map_err(|error| error.to_string())?);
     let storage = VaultStorage::open(provider).map_err(|error| error.to_string())?;
-    let note = storage.read_note(&name).map_err(|error| error.to_string())?;
+    let note = storage
+        .read_note(&name)
+        .map_err(|error| error.to_string())?;
     Ok(StandaloneMarkdown {
         path: absolute.display().to_string(),
         directory: directory.display().to_string(),
