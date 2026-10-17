@@ -2,6 +2,7 @@
 
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 use std::sync::{Arc, Mutex};
 
 use notes_core::{
@@ -115,6 +116,84 @@ fn save_markdown_file(path: String, content: String) -> CmdResult<StandaloneMark
         .write_note(&name, &content)
         .map_err(|error| error.to_string())?;
     load_standalone_markdown(&path)
+}
+
+#[tauri::command]
+fn startup_markdown_files() -> Vec<String> {
+    #[cfg(any(target_os = "windows", target_os = "linux"))]
+    {
+        return std::env::args()
+            .skip(1)
+            .filter(|arg| {
+                let path = Path::new(arg);
+                path.is_file()
+                    && path
+                        .extension()
+                        .and_then(|value| value.to_str())
+                        .is_some_and(|ext| matches!(ext.to_ascii_lowercase().as_str(), "md" | "markdown"))
+            })
+            .collect();
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux")))]
+    Vec::new()
+}
+
+#[tauri::command]
+fn configure_markdown_association() -> CmdResult<String> {
+    #[cfg(target_os = "windows")]
+    {
+        let exe = std::env::current_exe().map_err(|error| error.to_string())?;
+        let exe_text = exe.display().to_string();
+        let command = format!("\"{exe_text}\" \"%1\"");
+        let icon = format!("\"{exe_text}\",0");
+        let registrations = [
+            vec!["add", r"HKCU\Software\Classes\MDNotes.Markdown", "/ve", "/d", "Markdown Document", "/f"],
+            vec!["add", r"HKCU\Software\Classes\MDNotes.Markdown\DefaultIcon", "/ve", "/d", &icon, "/f"],
+            vec!["add", r"HKCU\Software\Classes\MDNotes.Markdown\shell\open\command", "/ve", "/d", &command, "/f"],
+            vec!["add", r"HKCU\Software\Classes\.md\OpenWithProgids", "/v", "MDNotes.Markdown", "/t", "REG_NONE", "/f"],
+            vec!["add", r"HKCU\Software\Classes\.markdown\OpenWithProgids", "/v", "MDNotes.Markdown", "/t", "REG_NONE", "/f"],
+        ];
+        for args in registrations {
+            let status = Command::new("reg.exe")
+                .args(args)
+                .status()
+                .map_err(|error| error.to_string())?;
+            if !status.success() {
+                return Err("Windows could not register MD Notes for Markdown files".into());
+            }
+        }
+        let _ = Command::new("explorer.exe").arg("ms-settings:defaultapps").spawn();
+        return Ok("systemChoice".into());
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        let exe = std::env::current_exe().map_err(|error| error.to_string())?;
+        let home = std::env::var_os("HOME").ok_or_else(|| "HOME is not available".to_string())?;
+        let applications = PathBuf::from(home).join(".local/share/applications");
+        std::fs::create_dir_all(&applications).map_err(|error| error.to_string())?;
+        let desktop_path = applications.join("md-notes.desktop");
+        let exe_text = exe.display().to_string().replace('"', "\\"");
+        let desktop = format!(
+            "[Desktop Entry]\nType=Application\nName=MD Notes\nExec=\"{exe_text}\" %f\nMimeType=text/markdown;text/x-markdown;\nNoDisplay=true\nTerminal=false\n"
+        );
+        std::fs::write(&desktop_path, desktop).map_err(|error| error.to_string())?;
+        let _ = Command::new("update-desktop-database").arg(&applications).status();
+        for mime in ["text/markdown", "text/x-markdown"] {
+            let status = Command::new("xdg-mime")
+                .args(["default", "md-notes.desktop", mime])
+                .status()
+                .map_err(|error| error.to_string())?;
+            if !status.success() {
+                return Err(format!("xdg-mime could not set MD Notes for {mime}"));
+            }
+        }
+        return Ok("defaultSet".into());
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux")))]
+    Ok("unsupported".into())
 }
 
 fn activate_vault(
@@ -392,6 +471,8 @@ pub fn run() {
             open_mobile_sandbox_vault,
             open_markdown_file,
             save_markdown_file,
+            startup_markdown_files,
+            configure_markdown_association,
             open_vault,
             create_vault,
             save_git_credentials,
