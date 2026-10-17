@@ -4,6 +4,8 @@ export const uk = {
   appTagline: "Особиста база знань у звичайних Markdown-файлах.",
   openFolder: "Відкрити папку",
   pickFolderTitle: "Виберіть папку сховища",
+  openMarkdownFile: "Відкрити Markdown-файл…",
+  pickMarkdownFileTitle: "Виберіть Markdown-файл",
 
   sidebarToggle: "Бічна панель",
   goToNote: "Перейти до нотатки (Ctrl+O)",
