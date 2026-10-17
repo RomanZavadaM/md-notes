@@ -48,10 +48,7 @@ pub fn classify_git_pull_relation(
 ///
 /// The caller is responsible for fetching first. `remote_revision` is typically
 /// a remote-tracking ref such as `refs/remotes/origin/main`.
-pub fn plan_git_pull(
-    path: impl AsRef<Path>,
-    remote_revision: &str,
-) -> Result<GitPullRelation> {
+pub fn plan_git_pull(path: impl AsRef<Path>, remote_revision: &str) -> Result<GitPullRelation> {
     if remote_revision.trim().is_empty() {
         return Err(Error::Git("Git remote revision must not be empty".into()));
     }
