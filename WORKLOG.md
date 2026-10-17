@@ -4,11 +4,11 @@
 
 ## STATUS
 
-**ACTIVE. v0.2.2 опублікований і підтверджений Windows runtime-тестом. Roadmap stage v0.3 у роботі. Поточний Git/security checkpoint оформлюється до завершеного стану перед переходом власника до іншої роботи.**
+**ACTIVE. v0.3.0 опублікований як prerelease. Git/security checkpoint завершений; наступна робота v0.3 — pull/merge policy без silent overwrite.**
 
 Release baseline:
-- tag/prerelease `v0.2.2`;
-- release commit `b422b497b4e3980c665f7ae7017f34e73788218d`;
+- tag/prerelease `v0.3.0`;
+- release commit `42656f0075d0072e295bee33c74f059c3ae6e656`;
 - Windows/macOS/Linux packages + START/source + legal + checksums опубліковані.
 
 ## Runtime / build evidence
@@ -34,37 +34,15 @@ Release baseline:
 PR #44 merge checkpoint: `b142973ea4315987b28aa3a4e6563506c219c255`.
 Validation on PR #44 head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f`: CI #211 SUCCESS + Mobile smoke #29 SUCCESS.
 
-## Активний фінальний slice цього checkpoint — PR #45
+## Завершений Git/security checkpoint
 
-Branch: `feature/system-secret-store-v0.3`.
-
-Purpose:
-- system credential storage for Git HTTPS secrets;
-- Windows Credential Manager;
-- macOS Keychain;
-- iOS Protected Data;
-- Android Keystore-backed storage;
-- Linux Secret Service;
-- only target-specific native store dependency is linked;
-- save / has / clear Tauri commands;
-- no IPC command returns the token;
-- authenticated fetch loads secret only inside Rust;
-- session lock is released before network/credential work;
-- Cargo-generated lockfile and updated legal notices.
-
-Documentation checkpoint added on the same branch:
-- `README.md` updated to v0.2.2 published baseline + active v0.3 state;
-- localized README descriptions updated: EN / FR / DE / ES / KO / JA;
-- `START_HERE.md`, `PROJECT_STATE.md`, `WORKLOG.md`, `CHANGELOG.md` synchronized;
-- Issue #8 must receive the final append-only checkpoint after merge.
-
-## Gate before considering this stage clean
-
-1. PR #45 final ordinary CI = SUCCESS.
-2. PR #45 final Mobile smoke Android + iOS = SUCCESS.
-3. Mark ready and integrate PR #45 into `main`.
-4. Add Issue #8 ledger entry with merge SHA + workflow evidence.
-5. Verify `main` and leave no temporary write-capable workflow behind.
+- PR #45 інтегрований у `main`: `70d81622574b365334046520f534a9c3be8784af`.
+- Final PR head: `78e159c02691973cb9caa7468e40d3d1ea982cc5`.
+- CI #235: SUCCESS.
+- Android debug build: SUCCESS.
+- iOS simulator debug build: SUCCESS.
+- Release PR #40 інтегрований у `main`: `42656f0075d0072e295bee33c74f059c3ae6e656`.
+- GitHub prerelease `v0.3.0`: published.
 
 ## Next work when MD Notes resumes
 

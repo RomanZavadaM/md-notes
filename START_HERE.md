@@ -4,13 +4,13 @@
 
 ## Статус
 
-**ACTIVE — v0.2.2 лишається останнім опублікованим prerelease; roadmap stage v0.3 активно розробляється.**
+**ACTIVE — v0.3.0 опублікований як prerelease; продовжуємо roadmap stage v0.3 після завершеного Git/security checkpoint.**
 
-Останній опублікований checkpoint: **v0.2.2** (02.10.2026), release commit `b422b497b4e3980c665f7ae7017f34e73788218d`, release workflow `36990461869` — **SUCCESS**.
+Останній опублікований checkpoint: **v0.3.0** prerelease (03.10.2026), release commit `42656f0075d0072e295bee33c74f059c3ae6e656`.
 
-03.10.2026 власник повторно протестував v0.2.2 на реальній Windows і підтвердив нормальну роботу; startup-freeze blocker v0.2.1 закритий.
+v0.3.0 опублікований з Windows/macOS/Linux release assets, START/source, legal files і checksums. Android та iOS пройшли CI build smoke; physical-device runtime ще не підтверджений.
 
-Власник погодив roadmap stage **v0.3**.
+Roadmap stage **v0.3** продовжується після релізного checkpoint-а.
 
 ## Інтегрований v0.3 baseline
 
@@ -30,25 +30,18 @@
 
 PR #44 merge checkpoint: `b142973ea4315987b28aa3a4e6563506c219c255`; його PR head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f` пройшов desktop CI #211 і Mobile smoke #29.
 
-## Поточний checkpoint — PR #45
+## Завершений release checkpoint — v0.3.0
 
-PR #45 `feat: add native system secret storage` завершує security boundary для Git HTTPS credentials у Tauri layer:
+PR #45 `feat: add native system secret storage` інтегровано у `main` merge commit `70d81622574b365334046520f534a9c3be8784af`.
 
-- Windows Credential Manager;
-- macOS Keychain;
-- iOS Protected Data;
-- Android Keystore-backed storage;
-- Linux Secret Service;
-- target-specific native backend dependencies;
-- token не повертається frontend-у;
-- Tauri API дозволяє save / has / clear credentials;
-- authenticated fetch завантажує secret лише всередині Rust безпосередньо перед network call;
-- vault/session lock відпускається до credential/network роботи;
-- `Cargo.lock` згенеровано Cargo;
-- legal notices оновлено;
-- README синхронізовано UK/EN/FR/DE/ES/KO/JA.
+Фінальний PR head `78e159c02691973cb9caa7468e40d3d1ea982cc5` пройшов:
+- CI #235 — SUCCESS;
+- Android debug build — SUCCESS;
+- iOS simulator debug build — SUCCESS.
 
-**PR #45 не вважати інтегрованим, доки його фінальний desktop CI та Android/iOS Mobile smoke не зелені й PR не merged.**
+Release PR #40 `chore(main): release 0.3.0` інтегровано у `main` merge commit `42656f0075d0072e295bee33c74f059c3ae6e656`.
+
+GitHub prerelease `v0.3.0` опублікований. Release assets включають desktop packages, `MD-Notes-0.3.0-START.zip`, legal files та checksums.
 
 ## Після checkpoint-а
 
