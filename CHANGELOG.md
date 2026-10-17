@@ -34,6 +34,13 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.0](https://github.com/RomanZavadaM/md-notes/compare/v0.3.0...v0.3.0) (2026-10-17)
+
+
+### Документація
+
+* record v0.3.0 release checkpoint ([#46](https://github.com/RomanZavadaM/md-notes/issues/46)) ([21fee74](https://github.com/RomanZavadaM/md-notes/commit/21fee74c6ba6bf2b8facda7ca179400e20ac257c))
+
 ## [0.3.0](https://github.com/RomanZavadaM/md-notes/compare/v0.2.2...v0.3.0) (2026-10-03)
 
 
