@@ -185,7 +185,7 @@ fn configure_markdown_association() -> CmdResult<String> {
         let applications = PathBuf::from(home).join(".local/share/applications");
         std::fs::create_dir_all(&applications).map_err(|error| error.to_string())?;
         let desktop_path = applications.join("md-notes.desktop");
-        let exe_text = exe.display().to_string().replace('"', "\\"");
+        let exe_text = exe.display().to_string().replace('"', "\\\"");
         let desktop = format!(
             "[Desktop Entry]\nType=Application\nName=MD Notes\nExec=\"{exe_text}\" %f\nMimeType=text/markdown;text/x-markdown;\nNoDisplay=true\nTerminal=false\n"
         );
