@@ -54,7 +54,7 @@ Validation on PR #44 head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f`: CI #211 SU
 - Mobile smoke #78: SUCCESS.
 - `.md/.markdown` можна відкрити зсередини MD Notes без vault і зберегти назад.
 - Windows/Linux: системна прив'язка Markdown виконується тільки після явної команди користувача; portable та installer поводяться однаково з точки зору opt-in.
-- PR #56 closes macOS standalone Markdown integration: Finder open-event + explicit handler action, without automatic default takeover. Desktop CI + Android are green; final iOS rerun is pending before merge.
+- PR #56 merged as `a6429a40f87827e710dbd2e6ebb7b9e6df194375`: macOS Finder open-event + explicit handler action, without automatic default takeover. Desktop CI + Android are green; final iOS rerun is pending as post-merge evidence.
 
 ## Next work when MD Notes resumes
 
