@@ -8,6 +8,7 @@ import {
   VAULT_CHANGED,
   type AttachmentInfo,
   type Note,
+  type RuntimePlatform,
   type StandaloneMarkdown,
   type TemplateInfo,
   type TreeEntry,
@@ -42,6 +43,7 @@ const isNarrow = () => window.matchMedia("(max-width: 720px)").matches;
 export default function App() {
   const { t, language, setLanguage } = useI18n();
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [platform, setPlatform] = useState<RuntimePlatform>("unknown");
   const [vault, setVault] = useState<VaultInfo | null>(null);
   const [standalone, setStandalone] = useState<StandaloneMarkdown | null>(null);
   const [tree, setTree] = useState<TreeEntry[]>([]);
@@ -139,13 +141,6 @@ export default function App() {
     [save, showNote, report, bump],
   );
 
-  useEffect(() => {
-    const last = storage.get(LAST_VAULT_KEY);
-    if (last) void openVaultAt(last);
-    // Only on startup.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const pickVault = async () => {
     const dir = await open({ directory: true, multiple: false, title: t.pickFolderTitle });
     if (typeof dir === "string") await openVaultAt(dir);
@@ -168,6 +163,37 @@ export default function App() {
     },
     [save, showNote, report],
   );
+
+  useEffect(() => {
+    void api.runtimePlatform().then(setPlatform).catch(() => setPlatform("unknown"));
+    void api
+      .startupMarkdownFiles()
+      .then((paths) => {
+        if (paths.length > 0) {
+          void openStandaloneAt(paths[0]);
+          return;
+        }
+        const last = storage.get(LAST_VAULT_KEY);
+        if (last) void openVaultAt(last);
+      })
+      .catch(() => {
+        const last = storage.get(LAST_VAULT_KEY);
+        if (last) void openVaultAt(last);
+      });
+    // Only on startup.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const configureMarkdownAssociation = async () => {
+    try {
+      const result = await api.configureMarkdownAssociation();
+      if (result === "systemChoice") setError(t.markdownAssociationSystemChoice);
+      else if (result === "defaultSet") setError(t.markdownAssociationDefaultSet);
+      else setError(t.markdownAssociationUnsupported);
+    } catch (e) {
+      report(e);
+    }
+  };
 
   const pickMarkdownFile = async () => {
     const file = await open({
@@ -406,6 +432,11 @@ export default function App() {
         <button type="button" onClick={() => void pickMarkdownFile()}>
           {t.openMarkdownFile}
         </button>
+        {(platform === "windows" || platform === "linux") && (
+          <button type="button" onClick={() => void configureMarkdownAssociation()}>
+            {t.makeMarkdownDefault}
+          </button>
+        )}
         {error && <p className="welcome-error">{error}</p>}
         <select
           className="welcome-language"
@@ -459,6 +490,11 @@ export default function App() {
           <button type="button" onClick={() => void pickVault()}>
             {t.openFolder}
           </button>
+          {(platform === "windows" || platform === "linux") && (
+            <button type="button" onClick={() => void configureMarkdownAssociation()}>
+              {t.makeMarkdownDefault}
+            </button>
+          )}
         </header>
 
         <main className={`workspace mode-${mode}`}>
@@ -645,6 +681,11 @@ export default function App() {
               <button type="button" onClick={() => void pickMarkdownFile()}>
                 {t.openMarkdownFile}
               </button>
+              {(platform === "windows" || platform === "linux") && (
+                <button type="button" onClick={() => void configureMarkdownAssociation()}>
+                  {t.makeMarkdownDefault}
+                </button>
+              )}
               <button type="button" onClick={() => void pickVault()}>
                 {t.otherVault}
               </button>
