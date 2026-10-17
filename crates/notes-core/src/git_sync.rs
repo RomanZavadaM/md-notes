@@ -44,6 +44,41 @@ pub fn classify_git_pull_relation(
     }
 }
 
+/// Plan a pull against an already-fetched revision without mutating repository state.
+///
+/// The caller is responsible for fetching first. `remote_revision` is typically
+/// a remote-tracking ref such as `refs/remotes/origin/main`.
+pub fn plan_git_pull(path: impl AsRef<Path>, remote_revision: &str) -> Result<GitPullRelation> {
+    if remote_revision.trim().is_empty() {
+        return Err(Error::Git("Git remote revision must not be empty".into()));
+    }
+
+    let repo = open_isolated(path.as_ref())?;
+    let local = repo
+        .head()
+        .map_err(git_err)?
+        .id()
+        .ok_or_else(|| Error::Git("cannot plan pull from an unborn local HEAD".into()))?
+        .detach();
+    let remote = repo
+        .rev_parse_single(remote_revision.as_bytes().as_bstr())
+        .map_err(git_err)?
+        .detach();
+    let merge_bases = repo
+        .merge_bases_many(local, &[remote])
+        .map_err(git_err)?;
+    let merge_base = merge_bases.first().map(|id| id.detach());
+
+    let local_text = local.to_string();
+    let remote_text = remote.to_string();
+    let base_text = merge_base.map(|id| id.to_string());
+    Ok(classify_git_pull_relation(
+        &local_text,
+        &remote_text,
+        base_text.as_deref(),
+    ))
+}
+
 /// HTTPS credentials supplied by the application at call time.
 ///
 /// Intentionally does not implement `Debug` or `Serialize` so tokens are harder
@@ -394,6 +429,35 @@ mod tests {
             classify_git_pull_relation("b", "c", None),
             GitPullRelation::Unrelated
         );
+    }
+
+    #[test]
+    fn repository_pull_plan_is_read_only_for_equal_heads() {
+        let dir = tempfile::tempdir().unwrap();
+        gix::init(dir.path()).unwrap();
+        fs::write(dir.path().join("note.md"), "# Note\n").unwrap();
+        commit_git_worktree(dir.path(), "Initial").unwrap();
+
+        let before = open_git_repository(dir.path()).unwrap().head;
+        assert_eq!(
+            plan_git_pull(dir.path(), "HEAD").unwrap(),
+            GitPullRelation::UpToDate
+        );
+        let after = open_git_repository(dir.path()).unwrap().head;
+        assert_eq!(before, after);
+    }
+
+    #[test]
+    fn repository_pull_plan_rejects_missing_remote_revision() {
+        let dir = tempfile::tempdir().unwrap();
+        gix::init(dir.path()).unwrap();
+        fs::write(dir.path().join("note.md"), "# Note\n").unwrap();
+        commit_git_worktree(dir.path(), "Initial").unwrap();
+
+        assert!(matches!(
+            plan_git_pull(dir.path(), "refs/remotes/origin/main"),
+            Err(Error::Git(_))
+        ));
     }
 
     #[test]
