@@ -27,6 +27,7 @@ struct Session {
 #[derive(Default)]
 struct AppState {
     session: Mutex<Option<Session>>,
+    opened_markdown: Mutex<Vec<String>>,
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     watcher: Mutex<Option<watch::VaultWatcher>>,
 }
@@ -119,10 +120,10 @@ fn save_markdown_file(path: String, content: String) -> CmdResult<StandaloneMark
 }
 
 #[tauri::command]
-fn startup_markdown_files() -> Vec<String> {
+fn startup_markdown_files(state: State<'_, AppState>) -> Vec<String> {
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     {
-        std::env::args()
+        return std::env::args()
             .skip(1)
             .filter(|arg| {
                 let path = Path::new(arg);
@@ -134,11 +135,78 @@ fn startup_markdown_files() -> Vec<String> {
                             matches!(ext.to_ascii_lowercase().as_str(), "md" | "markdown")
                         })
             })
-            .collect()
+            .collect();
     }
 
-    #[cfg(not(any(target_os = "windows", target_os = "linux")))]
-    Vec::new()
+    #[cfg(target_os = "macos")]
+    {
+        return state
+            .opened_markdown
+            .lock()
+            .map(|mut paths| std::mem::take(&mut *paths))
+            .unwrap_or_default();
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
+    {
+        let _ = state;
+        Vec::new()
+    }
+}
+
+
+#[cfg(target_os = "macos")]
+fn set_macos_markdown_default() -> CmdResult<()> {
+    use std::ffi::{c_char, c_void, CString};
+
+    type CFStringRef = *const c_void;
+    const UTF8_ENCODING: u32 = 0x0800_0100;
+    const LS_ROLES_ALL: u32 = 0xffff_ffff;
+
+    #[link(name = "CoreFoundation", kind = "framework")]
+    extern "C" {
+        fn CFStringCreateWithCString(
+            allocator: *const c_void,
+            c_str: *const c_char,
+            encoding: u32,
+        ) -> CFStringRef;
+        fn CFRelease(value: *const c_void);
+    }
+
+    #[link(name = "CoreServices", kind = "framework")]
+    extern "C" {
+        fn LSSetDefaultRoleHandlerForContentType(
+            content_type: CFStringRef,
+            role: u32,
+            handler_bundle_id: CFStringRef,
+        ) -> i32;
+    }
+
+    fn cf_string(value: &str) -> CmdResult<CFStringRef> {
+        let value = CString::new(value).map_err(|error| error.to_string())?;
+        let string = unsafe {
+            CFStringCreateWithCString(std::ptr::null(), value.as_ptr(), UTF8_ENCODING)
+        };
+        if string.is_null() {
+            return Err("macOS could not create Launch Services string".into());
+        }
+        Ok(string)
+    }
+
+    let content_type = cf_string("net.daringfireball.markdown")?;
+    let bundle_id = cf_string("io.github.romanzavadam.mdnotes")?;
+    let status = unsafe {
+        LSSetDefaultRoleHandlerForContentType(content_type, LS_ROLES_ALL, bundle_id)
+    };
+    unsafe {
+        CFRelease(content_type);
+        CFRelease(bundle_id);
+    }
+    if status == 0 {
+        Ok(())
+    } else {
+        Err(format!("macOS Launch Services returned OSStatus {status}"))
+    }
 }
 
 #[tauri::command]
@@ -266,7 +334,13 @@ fn configure_markdown_association() -> CmdResult<String> {
         Ok("defaultSet".into())
     }
 
-    #[cfg(not(any(target_os = "windows", target_os = "linux")))]
+    #[cfg(target_os = "macos")]
+    {
+        set_macos_markdown_default()?;
+        return Ok("defaultSet".into());
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
     Ok("unsupported".into())
 }
 
@@ -578,6 +652,30 @@ pub fn run() {
             attachment_used_by,
             orphan_attachments
         ])
-        .run(tauri::generate_context!())
-        .expect("error while running MD Notes");
+        .build(tauri::generate_context!())
+        .expect("error while building MD Notes")
+        .run(|app, event| {
+            #[cfg(target_os = "macos")]
+            if let tauri::RunEvent::Opened { urls } = event {
+                let paths = urls
+                    .into_iter()
+                    .filter_map(|url| url.to_file_path().ok())
+                    .filter(|path| {
+                        path.extension()
+                            .and_then(|value| value.to_str())
+                            .is_some_and(|ext| {
+                                matches!(ext.to_ascii_lowercase().as_str(), "md" | "markdown")
+                            })
+                    })
+                    .map(|path| path.display().to_string())
+                    .collect::<Vec<_>>();
+                if paths.is_empty() {
+                    return;
+                }
+                if let Ok(mut pending) = app.state::<AppState>().opened_markdown.lock() {
+                    pending.extend(paths.clone());
+                }
+                let _ = app.emit("opened-markdown-files", paths);
+            }
+        });
 }
