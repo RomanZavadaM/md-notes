@@ -4,6 +4,8 @@ export const de: Strings = {
   appTagline: "Eine persönliche Wissensdatenbank in einfachen Markdown-Dateien.",
   openFolder: "Ordner öffnen",
   pickFolderTitle: "Tresor-Ordner auswählen",
+  openMarkdownFile: "Markdown-Datei öffnen…",
+  pickMarkdownFileTitle: "Markdown-Datei auswählen",
 
   sidebarToggle: "Seitenleiste",
   goToNote: "Zur Notiz springen (Ctrl+O)",
