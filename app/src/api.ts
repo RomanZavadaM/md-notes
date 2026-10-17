@@ -145,6 +145,7 @@ export const MATCH_END = "\u0003";
 
 /** Event emitted by the backend with vault-relative paths changed on disk. */
 export const VAULT_CHANGED = "vault-changed";
+export const OPENED_MARKDOWN_FILES = "opened-markdown-files";
 
 export const api = {
   runtimePlatform: () => invoke<RuntimePlatform>("runtime_platform"),
