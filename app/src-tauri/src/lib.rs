@@ -122,7 +122,7 @@ fn save_markdown_file(path: String, content: String) -> CmdResult<StandaloneMark
 fn startup_markdown_files() -> Vec<String> {
     #[cfg(any(target_os = "windows", target_os = "linux"))]
     {
-        return std::env::args()
+        std::env::args()
             .skip(1)
             .filter(|arg| {
                 let path = Path::new(arg);
@@ -236,7 +236,7 @@ fn configure_markdown_association() -> CmdResult<String> {
         let _ = Command::new("explorer.exe")
             .arg("ms-settings:defaultapps")
             .spawn();
-        return Ok("systemChoice".into());
+        Ok("systemChoice".into())
     }
 
     #[cfg(target_os = "linux")]
@@ -263,7 +263,7 @@ fn configure_markdown_association() -> CmdResult<String> {
                 return Err(format!("xdg-mime could not set MD Notes for {mime}"));
             }
         }
-        return Ok("defaultSet".into());
+        Ok("defaultSet".into())
     }
 
     #[cfg(not(any(target_os = "windows", target_os = "linux")))]
