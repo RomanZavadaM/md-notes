@@ -87,10 +87,10 @@ pub fn plan_git_pull(path: impl AsRef<Path>, remote_revision: &str) -> Result<Gi
         .rev_parse_single(remote_revision.as_bytes().as_bstr())
         .map_err(git_err)?
         .detach();
-    let merge_base = repo
-        .merge_base(local, remote)
-        .map_err(git_err)?
-        .map(|id| id.detach());
+    let merge_bases = repo
+        .merge_bases_many(local, &[remote])
+        .map_err(git_err)?;
+    let merge_base = merge_bases.first().map(|id| id.detach());
 
     let local_text = local.to_string();
     let remote_text = remote.to_string();
