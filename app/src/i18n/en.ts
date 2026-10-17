@@ -6,6 +6,10 @@ export const en: Strings = {
   pickFolderTitle: "Choose the vault folder",
   openMarkdownFile: "Open Markdown file…",
   pickMarkdownFileTitle: "Choose a Markdown file",
+  makeMarkdownDefault: "Make MD Notes the Markdown app",
+  markdownAssociationSystemChoice: "MD Notes was added as a Markdown app. Choose it as the default in the system window.",
+  markdownAssociationDefaultSet: "MD Notes is now the default Markdown app.",
+  markdownAssociationUnsupported: "Automatic Markdown association is not implemented for this system yet.",
 
   sidebarToggle: "Sidebar",
   goToNote: "Go to note (Ctrl+O)",
