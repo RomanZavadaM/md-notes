@@ -1,12 +1,14 @@
 //! Tauri shell of MD Notes: exposes `notes-core` to the web UI as commands.
 
 use std::collections::BTreeMap;
-use std::sync::Mutex;
+use std::path::{Path, PathBuf};
+use std::sync::{Arc, Mutex};
 
 use notes_core::{
     create_vault_with_preset, fetch_git_remote_authenticated, knowledge_graph, AttachmentInfo,
-    Backlink, Index, KnowledgeGraph, Note, NoteSummary, RenameOutcome, SchemaDocument, SearchHit,
-    TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault, VaultPreset,
+    Backlink, Index, KnowledgeGraph, LocalFsProvider, Note, NoteSummary, RenameOutcome,
+    SchemaDocument, SearchHit, TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault,
+    VaultPreset, VaultStorage,
 };
 use serde::Serialize;
 use serde_json::Value;
@@ -48,6 +50,69 @@ const VAULT_CHANGED: &str = "vault-changed";
 struct VaultInfo {
     root: String,
     name: String,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct StandaloneMarkdown {
+    path: String,
+    directory: String,
+    name: String,
+    note: Note,
+}
+
+fn standalone_markdown_path(path: &str) -> CmdResult<(PathBuf, PathBuf, String)> {
+    let path = Path::new(path);
+    let extension = path
+        .extension()
+        .and_then(|value| value.to_str())
+        .unwrap_or_default();
+    if !matches!(extension.to_ascii_lowercase().as_str(), "md" | "markdown") {
+        return Err("only .md and .markdown files are supported".into());
+    }
+    let absolute = path.canonicalize().map_err(|error| error.to_string())?;
+    if !absolute.is_file() {
+        return Err("Markdown path is not a file".into());
+    }
+    let directory = absolute
+        .parent()
+        .ok_or_else(|| "Markdown file has no parent directory".to_string())?
+        .to_path_buf();
+    let name = absolute
+        .file_name()
+        .and_then(|value| value.to_str())
+        .ok_or_else(|| "Markdown filename must be valid UTF-8".to_string())?
+        .to_string();
+    Ok((absolute, directory, name))
+}
+
+fn load_standalone_markdown(path: &str) -> CmdResult<StandaloneMarkdown> {
+    let (absolute, directory, name) = standalone_markdown_path(path)?;
+    let provider = Arc::new(LocalFsProvider::new(&directory).map_err(|error| error.to_string())?);
+    let storage = VaultStorage::open(provider).map_err(|error| error.to_string())?;
+    let note = storage.read_note(&name).map_err(|error| error.to_string())?;
+    Ok(StandaloneMarkdown {
+        path: absolute.display().to_string(),
+        directory: directory.display().to_string(),
+        name,
+        note,
+    })
+}
+
+#[tauri::command]
+fn open_markdown_file(path: String) -> CmdResult<StandaloneMarkdown> {
+    load_standalone_markdown(&path)
+}
+
+#[tauri::command]
+fn save_markdown_file(path: String, content: String) -> CmdResult<StandaloneMarkdown> {
+    let (_, directory, name) = standalone_markdown_path(&path)?;
+    let provider = Arc::new(LocalFsProvider::new(&directory).map_err(|error| error.to_string())?);
+    let storage = VaultStorage::open(provider).map_err(|error| error.to_string())?;
+    storage
+        .write_note(&name, &content)
+        .map_err(|error| error.to_string())?;
+    load_standalone_markdown(&path)
 }
 
 fn activate_vault(
@@ -323,6 +388,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             runtime_platform,
             open_mobile_sandbox_vault,
+            open_markdown_file,
+            save_markdown_file,
             open_vault,
             create_vault,
             save_git_credentials,
