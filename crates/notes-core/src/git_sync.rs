@@ -16,6 +16,34 @@ pub struct GitRepositoryInfo {
     pub head: Option<String>,
 }
 
+/// Safe pull-planning result. This type never mutates refs, index or worktree.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub enum GitPullRelation {
+    UpToDate,
+    FastForward,
+    LocalAhead,
+    Diverged,
+    Unrelated,
+}
+
+/// Classify local and fetched remote heads without changing repository state.
+pub fn classify_git_pull_relation(
+    local_head: &str,
+    remote_head: &str,
+    merge_base: Option<&str>,
+) -> GitPullRelation {
+    if local_head == remote_head {
+        return GitPullRelation::UpToDate;
+    }
+    match merge_base {
+        Some(base) if base == local_head => GitPullRelation::FastForward,
+        Some(base) if base == remote_head => GitPullRelation::LocalAhead,
+        Some(_) => GitPullRelation::Diverged,
+        None => GitPullRelation::Unrelated,
+    }
+}
+
 /// HTTPS credentials supplied by the application at call time.
 ///
 /// Intentionally does not implement `Debug` or `Serialize` so tokens are harder
@@ -343,6 +371,30 @@ mod tests {
     use std::fs;
 
     use super::*;
+
+    #[test]
+    fn classifies_pull_relations_without_mutation() {
+        assert_eq!(
+            classify_git_pull_relation("a", "a", Some("a")),
+            GitPullRelation::UpToDate
+        );
+        assert_eq!(
+            classify_git_pull_relation("a", "b", Some("a")),
+            GitPullRelation::FastForward
+        );
+        assert_eq!(
+            classify_git_pull_relation("b", "a", Some("a")),
+            GitPullRelation::LocalAhead
+        );
+        assert_eq!(
+            classify_git_pull_relation("b", "c", Some("a")),
+            GitPullRelation::Diverged
+        );
+        assert_eq!(
+            classify_git_pull_relation("b", "c", None),
+            GitPullRelation::Unrelated
+        );
+    }
 
     #[test]
     fn remote_validation_requires_https_without_embedded_credentials() {
