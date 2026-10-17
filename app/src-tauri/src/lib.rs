@@ -154,7 +154,6 @@ fn startup_markdown_files(state: State<'_, AppState>) -> Vec<String> {
     }
 }
 
-
 #[cfg(target_os = "macos")]
 fn set_macos_markdown_default() -> CmdResult<()> {
     use std::ffi::{c_char, c_void, CString};
@@ -184,9 +183,8 @@ fn set_macos_markdown_default() -> CmdResult<()> {
 
     fn cf_string(value: &str) -> CmdResult<CFStringRef> {
         let value = CString::new(value).map_err(|error| error.to_string())?;
-        let string = unsafe {
-            CFStringCreateWithCString(std::ptr::null(), value.as_ptr(), UTF8_ENCODING)
-        };
+        let string =
+            unsafe { CFStringCreateWithCString(std::ptr::null(), value.as_ptr(), UTF8_ENCODING) };
         if string.is_null() {
             return Err("macOS could not create Launch Services string".into());
         }
@@ -195,9 +193,8 @@ fn set_macos_markdown_default() -> CmdResult<()> {
 
     let content_type = cf_string("net.daringfireball.markdown")?;
     let bundle_id = cf_string("io.github.romanzavadam.mdnotes")?;
-    let status = unsafe {
-        LSSetDefaultRoleHandlerForContentType(content_type, LS_ROLES_ALL, bundle_id)
-    };
+    let status =
+        unsafe { LSSetDefaultRoleHandlerForContentType(content_type, LS_ROLES_ALL, bundle_id) };
     unsafe {
         CFRelease(content_type);
         CFRelease(bundle_id);
