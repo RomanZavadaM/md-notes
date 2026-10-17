@@ -5,6 +5,7 @@ import {
   api,
   joinPath,
   parentPath,
+  OPENED_MARKDOWN_FILES,
   VAULT_CHANGED,
   type AttachmentInfo,
   type Note,
@@ -183,6 +184,22 @@ export default function App() {
     // Only on startup.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    let disposed = false;
+    let unlisten: (() => void) | undefined;
+    void listen<string[]>(OPENED_MARKDOWN_FILES, (event) => {
+      const path = event.payload[0];
+      if (path) void openStandaloneAt(path);
+    }).then((fn) => {
+      if (disposed) fn();
+      else unlisten = fn;
+    });
+    return () => {
+      disposed = true;
+      unlisten?.();
+    };
+  }, [openStandaloneAt]);
 
   const configureMarkdownAssociation = async () => {
     try {
@@ -432,7 +449,7 @@ export default function App() {
         <button type="button" onClick={() => void pickMarkdownFile()}>
           {t.openMarkdownFile}
         </button>
-        {(platform === "windows" || platform === "linux") && (
+        {(platform === "windows" || platform === "linux" || platform === "macos") && (
           <button type="button" onClick={() => void configureMarkdownAssociation()}>
             {t.makeMarkdownDefault}
           </button>
@@ -490,7 +507,7 @@ export default function App() {
           <button type="button" onClick={() => void pickVault()}>
             {t.openFolder}
           </button>
-          {(platform === "windows" || platform === "linux") && (
+          {(platform === "windows" || platform === "linux" || platform === "macos") && (
             <button type="button" onClick={() => void configureMarkdownAssociation()}>
               {t.makeMarkdownDefault}
             </button>
@@ -681,7 +698,7 @@ export default function App() {
               <button type="button" onClick={() => void pickMarkdownFile()}>
                 {t.openMarkdownFile}
               </button>
-              {(platform === "windows" || platform === "linux") && (
+              {(platform === "windows" || platform === "linux" || platform === "macos") && (
                 <button type="button" onClick={() => void configureMarkdownAssociation()}>
                   {t.makeMarkdownDefault}
                 </button>
