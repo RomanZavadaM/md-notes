@@ -78,6 +78,10 @@ Release baseline:
 - CI now classifies changed files: frontend-only changes avoid Rust/Tauri matrix; dependency licenses run only when relevant; unknown non-doc paths fall back to full validation.
 - Draft PRs avoid heavy CI until `ready_for_review`.
 - Mobile smoke paths are narrowed to native/core/dependency files, so pure frontend/i18n changes no longer build Android/iOS.
+- PR #69 `ci: ignore docs-only commits for releases` merged as `9a2c2066554975346ac5ca584a36c565619c5821`; CI #319 **SUCCESS**.
+- Release workflow #60 after that merge: **SUCCESS**, package build/assets correctly **SKIPPED** (no product release).
+- Stale release-please PR #63 `chore(main): release 0.3.2`, generated only from documentation commits, was closed unmerged.
+- Future docs/ci/chore-only work must not create a product version; the next release PR should appear only after release-driving product changes.
 
 ## Поточна наступна дія
 
