@@ -24,7 +24,7 @@ pub mod vault_storage;
 pub use attachments::AttachmentInfo;
 pub use error::{Error, Result};
 pub use git_sync::{
-    classify_git_pull_relation, clone_git_repository, commit_git_worktree,
+    apply_git_fast_forward, classify_git_pull_relation, clone_git_repository, commit_git_worktree,
     fetch_git_remote_authenticated, fetch_git_remote_public, git_has_changes, open_git_repository,
     plan_git_pull, plan_git_pull_preflight, validate_git_remote, GitHttpsCredentials,
     GitPullPreflight, GitPullRelation, GitRepositoryInfo,
