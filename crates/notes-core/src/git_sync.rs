@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 use std::fs;
 use std::path::Path;
-use std::sync::atomic::AtomicBool;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 use chrono::Utc;
 use gix::bstr::{BString, ByteSlice};
@@ -98,6 +98,128 @@ pub fn plan_git_pull(path: impl AsRef<Path>, remote_revision: &str) -> Result<Gi
         &remote_text,
         base_text.as_deref(),
     ))
+}
+
+/// Apply an already-planned clean fast-forward without merge commits.
+///
+/// The remote revision must already be fetched. This function refuses dirty,
+/// detached, unborn, non-fast-forward, diverged and unrelated states.
+pub fn apply_git_fast_forward(
+    path: impl AsRef<Path>,
+    remote_revision: &str,
+) -> Result<GitRepositoryInfo> {
+    let path = path.as_ref();
+    let preflight = plan_git_pull_preflight(path, remote_revision)?;
+    if !preflight.can_fast_forward {
+        return Err(Error::Git(format!(
+            "Git fast-forward is not safe: relation={:?}, worktree_clean={}",
+            preflight.relation, preflight.worktree_clean
+        )));
+    }
+
+    let repo = open_isolated(path)?;
+    // Re-check immediately before mutation so stale planning cannot authorize an apply.
+    if git_has_changes(path)? {
+        return Err(Error::Git(
+            "Git worktree changed after pull planning; fast-forward aborted".into(),
+        ));
+    }
+
+    let local = repo
+        .head_id()
+        .map_err(git_err)?
+        .detach();
+    let head_name = repo
+        .head_name()
+        .map_err(git_err)?
+        .ok_or_else(|| Error::Git("detached HEAD cannot be fast-forwarded automatically".into()))?;
+    let remote = repo
+        .rev_parse_single(remote_revision.as_bytes().as_bstr())
+        .map_err(git_err)?
+        .detach();
+
+    let local_text = local.to_string();
+    let remote_text = remote.to_string();
+    let merge_bases = repo.merge_bases_many(local, &[remote]).map_err(git_err)?;
+    let merge_base = merge_bases.first().map(|id| id.to_string());
+    if classify_git_pull_relation(&local_text, &remote_text, merge_base.as_deref())
+        != GitPullRelation::FastForward
+    {
+        return Err(Error::Git(
+            "Git relation changed after pull planning; fast-forward aborted".into(),
+        ));
+    }
+
+    let old_tree = repo.head_tree_id().map_err(git_err)?.detach();
+    let target_tree = repo
+        .find_commit(remote)
+        .map_err(git_err)?
+        .tree_id()
+        .map_err(git_err)?
+        .detach();
+
+    checkout_tree(&repo, target_tree, false)?;
+
+    let update = repo.reference(
+        head_name,
+        remote,
+        gix::refs::transaction::PreviousValue::MustExistAndMatch(gix::refs::Target::Object(local)),
+        "pull: fast-forward",
+    );
+    if let Err(error) = update {
+        let rollback = checkout_tree(&repo, old_tree, true);
+        return match rollback {
+            Ok(()) => Err(Error::Git(format!(
+                "Git HEAD changed during fast-forward; worktree restored: {error}"
+            ))),
+            Err(rollback_error) => Err(Error::Git(format!(
+                "Git HEAD changed during fast-forward ({error}); rollback also failed ({rollback_error})"
+            ))),
+        };
+    }
+
+    Ok(GitRepositoryInfo {
+        workdir: repo
+            .workdir()
+            .ok_or_else(|| Error::Git("bare Git repositories are not supported as vaults".into()))?
+            .display()
+            .to_string(),
+        head: Some(remote.to_string()),
+    })
+}
+
+fn checkout_tree(
+    repo: &gix::Repository,
+    tree_id: gix::ObjectId,
+    overwrite_existing: bool,
+) -> Result<()> {
+    let workdir = repo
+        .workdir()
+        .ok_or_else(|| Error::Git("bare Git repositories are not supported as vaults".into()))?;
+    let mut index = repo.index_from_tree(&tree_id).map_err(git_err)?;
+    let mut options = repo
+        .checkout_options(gix::worktree::stack::state::attributes::Source::IdMapping)
+        .map_err(git_err)?;
+    options.overwrite_existing = overwrite_existing;
+    options.destination_is_initially_empty = false;
+    let interrupt = AtomicBool::new(false);
+    gix::worktree::state::checkout(
+        &mut index,
+        workdir,
+        repo.objects.clone(),
+        &gix::progress::Discard,
+        &gix::progress::Discard,
+        &interrupt,
+        options,
+    )
+    .map_err(git_err)?;
+    if interrupt.load(Ordering::Relaxed) {
+        return Err(Error::Git("Git checkout was interrupted".into()));
+    }
+    index
+        .write(gix::index::write::Options::default())
+        .map_err(git_err)?;
+    Ok(())
 }
 
 /// HTTPS credentials supplied by the application at call time.
@@ -469,6 +591,90 @@ mod tests {
         assert!(!dirty.worktree_clean);
         assert_eq!(dirty.relation, GitPullRelation::UpToDate);
         assert!(!dirty.can_fast_forward);
+    }
+
+    #[test]
+    fn fast_forward_apply_updates_head_worktree_and_index() {
+        let dir = tempfile::tempdir().unwrap();
+        gix::init(dir.path()).unwrap();
+        fs::write(dir.path().join("note.md"), "# One\n").unwrap();
+        let first = commit_git_worktree(dir.path(), "Initial").unwrap().unwrap();
+
+        fs::write(dir.path().join("note.md"), "# Two\n").unwrap();
+        let second = commit_git_worktree(dir.path(), "Remote update")
+            .unwrap()
+            .unwrap();
+
+        let repo = open_isolated(dir.path()).unwrap();
+        let first_id = repo
+            .rev_parse_single(first.as_bytes().as_bstr())
+            .unwrap()
+            .detach();
+        let second_id = repo
+            .rev_parse_single(second.as_bytes().as_bstr())
+            .unwrap()
+            .detach();
+        let head_name = repo.head_name().unwrap().unwrap();
+
+        repo.reference(
+            "refs/remotes/origin/main",
+            second_id,
+            gix::refs::transaction::PreviousValue::MustNotExist,
+            "test: remote",
+        )
+        .unwrap();
+        repo.reference(
+            head_name,
+            first_id,
+            gix::refs::transaction::PreviousValue::MustExistAndMatch(
+                gix::refs::Target::Object(second_id),
+            ),
+            "test: rewind local",
+        )
+        .unwrap();
+
+        fs::write(dir.path().join("note.md"), "# One\n").unwrap();
+        let first_tree = repo
+            .find_commit(first_id)
+            .unwrap()
+            .tree_id()
+            .unwrap()
+            .detach();
+        let mut index = repo.index_from_tree(&first_tree).unwrap();
+        index.write(gix::index::write::Options::default()).unwrap();
+
+        assert!(!git_has_changes(dir.path()).unwrap());
+        let preflight =
+            plan_git_pull_preflight(dir.path(), "refs/remotes/origin/main").unwrap();
+        assert_eq!(preflight.relation, GitPullRelation::FastForward);
+        assert!(preflight.can_fast_forward);
+
+        let info = apply_git_fast_forward(dir.path(), "refs/remotes/origin/main").unwrap();
+        assert_eq!(info.head.as_deref(), Some(second.as_str()));
+        assert_eq!(
+            fs::read_to_string(dir.path().join("note.md")).unwrap(),
+            "# Two\n"
+        );
+        assert!(!git_has_changes(dir.path()).unwrap());
+        assert_eq!(
+            plan_git_pull(dir.path(), "refs/remotes/origin/main").unwrap(),
+            GitPullRelation::UpToDate
+        );
+    }
+
+    #[test]
+    fn fast_forward_apply_refuses_dirty_worktree() {
+        let dir = tempfile::tempdir().unwrap();
+        gix::init(dir.path()).unwrap();
+        fs::write(dir.path().join("note.md"), "# One\n").unwrap();
+        commit_git_worktree(dir.path(), "Initial").unwrap();
+        fs::write(dir.path().join("draft.md"), "# Draft\n").unwrap();
+
+        assert!(apply_git_fast_forward(dir.path(), "HEAD").is_err());
+        assert_eq!(
+            fs::read_to_string(dir.path().join("draft.md")).unwrap(),
+            "# Draft\n"
+        );
     }
 
     #[test]
