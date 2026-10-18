@@ -8,6 +8,18 @@
 >
 > **Статус розвитку: ACTIVE — roadmap stage v0.3 «мобільні платформи і синхронізація».**
 
+## Завантажити MD Notes v0.3.1
+
+**Швидке встановлення:**
+
+- **Windows 64-bit:** [завантажити інсталятор .exe](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD-Notes-0.3.1-Windows-x64-portable.zip)
+- **macOS Universal:** [завантажити DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes-0.3.1-1.x86_64.rpm)
+
+[**Усі файли релізу v0.3.1 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.1)
+
+> Збірки поки не підписані/не нотаризовані, тому Windows, macOS або Linux можуть показувати стандартне попередження безпеки.
+
 ## Про продукт
 
 **MD Notes** — кросплатформний local-first застосунок для особистої бази знань у Markdown. Він працює зі звичайними `.md/.markdown` файлами, вкладеннями та відкритими службовими JSON-файлами без прихованого формату даних.

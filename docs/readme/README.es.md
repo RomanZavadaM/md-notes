@@ -6,6 +6,18 @@
 >
 > **Estado del desarrollo: ACTIVE — etapa del roadmap v0.3 «plataformas móviles y sincronización».**
 
+## Descargar MD Notes v0.3.1
+
+**Instalación rápida:**
+
+- **Windows 64-bit:** [instalador .exe](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64_en-US.msi) · [ZIP portable](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD-Notes-0.3.1-Windows-x64-portable.zip)
+- **macOS Universal:** [descargar DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes-0.3.1-1.x86_64.rpm)
+
+[**Todos los archivos de v0.3.1 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.1)
+
+> Las builds todavía no están firmadas/notarizadas, por lo que el sistema puede mostrar una advertencia de seguridad estándar.
+
 ## Qué es
 
 **MD Notes** es una aplicación multiplataforma local-first para una base de conocimiento Markdown. Trabaja con archivos `.md/.markdown`, adjuntos y metadatos JSON abiertos, sin un formato propietario oculto.
