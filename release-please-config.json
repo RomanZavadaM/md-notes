@@ -14,7 +14,6 @@
         { "type": "feat", "section": "Нові можливості" },
         { "type": "fix", "section": "Виправлення" },
         { "type": "perf", "section": "Продуктивність" },
-        { "type": "docs", "section": "Документація" },
         { "type": "refactor", "section": "Рефакторинг", "hidden": true },
         { "type": "chore", "section": "Обслуговування", "hidden": true }
       ],
