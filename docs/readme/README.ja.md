@@ -2,19 +2,19 @@
 
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · [🇩🇪 Deutsch](README.de.md) · [🇪🇸 Español](README.es.md) · [🇰🇷 한국어](README.ko.md) · **🇯🇵 日本語**
 
-> **最新の公開 checkpoint: [MD Notes v0.2.2](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.2.2)**
+> **リリース checkpoint: MD Notes v0.3.1**
 >
 > **開発状態: ACTIVE — roadmap 段階 v0.3「モバイルプラットフォームと同期」。**
 
 ## 製品について
 
-**MD Notes** は Markdown 個人ナレッジベースのためのクロスプラットフォーム local-first アプリです。通常の `.md` ファイルと添付ファイルを扱い、隠された独自データ形式は作りません。
+**MD Notes** は Markdown 個人ナレッジベースのためのクロスプラットフォーム local-first アプリです。通常の `.md/.markdown` ファイル、添付ファイル、公開 JSON メタデータを扱い、隠された独自形式は作りません。
 
-**データはユーザーのものです。** ノートは任意のエディターで開き、自分のファイルシステムに保存し、Git でバージョン管理できます。MD Notes には独自のアプリケーションサーバー、分析、テレメトリーはありません。
+**データはユーザーのものです。** ノートは自分のファイルシステムに残り、任意のエディターで開き、Git でバージョン管理できます。MD Notes には独自のアプリケーションサーバー、分析、テレメトリーはありません。
 
-プラットフォーム: **Windows、macOS、Linux**。Android と iOS は v0.3 で積極的に開発中です。CI はビルド可能性を確認していますが、物理端末での runtime 検証が完了したとはまだ表明していません。
+プラットフォーム: **Windows、macOS、Linux**。Android と iOS は v0.3 の対象で、CI はビルド可能性を検証していますが、物理端末での runtime 検証はまだ完了扱いではありません。
 
-## 実装済み
+## 統合済み機能
 
 ### v0.2 — 完了した機能ベースライン
 
@@ -23,28 +23,29 @@
 - SQLite/FTS5 インデックス、検索、タグ、quick open;
 - wiki link、aliases、backlinks、rename/move 時のリンク更新;
 - Mermaid 11、KaTeX、画像、添付ファイル、テンプレート、daily notes;
-- オープンな `.mdnotes/schema.json` による schema-driven properties;
+- `.mdnotes/schema.json` による schema-driven properties;
 - Empty / PARA / Zettelkasten preset;
 - global/local knowledge graph;
 - 7 言語 UI とライト/ダーク/システムテーマ。
 
-### v0.3 — 開発中
-
-すでに `main` に統合済み:
+### v0.3 — v0.3.1 checkpoint まで統合済み
 
 - provider-neutral `StorageProvider` / `VaultStorage`;
 - Android/iOS 用 mobile sandbox vault;
 - CI の Android + iOS build smoke;
-- local-first sync decision foundation と persistent sync state;
+- local-first sync foundation と persistent sync state;
 - `gix`/gitoxide による HTTPS Git foundation;
-- dirty worktree 検出;
-- user/system Git config に依存しないローカル Git commit pipeline;
+- dirty worktree 検出とローカル Git commit pipeline;
 - 安全な public HTTPS fetch;
-- token を Git config、vault、remote URL に保存しない in-memory HTTPS authentication。
+- token を保存しない in-memory HTTPS authentication;
+- Windows/macOS/iOS/Android/Linux の system Git credential storage;
+- vault なしで `.md/.markdown` を開く・編集する・保存する機能;
+- Windows/Linux/macOS の Markdown desktop integration。既定アプリ変更はユーザーの明示操作後のみ;
+- Git pull planner: `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
+- dirty worktree をブロックする pull safety preflight;
+- clean `FastForward` のみを適用する安全な fast-forward。blind `hard reset`、merge commit、silent overwrite は行いません。
 
-現在の security checkpoint では Tauri レイヤーに **システム Git credential storage** を追加します。対象は Windows Credential Manager、macOS Keychain、iOS Protected Data、Android Keystore-backed storage、Linux Secret Service です。フロントエンドは credential の保存/確認/削除はできますが token を読み戻せません。認証 fetch はネットワーク呼び出し直前に Rust 内部だけで secret を取得します。
-
-まだ **未完了**: Git pull/merge policy、push、conflict policy との完全統合、WebDAV、物理 Android/iOS 端末での runtime 検証、optional Android SAF / iOS security-scoped 外部フォルダー。
+まだ **未完了**: Git push、`SyncManifest` / ADR-0005 との完全な Git state 統合、WebDAV、物理 Android/iOS 端末での runtime 検証、optional Android SAF / iOS security-scoped 外部フォルダー。
 
 全体計画: [roadmap](../roadmap.md)（ウクライナ語、正本）。
 
@@ -52,14 +53,14 @@
 
 [リリースページ](https://github.com/RomanZavadaM/md-notes/releases) から Windows (`.exe`, `.msi`, portable ZIP)、macOS (`.dmg`, `.app.tar.gz`)、Linux (`.AppImage`, `.deb`, `.rpm`) のパッケージを取得できます。
 
-最新の公開 prerelease は **v0.2.2** です。現在のビルドは未署名/未公証のため、OS が通常のセキュリティ警告を表示することがあります。
+**v0.3.1** checkpoint には standalone Markdown と安全な Git fast-forward pipeline が含まれます。個別リリースで別途明記されない限り、ビルドは未署名/未公証です。
 
 詳しい手順: **[ユーザーガイド](../user-guide/USER_GUIDE.ja.md)**。
 
 ## 開発、プライバシー、法的情報
 
-Rust stable、Node.js 20+、Tauri のシステム要件が必要です。統合 gate には Rust format/clippy/tests、frontend build、dependency license check、desktop CI、mobile/Tauri 境界変更時の Android/iOS mobile smoke が含まれます。
+Rust stable、Node.js 20+、Tauri のシステム要件が必要です。統合 gate には Rust fmt/clippy/tests、frontend build、dependency license check、desktop CI、関連変更に対する Android/iOS mobile smoke が含まれます。
 
-MD Notes は local-first です。同期 secret は vault、Markdown ファイル、remote URL、Git config、ログ、`localStorage` に保存してはならず、OS の credential store に保存します。同期競合は黙って上書きしてはいけません。
+MD Notes は local-first です。同期 secret は vault、Markdown ファイル、remote URL、Git config、ログ、`localStorage` に保存してはいけません。同期競合は黙って上書きせず、自動 Git apply は clean fast-forward 状態にのみ許可されます。
 
 Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved. MD Notes はプロプライエタリソフトウェアであり、公開リポジトリはオープンソースライセンスを付与しません。ノートはユーザーのものです。[LICENSE.md](../../LICENSE.md) と [法的情報](../LEGAL_AND_COPYRIGHT.md) を参照してください。
