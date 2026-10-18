@@ -27,6 +27,14 @@ pub enum GitPullRelation {
     Unrelated,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GitPullPreflight {
+    pub relation: GitPullRelation,
+    pub worktree_clean: bool,
+    pub can_fast_forward: bool,
+}
+
 /// Classify local and fetched remote heads without changing repository state.
 pub fn classify_git_pull_relation(
     local_head: &str,
@@ -42,6 +50,21 @@ pub fn classify_git_pull_relation(
         Some(_) => GitPullRelation::Diverged,
         None => GitPullRelation::Unrelated,
     }
+}
+
+/// Combine repository relation planning with the clean-worktree safety gate.
+pub fn plan_git_pull_preflight(
+    path: impl AsRef<Path>,
+    remote_revision: &str,
+) -> Result<GitPullPreflight> {
+    let path = path.as_ref();
+    let worktree_clean = !git_has_changes(path)?;
+    let relation = plan_git_pull(path, remote_revision)?;
+    Ok(GitPullPreflight {
+        relation,
+        worktree_clean,
+        can_fast_forward: worktree_clean && relation == GitPullRelation::FastForward,
+    })
 }
 
 /// Plan a pull against an already-fetched revision without mutating repository state.
@@ -427,6 +450,25 @@ mod tests {
             classify_git_pull_relation("b", "c", None),
             GitPullRelation::Unrelated
         );
+    }
+
+    #[test]
+    fn pull_preflight_blocks_apply_when_worktree_is_dirty() {
+        let dir = tempfile::tempdir().unwrap();
+        gix::init(dir.path()).unwrap();
+        fs::write(dir.path().join("note.md"), "# One\n").unwrap();
+        commit_git_worktree(dir.path(), "Initial").unwrap();
+
+        let clean = plan_git_pull_preflight(dir.path(), "HEAD").unwrap();
+        assert!(clean.worktree_clean);
+        assert_eq!(clean.relation, GitPullRelation::UpToDate);
+        assert!(!clean.can_fast_forward);
+
+        fs::write(dir.path().join("draft.md"), "# Draft\n").unwrap();
+        let dirty = plan_git_pull_preflight(dir.path(), "HEAD").unwrap();
+        assert!(!dirty.worktree_clean);
+        assert_eq!(dirty.relation, GitPullRelation::UpToDate);
+        assert!(!dirty.can_fast_forward);
     }
 
     #[test]
