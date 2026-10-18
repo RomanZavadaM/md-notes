@@ -34,6 +34,25 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.2](https://github.com/RomanZavadaM/md-notes/compare/v0.3.1...v0.3.2) (2026-10-18)
+
+
+### Документація
+
+* add direct v0.3.1 download links ([8e5f070](https://github.com/RomanZavadaM/md-notes/commit/8e5f0702c4bb780155f7b1ed9676b78067195a33))
+* add direct v0.3.1 download links ([13b8fdf](https://github.com/RomanZavadaM/md-notes/commit/13b8fdf1c7bc264e9728111d88b63989d0ac03da))
+* add direct v0.3.1 download links ([2478fca](https://github.com/RomanZavadaM/md-notes/commit/2478fcaf8a9f91c3e9524585db984576782f989a))
+* add direct v0.3.1 download links ([d08a050](https://github.com/RomanZavadaM/md-notes/commit/d08a0506864290d273c146c193b7e1d8cc4295f3))
+* add direct v0.3.1 download links ([edc6277](https://github.com/RomanZavadaM/md-notes/commit/edc627770e7c6a107b71d6c4f3e8b85711e5bdc3))
+* add direct v0.3.1 download links ([dd30483](https://github.com/RomanZavadaM/md-notes/commit/dd30483ede60cea5a0957a36c61baf325af756dd))
+* add direct v0.3.1 download links ([c026b39](https://github.com/RomanZavadaM/md-notes/commit/c026b39569cba78af6b078c36f6bfdb308c2afd2))
+* add direct v0.3.1 download links ([6efe773](https://github.com/RomanZavadaM/md-notes/commit/6efe77397d8e10edbdbcf61a89a6021642d1122c))
+* record v0.3.1 release checkpoint ([ea91140](https://github.com/RomanZavadaM/md-notes/commit/ea9114030897b66f191f9dd01c1e34d543d6fd23))
+* record v0.3.1 release checkpoint ([24806c6](https://github.com/RomanZavadaM/md-notes/commit/24806c6de265aa30c5f74542790f689dc88ad87d))
+* record v0.3.1 release checkpoint ([671d846](https://github.com/RomanZavadaM/md-notes/commit/671d846937a9210ad74a2a2ed8eeb986be08ba92))
+* record v0.3.1 release checkpoint ([58cf1bf](https://github.com/RomanZavadaM/md-notes/commit/58cf1bf36f7491278b5beabfc8b50ae27ba33b36))
+* record v0.3.1 release checkpoint ([8d2d7c1](https://github.com/RomanZavadaM/md-notes/commit/8d2d7c1aa72b9d802d98dd804a64b9227976f924))
+
 ## [0.3.1](https://github.com/RomanZavadaM/md-notes/compare/v0.3.0...v0.3.1) (2026-10-18)
 
 
