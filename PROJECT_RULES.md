@@ -76,7 +76,21 @@
 7. version, показана в інтерфейсі, походить з build metadata; hardcoded номери версій в UI заборонені;
 8. перевірити, що робочі сховища, особисті нотатки, ключі, БД індексу та персональні файли не потрапили до Git.
 
-CI (`.github/workflows/ci.yml`) виконує пункти 1–4 на Windows, macOS і Linux. Зелений CI не замінює runtime-перевірку user-visible змін.
+CI використовує path-aware routing і не повинен без потреби запускати дорогі jobs:
+
+- docs-only PR (`**/*.md`, `docs/**`) не запускає heavy CI;
+- draft PR не запускає heavy CI; фінальна перевірка стартує при `ready_for_review`;
+- frontend-only зміни проходять Node/frontend build без Rust matrix і без Mobile smoke;
+- Rust/core/Tauri зміни проходять повний Rust matrix на Linux/Windows/macOS + Tauri clippy;
+- Android/iOS Mobile smoke запускається автоматично лише для ready/non-draft змін, що зачіпають native/core/dependency boundary, або вручну через `workflow_dispatch`;
+- license gates запускаються при зміні dependency metadata або консервативно для невідомих non-doc paths;
+- невідомі non-doc paths за замовчуванням отримують повну перевірку, а не пропускаються;
+- release-please PR не повинен запускати повний Rust/Tauri/Mobile набір; для нього достатня перевірка release metadata/version consistency перед release checkpoint;
+- docs-only та workflow-only push у `main` не запускає release-please;
+- реальний release packaging не можна ставити на `cancel-in-progress`, щоб наступний push не обірвав публікацію assets;
+- `cancel-in-progress` дозволений для звичайного CI/Mobile PR feedback.
+
+Перед merge все одно мають бути зеленими **усі релевантні checks для типу зміни**. Path routing оптимізує зайві запуски, але не скасовує обов'язкові перевірки. Зелений CI не замінює runtime-перевірку user-visible змін.
 
 ## 8. Реліз
 
