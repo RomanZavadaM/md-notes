@@ -26,7 +26,7 @@ pub use error::{Error, Result};
 pub use git_sync::{
     classify_git_pull_relation, clone_git_repository, commit_git_worktree,
     fetch_git_remote_authenticated, fetch_git_remote_public, git_has_changes, open_git_repository,
-    validate_git_remote, GitHttpsCredentials, GitPullRelation, GitRepositoryInfo,
+    plan_git_pull, validate_git_remote, GitHttpsCredentials, GitPullRelation, GitRepositoryInfo,
 };
 pub use graph::{knowledge_graph, GraphEdge, GraphNode, KnowledgeGraph};
 pub use index::{Backlink, Index, NoteSummary, SearchHit, SyncStats, TagCount, UnresolvedLink};
