@@ -34,6 +34,35 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.1](https://github.com/RomanZavadaM/md-notes/compare/v0.3.0...v0.3.1) (2026-10-18)
+
+
+### Нові можливості
+
+* add Git pull safety preflight ([#60](https://github.com/RomanZavadaM/md-notes/issues/60)) ([d9d4d5f](https://github.com/RomanZavadaM/md-notes/commit/d9d4d5fd3becf77d1587981733e6f442881ae6a9))
+* add macOS Markdown association ([#56](https://github.com/RomanZavadaM/md-notes/issues/56)) ([a6429a4](https://github.com/RomanZavadaM/md-notes/commit/a6429a40f87827e710dbd2e6ebb7b9e6df194375))
+* add safe Git pull relation planner ([#47](https://github.com/RomanZavadaM/md-notes/issues/47)) ([7baa71b](https://github.com/RomanZavadaM/md-notes/commit/7baa71bbd838bee95daaca34cb50c6dcb260ddac))
+* apply safe Git fast-forward ([ed92405](https://github.com/RomanZavadaM/md-notes/commit/ed924059fa68bc31014c5b484fb78daaeba675b0))
+* apply safe Git fast-forward ([17db320](https://github.com/RomanZavadaM/md-notes/commit/17db3204ba0b8cd79505a972cb0a3d6c65c13d15))
+* export safe Git fast-forward ([12d66fa](https://github.com/RomanZavadaM/md-notes/commit/12d66faa0d4bf8ee42db868e2ea0c7c166c7f8ae))
+* open standalone Markdown files ([#54](https://github.com/RomanZavadaM/md-notes/issues/54)) ([c940dcc](https://github.com/RomanZavadaM/md-notes/commit/c940dcc7aa2f8a4028b7ba4a8a15862070b7907b))
+* plan Git pull from fetched revision ([#59](https://github.com/RomanZavadaM/md-notes/issues/59)) ([ad0444e](https://github.com/RomanZavadaM/md-notes/commit/ad0444eee38d81236d1f60c20e6bfaaf73f7f6f3))
+
+
+### Виправлення
+
+* clear one-time v0.3.0 release pin ([#51](https://github.com/RomanZavadaM/md-notes/issues/51)) ([9c0ef0e](https://github.com/RomanZavadaM/md-notes/commit/9c0ef0eea6dc158cfe9bb01d72d38b5bec308902))
+* update Git refs with app committer ([c9580c7](https://github.com/RomanZavadaM/md-notes/commit/c9580c7f9c70c80919ad6a67443f7440f6bd0031))
+* use thread-safe object store for checkout ([e76da15](https://github.com/RomanZavadaM/md-notes/commit/e76da15a00f3ddf6d36f1de28482025ef0bc429c))
+
+
+### Документація
+
+* record standalone Markdown checkpoint ([#58](https://github.com/RomanZavadaM/md-notes/issues/58)) ([50066bc](https://github.com/RomanZavadaM/md-notes/commit/50066bc4e8e67fe9fdf29f0e7970b6a36bb0210b))
+* record standalone Markdown integration ([#55](https://github.com/RomanZavadaM/md-notes/issues/55)) ([bf27a24](https://github.com/RomanZavadaM/md-notes/commit/bf27a24a794e10d2941ec8119a545c61d99af4e3))
+* record v0.3.0 release checkpoint ([#46](https://github.com/RomanZavadaM/md-notes/issues/46)) ([21fee74](https://github.com/RomanZavadaM/md-notes/commit/21fee74c6ba6bf2b8facda7ca179400e20ac257c))
+* track safe fast-forward apply slice ([8bac0f2](https://github.com/RomanZavadaM/md-notes/commit/8bac0f284dfbe2fab21ad8077b3b9d40868f6403))
+
 ## [0.3.0](https://github.com/RomanZavadaM/md-notes/compare/v0.2.2...v0.3.0) (2026-10-03)
 
 
