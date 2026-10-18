@@ -4,10 +4,12 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
-      - "app/**"
+      - "app/src-tauri/**"
       - "crates/**"
       - "Cargo.toml"
       - "Cargo.lock"
+      - "app/package.json"
+      - "app/package-lock.json"
       - ".github/workflows/mobile-smoke.yml"
   workflow_dispatch:
 
