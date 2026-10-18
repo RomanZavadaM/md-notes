@@ -61,6 +61,19 @@ Release baseline:
 - README UK / EN / FR / DE / ES / KO / JA синхронізовані.
 - Нових user-visible UI strings у PR #61 не було; app i18n keys не потребували змін.
 
+## GitHub Actions optimization
+
+- PR #65 `ci: reduce redundant Actions runs` merged to `main` as `b94edb7a84896b0f8694e3d548398e1187d48c43`.
+- Validation before merge: CI #317 **SUCCESS**; Mobile smoke #107 **SUCCESS** (Android + iOS).
+- Docs-only pull requests no longer start the heavy desktop CI matrix.
+- CI no longer repeats automatically on every push to `main`; PR validation is the primary code gate.
+- Release-please PRs skip the heavy Rust/Tauri matrix and use a lightweight version-consistency check instead.
+- Mobile smoke skips draft PRs and release-please PRs, while remaining required for ready/non-draft code PRs that touch app/core/mobile-relevant paths.
+- Android/iOS smoke jobs now use Rust cache.
+- Release builds now use npm cache.
+- Docs-only and workflow-only pushes to `main` do not run release-please.
+- Real release packaging is deliberately **not** configured with `cancel-in-progress`.
+
 ## Поточна наступна дія
 
 **Git push — почати окремим slice з актуального `main` після перевірки GitHub state.**
