@@ -1,9 +1,10 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
   pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
 
 permissions:
   contents: read
@@ -17,6 +18,7 @@ env:
 
 jobs:
   core:
+    if: ${{ !startsWith(github.head_ref, 'release-please--') }}
     name: notes-core (${{ matrix.os }})
     strategy:
       fail-fast: false
@@ -38,10 +40,8 @@ jobs:
         run: cargo test -p notes-core
 
   app:
+    if: ${{ !startsWith(github.head_ref, 'release-please--') }}
     name: app (frontend + Tauri)
-    # Match the Linux environment used by the release build. ubuntu-latest
-    # currently resolves to 24.04, where Tauri system-package installation
-    # has been intermittently hanging on hosted runners.
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v5
@@ -68,6 +68,7 @@ jobs:
         run: cargo clippy -p md-notes --all-targets -- -D warnings
 
   app-macos:
+    if: ${{ !startsWith(github.head_ref, 'release-please--') }}
     name: app (macOS Tauri)
     runs-on: macos-latest
     steps:
@@ -80,6 +81,7 @@ jobs:
         run: cargo clippy -p md-notes --all-targets -- -D warnings
 
   licenses:
+    if: ${{ !startsWith(github.head_ref, 'release-please--') }}
     name: Dependency licenses
     runs-on: ubuntu-latest
     steps:
@@ -94,9 +96,36 @@ jobs:
         working-directory: app
         run: npm run licenses
 
+  release-metadata:
+    if: ${{ startsWith(github.head_ref, 'release-please--') }}
+    name: Release metadata consistency
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Verify release versions match
+        shell: python
+        run: |
+          import json
+          import tomllib
+          from pathlib import Path
+
+          cargo = tomllib.loads(Path("Cargo.toml").read_text(encoding="utf-8"))
+          package = json.loads(Path("app/package.json").read_text(encoding="utf-8"))
+          tauri = json.loads(Path("app/src-tauri/tauri.conf.json").read_text(encoding="utf-8"))
+
+          versions = {
+              "Cargo.toml": cargo["workspace"]["package"]["version"],
+              "app/package.json": package["version"],
+              "app/src-tauri/tauri.conf.json": tauri["version"],
+          }
+
+          if len(set(versions.values())) != 1:
+              raise SystemExit(f"Release version mismatch: {versions}")
+
+          print("Release versions are consistent:", next(iter(versions.values())))
+
   pr-title:
     name: Conventional PR title
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
