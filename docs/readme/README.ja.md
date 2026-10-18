@@ -6,6 +6,18 @@
 >
 > **開発状態: ACTIVE — roadmap 段階 v0.3「モバイルプラットフォームと同期」。**
 
+## MD Notes v0.3.1 をダウンロード
+
+**クイックインストール:**
+
+- **Windows 64-bit:** [.exe インストーラー](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD-Notes-0.3.1-Windows-x64-portable.zip)
+- **macOS Universal:** [DMG をダウンロード](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes-0.3.1-1.x86_64.rpm)
+
+[**v0.3.1 のすべてのリリースファイル →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.1)
+
+> 現在のビルドは未署名/未公証のため、OS が通常のセキュリティ警告を表示することがあります。
+
 ## 製品について
 
 **MD Notes** は Markdown 個人ナレッジベースのためのクロスプラットフォーム local-first アプリです。通常の `.md/.markdown` ファイル、添付ファイル、公開 JSON メタデータを扱い、隠された独自形式は作りません。
