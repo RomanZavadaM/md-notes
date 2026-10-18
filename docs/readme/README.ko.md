@@ -6,6 +6,18 @@
 >
 > **개발 상태: ACTIVE — roadmap 단계 v0.3 「모바일 플랫폼과 동기화」.**
 
+## MD Notes v0.3.1 다운로드
+
+**빠른 설치:**
+
+- **Windows 64-bit:** [.exe 설치 파일](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD-Notes-0.3.1-Windows-x64-portable.zip)
+- **macOS Universal:** [DMG 다운로드](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes-0.3.1-1.x86_64.rpm)
+
+[**v0.3.1의 모든 릴리스 파일 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.1)
+
+> 현재 빌드는 서명/공증되지 않았으므로 운영체제가 일반적인 보안 경고를 표시할 수 있습니다.
+
 ## 제품 소개
 
 **MD Notes**는 Markdown 개인 지식 베이스를 위한 크로스 플랫폼 local-first 앱입니다. 일반 `.md/.markdown` 파일, 첨부 파일, 공개 JSON 메타데이터를 사용하며 숨겨진 독점 형식을 만들지 않습니다.
