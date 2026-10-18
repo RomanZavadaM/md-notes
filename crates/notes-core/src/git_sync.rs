@@ -125,10 +125,7 @@ pub fn apply_git_fast_forward(
         ));
     }
 
-    let local = repo
-        .head_id()
-        .map_err(git_err)?
-        .detach();
+    let local = repo.head_id().map_err(git_err)?.detach();
     let head_name = repo
         .head_name()
         .map_err(git_err)?
@@ -203,10 +200,11 @@ fn checkout_tree(
     options.overwrite_existing = overwrite_existing;
     options.destination_is_initially_empty = false;
     let interrupt = AtomicBool::new(false);
+    let objects = repo.objects.clone().into_arc().map_err(git_err)?;
     gix::worktree::state::checkout(
         &mut index,
         workdir,
-        repo.objects.clone(),
+        objects,
         &gix::progress::Discard,
         &gix::progress::Discard,
         &interrupt,
@@ -626,9 +624,9 @@ mod tests {
         repo.reference(
             head_name,
             first_id,
-            gix::refs::transaction::PreviousValue::MustExistAndMatch(
-                gix::refs::Target::Object(second_id),
-            ),
+            gix::refs::transaction::PreviousValue::MustExistAndMatch(gix::refs::Target::Object(
+                second_id,
+            )),
             "test: rewind local",
         )
         .unwrap();
@@ -644,8 +642,7 @@ mod tests {
         index.write(gix::index::write::Options::default()).unwrap();
 
         assert!(!git_has_changes(dir.path()).unwrap());
-        let preflight =
-            plan_git_pull_preflight(dir.path(), "refs/remotes/origin/main").unwrap();
+        let preflight = plan_git_pull_preflight(dir.path(), "refs/remotes/origin/main").unwrap();
         assert_eq!(preflight.relation, GitPullRelation::FastForward);
         assert!(preflight.can_fast_forward);
 
