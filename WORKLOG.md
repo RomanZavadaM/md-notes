@@ -1,97 +1,92 @@
 # WORKLOG — MD Notes
 
-Оновлено: **17.10.2026**
+Оновлено: **18.10.2026**
 
 ## STATUS
 
-**ACTIVE. v0.3.0 опублікований як prerelease. Git/security checkpoint завершений; наступна робота v0.3 — pull/merge policy без silent overwrite.**
+**ACTIVE. Повний test-release checkpoint v0.3.1 завершено. Наступний активний slice — Git push.**
 
 Release baseline:
-- tag/prerelease `v0.3.0`;
-- release commit `42656f0075d0072e295bee33c74f059c3ae6e656`;
-- Windows/macOS/Linux packages + START/source + legal + checksums опубліковані.
+- tag/prerelease: `v0.3.1`;
+- release commit: `95d95264edf6382c7eb812a0d2559f4c21455b76`;
+- Release workflow #57: **SUCCESS**;
+- main CI #310: **SUCCESS**;
+- Windows/macOS/Linux packages + portable + START/source + legal + checksums: **published**.
 
 ## Runtime / build evidence
 
 - Windows v0.2.2 runtime: PASS від власника 03.10.2026.
-- Android/iOS build smoke інтегрований у `main` і використовується як обов’язковий gate для mobile/Tauri changes.
-- Mobile smoke = build evidence, не physical-device runtime evidence.
+- Android/iOS build smoke: CI evidence only, не physical-device runtime.
+- PR #61 final head `8bac0f284dfbe2fab21ad8077b3b9d40868f6403`: CI #303 SUCCESS + Mobile smoke #99 SUCCESS.
+- Release PR #52 final head `909ce415e06d13a7e3556223aaf659d9ba2be88f`: CI #309 SUCCESS + Mobile smoke #104 SUCCESS.
 
-## Завершено й інтегровано у v0.3
+## Нещодавно завершено
 
-- PR #30 — `StorageProvider` foundation.
-- PR #31 — provider-backed `VaultStorage`.
-- PR #32 — mobile sandbox bootstrap.
-- PR #33 — local-first sync decision/conflict foundation.
-- PR #35 — Android/iOS build validation.
-- PR #37 — persistent local sync state.
-- PR #39 — `gix` HTTPS clone/open foundation.
-- PR #41 — dirty worktree detection.
-- PR #42 — local Git commit pipeline.
-- PR #43 — safe public HTTPS fetch.
-- PR #44 — in-memory Git HTTPS authentication.
-- PR #47 — safe Git pull relation planner.
-- PR #54 — standalone Markdown reader/editor + opt-in Windows/Linux file association.
-
-PR #44 merge checkpoint: `b142973ea4315987b28aa3a4e6563506c219c255`.
-Validation on PR #44 head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f`: CI #211 SUCCESS + Mobile smoke #29 SUCCESS.
-
-## Завершений Git/security checkpoint
-
-- PR #45 інтегрований у `main`: `70d81622574b365334046520f534a9c3be8784af`.
-- Final PR head: `78e159c02691973cb9caa7468e40d3d1ea982cc5`.
-- CI #235: SUCCESS.
-- Android debug build: SUCCESS.
-- iOS simulator debug build: SUCCESS.
-- Release PR #40 інтегрований у `main`: `42656f0075d0072e295bee33c74f059c3ae6e656`.
-- GitHub prerelease `v0.3.0`: published.
-
-## Standalone Markdown checkpoint
+### Standalone Markdown
 
 - PR #54 merged: `c940dcc7aa2f8a4028b7ba4a8a15862070b7907b`.
-- Final head `937047ada68cf38626a0cb35bd75457c2efab700`.
-- CI #270: SUCCESS.
-- Mobile smoke #78: SUCCESS.
-- `.md/.markdown` можна відкрити зсередини MD Notes без vault і зберегти назад.
-- Windows/Linux: системна прив'язка Markdown виконується тільки після явної команди користувача; portable та installer поводяться однаково з точки зору opt-in.
-- PR #56 merged as `a6429a40f87827e710dbd2e6ebb7b9e6df194375`: macOS Finder open-event + explicit handler action, without automatic default takeover. Final head `41d51db7ea5631b51a024fbf790bcc82758a4894`; CI #283 + Mobile smoke #88 SUCCESS.
+- PR #56 merged: `a6429a40f87827e710dbd2e6ebb7b9e6df194375`.
+- `.md/.markdown` open/edit/save без vault.
+- macOS Finder open-event підтримується.
+- Системна асоціація лише після explicit user action.
 
-## Поточний активний slice — Safe fast-forward apply
+### Git pull planner / safety / apply
 
-- Base `main`: `d9d4d5fd3becf77d1587981733e6f442881ae6a9` (PR #60 merged).
-- Branch: `feature/git-fast-forward-apply-v0.3`.
-- PR: #61 `feat: apply safe Git fast-forward` (draft).
-- Поточний head перед цим записом: `c9580c7f9c70c80919ad6a67443f7440f6bd0031`.
-- Реалізовано `apply_git_fast_forward(path, remote_revision)`:
-  - apply лише для clean `FastForward`;
-  - повторна перевірка worktree + relation безпосередньо перед mutation;
-  - detached/unborn/non-fast-forward стани відхиляються;
-  - без shell git, merge commit і hard reset;
-  - gix checkout оновлює worktree/index;
-  - branch ref оновлюється з optimistic old-HEAD constraint;
-  - при race на ref виконується спроба відновлення старого tree у worktree/index.
-- Тести: реальний fast-forward оновлює HEAD/worktree/index; dirty worktree відхиляється й локальний файл зберігається.
-- CI #302: SUCCESS.
-- Mobile smoke #98: Android + iOS ще виконуються.
-- Статус slice: **VERIFIED desktop/CI, очікує mobile gate; не DONE до merge**.
-- Наступна дія: після Android+iOS SUCCESS перевести PR #61 з draft у ready, інтегрувати у `main`, записати merge SHA в Issue #8 і синхронізувати `START_HERE.md`, `PROJECT_STATE.md`, `WORKLOG.md`.
+- PR #59 merge: `ad0444eee38d81236d1f60c20e6bfaaf73f7f6f3`.
+- PR #60 merge: `d9d4d5fd3becf77d1587981733e6f442881ae6a9`.
+- PR #61 merge: `ed924059fa68bc31014c5b484fb78daaeba675b0`.
+- clean FastForward-only automatic apply;
+- dirty worktree blocks mutation;
+- LocalAhead / Diverged / Unrelated не мутуються;
+- no blind hard reset / silent overwrite;
+- optimistic ref update + rollback attempt on race.
 
-## Next work when MD Notes resumes
+### Release v0.3.1
 
-1. Git pull/merge policy with no silent overwrite.
-2. Git push.
-3. Integrate Git state with `SyncManifest` / ADR-0005 conflict policy.
-4. WebDAV adapter.
-5. Physical Android/iOS runtime validation.
-6. Optional Android SAF / iOS security-scoped external folders.
+- Release PR #52 merge/release commit: `95d95264edf6382c7eb812a0d2559f4c21455b76`.
+- Tag/prerelease: `v0.3.1`.
+- Release workflow #57: SUCCESS.
+- Assets published:
+  - Windows setup EXE;
+  - Windows MSI;
+  - Windows x64 portable ZIP;
+  - macOS universal DMG;
+  - macOS app tarball;
+  - Linux AppImage;
+  - Linux deb;
+  - Linux rpm;
+  - START/source ZIP;
+  - LICENSE/COPYRIGHT/THIRD_PARTY_NOTICES;
+  - SHA256SUMS.
+- README UK / EN / FR / DE / ES / KO / JA синхронізовані.
+- Нових user-visible UI strings у PR #61 не було; app i18n keys не потребували змін.
+
+## Поточна наступна дія
+
+**Git push — почати окремим slice з актуального `main` після перевірки GitHub state.**
+
+Safety requirements для Git push мають зберігати існуючі trust boundaries:
+- HTTPS only;
+- credentials тільки через системне secret storage / in-memory callback;
+- не записувати token у URL, Git config, vault або логи;
+- не переписувати remote history мовчки;
+- force push не вводити як implicit behavior;
+- спершу planner/preflight + tests, потім mutation.
+
+## Після Git push
+
+1. Git state ↔ `SyncManifest` / ADR-0005 conflict policy.
+2. WebDAV adapter.
+3. Physical Android/iOS runtime validation.
+4. Optional Android SAF / iOS security-scoped external folders.
 
 ## Відомі обмеження
 
 - Android/iOS physical-device runtime untested;
 - Git push not implemented;
-- complete Git pull/merge/conflict workflow not implemented;
+- complete conflict workflow not implemented;
 - WebDAV not implemented;
 - SAF/bookmark external-folder adapters not implemented;
 - large vault open/indexing can still be synchronous;
 - graph still lacks ForceAtlas2/clustering/layout persistence;
-- builds are unsigned.
+- builds are unsigned unless explicitly stated otherwise.
