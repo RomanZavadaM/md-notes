@@ -73,6 +73,11 @@ Release baseline:
 - Release builds now use npm cache.
 - Docs-only and workflow-only pushes to `main` do not run release-please.
 - Real release packaging is deliberately **not** configured with `cancel-in-progress`.
+- PR #67 `ci: route checks by changed paths` merged to `main` as `68655c50fa43da74820ea38e723901f2ff6d15e7`.
+- PR #67 validation: CI #318 **SUCCESS**; Mobile smoke #108 **SUCCESS** (Android + iOS).
+- CI now classifies changed files: frontend-only changes avoid Rust/Tauri matrix; dependency licenses run only when relevant; unknown non-doc paths fall back to full validation.
+- Draft PRs avoid heavy CI until `ready_for_review`.
+- Mobile smoke paths are narrowed to native/core/dependency files, so pure frontend/i18n changes no longer build Android/iOS.
 
 ## Поточна наступна дія
 
