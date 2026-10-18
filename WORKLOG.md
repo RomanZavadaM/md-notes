@@ -56,6 +56,26 @@ Validation on PR #44 head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f`: CI #211 SU
 - Windows/Linux: системна прив'язка Markdown виконується тільки після явної команди користувача; portable та installer поводяться однаково з точки зору opt-in.
 - PR #56 merged as `a6429a40f87827e710dbd2e6ebb7b9e6df194375`: macOS Finder open-event + explicit handler action, without automatic default takeover. Final head `41d51db7ea5631b51a024fbf790bcc82758a4894`; CI #283 + Mobile smoke #88 SUCCESS.
 
+## Поточний активний slice — Safe fast-forward apply
+
+- Base `main`: `d9d4d5fd3becf77d1587981733e6f442881ae6a9` (PR #60 merged).
+- Branch: `feature/git-fast-forward-apply-v0.3`.
+- PR: #61 `feat: apply safe Git fast-forward` (draft).
+- Поточний head перед цим записом: `c9580c7f9c70c80919ad6a67443f7440f6bd0031`.
+- Реалізовано `apply_git_fast_forward(path, remote_revision)`:
+  - apply лише для clean `FastForward`;
+  - повторна перевірка worktree + relation безпосередньо перед mutation;
+  - detached/unborn/non-fast-forward стани відхиляються;
+  - без shell git, merge commit і hard reset;
+  - gix checkout оновлює worktree/index;
+  - branch ref оновлюється з optimistic old-HEAD constraint;
+  - при race на ref виконується спроба відновлення старого tree у worktree/index.
+- Тести: реальний fast-forward оновлює HEAD/worktree/index; dirty worktree відхиляється й локальний файл зберігається.
+- CI #302: SUCCESS.
+- Mobile smoke #98: Android + iOS ще виконуються.
+- Статус slice: **VERIFIED desktop/CI, очікує mobile gate; не DONE до merge**.
+- Наступна дія: після Android+iOS SUCCESS перевести PR #61 з draft у ready, інтегрувати у `main`, записати merge SHA в Issue #8 і синхронізувати `START_HERE.md`, `PROJECT_STATE.md`, `WORKLOG.md`.
+
 ## Next work when MD Notes resumes
 
 1. Git pull/merge policy with no silent overwrite.
