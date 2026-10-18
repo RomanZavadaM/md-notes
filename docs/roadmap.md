@@ -22,30 +22,49 @@
 
 - [x] Індекс SQLite у `.mdnotes/cache/index.db`, інкрементальне оновлення
 - [x] Повнотекстовий пошук (FTS5), швидкий перехід `Ctrl+O`
-- [x] Зворотні посилання, пошук за `aliases`, теги
+- [x] Зворотні посилання, пошук за aliases, теги
 - [x] Оновлення посилань при перейменуванні та переміщенні
-- [x] Відстеження змін файлів ззовні (настільні ОС)
-- [x] Mermaid і KaTeX у перегляді, зображення зі сховища
-- [x] Шаблони нотаток і щоденні нотатки
-- [x] Інтерфейс сімома мовами (UK, EN, FR, DE, ES, KO, JA), вікно «Про програму»
-- [x] Вкладення: копіювання в `attachments/РРРР/ММ/`, перегляд зображень і PDF,
-  «де використовується», файли без посилань — v0.2.1
-- [x] Типи нотаток, `.mdnotes/schema.json` v1 і schema-driven форма властивостей — PR #19
-- [x] Створення сховища з пресетом: PARA, Zettelkasten, порожнє — PR #23
-- [x] Граф знань: глобальний і локальний, Sigma.js + Graphology — PR #25
-- [x] Windows portable як стандартний release artifact — v0.2.2
-- [x] Повний test-release checkpoint `v0.2.2`: Windows/macOS/Linux + START/legal/checksums
-- [x] Реальний Windows runtime-test v0.2.2 — **PASS 03.10.2026**; попередній startup-freeze blocker v0.2.1 не відтворився.
+- [x] Відстеження зовнішніх змін файлів
+- [x] Mermaid, KaTeX, вкладення, шаблони та daily notes
+- [x] Інтерфейс сімома мовами (UK, EN, FR, DE, ES, KO, JA)
+- [x] Schema-driven properties
+- [x] PARA / Zettelkasten / Empty presets
+- [x] Global/local knowledge graph
+- [x] Windows portable
+- [x] Повний test-release checkpoint v0.2.2
+- [x] Windows runtime-test v0.2.2 — PASS 03.10.2026
 
 ## v0.3 — мобільні платформи і синхронізація
 
-- Android та iOS: доступ до папок через SAF та security-scoped bookmarks
-- Git-сховище (gitoxide): clone, pull, commit, push у фоні
-- WebDAV через OpenDAL
-- Local-first: локальна копія, черга змін, конфлікти як окремі файли
-- Паролі й токени в системному сховищі секретів (keyring)
-- Таблиці (TanStack Table) і мова запитів
-- Мобільні режими: таблиця як картки
+### Завершено до checkpoint v0.3.1
+
+- [x] Provider-neutral storage foundation
+- [x] Mobile sandbox vault
+- [x] Android/iOS CI build smoke
+- [x] Local-first sync planning foundation
+- [x] Persistent sync state
+- [x] Git clone/open foundation
+- [x] Dirty worktree detection
+- [x] Local Git commit
+- [x] Safe HTTPS fetch
+- [x] In-memory Git authentication
+- [x] System credential storage
+- [x] Standalone Markdown open/edit/save
+- [x] Windows/Linux/macOS Markdown desktop integration
+- [x] Git pull relation planner
+- [x] Git pull safety preflight
+- [x] Safe clean fast-forward apply
+- [x] Повний test-release checkpoint **v0.3.1**
+
+### Наступне
+
+- [ ] **Git push**
+- [ ] Git state ↔ `SyncManifest` / ADR-0005 conflict policy
+- [ ] WebDAV
+- [ ] Physical Android/iOS runtime validation
+- [ ] Optional Android SAF / iOS security-scoped external folders
+- [ ] Tables / query language follow-up
+- [ ] Mobile table-as-cards modes
 
 ## v0.4 — час і задачі
 
@@ -63,10 +82,10 @@
 ## v0.6 — історія версій
 
 - Історія нотатки з Git, порівняння версій, відновлення
-- SMB (через системне монтування або окрему бібліотеку)
+- SMB
 
 ## v1.0 — публікація
 
 - Microsoft Store, Mac App Store, Google Play, App Store
-- Підписування коду, автооновлення для настільних версій
+- Підписування коду, автооновлення
 - Стабілізація форматів `config.json`, `schema.json`, `*.view.json`
