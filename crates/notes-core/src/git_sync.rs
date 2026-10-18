@@ -157,7 +157,8 @@ pub fn apply_git_fast_forward(
 
     checkout_tree(&repo, target_tree, false)?;
 
-    let update = repo.reference(
+    let update = update_ref(
+        &repo,
         head_name,
         remote,
         gix::refs::transaction::PreviousValue::MustExistAndMatch(gix::refs::Target::Object(local)),
@@ -183,6 +184,39 @@ pub fn apply_git_fast_forward(
             .to_string(),
         head: Some(remote.to_string()),
     })
+}
+
+fn update_ref(
+    repo: &gix::Repository,
+    name: gix::refs::FullName,
+    target: gix::ObjectId,
+    expected: gix::refs::transaction::PreviousValue,
+    message: &str,
+) -> Result<()> {
+    use gix::refs::transaction::{Change, LogChange, RefEdit, RefLog};
+
+    let timestamp = format!("{} +0000", Utc::now().timestamp());
+    let committer = gix::actor::SignatureRef {
+        name: "MD Notes".into(),
+        email: "md-notes@local".into(),
+        time: timestamp.as_str(),
+    };
+    let edit = RefEdit {
+        change: Change::Update {
+            log: LogChange {
+                mode: RefLog::AndReference,
+                force_create_reflog: false,
+                message: message.into(),
+            },
+            expected,
+            new: gix::refs::Target::Object(target),
+        },
+        name,
+        deref: false,
+    };
+    repo.edit_references_as([edit], Some(committer))
+        .map_err(git_err)?;
+    Ok(())
 }
 
 fn checkout_tree(
@@ -614,14 +648,16 @@ mod tests {
             .detach();
         let head_name = repo.head_name().unwrap().unwrap();
 
-        repo.reference(
-            "refs/remotes/origin/main",
+        update_ref(
+            &repo,
+            "refs/remotes/origin/main".try_into().unwrap(),
             second_id,
             gix::refs::transaction::PreviousValue::MustNotExist,
             "test: remote",
         )
         .unwrap();
-        repo.reference(
+        update_ref(
+            &repo,
             head_name,
             first_id,
             gix::refs::transaction::PreviousValue::MustExistAndMatch(gix::refs::Target::Object(
