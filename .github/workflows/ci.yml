@@ -2,12 +2,14 @@ name: CI
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     paths-ignore:
       - "**/*.md"
       - "docs/**"
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -17,9 +19,75 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  classify:
+    name: Classify changed paths
+    if: ${{ github.event.pull_request.draft == false && !startsWith(github.head_ref, 'release-please--') }}
+    runs-on: ubuntu-latest
+    outputs:
+      rust: ${{ steps.paths.outputs.rust }}
+      frontend: ${{ steps.paths.outputs.frontend }}
+      licenses: ${{ steps.paths.outputs.licenses }}
+    steps:
+      - id: paths
+        name: Classify PR files
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+
+          rust=false
+          frontend=false
+          licenses=false
+          unknown=false
+
+          while IFS= read -r file; do
+            case "$file" in
+              crates/*|app/src-tauri/*|Cargo.toml|Cargo.lock|.cargo/*|rust-toolchain|rust-toolchain.toml)
+                rust=true
+                frontend=true
+                ;;
+              app/src/*|app/public/*|app/index.html|app/vite.config.*|app/tsconfig*.json)
+                frontend=true
+                ;;
+              app/package.json|app/package-lock.json)
+                frontend=true
+                licenses=true
+                ;;
+              deny.toml|about.toml)
+                licenses=true
+                ;;
+              .github/workflows/ci.yml)
+                rust=true
+                frontend=true
+                licenses=true
+                ;;
+              .github/workflows/*)
+                ;;
+              *)
+                # Unknown non-documentation files are checked conservatively.
+                unknown=true
+                ;;
+            esac
+          done < <(gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}/files" --jq '.[].filename')
+
+          if [[ "$unknown" == true ]]; then
+            rust=true
+            frontend=true
+            licenses=true
+          fi
+
+          echo "rust=$rust" >> "$GITHUB_OUTPUT"
+          echo "frontend=$frontend" >> "$GITHUB_OUTPUT"
+          echo "licenses=$licenses" >> "$GITHUB_OUTPUT"
+
+          printf 'rust=%s frontend=%s licenses=%s unknown=%s\n' "$rust" "$frontend" "$licenses" "$unknown"
+
   core:
-    if: ${{ !startsWith(github.head_ref, 'release-please--') }}
     name: notes-core (${{ matrix.os }})
+    needs: classify
+    if: ${{ needs.classify.outputs.rust == 'true' }}
     strategy:
       fail-fast: false
       matrix:
@@ -39,10 +107,11 @@ jobs:
       - name: Test
         run: cargo test -p notes-core
 
-  app:
-    if: ${{ !startsWith(github.head_ref, 'release-please--') }}
-    name: app (frontend + Tauri)
-    runs-on: ubuntu-22.04
+  frontend:
+    name: Frontend build
+    needs: classify
+    if: ${{ needs.classify.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -50,6 +119,20 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: app/package-lock.json
+      - name: Install npm packages
+        working-directory: app
+        run: npm ci
+      - name: Typecheck and build frontend
+        working-directory: app
+        run: npm run build
+
+  tauri-linux:
+    name: Tauri clippy (Linux)
+    needs: classify
+    if: ${{ needs.classify.outputs.rust == 'true' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
@@ -58,18 +141,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev libssl-dev
-      - name: Install npm packages
-        working-directory: app
-        run: npm ci
-      - name: Typecheck and build frontend
-        working-directory: app
-        run: npm run build
       - name: Clippy (Tauri app)
         run: cargo clippy -p md-notes --all-targets -- -D warnings
 
-  app-macos:
-    if: ${{ !startsWith(github.head_ref, 'release-please--') }}
-    name: app (macOS Tauri)
+  tauri-macos:
+    name: Tauri clippy (macOS)
+    needs: classify
+    if: ${{ needs.classify.outputs.rust == 'true' }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v5
@@ -81,8 +159,9 @@ jobs:
         run: cargo clippy -p md-notes --all-targets -- -D warnings
 
   licenses:
-    if: ${{ !startsWith(github.head_ref, 'release-please--') }}
     name: Dependency licenses
+    needs: classify
+    if: ${{ needs.classify.outputs.licenses == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
