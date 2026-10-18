@@ -4,74 +4,60 @@
 
 ## Статус
 
-**ACTIVE — v0.3.0 опублікований як prerelease; продовжуємо roadmap stage v0.3 після завершеного Git/security checkpoint.**
+**ACTIVE — v0.3.1 опублікований як prerelease; roadmap stage v0.3 продовжується.**
 
-Останній опублікований checkpoint: **v0.3.0** prerelease (03.10.2026), release commit `42656f0075d0072e295bee33c74f059c3ae6e656`.
+Останній повний test-release checkpoint: **v0.3.1**, 18.10.2026.
 
-v0.3.0 опублікований з Windows/macOS/Linux release assets, START/source, legal files і checksums. Android та iOS пройшли CI build smoke; physical-device runtime ще не підтверджений.
+- release commit: `95d95264edf6382c7eb812a0d2559f4c21455b76`;
+- Release workflow #57 — **SUCCESS**;
+- main CI #310 — **SUCCESS**;
+- release assets: Windows installer/MSI + portable ZIP, macOS DMG/app archive, Linux AppImage/deb/rpm, START/source, legal notices, `SHA256SUMS.txt`;
+- release status: **prerelease**;
+- README синхронізовані мовами UK / EN / FR / DE / ES / KO / JA.
 
-Roadmap stage **v0.3** продовжується після релізного checkpoint-а.
+## Що інтегровано у v0.3.1
 
-## Інтегрований v0.3 baseline
+### Standalone Markdown
 
-У `main` уже інтегровано:
+- PR #54 — standalone `.md/.markdown` open/edit/save без vault;
+- PR #56 — macOS Finder/open-event + explicit Markdown handler action;
+- Windows/Linux/macOS можуть працювати з одиночним Markdown-файлом;
+- системна асоціація виконується лише після явної команди користувача;
+- portable та installer не перехоплюють `.md` автоматично.
 
-- PR #30 — `StorageProvider` + `LocalFsProvider`;
-- PR #31 — provider-backed `VaultStorage`;
-- PR #32 — mobile sandbox vault + mobile startup flow;
-- PR #33 — local-first sync decision/conflict foundation;
-- PR #35 — Android/iOS mobile build smoke;
-- PR #37 — persistent `.mdnotes/cache/sync-state.json`;
-- PR #39 — `gix`/gitoxide HTTPS clone/open foundation;
-- PR #41 — local Git dirty-state detection;
-- PR #42 — local Git commit pipeline;
-- PR #43 — safe public HTTPS fetch;
-- PR #44 — in-memory Git HTTPS authentication;
-- PR #47 — safe Git pull relation planner;
-- PR #54 — standalone `.md/.markdown` reader/editor + opt-in Windows/Linux Markdown association.
-- PR #56 — macOS Finder/open-event + explicit Markdown handler action, merged to `main` as `a6429a40f87827e710dbd2e6ebb7b9e6df194375`; CI #283 + Mobile smoke #88 SUCCESS on final head `41d51db7ea5631b51a024fbf790bcc82758a4894`.
+### Git pull safety
 
-PR #44 merge checkpoint: `b142973ea4315987b28aa3a4e6563506c219c255`; його PR head `fe5cdd66d416bc80e7e5dcc25e6d969ae917492f` пройшов desktop CI #211 і Mobile smoke #29.
+- PR #59 — repository pull planner;
+- PR #60 — safety preflight;
+- PR #61 — safe fast-forward apply;
+- planner класифікує `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
+- dirty worktree блокує apply;
+- автоматичний apply дозволений тільки для clean `FastForward`;
+- немає blind `hard reset`, shell git, merge commit або silent overwrite;
+- branch ref оновлюється з optimistic old-HEAD constraint;
+- при race виконується спроба відновлення попереднього tree у worktree/index.
 
-## Останні інтегровані зміни після v0.3.0
+PR #61:
+- final head: `8bac0f284dfbe2fab21ad8077b3b9d40868f6403`;
+- CI #303 — **SUCCESS**;
+- Mobile smoke #99 — **SUCCESS**;
+- merge commit: `ed924059fa68bc31014c5b484fb78daaeba675b0`.
 
-PR #54 `feat: open standalone Markdown files` інтегровано у `main` commit `c940dcc7aa2f8a4028b7ba4a8a15862070b7907b`.
+Release PR #52:
+- final head: `909ce415e06d13a7e3556223aaf659d9ba2be88f`;
+- CI #309 — **SUCCESS**;
+- Mobile smoke #104 — **SUCCESS**;
+- merge/release commit: `95d95264edf6382c7eb812a0d2559f4c21455b76`.
 
-- одиночний `.md/.markdown` відкривається без vault;
-- файл можна читати, редагувати і зберігати на місце;
-- installer і portable мають однакову кнопку «Відкрити Markdown-файл…»;
-- Windows/Linux system association — лише за явною командою користувача;
-- portable самостійно системні асоціації не змінює;
-- CI #270 + Mobile smoke #78 — SUCCESS;
-- macOS integration merged in PR #56 (`a6429a40f87827e710dbd2e6ebb7b9e6df194375`); no automatic default takeover; CI #283 + Mobile smoke #88 SUCCESS.
+## Що ще не завершено
 
-## Завершений release checkpoint — v0.3.0
+1. **Git push** — наступний головний slice.
+2. Git state ↔ `SyncManifest` / ADR-0005 conflict policy.
+3. WebDAV.
+4. Physical Android/iOS runtime validation.
+5. Optional Android SAF / iOS security-scoped external folders.
 
-PR #45 `feat: add native system secret storage` інтегровано у `main` merge commit `70d81622574b365334046520f534a9c3be8784af`.
-
-Фінальний PR head `78e159c02691973cb9caa7468e40d3d1ea982cc5` пройшов:
-- CI #235 — SUCCESS;
-- Android debug build — SUCCESS;
-- iOS simulator debug build — SUCCESS.
-
-Release PR #40 `chore(main): release 0.3.0` інтегровано у `main` merge commit `42656f0075d0072e295bee33c74f059c3ae6e656`.
-
-GitHub prerelease `v0.3.0` опублікований. Release assets включають desktop packages, `MD-Notes-0.3.0-START.zip`, legal files та checksums.
-
-## Після checkpoint-а
-
-Завершений напрям цього етапу: provider/mobile foundation → local sync model → Git local state/commit → safe fetch → in-memory auth → system secret-store boundary.
-
-Наступні незавершені sync slices, коли власник повернеться до MD Notes:
-
-1. Git pull/merge policy без silent overwrite;
-2. Git push;
-3. інтеграція Git state з `SyncManifest` / ADR-0005 conflict policy;
-4. WebDAV;
-5. physical-device runtime validation Android/iOS;
-6. optional Android SAF та iOS security-scoped external-folder adapters.
-
-Не заявляти, що push/WebDAV/device runtime уже готові.
+Не заявляти, що push/WebDAV/physical-device runtime вже готові.
 
 ## Startup protocol
 
@@ -80,22 +66,22 @@ GitHub prerelease `v0.3.0` опублікований. Release assets включ
 3. Прочитати `WORKLOG.md`.
 4. Перевірити фактичний GitHub: `main` SHA, open PR, останні workflow runs і latest release.
 5. Прочитати останні записи GitHub Issue #8.
-6. Якщо GitHub і текст суперечать одне одному — GitHub має пріоритет, документацію синхронізувати.
-7. Продовжити з першої незавершеної дії `WORKLOG.md`; не починати новий roadmap stage без рішення власника.
+6. Якщо GitHub і документація суперечать одне одному — GitHub має пріоритет, документацію синхронізувати.
+7. Продовжити з першої незавершеної дії `WORKLOG.md`; не повторювати вже інтегровану роботу.
 
 ## Джерела істини
 
 - `PROJECT_RULES.md` — постійні правила;
-- `PROJECT_STATE.md` — підтверджений інтегрований стан;
-- `WORKLOG.md` — operational queue і blockers;
+- `PROJECT_STATE.md` — інтегрований стан `main`;
+- `WORKLOG.md` — operational queue і точна наступна дія;
 - GitHub Issue #8 — append-only development ledger;
 - `Cargo.toml`, `app/package.json`, `app/src-tauri/tauri.conf.json` — machine source версії;
-- `docs/releases/` — опубліковані release notes;
+- `docs/releases/` — release notes;
 - `docs/roadmap.md` — roadmap.
 
 ## Команда власника «злити у main»
 
-**«Злити у main / зливай у main»** означає повний test-release checkpoint: нова версія, зелені checks, merge, збірки всіх підтримуваних платформ + START/source, checksums/legal, tag + GitHub prerelease, документація та ledger. Для простого merge використовується «інтегрувати PR у main».
+**«Злити у main / зливай у main»** означає повний test-release checkpoint: нова версія, зелені checks, merge, збірки всіх підтримуваних платформ, START/source, checksums/legal, tag + GitHub prerelease, документація та ledger.
 
 ## Для нового чату
 
