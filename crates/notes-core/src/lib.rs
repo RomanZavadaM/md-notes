@@ -17,6 +17,8 @@ pub mod markdown;
 pub mod note;
 pub mod paths;
 pub mod presets;
+#[cfg(feature = "encrypted-vault")]
+pub mod push_guard;
 pub mod refactor;
 pub mod schema;
 pub mod storage;
