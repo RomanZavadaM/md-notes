@@ -422,9 +422,7 @@ mod tests {
             let created = create_encrypted_vault(&work, None, &[]).unwrap();
             created
                 .vault
-                .write_note("secret.md", "# Secret
-
-body")
+                .write_note("secret.md", "# Secret\n\nbody")
                 .unwrap();
             (tmp, work, bare)
         }
