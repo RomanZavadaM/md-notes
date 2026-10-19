@@ -484,7 +484,9 @@ mod vault_tests {
     fn index_and_search_work_over_encrypted_storage() {
         let dir = tempfile::tempdir().unwrap();
         let vault = encrypted_vault(dir.path());
-        vault.write_note("a.md", "# Alpha\nuniqueword text\n").unwrap();
+        vault
+            .write_note("a.md", "# Alpha\nuniqueword text\n")
+            .unwrap();
 
         let mut index = Index::open_in_memory().unwrap();
         assert_eq!(index.sync(&vault).unwrap().added, 1);
