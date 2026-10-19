@@ -10,6 +10,7 @@ pub mod encrypted;
 #[cfg(feature = "encrypted-vault")]
 pub mod encrypted_vault;
 pub mod error;
+pub mod folder_import;
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub mod git_manage;
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
@@ -34,6 +35,7 @@ pub use attachments::AttachmentInfo;
 #[cfg(feature = "encrypted-vault")]
 pub use encrypted::{EncryptedProvider, NameLayout, ENCRYPTED_SUFFIX};
 pub use error::{Error, Result};
+pub use folder_import::ImportReport;
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub use git_manage::{git_init, git_set_remote, git_status, tracking_reference, GitStatus};
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
