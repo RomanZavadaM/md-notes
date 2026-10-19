@@ -51,13 +51,14 @@ Release PR #52:
 
 ## Що ще не завершено
 
-1. **Git push** — наступний головний slice.
+1. **Зашифроване сховище (age, ADR-0007)** — наступний головний slice (зрізи 0-3; рішення власника 19.10.2026).
+1a. **Git push** — одразу після зрізу 3, із запобіжником для зашифрованих сховищ.
 2. Git state ↔ `SyncManifest` / ADR-0005 conflict policy.
 3. WebDAV.
 4. Physical Android/iOS runtime validation.
 5. Optional Android SAF / iOS security-scoped external folders.
 
-Не заявляти, що push/WebDAV/physical-device runtime вже готові.
+Не заявляти, що зашифроване сховище/push/WebDAV/physical-device runtime вже готові.
 
 ## Startup protocol
 

@@ -4,7 +4,7 @@
 
 ## STATUS
 
-**ACTIVE. Повний test-release checkpoint v0.3.1 завершено. Наступний активний slice — Git push.**
+**ACTIVE. Повний test-release checkpoint v0.3.1 завершено. Наступний активний slice — зашифроване сховище (ADR-0007), далі Git push.**
 
 Release baseline:
 - tag/prerelease: `v0.3.1`;
@@ -85,7 +85,11 @@ Release baseline:
 
 ## Поточна наступна дія
 
-**Git push — почати окремим slice з актуального `main` після перевірки GitHub state.**
+**ADR-0007 (зашифроване сховище, age): docs-PR з ADR і змінами правил, далі зріз 0 (дослідження), 1 (`EncryptedProvider`), 2 (індексатор і вкладення), 3 (інтерфейс і ключі в системному сховищі секретів). Кожен зріз - окрема гілка й PR від актуального `main`; перевірки - CI на GitHub. Git push - одразу після зрізу 3.**
+
+Запобіжники ADR-0007: режим опційний; збірка без feature `encrypted-vault` і звичайні сховища - як раніше; відкритий текст не пишеться на диск у зашифрованому режимі; крейт age - лише після `cargo deny check licenses`.
+
+Нижче - вимоги безпеки для Git push, що лишаються чинними:
 
 Safety requirements для Git push мають зберігати існуючі trust boundaries:
 - HTTPS only;
@@ -105,6 +109,7 @@ Safety requirements для Git push мають зберігати існуючі
 ## Відомі обмеження
 
 - Android/iOS physical-device runtime untested;
+- encrypted vault (ADR-0007) not implemented;
 - Git push not implemented;
 - complete conflict workflow not implemented;
 - WebDAV not implemented;

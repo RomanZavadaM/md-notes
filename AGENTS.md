@@ -2,7 +2,7 @@
 
 - Before any project work, read `START_HERE.md`, `PROJECT_RULES.md`, `PROJECT_STATE.md` and `WORKLOG.md`; they are the canonical persistent rules and current checkpoint.
 
-- Product scope: a local-first Markdown knowledge base. User notes are plain open files; never introduce hidden or locked data formats.
+- Product scope: a local-first Markdown knowledge base. User notes are plain open files; never introduce hidden or locked data formats. Exception: an optional encrypted vault in the open, documented age format (ADR-0007), created only by explicit user action; for it never write decrypted note or attachment text to disk, keep private keys only in the OS secret store, never write own cryptography, keep plain vaults and builds without the `encrypted-vault` feature fully working, and add the `age` crate only after `cargo deny check licenses` passes.
 - Notes, attachments, credentials and personal files must never traverse MD Notes servers; there are none. No analytics, telemetry, session replay, remote fonts or third-party tracking scripts.
 - Credentials for network/cloud vaults live only in the OS secret store; never in vault files, localStorage or Git.
 - Sync conflicts are never overwritten silently (ADR-0005). Deletion moves files to `.mdnotes/trash/`.
