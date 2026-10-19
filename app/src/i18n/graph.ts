@@ -11,6 +11,12 @@ export interface GraphStrings {
   nodes: (count: number) => string;
   edges: (count: number) => string;
   openHint: string;
+  searchPlaceholder: string;
+  typesHeading: string;
+  noType: string;
+  expand: string;
+  collapse: string;
+  connections: (count: number) => string;
 }
 
 export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
@@ -25,6 +31,12 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     nodes: (count) => `Нотаток: ${count}`,
     edges: (count) => `Зв’язків: ${count}`,
     openHint: "Натисніть вузол, щоб відкрити нотатку.",
+    searchPlaceholder: "Пошук у графі…",
+    typesHeading: "Типи",
+    noType: "без типу",
+    expand: "Розгорнути",
+    collapse: "Згорнути",
+    connections: (count) => `зв’язків: ${count}`,
   },
   en: {
     linksMode: "Links",
@@ -37,6 +49,12 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     nodes: (count) => `Notes: ${count}`,
     edges: (count) => `Links: ${count}`,
     openHint: "Click a node to open the note.",
+    searchPlaceholder: "Search the graph…",
+    typesHeading: "Types",
+    noType: "no type",
+    expand: "Expand",
+    collapse: "Collapse",
+    connections: (count) => `${count} links`,
   },
   fr: {
     linksMode: "Liens",
@@ -49,6 +67,12 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     nodes: (count) => `Notes : ${count}`,
     edges: (count) => `Liens : ${count}`,
     openHint: "Cliquez sur un nœud pour ouvrir la note.",
+    searchPlaceholder: "Rechercher dans le graphe…",
+    typesHeading: "Types",
+    noType: "sans type",
+    expand: "Agrandir",
+    collapse: "Réduire",
+    connections: (count) => `${count} liens`,
   },
   de: {
     linksMode: "Verknüpfungen",
@@ -61,6 +85,12 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     nodes: (count) => `Notizen: ${count}`,
     edges: (count) => `Verknüpfungen: ${count}`,
     openHint: "Klicken Sie auf einen Knoten, um die Notiz zu öffnen.",
+    searchPlaceholder: "Im Graphen suchen…",
+    typesHeading: "Typen",
+    noType: "ohne Typ",
+    expand: "Vergrößern",
+    collapse: "Verkleinern",
+    connections: (count) => `${count} Verknüpfungen`,
   },
   es: {
     linksMode: "Enlaces",
@@ -73,6 +103,12 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     nodes: (count) => `Notas: ${count}`,
     edges: (count) => `Enlaces: ${count}`,
     openHint: "Haz clic en un nodo para abrir la nota.",
+    searchPlaceholder: "Buscar en el grafo…",
+    typesHeading: "Tipos",
+    noType: "sin tipo",
+    expand: "Ampliar",
+    collapse: "Reducir",
+    connections: (count) => `${count} enlaces`,
   },
   ko: {
     linksMode: "링크",
@@ -85,6 +121,12 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     nodes: (count) => `노트: ${count}`,
     edges: (count) => `링크: ${count}`,
     openHint: "노드를 클릭하면 해당 노트를 엽니다.",
+    searchPlaceholder: "그래프에서 검색…",
+    typesHeading: "유형",
+    noType: "유형 없음",
+    expand: "확대",
+    collapse: "축소",
+    connections: (count) => `연결 ${count}개`,
   },
   ja: {
     linksMode: "リンク",
@@ -97,5 +139,11 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     nodes: (count) => `ノート: ${count}`,
     edges: (count) => `リンク: ${count}`,
     openHint: "ノードをクリックするとノートを開きます。",
+    searchPlaceholder: "グラフ内を検索…",
+    typesHeading: "タイプ",
+    noType: "タイプなし",
+    expand: "拡大",
+    collapse: "縮小",
+    connections: (count) => `リンク ${count} 件`,
   },
 };
