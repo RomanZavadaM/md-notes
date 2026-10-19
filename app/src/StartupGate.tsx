@@ -3,7 +3,9 @@ import { open } from "@tauri-apps/plugin-dialog";
 import App from "./App";
 import { api, type RuntimePlatform, type VaultPreset } from "./api";
 import { AboutDialog, COPYRIGHT } from "./components/AboutDialog";
+import { ImportKeyDialog, KeyBackupDialog } from "./components/EncryptionDialogs";
 import { LANGUAGES, useI18n, type LanguageCode } from "./i18n";
+import { ENCRYPTION_STRINGS } from "./i18n/encryption";
 import { STARTUP_STRINGS } from "./i18n/startup";
 import { getRememberedVault, hasPendingVaultOpen, requestVaultOpen } from "./storage";
 import "./StartupGate.css";
@@ -11,11 +13,16 @@ import "./StartupGate.css";
 export function StartupGate() {
   const { t, language, setLanguage } = useI18n();
   const s = STARTUP_STRINGS[language];
+  const e = ENCRYPTION_STRINGS[language];
   const [aboutOpen, setAboutOpen] = useState(false);
   const [preset, setPreset] = useState<VaultPreset>("empty");
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [encrypt, setEncrypt] = useState(false);
+  const [recoveryKey, setRecoveryKey] = useState("");
+  const [backup, setBackup] = useState<{ path: string; secretKey: string } | null>(null);
+  const [needKey, setNeedKey] = useState<string | null>(null);
   const [platform, setPlatform] = useState<RuntimePlatform | null>(null);
   const pending = useMemo(() => hasPendingVaultOpen(), []);
   const remembered = useMemo(() => getRememberedVault(), []);
@@ -35,10 +42,26 @@ export function StartupGate() {
     window.location.reload();
   };
 
+  // Encrypted vaults whose key is not on this device go through the import dialog.
+  const enterChecked = async (path: string) => {
+    setError(null);
+    try {
+      const status = await api.encryptionStatus(path);
+      if (status.encrypted && !status.hasKey) {
+        setNeedKey(path);
+        return;
+      }
+    } catch (err) {
+      setError(String(err));
+      return;
+    }
+    enterVault(path);
+  };
+
   const openExisting = async () => {
     setError(null);
     const dir = await open({ directory: true, multiple: false, title: s.pickExistingTitle });
-    if (typeof dir === "string") enterVault(dir);
+    if (typeof dir === "string") await enterChecked(dir);
   };
 
   const createVault = async () => {
@@ -47,10 +70,16 @@ export function StartupGate() {
     if (typeof dir !== "string") return;
     setCreating(true);
     try {
+      if (encrypt) {
+        const created = await api.createEncryptedVault(dir, name.trim() || null, recoveryKey.trim() || null);
+        setBackup({ path: dir, secretKey: created.secretKey });
+        setCreating(false);
+        return;
+      }
       await api.createVault(dir, name.trim() || null, preset);
       enterVault(dir);
-    } catch (e) {
-      setError(String(e));
+    } catch (err) {
+      setError(String(err));
       setCreating(false);
     }
   };
@@ -87,7 +116,7 @@ export function StartupGate() {
           <div className="startup-actions">
             {remembered && (
               <>
-                <button type="button" className="primary" onClick={() => enterVault(remembered)}>
+                <button type="button" className="primary" onClick={() => void enterChecked(remembered)}>
                   {s.openRecent}
                 </button>
                 <small className="startup-recent-path" title={remembered}>
@@ -119,6 +148,25 @@ export function StartupGate() {
               </select>
             </label>
             <small>{presetHelp}</small>
+            <label className="key-confirm">
+              <input type="checkbox" checked={encrypt} onChange={(event) => setEncrypt(event.target.checked)} />
+              {e.createEncrypted}
+            </label>
+            {encrypt && (
+              <>
+                <small>{e.createEncryptedHelp}</small>
+                <label>
+                  {e.recoveryKey}
+                  <input
+                    value={recoveryKey}
+                    onChange={(event) => setRecoveryKey(event.target.value)}
+                    placeholder={e.recoveryKeyPlaceholder}
+                    spellCheck={false}
+                  />
+                </label>
+                <small>{e.recoveryKeyHelp}</small>
+              </>
+            )}
             <button type="button" className="primary" disabled={creating} onClick={() => void createVault()}>
               {creating ? s.creating : s.createButton}
             </button>
@@ -148,6 +196,10 @@ export function StartupGate() {
       </div>
       <p className="welcome-copyright">{COPYRIGHT}</p>
       {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
+      {backup && <KeyBackupDialog secretKey={backup.secretKey} onDone={() => enterVault(backup.path)} />}
+      {needKey && (
+        <ImportKeyDialog path={needKey} onImported={() => enterVault(needKey)} onCancel={() => setNeedKey(null)} />
+      )}
     </div>
   );
 }
