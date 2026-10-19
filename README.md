@@ -4,19 +4,19 @@
 
 [![CI](https://github.com/RomanZavadaM/md-notes/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanZavadaM/md-notes/actions/workflows/ci.yml)
 
-> **Release checkpoint: MD Notes v0.3.1**
+> **Release checkpoint: MD Notes v0.3.2**
 >
 > **Статус розвитку: ACTIVE — roadmap stage v0.3 «мобільні платформи і синхронізація».**
 
-## Завантажити MD Notes v0.3.1
+## Завантажити MD Notes v0.3.2
 
 **Швидке встановлення:**
 
-- **Windows 64-bit:** [завантажити інсталятор .exe](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD-Notes-0.3.1-Windows-x64-portable.zip)
-- **macOS Universal:** [завантажити DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes-0.3.1-1.x86_64.rpm)
+- **Windows 64-bit:** [завантажити інсталятор .exe](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD-Notes-0.3.2-Windows-x64-portable.zip)
+- **macOS Universal:** [завантажити DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes-0.3.2-1.x86_64.rpm)
 
-[**Усі файли релізу v0.3.1 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.1)
+[**Усі файли релізу v0.3.2 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.2)
 
 > Збірки поки не підписані/не нотаризовані, тому Windows, macOS або Linux можуть показувати стандартне попередження безпеки.
 
@@ -42,7 +42,7 @@
 - global/local knowledge graph;
 - UI сімома мовами, світла/темна/системна теми.
 
-### v0.3 — інтегрований стан до checkpoint v0.3.1
+### v0.3 — інтегрований стан до checkpoint v0.3.2
 
 - provider-neutral `StorageProvider` / `VaultStorage`;
 - mobile sandbox vault для Android/iOS;
@@ -57,9 +57,12 @@
 - Windows/Linux/macOS desktop integration для Markdown, але системна асоціація виконується лише після явної команди користувача;
 - Git pull planner: `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
 - pull safety preflight: dirty worktree блокує apply;
-- safe fast-forward apply лише для clean `FastForward`, без blind `hard reset`, merge commit чи silent overwrite.
+- safe fast-forward apply лише для clean `FastForward`, без blind `hard reset`, merge commit чи silent overwrite;
+- опціональне зашифроване сховище (age): нотатки лежать на диску як `.age`, приватний ключ зберігається лише в системному сховищі секретів пристрою (Windows Credential Manager, macOS Keychain, Linux Secret Service), у діалогах — створення з показом ключа один раз, імпорт ключа на іншому пристрої, необов’язковий ключ відновлення.
 
 Ще **не завершено**: Git push, повна інтеграція Git state з `SyncManifest` / ADR-0005 conflict policy, WebDAV, runtime-перевірка на фізичних Android/iOS пристроях та optional Android SAF / iOS security-scoped external folders.
+
+**Зашифроване сховище** — опція, а не вимога: звичайні vault працюють без змін, а збірка без feature `encrypted-vault` не містить коду шифрування. Поки що в зашифрованому vault не відображаються зображення й вкладення, немає інтерфейсу додавання ключа відновлення до вже створеного vault, а кеш-індекс `.mdnotes/cache` лишається незашифрованим; Git push із такого vault буде додано із запобіжником, що не відправляє відкритий текст.
 
 Повний план — [docs/roadmap.md](docs/roadmap.md).
 
@@ -71,7 +74,7 @@
 - **macOS** — `.dmg` / `.app.tar.gz`;
 - **Linux** — `.AppImage`, `.deb` або `.rpm`.
 
-Checkpoint **v0.3.1** включає standalone Markdown і безпечний Git fast-forward pipeline. Release builds поки не підписані/не нотаризовані, якщо сторінка конкретного релізу прямо не вказує інше.
+Checkpoint **v0.3.2** включає standalone Markdown і безпечний Git fast-forward pipeline. Release builds поки не підписані/не нотаризовані, якщо сторінка конкретного релізу прямо не вказує інше.
 
 ## Для розробника
 

@@ -2,19 +2,19 @@
 
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · **🇩🇪 Deutsch** · [🇪🇸 Español](README.es.md) · [🇰🇷 한국어](README.ko.md) · [🇯🇵 日本語](README.ja.md)
 
-> **Release-Checkpoint: MD Notes v0.3.1**
+> **Release-Checkpoint: MD Notes v0.3.2**
 >
 > **Entwicklungsstatus: ACTIVE — Roadmap-Stufe v0.3 „mobile Plattformen und Synchronisierung“.**
 
-## MD Notes v0.3.1 herunterladen
+## MD Notes v0.3.2 herunterladen
 
 **Schnellinstallation:**
 
-- **Windows 64-bit:** [.exe-Installer](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64_en-US.msi) · [Portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD-Notes-0.3.1-Windows-x64-portable.zip)
-- **macOS Universal:** [DMG herunterladen](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes-0.3.1-1.x86_64.rpm)
+- **Windows 64-bit:** [.exe-Installer](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_x64_en-US.msi) · [Portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD-Notes-0.3.2-Windows-x64-portable.zip)
+- **macOS Universal:** [DMG herunterladen](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes-0.3.2-1.x86_64.rpm)
 
-[**Alle Dateien von v0.3.1 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.1)
+[**Alle Dateien von v0.3.2 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.2)
 
 > Die Builds sind derzeit nicht signiert/notarisiert; das Betriebssystem kann eine normale Sicherheitswarnung anzeigen.
 
@@ -40,7 +40,7 @@ Plattformen: **Windows, macOS, Linux**. Android und iOS sind aktive v0.3-Ziele; 
 - globaler/lokaler Wissensgraph;
 - Oberfläche in sieben Sprachen und Hell/Dunkel/System-Theme.
 
-### v0.3 — integriert bis zum Checkpoint v0.3.1
+### v0.3 — integriert bis zum Checkpoint v0.3.2
 
 - provider-neutrales `StorageProvider` / `VaultStorage`;
 - Mobile-Sandbox-Vault für Android/iOS;
@@ -55,9 +55,12 @@ Plattformen: **Windows, macOS, Linux**. Android und iOS sind aktive v0.3-Ziele; 
 - Markdown-Desktop-Integration unter Windows/Linux/macOS, Standardzuordnung nur nach ausdrücklicher Benutzeraktion;
 - Git-Pull-Planer: `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
 - Preflight blockiert einen schmutzigen Worktree;
-- sicherer Fast-Forward nur bei sauberem `FastForward`, ohne blinden `hard reset`, Merge-Commit oder stilles Überschreiben.
+- sicherer Fast-Forward nur bei sauberem `FastForward`, ohne blinden `hard reset`, Merge-Commit oder stilles Überschreiben;
+- optionaler verschlüsselter Tresor (age): Notizen liegen als `.age`-Dateien auf der Festplatte, der private Schlüssel liegt nur im System-Geheimnisspeicher des Geräts (Windows Credential Manager, macOS Keychain, Linux Secret Service); Dialoge für das Anlegen mit einmaliger Schlüsselsicherung, den Schlüsselimport auf einem anderen Gerät und einen optionalen Wiederherstellungsschlüssel.
 
 Noch **nicht abgeschlossen**: Git Push, vollständige Git-State-Integration mit `SyncManifest` / ADR-0005, WebDAV, Runtime-Validierung auf physischen Android/iOS-Geräten und optionale externe Ordner über Android SAF / iOS security-scoped access.
+
+Der **verschlüsselte Tresor** ist eine Option, keine Pflicht: normale Tresore funktionieren unverändert, und ein Build ohne das Feature `encrypted-vault` enthält keinen Verschlüsselungscode. Bisher zeigt ein verschlüsselter Tresor keine Bilder und Anhänge an, es gibt keine Oberfläche zum Hinzufügen eines Wiederherstellungsschlüssels zu einem bestehenden Tresor, und der Index `.mdnotes/cache` bleibt unverschlüsselt; Git Push aus einem solchen Tresor kommt mit einer Sperre, die keinen Klartext sendet.
 
 Vollständiger Plan: [Roadmap](../roadmap.md) (Ukrainisch, maßgeblich).
 
@@ -65,7 +68,7 @@ Vollständiger Plan: [Roadmap](../roadmap.md) (Ukrainisch, maßgeblich).
 
 Pakete gibt es auf der [Release-Seite](https://github.com/RomanZavadaM/md-notes/releases): Windows (`.exe`, `.msi`, portable ZIP), macOS (`.dmg`, `.app.tar.gz`) und Linux (`.AppImage`, `.deb`, `.rpm`).
 
-Der Checkpoint **v0.3.1** enthält Standalone-Markdown und die sichere Git-Fast-Forward-Pipeline. Builds bleiben unsigniert/nicht notarisiert, sofern ein konkretes Release nichts anderes angibt.
+Der Checkpoint **v0.3.2** enthält Standalone-Markdown und die sichere Git-Fast-Forward-Pipeline. Builds bleiben unsigniert/nicht notarisiert, sofern ein konkretes Release nichts anderes angibt.
 
 Vollständige Anleitung: **[Benutzerhandbuch](../user-guide/USER_GUIDE.de.md)**.
 

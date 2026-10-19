@@ -95,6 +95,14 @@ En pantallas estrechas, el panel lateral y el panel de enlaces se abren sobre el
 - MD Notes no envía tus datos a ninguna parte: sin servidores, analítica ni telemetría.
 - Haz copias de seguridad de la carpeta de la bóveda. Git es una forma cómoda de conservar versiones.
 
+### Bóveda cifrada (opcional)
+
+- Al crear la bóveda, marque **«Cifrar esta bóveda»**. Las notas se guardan en disco como archivos `.age`, ilegibles sin la clave.
+- Tras crearla, la clave privada (`AGE-SECRET-KEY-…`) se muestra **una sola vez**. Guárdela en un gestor de contraseñas o sin conexión: no se puede recuperar. De forma permanente, la clave solo vive en el almacén de secretos del sistema de este dispositivo.
+- Puede indicar una **clave pública de recuperación** (`age1…`): también abre la bóveda si se pierde la clave principal.
+- En otro ordenador, copie la carpeta de la bóveda y ábrala: la aplicación pedirá la clave. Pegue la clave privada y se guardará en el almacén de secretos de ese ordenador.
+- Por ahora una bóveda cifrada no muestra imágenes ni adjuntos, y el índice `.mdnotes/cache` no está cifrado.
+
 ## 12. Teclado
 
 | Acción | Windows / Linux | macOS |

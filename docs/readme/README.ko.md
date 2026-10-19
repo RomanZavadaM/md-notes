@@ -2,19 +2,19 @@
 
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · [🇩🇪 Deutsch](README.de.md) · [🇪🇸 Español](README.es.md) · **🇰🇷 한국어** · [🇯🇵 日本語](README.ja.md)
 
-> **릴리스 체크포인트: MD Notes v0.3.1**
+> **릴리스 체크포인트: MD Notes v0.3.2**
 >
 > **개발 상태: ACTIVE — roadmap 단계 v0.3 「모바일 플랫폼과 동기화」.**
 
-## MD Notes v0.3.1 다운로드
+## MD Notes v0.3.2 다운로드
 
 **빠른 설치:**
 
-- **Windows 64-bit:** [.exe 설치 파일](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD-Notes-0.3.1-Windows-x64-portable.zip)
-- **macOS Universal:** [DMG 다운로드](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes-0.3.1-1.x86_64.rpm)
+- **Windows 64-bit:** [.exe 설치 파일](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD-Notes-0.3.2-Windows-x64-portable.zip)
+- **macOS Universal:** [DMG 다운로드](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes-0.3.2-1.x86_64.rpm)
 
-[**v0.3.1의 모든 릴리스 파일 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.1)
+[**v0.3.2의 모든 릴리스 파일 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.2)
 
 > 현재 빌드는 서명/공증되지 않았으므로 운영체제가 일반적인 보안 경고를 표시할 수 있습니다.
 
@@ -40,7 +40,7 @@
 - global/local knowledge graph;
 - 7개 언어 UI와 라이트/다크/시스템 테마.
 
-### v0.3 — v0.3.1 체크포인트까지 통합됨
+### v0.3 — v0.3.2 체크포인트까지 통합됨
 
 - provider-neutral `StorageProvider` / `VaultStorage`;
 - Android/iOS용 mobile sandbox vault;
@@ -55,9 +55,12 @@
 - Windows/Linux/macOS Markdown desktop integration, 기본 앱 변경은 사용자의 명시적 동작 후에만 수행;
 - Git pull planner: `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
 - dirty worktree를 차단하는 pull safety preflight;
-- clean `FastForward`에만 적용되는 안전한 fast-forward, blind `hard reset`, merge commit, silent overwrite 없음.
+- clean `FastForward`에만 적용되는 안전한 fast-forward, blind `hard reset`, merge commit, silent overwrite 없음;
+- 선택형 암호화 보관함(age): 노트는 디스크에 `.age` 파일로 저장되고, 개인 키는 기기의 시스템 비밀 저장소(Windows Credential Manager, macOS Keychain, Linux Secret Service)에만 보관됩니다. 대화상자로 생성 시 키 1회 백업, 다른 기기에서 키 가져오기, 선택적 복구 키를 지원합니다.
 
 아직 **완료되지 않음**: Git push, `SyncManifest` / ADR-0005와의 완전한 Git state 통합, WebDAV, 실제 Android/iOS 기기 runtime 검증, optional Android SAF / iOS security-scoped 외부 폴더.
+
+**암호화 보관함**은 필수가 아닌 선택 기능입니다. 일반 보관함은 그대로 동작하며, `encrypted-vault` feature 없이 빌드하면 암호화 코드가 포함되지 않습니다. 현재 암호화 보관함에서는 이미지와 첨부 파일이 표시되지 않고, 이미 만든 보관함에 복구 키를 추가하는 UI가 없으며, `.mdnotes/cache` 인덱스는 암호화되지 않습니다. 이런 보관함의 Git push는 평문 전송을 막는 안전장치와 함께 추가될 예정입니다.
 
 전체 계획: [roadmap](../roadmap.md) (우크라이나어, 기준 문서).
 
@@ -65,7 +68,7 @@
 
 [릴리스 페이지](https://github.com/RomanZavadaM/md-notes/releases)에서 Windows (`.exe`, `.msi`, portable ZIP), macOS (`.dmg`, `.app.tar.gz`), Linux (`.AppImage`, `.deb`, `.rpm`) 패키지를 받을 수 있습니다.
 
-**v0.3.1** 체크포인트에는 standalone Markdown과 안전한 Git fast-forward pipeline이 포함됩니다. 특정 릴리스에서 달리 명시하지 않는 한 빌드는 아직 서명/공증되지 않았습니다.
+**v0.3.2** 체크포인트에는 standalone Markdown과 안전한 Git fast-forward pipeline이 포함됩니다. 특정 릴리스에서 달리 명시하지 않는 한 빌드는 아직 서명/공증되지 않았습니다.
 
 전체 안내: **[사용자 가이드](../user-guide/USER_GUIDE.ko.md)**.
 

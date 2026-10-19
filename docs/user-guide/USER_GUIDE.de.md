@@ -95,6 +95,14 @@ Auf schmalen Bildschirmen öffnen sich Seitenleiste und Verknüpfungsleiste übe
 - MD Notes sendet Ihre Daten nirgendwohin: keine Server, keine Analyse, keine Telemetrie.
 - Sichern Sie den Tresor-Ordner. Git eignet sich gut zur Versionierung.
 
+### Verschlüsselter Tresor (optional)
+
+- Aktivieren Sie beim Anlegen des Tresors **„Tresor verschlüsseln“**. Notizen liegen als `.age`-Dateien auf der Festplatte und sind ohne Schlüssel nicht lesbar.
+- Nach dem Anlegen wird der private Schlüssel (`AGE-SECRET-KEY-…`) **einmalig** angezeigt. Bewahren Sie ihn in einem Passwortmanager oder offline auf: Er lässt sich nicht wiederherstellen. Dauerhaft liegt der Schlüssel nur im System-Geheimnisspeicher dieses Geräts.
+- Sie können einen **öffentlichen Wiederherstellungsschlüssel** (`age1…`) angeben: Er öffnet den Tresor ebenfalls, falls der Hauptschlüssel verloren geht.
+- Auf einem anderen Computer kopieren Sie den Tresorordner und öffnen ihn: Die App fragt nach dem Schlüssel. Fügen Sie den privaten Schlüssel ein; er wird dann im System-Geheimnisspeicher dieses Computers abgelegt.
+- Bisher zeigt ein verschlüsselter Tresor keine Bilder und Anhänge an, und der Index `.mdnotes/cache` ist nicht verschlüsselt.
+
 ## 12. Tastatur
 
 | Aktion | Windows / Linux | macOS |

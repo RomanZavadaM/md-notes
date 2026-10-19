@@ -95,6 +95,14 @@ On narrow screens the sidebar and the links panel open over the content.
 - MD Notes sends your data nowhere: no servers, analytics or telemetry.
 - Back up the vault folder. Git is a convenient way to keep versions.
 
+### Encrypted vault (optional)
+
+- When creating a vault, tick **“Encrypt this vault”**. Notes are stored on disk as `.age` files that cannot be read without the key.
+- After creation the private key (`AGE-SECRET-KEY-…`) is shown **once**. Keep it in a password manager or offline: it cannot be recovered. Permanently the key lives only in this device's system secret store.
+- You can enter a **recovery public key** (`age1…`): it can also open the vault if the main key is lost.
+- On another computer, copy the vault folder and open it: the app asks for the key. Paste the private key and it is then kept in that computer's system secret store.
+- For now an encrypted vault does not display images and attachments, and the `.mdnotes/cache` index is not encrypted.
+
 ## 12. Keyboard
 
 | Action | Windows / Linux | macOS |

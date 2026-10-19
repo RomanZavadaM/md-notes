@@ -2,19 +2,19 @@
 
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · [🇩🇪 Deutsch](README.de.md) · **🇪🇸 Español** · [🇰🇷 한국어](README.ko.md) · [🇯🇵 日本語](README.ja.md)
 
-> **Checkpoint de versión: MD Notes v0.3.1**
+> **Checkpoint de versión: MD Notes v0.3.2**
 >
 > **Estado del desarrollo: ACTIVE — etapa del roadmap v0.3 «plataformas móviles y sincronización».**
 
-## Descargar MD Notes v0.3.1
+## Descargar MD Notes v0.3.2
 
 **Instalación rápida:**
 
-- **Windows 64-bit:** [instalador .exe](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64_en-US.msi) · [ZIP portable](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD-Notes-0.3.1-Windows-x64-portable.zip)
-- **macOS Universal:** [descargar DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes-0.3.1-1.x86_64.rpm)
+- **Windows 64-bit:** [instalador .exe](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_x64_en-US.msi) · [ZIP portable](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD-Notes-0.3.2-Windows-x64-portable.zip)
+- **macOS Universal:** [descargar DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes-0.3.2-1.x86_64.rpm)
 
-[**Todos los archivos de v0.3.1 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.1)
+[**Todos los archivos de v0.3.2 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.2)
 
 > Las builds todavía no están firmadas/notarizadas, por lo que el sistema puede mostrar una advertencia de seguridad estándar.
 
@@ -40,7 +40,7 @@ Plataformas: **Windows, macOS, Linux**. Android e iOS son objetivos activos de v
 - grafo de conocimiento global/local;
 - interfaz en siete idiomas y temas claro/oscuro/sistema.
 
-### v0.3 — integrado hasta el checkpoint v0.3.1
+### v0.3 — integrado hasta el checkpoint v0.3.2
 
 - `StorageProvider` / `VaultStorage` neutrales respecto al backend;
 - bóveda sandbox móvil para Android/iOS;
@@ -55,9 +55,12 @@ Plataformas: **Windows, macOS, Linux**. Android e iOS son objetivos activos de v
 - integración Markdown en Windows/Linux/macOS, con asociación predeterminada solo tras una acción explícita del usuario;
 - planner Git pull: `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
 - preflight que bloquea un worktree modificado;
-- fast-forward seguro solo para `FastForward` limpio, sin `hard reset` ciego, commit de merge ni sobrescritura silenciosa.
+- fast-forward seguro solo para `FastForward` limpio, sin `hard reset` ciego, commit de merge ni sobrescritura silenciosa;
+- bóveda cifrada opcional (age): las notas se guardan en disco como archivos `.age` y la clave privada vive solo en el almacén de secretos del sistema del dispositivo (Windows Credential Manager, macOS Keychain, Linux Secret Service); hay diálogos para crearla con copia única de la clave, importar la clave en otro dispositivo y una clave de recuperación opcional.
 
 Aún **no está terminado**: Git push, integración completa con `SyncManifest` / ADR-0005, WebDAV, validación runtime en dispositivos Android/iOS físicos y carpetas externas opcionales Android SAF / iOS security-scoped.
+
+La **bóveda cifrada** es una opción, no un requisito: las bóvedas normales funcionan sin cambios y una build sin la feature `encrypted-vault` no contiene código de cifrado. Por ahora una bóveda cifrada no muestra imágenes ni adjuntos, no hay interfaz para añadir una clave de recuperación a una bóveda existente y el índice `.mdnotes/cache` sigue sin cifrar; el Git push desde una bóveda así llegará con una protección que impide enviar texto en claro.
 
 Plan completo: [roadmap](../roadmap.md) (ucraniano, canónico).
 
@@ -65,7 +68,7 @@ Plan completo: [roadmap](../roadmap.md) (ucraniano, canónico).
 
 Descarga los paquetes desde la [página de versiones](https://github.com/RomanZavadaM/md-notes/releases): Windows (`.exe`, `.msi`, ZIP portable), macOS (`.dmg`, `.app.tar.gz`) y Linux (`.AppImage`, `.deb`, `.rpm`).
 
-El checkpoint **v0.3.1** incluye Markdown standalone y el pipeline Git fast-forward seguro. Las builds siguen sin firma/notarización salvo que una versión concreta indique lo contrario.
+El checkpoint **v0.3.2** incluye Markdown standalone y el pipeline Git fast-forward seguro. Las builds siguen sin firma/notarización salvo que una versión concreta indique lo contrario.
 
 Guía completa: **[Guía del usuario](../user-guide/USER_GUIDE.es.md)**.
 

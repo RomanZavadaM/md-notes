@@ -95,6 +95,14 @@ Sur les écrans étroits, le panneau latéral et le panneau des liens s'ouvrent 
 - MD Notes n'envoie vos données nulle part : ni serveur, ni analyse d'usage, ni télémétrie.
 - Sauvegardez le dossier du coffre. Git est pratique pour conserver les versions.
 
+### Coffre chiffré (facultatif)
+
+- À la création du coffre, cochez **« Chiffrer ce coffre »**. Les notes sont stockées sur le disque en fichiers `.age`, illisibles sans la clé.
+- Après la création, la clé privée (`AGE-SECRET-KEY-…`) est affichée **une seule fois**. Conservez-la dans un gestionnaire de mots de passe ou hors ligne : elle ne peut pas être récupérée. Durablement, la clé ne reste que dans le magasin de secrets système de cet appareil.
+- Vous pouvez indiquer une **clé publique de récupération** (`age1…`) : elle permet aussi d’ouvrir le coffre si la clé principale est perdue.
+- Sur un autre ordinateur, copiez le dossier du coffre et ouvrez-le : l’application demande la clé. Collez la clé privée ; elle est ensuite conservée dans le magasin de secrets de cet ordinateur.
+- Pour l’instant, un coffre chiffré n’affiche pas les images ni les pièces jointes, et l’index `.mdnotes/cache` n’est pas chiffré.
+
 ## 12. Clavier
 
 | Action | Windows / Linux | macOS |

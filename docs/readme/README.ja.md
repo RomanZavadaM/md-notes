@@ -2,19 +2,19 @@
 
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · [🇩🇪 Deutsch](README.de.md) · [🇪🇸 Español](README.es.md) · [🇰🇷 한국어](README.ko.md) · **🇯🇵 日本語**
 
-> **リリース checkpoint: MD Notes v0.3.1**
+> **リリース checkpoint: MD Notes v0.3.2**
 >
 > **開発状態: ACTIVE — roadmap 段階 v0.3「モバイルプラットフォームと同期」。**
 
-## MD Notes v0.3.1 をダウンロード
+## MD Notes v0.3.2 をダウンロード
 
 **クイックインストール:**
 
-- **Windows 64-bit:** [.exe インストーラー](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD-Notes-0.3.1-Windows-x64-portable.zip)
-- **macOS Universal:** [DMG をダウンロード](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes_0.3.1_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.1/MD.Notes-0.3.1-1.x86_64.rpm)
+- **Windows 64-bit:** [.exe インストーラー](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD-Notes-0.3.2-Windows-x64-portable.zip)
+- **macOS Universal:** [DMG をダウンロード](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes-0.3.2-1.x86_64.rpm)
 
-[**v0.3.1 のすべてのリリースファイル →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.1)
+[**v0.3.2 のすべてのリリースファイル →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.2)
 
 > 現在のビルドは未署名/未公証のため、OS が通常のセキュリティ警告を表示することがあります。
 
@@ -40,7 +40,7 @@
 - global/local knowledge graph;
 - 7 言語 UI とライト/ダーク/システムテーマ。
 
-### v0.3 — v0.3.1 checkpoint まで統合済み
+### v0.3 — v0.3.2 checkpoint まで統合済み
 
 - provider-neutral `StorageProvider` / `VaultStorage`;
 - Android/iOS 用 mobile sandbox vault;
@@ -55,9 +55,12 @@
 - Windows/Linux/macOS の Markdown desktop integration。既定アプリ変更はユーザーの明示操作後のみ;
 - Git pull planner: `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
 - dirty worktree をブロックする pull safety preflight;
-- clean `FastForward` のみを適用する安全な fast-forward。blind `hard reset`、merge commit、silent overwrite は行いません。
+- clean `FastForward` のみを適用する安全な fast-forward。blind `hard reset`、merge commit、silent overwrite は行いません;
+- オプションの暗号化保管庫（age）: ノートは `.age` ファイルとしてディスクに保存され、秘密鍵は端末のシステムのシークレットストア（Windows Credential Manager、macOS Keychain、Linux Secret Service）にのみ保管されます。ダイアログで、作成時の鍵の一度きりのバックアップ、別端末への鍵のインポート、任意の復旧鍵に対応します.
 
 まだ **未完了**: Git push、`SyncManifest` / ADR-0005 との完全な Git state 統合、WebDAV、物理 Android/iOS 端末での runtime 検証、optional Android SAF / iOS security-scoped 外部フォルダー。
+
+**暗号化保管庫**は必須ではなくオプションです。通常の保管庫は従来どおり動作し、`encrypted-vault` feature なしのビルドには暗号化コードが含まれません。現時点では、暗号化保管庫では画像と添付ファイルが表示されず、既存の保管庫に復旧鍵を追加する UI がなく、`.mdnotes/cache` インデックスは暗号化されません。この保管庫からの Git push は、平文を送信しないガード付きで追加される予定です。
 
 全体計画: [roadmap](../roadmap.md)（ウクライナ語、正本）。
 
@@ -65,7 +68,7 @@
 
 [リリースページ](https://github.com/RomanZavadaM/md-notes/releases) から Windows (`.exe`, `.msi`, portable ZIP)、macOS (`.dmg`, `.app.tar.gz`)、Linux (`.AppImage`, `.deb`, `.rpm`) のパッケージを取得できます。
 
-**v0.3.1** checkpoint には standalone Markdown と安全な Git fast-forward pipeline が含まれます。個別リリースで別途明記されない限り、ビルドは未署名/未公証です。
+**v0.3.2** checkpoint には standalone Markdown と安全な Git fast-forward pipeline が含まれます。個別リリースで別途明記されない限り、ビルドは未署名/未公証です。
 
 詳しい手順: **[ユーザーガイド](../user-guide/USER_GUIDE.ja.md)**。
 
