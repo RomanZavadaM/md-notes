@@ -34,6 +34,14 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.10](https://github.com/RomanZavadaM/md-notes/compare/v0.3.9...v0.3.10) (2026-10-19)
+
+
+### Нові можливості
+
+* **core,app:** картки зв'язків і стрілки напрямку в графі ([6e5eae1](https://github.com/RomanZavadaM/md-notes/commit/6e5eae1b1ae38633d504744d5557789801db0021))
+* **core,app:** картки зв'язків, стрілки напрямку, оновлення наявних файлів при імпорті ([f071f21](https://github.com/RomanZavadaM/md-notes/commit/f071f21ffd22375cfcaff41c193bb3e94d0a4989))
+
 ## [0.3.9](https://github.com/RomanZavadaM/md-notes/compare/v0.3.8...v0.3.9) (2026-10-19)
 
 
