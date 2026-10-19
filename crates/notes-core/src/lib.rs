@@ -9,6 +9,8 @@ pub mod attachments;
 pub mod encrypted;
 #[cfg(feature = "encrypted-vault")]
 pub mod encrypted_vault;
+#[cfg(feature = "encrypted-vault")]
+pub mod push_guard;
 pub mod error;
 pub mod git_sync;
 pub mod graph;

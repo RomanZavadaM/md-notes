@@ -636,6 +636,7 @@ pub fn run() {
             encryption::create_encrypted_vault_cmd,
             encryption::import_encryption_key,
             encryption::add_encryption_recipient,
+            encryption::push_safety,
             save_git_credentials,
             has_git_credentials,
             clear_git_credentials,

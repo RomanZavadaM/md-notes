@@ -126,6 +126,28 @@ pub fn create_encrypted_vault_cmd(
     }
 }
 
+/// Lists files of the open encrypted vault that would be pushed in plaintext.
+/// Empty for plain vaults and for fully encrypted ones. A future push command
+/// must call this first and refuse when the list is not empty.
+#[tauri::command]
+pub fn push_safety(state: State<'_, AppState>) -> CmdResult<serde_json::Value> {
+    #[cfg(feature = "encrypted-vault")]
+    {
+        let guard = state.session.lock().map_err(|e| e.to_string())?;
+        let session = guard
+            .as_ref()
+            .ok_or_else(|| "no vault is open".to_string())?;
+        let findings = notes_core::push_guard::find_plaintext(session.vault.root())
+            .map_err(|e| e.to_string())?;
+        serde_json::to_value(findings).map_err(|e| e.to_string())
+    }
+    #[cfg(not(feature = "encrypted-vault"))]
+    {
+        let _ = state;
+        Ok(serde_json::Value::Array(Vec::new()))
+    }
+}
+
 /// Imports a private key (for example on a second device), checks that it
 /// belongs to the vault in `path`, stores it and opens the vault.
 #[tauri::command]
