@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use crate::error::{io_err, Error, Result};
 use crate::note::Note;
 use crate::paths;
-use crate::storage::LocalFsProvider;
+use crate::storage::{LocalFsProvider, StorageProvider};
 use crate::vault_storage::VaultStorage;
 
 /// Service folder inside every vault.
@@ -73,6 +73,18 @@ impl Vault {
     pub fn open(root: impl AsRef<Path>) -> Result<Self> {
         let root = root.as_ref().to_path_buf();
         let provider = Arc::new(LocalFsProvider::new(&root)?);
+        let storage = VaultStorage::open(provider)?;
+        Ok(Self { root, storage })
+    }
+
+    /// Opens a folder as a vault whose content goes through `provider`
+    /// (for example an encrypted provider). `root` stays the local folder used
+    /// for the cache and the service operations that are not yet provider-based.
+    pub fn open_with_provider(
+        root: impl AsRef<Path>,
+        provider: Arc<dyn StorageProvider>,
+    ) -> Result<Self> {
+        let root = root.as_ref().to_path_buf();
         let storage = VaultStorage::open(provider)?;
         Ok(Self { root, storage })
     }

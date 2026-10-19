@@ -21,6 +21,8 @@ pub enum Error {
     Sync(String),
     #[error("Git sync error: {0}")]
     Git(String),
+    #[error("encryption error: {0}")]
+    Crypto(String),
     #[error("index error: {0}")]
     Index(#[from] rusqlite::Error),
 }

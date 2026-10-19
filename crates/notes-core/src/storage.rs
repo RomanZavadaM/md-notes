@@ -40,6 +40,17 @@ pub trait StorageProvider: Send + Sync {
     fn remove(&self, rel: &str) -> Result<()>;
     fn metadata(&self, rel: &str) -> Result<Option<StorageEntry>>;
 
+    /// Moves a file or folder inside the provider.
+    ///
+    /// The default implementation copies a single file and removes the
+    /// original; providers that can rename natively (and handle folders)
+    /// override it.
+    fn rename(&self, from: &str, to: &str) -> Result<()> {
+        let bytes = self.read(from)?;
+        self.write(to, &bytes)?;
+        self.remove(from)
+    }
+
     /// Returns entries modified strictly after `since_ms`.
     ///
     /// Providers with a native change journal can override this efficiently.
@@ -164,6 +175,23 @@ impl StorageProvider for LocalFsProvider {
         }
     }
 
+    fn rename(&self, from: &str, to: &str) -> Result<()> {
+        let from = paths::normalize(from)?;
+        let to = paths::normalize(to)?;
+        if from.is_empty() || to.is_empty() {
+            return Err(Error::InvalidPath("vault root".into()));
+        }
+        let source = paths::resolve(&self.root, &from)?;
+        let target = paths::resolve(&self.root, &to)?;
+        if !source.exists() {
+            return Err(Error::NotFound(from));
+        }
+        if let Some(parent) = target.parent() {
+            fs::create_dir_all(parent).map_err(io_err(parent))?;
+        }
+        fs::rename(&source, &target).map_err(io_err(&source))
+    }
+
     fn metadata(&self, rel: &str) -> Result<Option<StorageEntry>> {
         let rel = paths::normalize(rel)?;
         if rel.is_empty() {
@@ -230,5 +258,23 @@ mod tests {
 
         let changes = provider.changes_since(0).unwrap();
         assert!(changes.iter().any(|entry| entry.path == "a.md"));
+    }
+}
+
+#[cfg(test)]
+mod rename_tests {
+    use super::*;
+
+    #[test]
+    fn local_provider_renames_files_and_folders() {
+        let dir = tempfile::tempdir().unwrap();
+        let provider = LocalFsProvider::new(dir.path()).unwrap();
+        provider.write("a.md", b"1").unwrap();
+        provider.rename("a.md", "sub/b.md").unwrap();
+        assert!(provider.metadata("a.md").unwrap().is_none());
+        assert_eq!(provider.read("sub/b.md").unwrap(), b"1");
+        provider.rename("sub", "moved").unwrap();
+        assert_eq!(provider.read("moved/b.md").unwrap(), b"1");
+        assert!(matches!(provider.rename("nope.md", "x.md"), Err(Error::NotFound(_))));
     }
 }

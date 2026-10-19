@@ -106,6 +106,10 @@ jobs:
         run: cargo clippy -p notes-core --all-targets -- -D warnings
       - name: Test
         run: cargo test -p notes-core
+      - name: Clippy (encrypted-vault feature)
+        run: cargo clippy -p notes-core --all-targets --features encrypted-vault -- -D warnings
+      - name: Test (encrypted-vault feature)
+        run: cargo test -p notes-core --features encrypted-vault
 
   frontend:
     name: Frontend build
