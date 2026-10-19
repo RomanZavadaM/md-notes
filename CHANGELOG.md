@@ -34,6 +34,22 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.11](https://github.com/RomanZavadaM/md-notes/compare/v0.3.10...v0.3.11) (2026-10-19)
+
+
+### Нові можливості
+
+* **app:** режим «звідки це прийшло» - ланцюжок власників і матеріали, дерево власності ([5999b20](https://github.com/RomanZavadaM/md-notes/commit/5999b20b147c4c38c9d8c51bcce7a445c29fc15f))
+* **app:** режим «звідки це прийшло» у графі ([3808c62](https://github.com/RomanZavadaM/md-notes/commit/3808c6277764ab4c1e5f35a1d8d3572b88156c94))
+
+
+### Виправлення
+
+* **app:** вузли графа підлаштовуються під розмір панелі ([c30c179](https://github.com/RomanZavadaM/md-notes/commit/c30c17920f56982c1533d85a56544eb1bf0ab40e))
+* **app:** розмір вузлів графа підлаштовується під розмір панелі ([701e548](https://github.com/RomanZavadaM/md-notes/commit/701e54880f5745d5e39b20ff2f3feaad5be85bfc))
+* **app:** сповіщення зникають самі ([d6068de](https://github.com/RomanZavadaM/md-notes/commit/d6068de1d21fb4456d1bcec375e777f1d28ffb03))
+* **app:** сповіщення зникають самі (6 с, помилки 12 с) ([49e2501](https://github.com/RomanZavadaM/md-notes/commit/49e250103947f3a80513e9554bb4b52449614777))
+
 ## [0.3.10](https://github.com/RomanZavadaM/md-notes/compare/v0.3.9...v0.3.10) (2026-10-19)
 
 
