@@ -34,6 +34,14 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.4](https://github.com/RomanZavadaM/md-notes/compare/v0.3.3...v0.3.4) (2026-10-19)
+
+
+### Нові можливості
+
+* **core:** випадкові імена файлів у зашифрованому сховищі ([b0bac0d](https://github.com/RomanZavadaM/md-notes/commit/b0bac0da636a66015a332bd8a6a1cbd9b10a32d8))
+* **core:** випадкові імена файлів у зашифрованому сховищі (ADR-0007) ([9608d04](https://github.com/RomanZavadaM/md-notes/commit/9608d0491667377a22af72b7fdd6c0fa8750410d))
+
 ## [0.3.3](https://github.com/RomanZavadaM/md-notes/compare/v0.3.2...v0.3.3) (2026-10-19)
 
 
