@@ -34,6 +34,14 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.8](https://github.com/RomanZavadaM/md-notes/compare/v0.3.7...v0.3.8) (2026-10-19)
+
+
+### Нові можливості
+
+* **core,app:** граф за властивостями relations - лінії й обводи за оцінкою ([7c3a65e](https://github.com/RomanZavadaM/md-notes/commit/7c3a65e398cdb2073e9add28ebcb75ed11e2640d))
+* **core,app:** лінії зв'язків і обводи вузлів за оцінкою - властивості relations у графі ([3417bd9](https://github.com/RomanZavadaM/md-notes/commit/3417bd9e15ff11cf092cdd1bb9a1a4a29596624f))
+
 ## [0.3.7](https://github.com/RomanZavadaM/md-notes/compare/v0.3.6...v0.3.7) (2026-10-19)
 
 
