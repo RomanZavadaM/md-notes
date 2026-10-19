@@ -146,6 +146,8 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
     if (!container || !snapshot || snapshot.nodes.length === 0) return;
 
     const dark = isDarkBackground();
+    // Nodes are drawn in pixels, so a small pane needs smaller nodes to stay readable.
+    const fit = Math.max(0.45, Math.min(1, Math.min(container.clientWidth, container.clientHeight) / 640));
     const labelColor = dark ? "#E5E7EB" : "#1D2430";
     const edgeColor = dark ? "#5B6475" : "#A3ABB9";
     const dimNode = dark ? "#2B313D" : "#DDE1E8";
@@ -229,12 +231,12 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
     snapshot.nodes.forEach((node, index) => {
       const isFocus = mode === "local" && node.path === notePath;
       const type = node.noteType ?? "";
-      const size = nodeSize(degree.get(node.path) ?? 0);
+      const size = nodeSize(degree.get(node.path) ?? 0) * fit;
       graph.addNode(node.path, {
         label: node.title,
         x: layout.x[index],
         y: layout.y[index],
-        size: isFocus ? size + 4 : size,
+        size: isFocus ? size + 4 * fit : size,
         color: typeColor(type),
         typeKey: type,
         fullTitle: node.title,
@@ -396,7 +398,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       rendererRef.current = null;
       graphRef.current = null;
     };
-  }, [snapshot, mode, notePath, onOpen]);
+  }, [snapshot, mode, notePath, onOpen, expanded]);
 
   // Search and type filters only change what the reducers return.
   useEffect(() => {
