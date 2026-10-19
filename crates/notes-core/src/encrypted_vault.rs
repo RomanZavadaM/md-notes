@@ -150,7 +150,9 @@ fn provider_for(
 fn open_with_identity(root: &Path, config: &EncryptionConfig, identity: Identity) -> Result<Vault> {
     let own = identity.to_public().to_string();
     if !config.recipients.iter().any(|r| r.trim() == own) {
-        return Err(Error::Crypto("the key does not belong to this vault".into()));
+        return Err(Error::Crypto(
+            "the key does not belong to this vault".into(),
+        ));
     }
     let provider = provider_for(root, config.parse_recipients()?, identity)?;
     Vault::open_with_provider(root, Arc::new(provider))
@@ -231,7 +233,9 @@ pub fn add_recipient(root: &Path, secret_key: &str, recipient: &str) -> Result<u
         .ok_or_else(|| Error::NotFound(format!("{SERVICE_DIR}/{ENCRYPTION_FILE}")))?;
     let identity = parse_identity(secret_key)?;
     if !key_matches(&config, secret_key)? {
-        return Err(Error::Crypto("the key does not belong to this vault".into()));
+        return Err(Error::Crypto(
+            "the key does not belong to this vault".into(),
+        ));
     }
     let new = parse_recipient(recipient)?.to_string();
     if config.recipients.iter().any(|r| r.trim() == new) {
@@ -256,7 +260,10 @@ mod tests {
     fn create_then_reopen_round_trips_and_keeps_secrets_out_of_files() {
         let tmp = dir();
         let created = create_encrypted_vault(tmp.path(), Some("Private".into()), &[]).unwrap();
-        created.vault.write_note("a.md", "# Hidden title\n").unwrap();
+        created
+            .vault
+            .write_note("a.md", "# Hidden title\n")
+            .unwrap();
 
         assert!(created.secret_key.starts_with("AGE-SECRET-KEY-"));
         assert!(created.public_key.starts_with("age1"));
@@ -299,7 +306,8 @@ mod tests {
         let tmp = dir();
         let (recovery_secret, recovery_public) = generate_key_pair();
         let created =
-            create_encrypted_vault(tmp.path(), None, &[recovery_public.clone()]).unwrap();
+            create_encrypted_vault(tmp.path(), None, std::slice::from_ref(&recovery_public))
+                .unwrap();
         created.vault.write_note("n.md", "# N\n").unwrap();
 
         let config = EncryptionConfig::load(tmp.path()).unwrap().unwrap();
@@ -370,7 +378,10 @@ mod tests {
 
         let rewritten = add_recipient(tmp.path(), &created.secret_key, &second_public).unwrap();
         assert_eq!(rewritten, 2);
-        assert_eq!(add_recipient(tmp.path(), &created.secret_key, &second_public).unwrap(), 0);
+        assert_eq!(
+            add_recipient(tmp.path(), &created.secret_key, &second_public).unwrap(),
+            0
+        );
 
         let vault = open_encrypted_vault(tmp.path(), &second_secret).unwrap();
         assert_eq!(vault.read_note("sub/b.md").unwrap().title, "B");
