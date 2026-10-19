@@ -5,6 +5,7 @@ import {
   api,
   joinPath,
   parentPath,
+  KEY_MISSING,
   OPENED_MARKDOWN_FILES,
   VAULT_CHANGED,
   type AttachmentInfo,
@@ -16,6 +17,7 @@ import {
   type VaultInfo,
 } from "./api";
 import { Editor } from "./components/Editor";
+import { ImportKeyDialog } from "./components/EncryptionDialogs";
 import { FileTree } from "./components/FileTree";
 import { LinksPanel } from "./components/LinksPanel";
 import { NameDialog } from "./components/NameDialog";
@@ -26,6 +28,7 @@ import { TagsPanel } from "./components/TagsPanel";
 import { AttachmentsPanel } from "./components/AttachmentsPanel";
 import { AboutDialog, COPYRIGHT } from "./components/AboutDialog";
 import { LANGUAGES, useI18n, type LanguageCode } from "./i18n";
+import { ENCRYPTION_STRINGS } from "./i18n/encryption";
 import { storage, useStoredState } from "./storage";
 
 type ViewMode = "edit" | "split" | "preview";
@@ -44,6 +47,8 @@ const isNarrow = () => window.matchMedia("(max-width: 720px)").matches;
 export default function App() {
   const { t, language, setLanguage } = useI18n();
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [encrypted, setEncrypted] = useState(false);
+  const [keyPrompt, setKeyPrompt] = useState<string | null>(null);
   const [platform, setPlatform] = useState<RuntimePlatform>("unknown");
   const [vault, setVault] = useState<VaultInfo | null>(null);
   const [standalone, setStandalone] = useState<StandaloneMarkdown | null>(null);
@@ -127,6 +132,8 @@ export default function App() {
       try {
         await save();
         const info = await api.openVault(path);
+        setKeyPrompt(null);
+        setEncrypted(await api.encryptionStatus(info.root).then((status) => status.encrypted, () => false));
         setStandalone(null);
         setVault(info);
         setSelected(null);
@@ -136,7 +143,9 @@ export default function App() {
         bump();
       } catch (e) {
         storage.remove(LAST_VAULT_KEY);
-        report(e);
+        // An encrypted vault without a key on this device asks for the key.
+        if (String(e).includes(KEY_MISSING)) setKeyPrompt(path);
+        else report(e);
       }
     },
     [save, showNote, report, bump],
@@ -486,6 +495,13 @@ export default function App() {
         </button>
         <p className="welcome-copyright">{COPYRIGHT}</p>
         {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
+        {keyPrompt && (
+          <ImportKeyDialog
+            path={keyPrompt}
+            onImported={() => void openVaultAt(keyPrompt)}
+            onCancel={() => setKeyPrompt(null)}
+          />
+        )}
       </div>
     );
   }
@@ -578,6 +594,11 @@ export default function App() {
         <span className="vault-name" title={vault.root}>
           {vault.name}
         </span>
+        {encrypted && (
+          <span className="encrypted-badge" title={ENCRYPTION_STRINGS[language].badgeTitle}>
+            🔒 {ENCRYPTION_STRINGS[language].badge}
+          </span>
+        )}
         <button type="button" className="search-button" title={t.goToNote} onClick={() => setSwitcherOpen(true)}>
           <span className="note-title">
             {note ? note.title : t.goToNotePlaceholder}
@@ -803,6 +824,14 @@ export default function App() {
       )}
 
       {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
+
+      {keyPrompt && (
+        <ImportKeyDialog
+          path={keyPrompt}
+          onImported={() => void openVaultAt(keyPrompt)}
+          onCancel={() => setKeyPrompt(null)}
+        />
+      )}
 
       {error && (
         <div className="toast" role="alert" onClick={() => setError(null)}>

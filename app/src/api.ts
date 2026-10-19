@@ -34,6 +34,23 @@ export interface VaultInfo {
   name: string;
 }
 
+export interface EncryptionStatus {
+  encrypted: boolean;
+  hasKey: boolean;
+  vaultId: string | null;
+  recipients: number;
+}
+
+export interface CreatedEncryptedVault {
+  info: VaultInfo;
+  /** Private key; shown once so the user can back it up. */
+  secretKey: string;
+  publicKey: string;
+}
+
+/** Error text of `openVault` when the vault is encrypted and this device has no key. */
+export const KEY_MISSING = "KEY_MISSING";
+
 export interface StandaloneMarkdown {
   path: string;
   directory: string;
@@ -158,6 +175,12 @@ export const api = {
   openVault: (path: string) => invoke<VaultInfo>("open_vault", { path }),
   createVault: (path: string, name: string | null, preset: VaultPreset) =>
     invoke<VaultInfo>("create_vault", { path, name, preset }),
+  encryptionStatus: (path: string) => invoke<EncryptionStatus>("encryption_status", { path }),
+  createEncryptedVault: (path: string, name: string | null, recoveryPublicKey: string | null) =>
+    invoke<CreatedEncryptedVault>("create_encrypted_vault_cmd", { path, name, recoveryPublicKey }),
+  importEncryptionKey: (path: string, secretKey: string) =>
+    invoke<VaultInfo>("import_encryption_key", { path, secretKey }),
+  addEncryptionRecipient: (recipient: string) => invoke<number>("add_encryption_recipient", { recipient }),
   getTree: () => invoke<TreeEntry[]>("get_tree"),
   readNote: (path: string) => invoke<Note>("read_note", { path }),
   parseNoteContent: (path: string, content: string) => invoke<Note>("parse_note_content", { path, content }),
