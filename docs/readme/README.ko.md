@@ -2,19 +2,19 @@
 
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · [🇩🇪 Deutsch](README.de.md) · [🇪🇸 Español](README.es.md) · **🇰🇷 한국어** · [🇯🇵 日本語](README.ja.md)
 
-> **릴리스 체크포인트: MD Notes v0.3.2**
+> **릴리스 체크포인트: MD Notes v0.3.3**
 >
 > **개발 상태: ACTIVE — roadmap 단계 v0.3 「모바일 플랫폼과 동기화」.**
 
-## MD Notes v0.3.2 다운로드
+## MD Notes v0.3.3 다운로드
 
 **빠른 설치:**
 
-- **Windows 64-bit:** [.exe 설치 파일](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD-Notes-0.3.2-Windows-x64-portable.zip)
-- **macOS Universal:** [DMG 다운로드](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes_0.3.2_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.2/MD.Notes-0.3.2-1.x86_64.rpm)
+- **Windows 64-bit:** [.exe 설치 파일](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD-Notes-0.3.3-Windows-x64-portable.zip)
+- **macOS Universal:** [DMG 다운로드](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes-0.3.3-1.x86_64.rpm)
 
-[**v0.3.2의 모든 릴리스 파일 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.2)
+[**v0.3.3의 모든 릴리스 파일 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.3)
 
 > 현재 빌드는 서명/공증되지 않았으므로 운영체제가 일반적인 보안 경고를 표시할 수 있습니다.
 
@@ -40,7 +40,7 @@
 - global/local knowledge graph;
 - 7개 언어 UI와 라이트/다크/시스템 테마.
 
-### v0.3 — v0.3.2 체크포인트까지 통합됨
+### v0.3 — v0.3.3 체크포인트까지 통합됨
 
 - provider-neutral `StorageProvider` / `VaultStorage`;
 - Android/iOS용 mobile sandbox vault;
@@ -68,7 +68,7 @@
 
 [릴리스 페이지](https://github.com/RomanZavadaM/md-notes/releases)에서 Windows (`.exe`, `.msi`, portable ZIP), macOS (`.dmg`, `.app.tar.gz`), Linux (`.AppImage`, `.deb`, `.rpm`) 패키지를 받을 수 있습니다.
 
-**v0.3.2** 체크포인트에는 standalone Markdown과 안전한 Git fast-forward pipeline이 포함됩니다. 특정 릴리스에서 달리 명시하지 않는 한 빌드는 아직 서명/공증되지 않았습니다.
+**v0.3.3** 체크포인트에는 standalone Markdown과 안전한 Git fast-forward pipeline이 포함됩니다. 특정 릴리스에서 달리 명시하지 않는 한 빌드는 아직 서명/공증되지 않았습니다.
 
 전체 안내: **[사용자 가이드](../user-guide/USER_GUIDE.ko.md)**.
 
