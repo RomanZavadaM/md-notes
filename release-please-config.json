@@ -20,14 +20,7 @@
       "extra-files": [
         { "type": "toml", "path": "Cargo.toml", "jsonpath": "$.workspace.package.version" },
         { "type": "json", "path": "app/package.json", "jsonpath": "$.version" },
-        { "type": "json", "path": "app/src-tauri/tauri.conf.json", "jsonpath": "$.version" },
-        { "type": "generic", "path": "README.md" },
-        { "type": "generic", "path": "docs/readme/README.de.md" },
-        { "type": "generic", "path": "docs/readme/README.en.md" },
-        { "type": "generic", "path": "docs/readme/README.es.md" },
-        { "type": "generic", "path": "docs/readme/README.fr.md" },
-        { "type": "generic", "path": "docs/readme/README.ja.md" },
-        { "type": "generic", "path": "docs/readme/README.ko.md" }
+        { "type": "json", "path": "app/src-tauri/tauri.conf.json", "jsonpath": "$.version" }
       ]
     }
   }

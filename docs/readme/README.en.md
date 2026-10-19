@@ -11,11 +11,11 @@
 
 **Quick install:**
 
-- **Windows 64-bit:** [download .exe installer](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.4_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD-Notes-0.3.4-Windows-x64-portable.zip)
-- **macOS Universal:** [download DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.4_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.4_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes-0.3.4-1.x86_64.rpm)
+- **Windows 64-bit:** [download .exe installer](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD-Notes-0.3.5-Windows-x64-portable.zip)
+- **macOS Universal:** [download DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes-0.3.5-1.x86_64.rpm)
 
-[**All v0.3.5 release files →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.4)
+[**All v0.3.5 release files →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.5)
 <!-- x-release-please-end -->
 
 > Builds are currently unsigned/not notarized, so your operating system may show a standard security warning.

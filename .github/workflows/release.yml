@@ -136,3 +136,32 @@ jobs:
           (cd all && rm -f SHA256SUMS.txt && sha256sum * > ../SHA256SUMS.txt)
           cat SHA256SUMS.txt
           gh release upload "$TAG" SHA256SUMS.txt --clobber
+
+  # After the assets exist: point the download links of every README at this
+  # release. release-please's generic updater replaces only the first version
+  # on a line, so the script does it.
+  readme-links:
+    needs: [release-please, assets]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - name: Update README download links
+        env:
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+        run: |
+          python3 scripts/bump_readme_links.py "${TAG#v}"
+          if git diff --quiet; then
+            echo "README links already point at ${TAG}"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md docs/readme
+          git commit -m "docs: посилання на завантаження ${TAG}"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep 5
+          done
+          exit 1
