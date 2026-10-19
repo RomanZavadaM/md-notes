@@ -19,6 +19,7 @@ import {
 import { Editor } from "./components/Editor";
 import { ImportKeyDialog } from "./components/EncryptionDialogs";
 import { GitPanel } from "./components/GitPanel";
+import { IMPORTER_STRINGS } from "./i18n/importer";
 import { FileTree } from "./components/FileTree";
 import { LinksPanel } from "./components/LinksPanel";
 import { NameDialog } from "./components/NameDialog";
@@ -50,6 +51,7 @@ export default function App() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [encrypted, setEncrypted] = useState(false);
   const [gitOpen, setGitOpen] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
   const [keyPrompt, setKeyPrompt] = useState<string | null>(null);
   // Last vault that was open; offered as a way back from a standalone Markdown file.
   const lastVaultRef = useRef<string | null>(null);
@@ -235,6 +237,20 @@ export default function App() {
       if (result === "systemChoice") setError(t.markdownAssociationSystemChoice);
       else if (result === "defaultSet") setError(t.markdownAssociationDefaultSet);
       else setError(t.markdownAssociationUnsupported);
+    } catch (e) {
+      report(e);
+    }
+  };
+
+  const importFolder = async () => {
+    const strings = IMPORTER_STRINGS[language];
+    const dir = await open({ directory: true, multiple: false, title: strings.pickTitle });
+    if (typeof dir !== "string") return;
+    try {
+      const report = await api.importFolder(dir);
+      setNotice(strings.result(report.created, report.skipped, report.rejected));
+      await refreshTree();
+      bump();
     } catch (e) {
       report(e);
     }
@@ -760,6 +776,9 @@ export default function App() {
                   {t.makeMarkdownDefault}
                 </button>
               )}
+              <button type="button" onClick={() => void importFolder()}>
+                {IMPORTER_STRINGS[language].button}
+              </button>
               <button type="button" onClick={() => void pickVault()}>
                 {t.otherVault}
               </button>
@@ -869,6 +888,11 @@ export default function App() {
       {error && (
         <div className="toast" role="alert" onClick={() => setError(null)}>
           {error}
+        </div>
+      )}
+      {notice && (
+        <div className="toast" role="status" onClick={() => setNotice(null)}>
+          {notice}
         </div>
       )}
     </div>

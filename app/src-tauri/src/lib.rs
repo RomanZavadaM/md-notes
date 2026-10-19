@@ -439,6 +439,13 @@ fn git_fetch_with_stored_credentials(
 /// Pushes the current branch of the open vault with the stored HTTPS
 /// credentials (`"pushed"` or `"upToDate"`). Uses the system `git`, so it is
 /// desktop only; encrypted vaults are checked by the push guard first.
+/// Imports a plain folder into the open vault (encrypted on the way in when
+/// the vault is encrypted). Existing files are never overwritten.
+#[tauri::command]
+fn import_folder(source: String, state: State<'_, AppState>) -> CmdResult<notes_core::ImportReport> {
+    with_session(&state, |s| s.vault.import_folder(Path::new(&source)))
+}
+
 #[tauri::command]
 fn git_push_with_stored_credentials(
     remote_name: Option<String>,
@@ -676,6 +683,7 @@ pub fn run() {
             clear_git_credentials,
             git_fetch_with_stored_credentials,
             git_push_with_stored_credentials,
+            import_folder,
             git::git_status_cmd,
             git::git_init_repo,
             git::git_set_remote_url,

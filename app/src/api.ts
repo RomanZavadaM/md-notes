@@ -51,6 +51,12 @@ export interface CreatedEncryptedVault {
 /** Error text of `openVault` when the vault is encrypted and this device has no key. */
 export const KEY_MISSING = "KEY_MISSING";
 
+export interface ImportReport {
+  created: number;
+  skipped: number;
+  rejected: number;
+}
+
 export type GitRelation = "upToDate" | "fastForward" | "localAhead" | "diverged" | "unrelated";
 
 export interface GitStatus {
@@ -200,6 +206,7 @@ export const api = {
   /** Pushes the current branch (system Git, desktop only); resolves to `"pushed"` or `"upToDate"`. */
   gitPush: (remoteName: string | null = null) =>
     invoke<"pushed" | "upToDate">("git_push_with_stored_credentials", { remoteName }),
+  importFolder: (source: string) => invoke<ImportReport>("import_folder", { source }),
   gitStatus: (remoteName: string | null = null) => invoke<GitStatus>("git_status_cmd", { remoteName }),
   gitInit: () => invoke<void>("git_init_repo"),
   gitSetRemote: (url: string, remoteName: string | null = null) =>
