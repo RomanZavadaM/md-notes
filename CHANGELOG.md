@@ -34,6 +34,14 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.7](https://github.com/RomanZavadaM/md-notes/compare/v0.3.6...v0.3.7) (2026-10-19)
+
+
+### Нові можливості
+
+* **app:** граф у стилі Obsidian ([bf81468](https://github.com/RomanZavadaM/md-notes/commit/bf814688d7afa4f73ca3618e361e3f729e0bec39))
+* **app:** граф у стилі Obsidian - силова розкладка, кольори за типом, підсвічування сусідів, пошук, легенда-фільтр, перетягування вузлів ([4734a0e](https://github.com/RomanZavadaM/md-notes/commit/4734a0e0ae8a306e9cae7dd9b88c5dc5d1b5f9c3))
+
 ## [0.3.6](https://github.com/RomanZavadaM/md-notes/compare/v0.3.5...v0.3.6) (2026-10-19)
 
 
