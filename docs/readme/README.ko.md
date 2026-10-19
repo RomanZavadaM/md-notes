@@ -11,11 +11,11 @@
 
 **빠른 설치:**
 
-- **Windows 64-bit:** [.exe 설치 파일](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.4_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD-Notes-0.3.4-Windows-x64-portable.zip)
-- **macOS Universal:** [DMG 다운로드](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.4_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.4_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes-0.3.4-1.x86_64.rpm)
+- **Windows 64-bit:** [.exe 설치 파일](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD-Notes-0.3.5-Windows-x64-portable.zip)
+- **macOS Universal:** [DMG 다운로드](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes-0.3.5-1.x86_64.rpm)
 
-[**v0.3.5의 모든 릴리스 파일 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.4)
+[**v0.3.5의 모든 릴리스 파일 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.5)
 <!-- x-release-please-end -->
 
 > 현재 빌드는 서명/공증되지 않았으므로 운영체제가 일반적인 보안 경고를 표시할 수 있습니다.

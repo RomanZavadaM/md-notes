@@ -11,11 +11,11 @@
 
 **Installation rapide :**
 
-- **Windows 64 bits :** [installateur .exe](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.4_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_x64_en-US.msi) · [ZIP portable](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD-Notes-0.3.4-Windows-x64-portable.zip)
-- **macOS Universal :** [télécharger le DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.4_universal.dmg)
-- **Linux x86_64 :** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.4_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes-0.3.4-1.x86_64.rpm)
+- **Windows 64 bits :** [installateur .exe](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_x64_en-US.msi) · [ZIP portable](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD-Notes-0.3.5-Windows-x64-portable.zip)
+- **macOS Universal :** [télécharger le DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_universal.dmg)
+- **Linux x86_64 :** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes_0.3.5_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.5/MD.Notes-0.3.5-1.x86_64.rpm)
 
-[**Tous les fichiers de la version v0.3.5 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.4)
+[**Tous les fichiers de la version v0.3.5 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.5)
 <!-- x-release-please-end -->
 
 > Les builds ne sont pas encore signés/notarisés ; le système peut afficher un avertissement de sécurité standard.
