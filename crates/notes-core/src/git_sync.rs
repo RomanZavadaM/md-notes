@@ -260,8 +260,8 @@ fn checkout_tree(
 /// to leak into logs, diagnostics or persisted vault state by accident.
 #[derive(Clone, PartialEq, Eq)]
 pub struct GitHttpsCredentials {
-    username: String,
-    token: String,
+    pub(crate) username: String,
+    pub(crate) token: String,
 }
 
 impl GitHttpsCredentials {

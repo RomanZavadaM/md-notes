@@ -435,6 +435,39 @@ fn git_fetch_with_stored_credentials(
         .map_err(|e| e.to_string())
 }
 
+/// Pushes the current branch of the open vault with the stored HTTPS
+/// credentials (`"pushed"` or `"upToDate"`). Uses the system `git`, so it is
+/// desktop only; encrypted vaults are checked by the push guard first.
+#[tauri::command]
+fn git_push_with_stored_credentials(
+    remote_name: Option<String>,
+    state: State<'_, AppState>,
+) -> CmdResult<&'static str> {
+    #[cfg(any(target_os = "android", target_os = "ios"))]
+    {
+        let _ = (remote_name, state);
+        Err("Git push is available on desktop only".into())
+    }
+    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    {
+        let vault_root = {
+            let guard = state.session.lock().map_err(|e| e.to_string())?;
+            let session = guard
+                .as_ref()
+                .ok_or_else(|| "no vault is open".to_string())?;
+            session.vault.root().to_path_buf()
+        };
+        let credentials = mobile::secret_store::load_git_credentials()?
+            .ok_or_else(|| "Git HTTPS credentials are not configured".to_string())?;
+        match notes_core::push_git_branch(&vault_root, remote_name.as_deref(), &credentials)
+            .map_err(|e| e.to_string())?
+        {
+            notes_core::GitPushOutcome::Pushed => Ok("pushed"),
+            notes_core::GitPushOutcome::UpToDate => Ok("upToDate"),
+        }
+    }
+}
+
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 fn on_files_changed(app: &AppHandle, changed: Vec<String>) {
     let state = app.state::<AppState>();
@@ -641,6 +674,7 @@ pub fn run() {
             has_git_credentials,
             clear_git_credentials,
             git_fetch_with_stored_credentials,
+            git_push_with_stored_credentials,
             get_tree,
             read_note,
             parse_note_content,

@@ -10,6 +10,8 @@ pub mod encrypted;
 #[cfg(feature = "encrypted-vault")]
 pub mod encrypted_vault;
 pub mod error;
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+pub mod git_push;
 pub mod git_sync;
 pub mod graph;
 pub mod index;
@@ -17,7 +19,6 @@ pub mod markdown;
 pub mod note;
 pub mod paths;
 pub mod presets;
-#[cfg(feature = "encrypted-vault")]
 pub mod push_guard;
 pub mod refactor;
 pub mod schema;
@@ -31,6 +32,8 @@ pub use attachments::AttachmentInfo;
 #[cfg(feature = "encrypted-vault")]
 pub use encrypted::{EncryptedProvider, ENCRYPTED_SUFFIX};
 pub use error::{Error, Result};
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+pub use git_push::{push_git_branch, GitPushOutcome};
 pub use git_sync::{
     apply_git_fast_forward, classify_git_pull_relation, clone_git_repository, commit_git_worktree,
     fetch_git_remote_authenticated, fetch_git_remote_public, git_has_changes, open_git_repository,

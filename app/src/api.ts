@@ -181,6 +181,9 @@ export const api = {
   importEncryptionKey: (path: string, secretKey: string) =>
     invoke<VaultInfo>("import_encryption_key", { path, secretKey }),
   addEncryptionRecipient: (recipient: string) => invoke<number>("add_encryption_recipient", { recipient }),
+  /** Pushes the current branch (system Git, desktop only); resolves to `"pushed"` or `"upToDate"`. */
+  gitPush: (remoteName: string | null = null) =>
+    invoke<"pushed" | "upToDate">("git_push_with_stored_credentials", { remoteName }),
   getTree: () => invoke<TreeEntry[]>("get_tree"),
   readNote: (path: string) => invoke<Note>("read_note", { path }),
   parseNoteContent: (path: string, content: string) => invoke<Note>("parse_note_content", { path, content }),
