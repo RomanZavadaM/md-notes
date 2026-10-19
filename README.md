@@ -4,6 +4,7 @@
 
 [![CI](https://github.com/RomanZavadaM/md-notes/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanZavadaM/md-notes/actions/workflows/ci.yml)
 
+<!-- x-release-please-start-version -->
 > **Release checkpoint: MD Notes v0.3.4**
 >
 > **Статус розвитку: ACTIVE — roadmap stage v0.3 «мобільні платформи і синхронізація».**
@@ -17,6 +18,7 @@
 - **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes-0.3.4-1.x86_64.rpm)
 
 [**Усі файли релізу v0.3.4 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.4)
+<!-- x-release-please-end -->
 
 > Збірки поки не підписані/не нотаризовані, тому Windows, macOS або Linux можуть показувати стандартне попередження безпеки.
 

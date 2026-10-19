@@ -204,8 +204,17 @@ jobs:
 
           if len(set(versions.values())) != 1:
               raise SystemExit(f"Release version mismatch: {versions}")
+          version = next(iter(versions.values()))
 
-          print("Release versions are consistent:", next(iter(versions.values())))
+          # Download links in every README must point at this release.
+          import re
+          readmes = [Path("README.md"), *sorted(Path("docs/readme").glob("README.*.md"))]
+          for readme in readmes:
+              found = set(re.findall(r"download/v(\d+\.\d+\.\d+)/", readme.read_text(encoding="utf-8")))
+              if found != {version}:
+                  raise SystemExit(f"{readme}: download links {sorted(found)} do not match {version}")
+
+          print("Release versions are consistent:", version)
 
   pr-title:
     name: Conventional PR title

@@ -2,6 +2,7 @@
 
 [🇺🇦 Українська](../../README.md) · **🇬🇧 English** · [🇫🇷 Français](README.fr.md) · [🇩🇪 Deutsch](README.de.md) · [🇪🇸 Español](README.es.md) · [🇰🇷 한국어](README.ko.md) · [🇯🇵 日本語](README.ja.md)
 
+<!-- x-release-please-start-version -->
 > **Release checkpoint: MD Notes v0.3.4**
 >
 > **Development status: ACTIVE — roadmap stage v0.3 “mobile platforms and synchronization”.**
@@ -15,6 +16,7 @@
 - **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes-0.3.4-1.x86_64.rpm)
 
 [**All v0.3.4 release files →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.4)
+<!-- x-release-please-end -->
 
 > Builds are currently unsigned/not notarized, so your operating system may show a standard security warning.
 
