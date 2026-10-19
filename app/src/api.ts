@@ -51,6 +51,22 @@ export interface CreatedEncryptedVault {
 /** Error text of `openVault` when the vault is encrypted and this device has no key. */
 export const KEY_MISSING = "KEY_MISSING";
 
+export type GitRelation = "upToDate" | "fastForward" | "localAhead" | "diverged" | "unrelated";
+
+export interface GitStatus {
+  isRepo: boolean;
+  branch: string | null;
+  remoteUrl: string | null;
+  hasChanges: boolean;
+  relation: GitRelation | null;
+}
+
+export interface GitPullResult {
+  relation: GitRelation;
+  worktreeClean: boolean;
+  applied: boolean;
+}
+
 export interface StandaloneMarkdown {
   path: string;
   directory: string;
@@ -184,6 +200,19 @@ export const api = {
   /** Pushes the current branch (system Git, desktop only); resolves to `"pushed"` or `"upToDate"`. */
   gitPush: (remoteName: string | null = null) =>
     invoke<"pushed" | "upToDate">("git_push_with_stored_credentials", { remoteName }),
+  gitStatus: (remoteName: string | null = null) => invoke<GitStatus>("git_status_cmd", { remoteName }),
+  gitInit: () => invoke<void>("git_init_repo"),
+  gitSetRemote: (url: string, remoteName: string | null = null) =>
+    invoke<void>("git_set_remote_url", { remoteName, url }),
+  gitCommit: (message: string) => invoke<string | null>("git_commit_all", { message }),
+  gitFetch: (remoteName: string | null = null) => invoke<void>("git_fetch_with_stored_credentials", { remoteName }),
+  gitPull: (remoteName: string | null = null) =>
+    invoke<GitPullResult>("git_pull_with_stored_credentials", { remoteName }),
+  saveGitCredentials: (username: string, token: string) =>
+    invoke<void>("save_git_credentials", { username, token }),
+  hasGitCredentials: () => invoke<boolean>("has_git_credentials"),
+  clearGitCredentials: () => invoke<void>("clear_git_credentials"),
+  pushSafety: () => invoke<{ path: string; reason: string }[]>("push_safety"),
   getTree: () => invoke<TreeEntry[]>("get_tree"),
   readNote: (path: string) => invoke<Note>("read_note", { path }),
   parseNoteContent: (path: string, content: string) => invoke<Note>("parse_note_content", { path, content }),

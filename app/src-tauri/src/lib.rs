@@ -17,6 +17,7 @@ use serde_json::Value;
 use tauri::{AppHandle, Emitter, Manager, State};
 
 mod encryption;
+mod git;
 mod mobile;
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 mod watch;
@@ -675,6 +676,11 @@ pub fn run() {
             clear_git_credentials,
             git_fetch_with_stored_credentials,
             git_push_with_stored_credentials,
+            git::git_status_cmd,
+            git::git_init_repo,
+            git::git_set_remote_url,
+            git::git_commit_all,
+            git::git_pull_with_stored_credentials,
             get_tree,
             read_note,
             parse_note_content,
