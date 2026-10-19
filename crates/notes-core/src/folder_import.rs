@@ -128,7 +128,11 @@ mod tests {
         fs::create_dir_all(src.path().join("Справи")).unwrap();
         fs::create_dir_all(src.path().join(".mdnotes")).unwrap();
         fs::create_dir_all(src.path().join(".hidden")).unwrap();
-        fs::write(src.path().join("Головна.md"), "# Головна\n[[Справи/Одна]]\n").unwrap();
+        fs::write(
+            src.path().join("Головна.md"),
+            "# Головна\n[[Справи/Одна]]\n",
+        )
+        .unwrap();
         fs::write(src.path().join("Справи/Одна.md"), "# Одна\n").unwrap();
         fs::write(src.path().join("pic.png"), [1u8, 2, 3]).unwrap();
         fs::write(src.path().join(".secret"), "no").unwrap();

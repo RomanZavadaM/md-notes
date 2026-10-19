@@ -442,7 +442,10 @@ fn git_fetch_with_stored_credentials(
 /// Imports a plain folder into the open vault (encrypted on the way in when
 /// the vault is encrypted). Existing files are never overwritten.
 #[tauri::command]
-fn import_folder(source: String, state: State<'_, AppState>) -> CmdResult<notes_core::ImportReport> {
+fn import_folder(
+    source: String,
+    state: State<'_, AppState>,
+) -> CmdResult<notes_core::ImportReport> {
     with_session(&state, |s| s.vault.import_folder(Path::new(&source)))
 }
 

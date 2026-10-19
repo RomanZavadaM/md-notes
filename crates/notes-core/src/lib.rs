@@ -35,6 +35,7 @@ pub use attachments::AttachmentInfo;
 #[cfg(feature = "encrypted-vault")]
 pub use encrypted::{EncryptedProvider, NameLayout, ENCRYPTED_SUFFIX};
 pub use error::{Error, Result};
+pub use folder_import::ImportReport;
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub use git_manage::{git_init, git_set_remote, git_status, tracking_reference, GitStatus};
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
@@ -45,7 +46,6 @@ pub use git_sync::{
     plan_git_pull, plan_git_pull_preflight, validate_git_remote, GitHttpsCredentials,
     GitPullPreflight, GitPullRelation, GitRepositoryInfo,
 };
-pub use folder_import::ImportReport;
 pub use graph::{knowledge_graph, GraphEdge, GraphNode, KnowledgeGraph};
 pub use index::{Backlink, Index, NoteSummary, SearchHit, SyncStats, TagCount, UnresolvedLink};
 pub use markdown::WikiLink;
