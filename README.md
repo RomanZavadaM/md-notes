@@ -4,19 +4,19 @@
 
 [![CI](https://github.com/RomanZavadaM/md-notes/actions/workflows/ci.yml/badge.svg)](https://github.com/RomanZavadaM/md-notes/actions/workflows/ci.yml)
 
-> **Release checkpoint: MD Notes v0.3.3**
+> **Release checkpoint: MD Notes v0.3.4**
 >
 > **Статус розвитку: ACTIVE — roadmap stage v0.3 «мобільні платформи і синхронізація».**
 
-## Завантажити MD Notes v0.3.3
+## Завантажити MD Notes v0.3.4
 
 **Швидке встановлення:**
 
-- **Windows 64-bit:** [завантажити інсталятор .exe](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD-Notes-0.3.3-Windows-x64-portable.zip)
-- **macOS Universal:** [завантажити DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes-0.3.3-1.x86_64.rpm)
+- **Windows 64-bit:** [завантажити інсталятор .exe](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD-Notes-0.3.4-Windows-x64-portable.zip)
+- **macOS Universal:** [завантажити DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes-0.3.4-1.x86_64.rpm)
 
-[**Усі файли релізу v0.3.3 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.3)
+[**Усі файли релізу v0.3.4 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.4)
 
 > Збірки поки не підписані/не нотаризовані, тому Windows, macOS або Linux можуть показувати стандартне попередження безпеки.
 
@@ -42,7 +42,7 @@
 - global/local knowledge graph;
 - UI сімома мовами, світла/темна/системна теми.
 
-### v0.3 — інтегрований стан до checkpoint v0.3.3
+### v0.3 — інтегрований стан до checkpoint v0.3.4
 
 - provider-neutral `StorageProvider` / `VaultStorage`;
 - mobile sandbox vault для Android/iOS;
@@ -74,7 +74,7 @@
 - **macOS** — `.dmg` / `.app.tar.gz`;
 - **Linux** — `.AppImage`, `.deb` або `.rpm`.
 
-Checkpoint **v0.3.3** включає standalone Markdown і безпечний Git fast-forward pipeline. Release builds поки не підписані/не нотаризовані, якщо сторінка конкретного релізу прямо не вказує інше.
+Checkpoint **v0.3.4** включає standalone Markdown і безпечний Git fast-forward pipeline. Release builds поки не підписані/не нотаризовані, якщо сторінка конкретного релізу прямо не вказує інше.
 
 ## Для розробника
 

@@ -2,19 +2,19 @@
 
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · **🇩🇪 Deutsch** · [🇪🇸 Español](README.es.md) · [🇰🇷 한국어](README.ko.md) · [🇯🇵 日本語](README.ja.md)
 
-> **Release-Checkpoint: MD Notes v0.3.3**
+> **Release-Checkpoint: MD Notes v0.3.4**
 >
 > **Entwicklungsstatus: ACTIVE — Roadmap-Stufe v0.3 „mobile Plattformen und Synchronisierung“.**
 
-## MD Notes v0.3.3 herunterladen
+## MD Notes v0.3.4 herunterladen
 
 **Schnellinstallation:**
 
-- **Windows 64-bit:** [.exe-Installer](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_x64_en-US.msi) · [Portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD-Notes-0.3.3-Windows-x64-portable.zip)
-- **macOS Universal:** [DMG herunterladen](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes_0.3.3_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.3/MD.Notes-0.3.3-1.x86_64.rpm)
+- **Windows 64-bit:** [.exe-Installer](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_x64_en-US.msi) · [Portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD-Notes-0.3.4-Windows-x64-portable.zip)
+- **macOS Universal:** [DMG herunterladen](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes_0.3.4_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.4/MD.Notes-0.3.4-1.x86_64.rpm)
 
-[**Alle Dateien von v0.3.3 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.3)
+[**Alle Dateien von v0.3.4 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.4)
 
 > Die Builds sind derzeit nicht signiert/notarisiert; das Betriebssystem kann eine normale Sicherheitswarnung anzeigen.
 
@@ -40,7 +40,7 @@ Plattformen: **Windows, macOS, Linux**. Android und iOS sind aktive v0.3-Ziele; 
 - globaler/lokaler Wissensgraph;
 - Oberfläche in sieben Sprachen und Hell/Dunkel/System-Theme.
 
-### v0.3 — integriert bis zum Checkpoint v0.3.3
+### v0.3 — integriert bis zum Checkpoint v0.3.4
 
 - provider-neutrales `StorageProvider` / `VaultStorage`;
 - Mobile-Sandbox-Vault für Android/iOS;
@@ -68,7 +68,7 @@ Vollständiger Plan: [Roadmap](../roadmap.md) (Ukrainisch, maßgeblich).
 
 Pakete gibt es auf der [Release-Seite](https://github.com/RomanZavadaM/md-notes/releases): Windows (`.exe`, `.msi`, portable ZIP), macOS (`.dmg`, `.app.tar.gz`) und Linux (`.AppImage`, `.deb`, `.rpm`).
 
-Der Checkpoint **v0.3.3** enthält Standalone-Markdown und die sichere Git-Fast-Forward-Pipeline. Builds bleiben unsigniert/nicht notarisiert, sofern ein konkretes Release nichts anderes angibt.
+Der Checkpoint **v0.3.4** enthält Standalone-Markdown und die sichere Git-Fast-Forward-Pipeline. Builds bleiben unsigniert/nicht notarisiert, sofern ein konkretes Release nichts anderes angibt.
 
 Vollständige Anleitung: **[Benutzerhandbuch](../user-guide/USER_GUIDE.de.md)**.
 
