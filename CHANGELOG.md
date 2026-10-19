@@ -34,6 +34,22 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.3](https://github.com/RomanZavadaM/md-notes/compare/v0.3.2...v0.3.3) (2026-10-19)
+
+
+### Нові можливості
+
+* **core,app:** git push через системний git із запобіжником ([7334537](https://github.com/RomanZavadaM/md-notes/commit/73345373c14e0d02cf238f4ada601727e4b74756))
+* **core,app:** git push через системний git із запобіжником для зашифрованих сховищ ([f9516d9](https://github.com/RomanZavadaM/md-notes/commit/f9516d980f3487afa1ac66e8137e7597ab53626a))
+* **core:** запобіжник push для зашифрованого сховища ([c68f7e2](https://github.com/RomanZavadaM/md-notes/commit/c68f7e218bb0be56bfbf870edb6cd66da8865369))
+* **core:** запобіжник push для зашифрованого сховища (ADR-0007) ([8bb2541](https://github.com/RomanZavadaM/md-notes/commit/8bb2541760c3ea62929f1f73f381f75d64966090))
+
+
+### Виправлення
+
+* **app:** кнопка повернення до сховища з окремого Markdown-файлу ([c8dad84](https://github.com/RomanZavadaM/md-notes/commit/c8dad8441310e4fca5be350ca2c8ebc21c1d2d71))
+* **app:** повернення до сховища з окремого Markdown-файлу ([db40526](https://github.com/RomanZavadaM/md-notes/commit/db4052654a5e965f5886fd4ca6c449008cd71404))
+
 ## [0.3.2](https://github.com/RomanZavadaM/md-notes/compare/v0.3.1...v0.3.2) (2026-10-19)
 
 
