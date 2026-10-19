@@ -8,6 +8,8 @@ export interface OverlayView {
   neighbours: Set<string>;
   search: string;
   hidden: Set<string>;
+  /** Provenance trace: nodes and edge keys kept bright; `null` when off. */
+  trace: { nodes: Set<string>; edges: Set<string> } | null;
 }
 
 /** A line under the pointer (graph edge key and pointer position in the container). */
@@ -102,10 +104,22 @@ export function attachOverlay(
       }
       const incident = focus !== null && (source === focus || target === focus);
       lines.save();
-      lines.globalAlpha = focus === null ? (searching ? 0.4 : 0.9) : incident ? 1 : 0.07;
+      const traced = view.trace !== null && view.trace.edges.has(edge);
+      lines.globalAlpha =
+        view.trace !== null
+          ? traced
+            ? 1
+            : 0.05
+          : focus === null
+            ? searching
+              ? 0.4
+              : 0.9
+            : incident
+              ? 1
+              : 0.07;
       lines.strokeStyle = style.color;
       lines.fillStyle = style.color;
-      lines.lineWidth = style.width + (incident ? 1 : 0);
+      lines.lineWidth = style.width + (incident || traced ? 1.2 : 0);
       lines.setLineDash(style.dash);
       lines.beginPath();
       lines.moveTo(from.x, from.y);
@@ -140,7 +154,8 @@ export function attachOverlay(
       const radius = renderer.scaleSize(Number(attributes.size)) + 1;
       const matches = searching && String(attributes.fullTitle).toLowerCase().includes(view.search);
       const related = focus !== null && (node === focus || view.neighbours.has(node));
-      const dimmed = (focus !== null && !related) || (searching && !matches);
+      const dimmed =
+        (focus !== null && !related) || (searching && !matches) || (view.trace !== null && !view.trace.nodes.has(node));
       const evidence = evidenceStyle(attributes.evidence as number | undefined);
       rings.save();
       rings.globalAlpha = dimmed ? 0.25 : 1;
