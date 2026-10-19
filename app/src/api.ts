@@ -216,6 +216,8 @@ export const api = {
   /** Pushes the current branch (system Git, desktop only); resolves to `"pushed"` or `"upToDate"`. */
   gitPush: (remoteName: string | null = null) =>
     invoke<"pushed" | "upToDate">("git_push_with_stored_credentials", { remoteName }),
+  /** Closes the application (desktop). */
+  quitApp: () => invoke<void>("quit_app"),
   importFolder: (source: string) => invoke<ImportReport>("import_folder", { source }),
   gitStatus: (remoteName: string | null = null) => invoke<GitStatus>("git_status_cmd", { remoteName }),
   gitInit: () => invoke<void>("git_init_repo"),

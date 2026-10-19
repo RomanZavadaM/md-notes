@@ -18,8 +18,10 @@ import {
 } from "./api";
 import { Editor } from "./components/Editor";
 import { ImportKeyDialog } from "./components/EncryptionDialogs";
+import { AppMenu } from "./components/AppMenu";
 import { GitPanel } from "./components/GitPanel";
 import { IMPORTER_STRINGS } from "./i18n/importer";
+import { MENU_STRINGS } from "./i18n/menu";
 import { FileTree } from "./components/FileTree";
 import { LinksPanel } from "./components/LinksPanel";
 import { NameDialog } from "./components/NameDialog";
@@ -189,6 +191,28 @@ export default function App() {
   useEffect(() => {
     openVaultAtRef.current = openVaultAt;
   }, [openVaultAt]);
+
+  const isDesktop = platform === "windows" || platform === "linux" || platform === "macos";
+  const quitApp = useCallback(async () => {
+    try {
+      await save();
+    } catch {
+      // Leave even if the last save failed; autosave already ran.
+    }
+    await api.quitApp();
+  }, [save]);
+
+  useEffect(() => {
+    if (!isDesktop) return;
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && !event.shiftKey && !event.altKey && event.key.toLowerCase() === "q") {
+        event.preventDefault();
+        void quitApp();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isDesktop, quitApp]);
 
   useEffect(() => {
     void api.runtimePlatform().then(setPlatform).catch(() => setPlatform("unknown"));
@@ -482,6 +506,21 @@ export default function App() {
     }
   };
 
+  const fileMenu = (
+    <AppMenu
+      label={MENU_STRINGS[language].file}
+      items={[
+        { label: t.otherVault, onSelect: () => void pickVault() },
+        { label: t.openMarkdownFile, onSelect: () => void pickMarkdownFile() },
+        ...(vault ? [{ label: IMPORTER_STRINGS[language].button, onSelect: () => void importFolder() }] : []),
+        ...(vault && isDesktop ? [{ label: "Git…", onSelect: () => setGitOpen(true) }] : []),
+        ...(isDesktop ? [{ label: t.makeMarkdownDefault, onSelect: () => void configureMarkdownAssociation() }] : []),
+        { label: t.about, onSelect: () => setAboutOpen(true), separatorBefore: true },
+        ...(isDesktop ? [{ label: `${MENU_STRINGS[language].quit} (Ctrl+Q)`, onSelect: () => void quitApp(), separatorBefore: true }] : []),
+      ]}
+    />
+  );
+
   if (!vault && !standalone) {
     return (
       <div className="welcome">
@@ -531,6 +570,7 @@ export default function App() {
     return (
       <div className="app">
         <header className="toolbar">
+          {fileMenu}
           {(lastVaultRef.current ?? getRememberedVault()) && (
             <button
               type="button"
@@ -621,6 +661,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="toolbar">
+        {fileMenu}
         <button type="button" className="icon" title={t.sidebarToggle} onClick={() => setSidebarOpen((v) => !v)}>
           ☰
         </button>
