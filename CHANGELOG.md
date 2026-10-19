@@ -34,6 +34,14 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.6](https://github.com/RomanZavadaM/md-notes/compare/v0.3.5...v0.3.6) (2026-10-19)
+
+
+### Нові можливості
+
+* **core,app:** імпорт папки у відкрите сховище (шифрується дорогою в зашифрованому) ([47027fc](https://github.com/RomanZavadaM/md-notes/commit/47027fc0fa8c005854708a2665d9d7c4c3440660))
+* **core,app:** імпорт папки у сховище ([cd01cd6](https://github.com/RomanZavadaM/md-notes/commit/cd01cd6ca30398ae83dbdc5e4763b0604fb3448e))
+
 ## [0.3.5](https://github.com/RomanZavadaM/md-notes/compare/v0.3.4...v0.3.5) (2026-10-19)
 
 
