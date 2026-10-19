@@ -4,7 +4,7 @@ import Sigma from "sigma";
 import { api, type KnowledgeGraph } from "../api";
 import { ForceLayout } from "../graph/layout";
 import { attachOverlay, type EdgeHit } from "../graph/overlay";
-import { gradeDigit, isDarkBackground, nodeSize, typeColor } from "../graph/palette";
+import { chipColors, gradeDigit, isDarkBackground, nodeSize, typeColor } from "../graph/palette";
 import { useI18n } from "../i18n";
 import { GRAPH_STRINGS } from "../i18n/graph";
 import { RelationCard, type RelationCardData, type RelationItem } from "./RelationCard";
@@ -30,6 +30,62 @@ interface ViewState {
   neighbours: Set<string>;
   search: string;
   hidden: Set<string>;
+  trace: { nodes: Set<string>; edges: Set<string> } | null;
+}
+
+interface TraceNode {
+  path: string;
+  title: string;
+  type: string;
+  grade?: string;
+  kinds: string;
+  evidence?: string;
+  repeated: boolean;
+  children: TraceNode[];
+}
+
+/** Upstream chain of `root`: who owns it, who owns them, plus the materials around the chain. */
+function buildTrace(graph: Graph, root: string) {
+  const nodes = new Set<string>([root]);
+  const edges = new Set<string>();
+  const materials = new Set<string>();
+  const expanded = new Set<string>();
+  const visit = (node: string, depth: number): TraceNode => {
+    const owners: TraceNode[] = [];
+    const repeated = expanded.has(node);
+    expanded.add(node);
+    if (!repeated && depth < 8) {
+      graph.forEachInEdge(node, (edge, attributes, source) => {
+        if (attributes.hasItems !== true) return;
+        edges.add(edge);
+        nodes.add(source);
+        const items = attributes.items as RelationItem[];
+        const child = visit(source, depth + 1);
+        child.grade = attributes.grade as string | undefined;
+        child.kinds = items.map((item) => item.kind).filter(Boolean).join('; ');
+        child.evidence = items.find((item) => item.evidence)?.evidence;
+        owners.push(child);
+      });
+    }
+    graph.forEachEdge(node, (edge, attributes, source, target) => {
+      const other = source === node ? target : source;
+      if (graph.getNodeAttribute(other, 'typeKey') === 'material' && attributes.hasItems !== true) {
+        materials.add(other);
+        edges.add(edge);
+      }
+    });
+    return {
+      path: node,
+      title: String(graph.getNodeAttribute(node, 'fullTitle')),
+      type: String(graph.getNodeAttribute(node, 'typeKey')),
+      kinds: '',
+      repeated,
+      children: owners,
+    };
+  };
+  const tree = visit(root, 0);
+  materials.forEach((material) => nodes.add(material));
+  return { tree, nodes, edges, materials: [...materials] };
 }
 
 export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Props) {
@@ -37,7 +93,9 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
   const strings = GRAPH_STRINGS[language];
   const containerRef = useRef<HTMLDivElement | null>(null);
   const rendererRef = useRef<Sigma | null>(null);
-  const viewRef = useRef<ViewState>({ hovered: null, neighbours: new Set(), search: "", hidden: new Set() });
+  const viewRef = useRef<ViewState>({ hovered: null, neighbours: new Set(), search: "", hidden: new Set(), trace: null });
+  const graphRef = useRef<Graph | null>(null);
+  const traceModeRef = useRef(false);
   const [snapshot, setSnapshot] = useState<KnowledgeGraph | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +104,9 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
   const [hover, setHover] = useState<Hover | null>(null);
   const [edgeCard, setEdgeCard] = useState<RelationCardData | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const [traceMode, setTraceMode] = useState(false);
+  const [traceRoot, setTraceRoot] = useState<string | null>(null);
+  const [traceResult, setTraceResult] = useState<ReturnType<typeof buildTrace> | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -214,7 +275,16 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
         const matches = searching && String(data.fullTitle).toLowerCase().includes(view.search);
         const focus = view.hovered;
         const related = focus !== null && (node === focus || view.neighbours.has(node));
-        if (focus !== null && !related) {
+        if (view.trace !== null) {
+          if (view.trace.nodes.has(node)) {
+            result.zIndex = 2;
+            result.forceLabel = true;
+          } else {
+            result.color = dimNode;
+            result.label = "";
+            result.zIndex = 0;
+          }
+        } else if (focus !== null && !related) {
           result.color = dimNode;
           result.label = "";
           result.zIndex = 0;
@@ -235,6 +305,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       edgeReducer: (_edge, data) => ({ ...data, hidden: true }),
     });
     rendererRef.current = renderer;
+    graphRef.current = graph;
     const detachOverlay = attachOverlay(container, renderer, graph, view, dark, (hit: EdgeHit | null) => {
       if (!hit || !graph.hasEdge(hit.edge)) {
         setEdgeCard(null);
@@ -311,7 +382,10 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       dragged = null;
     });
     renderer.on("clickNode", ({ node }) => {
-      if (!moved) onOpen(node);
+      if (!moved) {
+        if (traceModeRef.current) setTraceRoot(node);
+        else onOpen(node);
+      }
       moved = false;
     });
 
@@ -320,6 +394,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       detachOverlay();
       renderer.kill();
       rendererRef.current = null;
+      graphRef.current = null;
     };
   }, [snapshot, mode, notePath, onOpen]);
 
@@ -329,6 +404,21 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
     viewRef.current.hidden = hiddenTypes;
     rendererRef.current?.refresh();
   }, [search, hiddenTypes, snapshot]);
+
+  // Provenance trace: recompute when the root changes, keep the graph repainted.
+  useEffect(() => {
+    traceModeRef.current = traceMode;
+    const graph = graphRef.current;
+    if (!traceMode || traceRoot === null || !graph || !graph.hasNode(traceRoot)) {
+      viewRef.current.trace = null;
+      setTraceResult(null);
+    } else {
+      const result = buildTrace(graph, traceRoot);
+      viewRef.current.trace = { nodes: result.nodes, edges: result.edges };
+      setTraceResult(result);
+    }
+    rendererRef.current?.refresh();
+  }, [traceMode, traceRoot, snapshot]);
 
   const toggleType = (type: string) => {
     setHiddenTypes((current) => {
@@ -369,6 +459,18 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
             placeholder={strings.searchPlaceholder}
             onChange={(event) => setSearch(event.target.value)}
           />
+          <button
+            type="button"
+            className={`knowledge-graph-trace-toggle${traceMode ? " on" : ""}`}
+            aria-pressed={traceMode}
+            onClick={() => {
+              setTraceMode((value) => !value);
+              setTraceRoot(null);
+            }}
+          >
+            {strings.trace}
+          </button>
+          {traceMode && traceRoot === null && <small className="knowledge-graph-hint">{strings.traceHint}</small>}
           <ul className="knowledge-graph-legend" aria-label={strings.typesHeading}>
             {legend.map(([type, count]) => (
               <li key={type || "_none"}>
@@ -384,6 +486,37 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
               </li>
             ))}
           </ul>
+        </div>
+      )}
+      {traceMode && traceResult && (
+        <div className="knowledge-graph-trace">
+          <header>
+            <strong>
+              {strings.traceFor} {traceResult.tree.title}
+            </strong>
+            <button type="button" onClick={() => setTraceRoot(null)}>
+              {strings.traceClear}
+            </button>
+          </header>
+          {traceResult.tree.children.length === 0 ? (
+            <small>{strings.traceNone}</small>
+          ) : (
+            <TraceList nodes={traceResult.tree.children} onOpen={onOpen} />
+          )}
+          {traceResult.materials.length > 0 && (
+            <div>
+              <strong>{strings.traceMaterials}</strong>
+              <ul>
+                {traceResult.materials.map((path) => (
+                  <li key={path}>
+                    <button type="button" className="link" onClick={() => onOpen(path)}>
+                      {String(graphRef.current?.getNodeAttribute(path, "fullTitle") ?? path)}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
       {loading && <p className="panel-note">{strings.loading}</p>}
@@ -404,5 +537,31 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       </div>
       {hasGraph && <p className="knowledge-graph-hint">{strings.openHint}</p>}
     </section>
+  );
+}
+
+function TraceList({ nodes, onOpen }: { nodes: TraceNode[]; onOpen: (path: string) => void }) {
+  return (
+    <ul>
+      {nodes.map((node) => {
+        const colors = chipColors(node.grade);
+        return (
+          <li key={node.path}>
+            <div className="trace-line">
+              <span className="relation-chip" style={{ background: colors.background, color: colors.color }}>
+                {node.grade ?? "—"}
+              </span>
+              <button type="button" className="link" onClick={() => onOpen(node.path)}>
+                {node.title}
+              </button>
+              {node.kinds && <small>{node.kinds}</small>}
+              {node.repeated && <small>↺</small>}
+            </div>
+            {node.evidence && <small>{node.evidence}</small>}
+            {node.children.length > 0 && <TraceList nodes={node.children} onOpen={onOpen} />}
+          </li>
+        );
+      })}
+    </ul>
   );
 }

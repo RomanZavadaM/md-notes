@@ -17,6 +17,12 @@ export interface GraphStrings {
   expand: string;
   collapse: string;
   connections: (count: number) => string;
+  trace: string;
+  traceHint: string;
+  traceNone: string;
+  traceMaterials: string;
+  traceClear: string;
+  traceFor: string;
 }
 
 export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
@@ -37,6 +43,12 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     expand: "Розгорнути",
     collapse: "Згорнути",
     connections: (count) => `зв’язків: ${count}`,
+    trace: "Звідки це прийшло",
+    traceHint: "Увімкніть режим і клікніть вузол: підсвітяться його власники, ланцюжок вище й матеріали.",
+    traceNone: "Власників у даних немає.",
+    traceMaterials: "Матеріали",
+    traceClear: "Скинути",
+    traceFor: "Ланцюжок для",
   },
   en: {
     linksMode: "Links",
@@ -55,6 +67,12 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     expand: "Expand",
     collapse: "Collapse",
     connections: (count) => `${count} links`,
+    trace: "Where it comes from",
+    traceHint: "Turn the mode on and click a node: its owners, the chain above and the materials light up.",
+    traceNone: "No owners in the data.",
+    traceMaterials: "Materials",
+    traceClear: "Reset",
+    traceFor: "Chain for",
   },
   fr: {
     linksMode: "Liens",
@@ -73,6 +91,12 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     expand: "Agrandir",
     collapse: "Réduire",
     connections: (count) => `${count} liens`,
+    trace: "D'où cela vient",
+    traceHint: "Activez le mode et cliquez sur un nœud : ses propriétaires, la chaîne au-dessus et les documents s'illuminent.",
+    traceNone: "Aucun propriétaire dans les données.",
+    traceMaterials: "Documents",
+    traceClear: "Réinitialiser",
+    traceFor: "Chaîne pour",
   },
   de: {
     linksMode: "Verknüpfungen",
@@ -91,6 +115,12 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     expand: "Vergrößern",
     collapse: "Verkleinern",
     connections: (count) => `${count} Verknüpfungen`,
+    trace: "Woher das kommt",
+    traceHint: "Modus einschalten und einen Knoten anklicken: Eigentümer, die Kette darüber und Materialien leuchten auf.",
+    traceNone: "Keine Eigentümer in den Daten.",
+    traceMaterials: "Materialien",
+    traceClear: "Zurücksetzen",
+    traceFor: "Kette für",
   },
   es: {
     linksMode: "Enlaces",
@@ -109,6 +139,12 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     expand: "Ampliar",
     collapse: "Reducir",
     connections: (count) => `${count} enlaces`,
+    trace: "De dónde viene",
+    traceHint: "Active el modo y haga clic en un nodo: se iluminan sus propietarios, la cadena superior y los materiales.",
+    traceNone: "No hay propietarios en los datos.",
+    traceMaterials: "Materiales",
+    traceClear: "Restablecer",
+    traceFor: "Cadena de",
   },
   ko: {
     linksMode: "링크",
@@ -127,6 +163,12 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     expand: "확대",
     collapse: "축소",
     connections: (count) => `연결 ${count}개`,
+    trace: "출처 추적",
+    traceHint: "모드를 켜고 노드를 클릭하면 소유자, 상위 사슬, 자료가 강조됩니다.",
+    traceNone: "데이터에 소유자가 없습니다.",
+    traceMaterials: "자료",
+    traceClear: "초기화",
+    traceFor: "추적 대상:",
   },
   ja: {
     linksMode: "リンク",
@@ -145,5 +187,11 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     expand: "拡大",
     collapse: "縮小",
     connections: (count) => `リンク ${count} 件`,
+    trace: "出どころを辿る",
+    traceHint: "モードをオンにしてノードをクリックすると、所有者・上位の連鎖・資料が強調表示されます。",
+    traceNone: "データに所有者はいません。",
+    traceMaterials: "資料",
+    traceClear: "リセット",
+    traceFor: "連鎖の対象:",
   },
 };
