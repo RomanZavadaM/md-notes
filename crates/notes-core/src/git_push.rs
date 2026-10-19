@@ -140,7 +140,7 @@ fn current_branch(root: &Path) -> Result<String> {
 }
 
 /// Runs a read-only Git command and returns its trimmed-by-caller stdout.
-fn capture(
+pub(crate) fn capture(
     root: &Path,
     args: &[&str],
     credentials: Option<&GitHttpsCredentials>,
@@ -156,7 +156,11 @@ fn capture(
     Ok(String::from_utf8_lossy(&output.stdout).into_owned())
 }
 
-fn run(root: &Path, args: &[&str], credentials: Option<&GitHttpsCredentials>) -> Result<Output> {
+pub(crate) fn run(
+    root: &Path,
+    args: &[&str],
+    credentials: Option<&GitHttpsCredentials>,
+) -> Result<Output> {
     let mut command = Command::new("git");
     command.arg("-C").arg(root).args(args);
     command.env("GIT_TERMINAL_PROMPT", "0");

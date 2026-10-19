@@ -18,6 +18,7 @@ import {
 } from "./api";
 import { Editor } from "./components/Editor";
 import { ImportKeyDialog } from "./components/EncryptionDialogs";
+import { GitPanel } from "./components/GitPanel";
 import { FileTree } from "./components/FileTree";
 import { LinksPanel } from "./components/LinksPanel";
 import { NameDialog } from "./components/NameDialog";
@@ -48,6 +49,7 @@ export default function App() {
   const { t, language, setLanguage } = useI18n();
   const [aboutOpen, setAboutOpen] = useState(false);
   const [encrypted, setEncrypted] = useState(false);
+  const [gitOpen, setGitOpen] = useState(false);
   const [keyPrompt, setKeyPrompt] = useState<string | null>(null);
   // Last vault that was open; offered as a way back from a standalone Markdown file.
   const lastVaultRef = useRef<string | null>(null);
@@ -614,6 +616,11 @@ export default function App() {
             🔒 {ENCRYPTION_STRINGS[language].badge}
           </span>
         )}
+        {(platform === "windows" || platform === "linux" || platform === "macos") && (
+          <button type="button" className="git-button" title="Git" onClick={() => setGitOpen(true)}>
+            Git
+          </button>
+        )}
         <button type="button" className="search-button" title={t.goToNote} onClick={() => setSwitcherOpen(true)}>
           <span className="note-title">
             {note ? note.title : t.goToNotePlaceholder}
@@ -839,6 +846,17 @@ export default function App() {
       )}
 
       {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
+
+      {gitOpen && (
+        <GitPanel
+          encrypted={encrypted}
+          onClose={() => setGitOpen(false)}
+          onVaultChanged={() => {
+            void api.getTree().then(setTree);
+            bump();
+          }}
+        />
+      )}
 
       {keyPrompt && (
         <ImportKeyDialog
