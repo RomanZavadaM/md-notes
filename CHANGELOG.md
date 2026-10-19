@@ -34,6 +34,14 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.5](https://github.com/RomanZavadaM/md-notes/compare/v0.3.4...v0.3.5) (2026-10-19)
+
+
+### Нові можливості
+
+* **app:** панель Git - статус, доступ, fetch, pull, коміт, push (7 мов) ([d9461e4](https://github.com/RomanZavadaM/md-notes/commit/d9461e4488e08b59690e8474ce3180d0676b1536))
+* **app:** панель Git у застосунку ([73b7678](https://github.com/RomanZavadaM/md-notes/commit/73b7678830da82c85cd3770535f77f3bd9e5c504))
+
 ## [0.3.4](https://github.com/RomanZavadaM/md-notes/compare/v0.3.3...v0.3.4) (2026-10-19)
 
 
