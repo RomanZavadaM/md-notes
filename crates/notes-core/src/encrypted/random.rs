@@ -136,8 +136,7 @@ impl EncryptedProvider {
                 Err(err) => return Err(err),
             };
             for entry in entries {
-                if entry.kind != StorageEntryKind::File || !entry.path.ends_with(ENCRYPTED_SUFFIX)
-                {
+                if entry.kind != StorageEntryKind::File || !entry.path.ends_with(ENCRYPTED_SUFFIX) {
                     continue;
                 }
                 seen.insert(entry.path.clone());

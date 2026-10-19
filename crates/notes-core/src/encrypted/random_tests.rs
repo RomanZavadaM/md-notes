@@ -268,7 +268,13 @@ fn vault_features_work_with_random_names() {
     assert_eq!(index.sync(&vault).unwrap().added, 2);
     assert_eq!(index.search("uniqueword", 10).unwrap().len(), 1);
 
-    rename_with_links(&vault, &mut index, "Проєкти/Target.md", "Проєкти/Renamed.md").unwrap();
+    rename_with_links(
+        &vault,
+        &mut index,
+        "Проєкти/Target.md",
+        "Проєкти/Renamed.md",
+    )
+    .unwrap();
     assert!(vault
         .read_note("a.md")
         .unwrap()
