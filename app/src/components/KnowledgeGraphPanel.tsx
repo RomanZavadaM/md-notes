@@ -3,7 +3,8 @@ import Graph from "graphology";
 import Sigma from "sigma";
 import { api, type KnowledgeGraph } from "../api";
 import { ForceLayout } from "../graph/layout";
-import { isDarkBackground, nodeSize, typeColor } from "../graph/palette";
+import { attachOverlay } from "../graph/overlay";
+import { gradeDigit, isDarkBackground, nodeSize, typeColor } from "../graph/palette";
 import { useI18n } from "../i18n";
 import { GRAPH_STRINGS } from "../i18n/graph";
 import "./KnowledgeGraphPanel.css";
@@ -84,7 +85,6 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
     const dark = isDarkBackground();
     const labelColor = dark ? "#E5E7EB" : "#1D2430";
     const edgeColor = dark ? "#5B6475" : "#A3ABB9";
-    const edgeActive = dark ? "#8B9CFF" : "#4F46E5";
     const dimNode = dark ? "#2B313D" : "#DDE1E8";
 
     const graph = new Graph({ type: "directed", multi: false, allowSelfLoops: false });
@@ -95,18 +95,59 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       degree.set(node.path, 0);
     });
 
-    const seen = new Set<string>();
-    const pairs: Array<[number, number]> = [];
+    // One line per pair of notes: a typed relation (styled by grade) wins over
+    // a plain [[link]] between the same notes.
+    interface PairEdge {
+      source: string;
+      target: string;
+      grade?: string;
+      kinds: string[];
+      digit?: number;
+    }
+    const pairEdges = new Map<string, PairEdge>();
+    const pairKey = (a: number, b: number) => (a < b ? `${a}:${b}` : `${b}:${a}`);
+    const evidence = new Map<string, number>();
+    (snapshot.relations ?? []).forEach((relation) => {
+      const a = indexOf.get(relation.source);
+      const b = indexOf.get(relation.target);
+      if (a === undefined || b === undefined || a === b) return;
+      const key = pairKey(a, b);
+      const digit = gradeDigit(relation.grade);
+      const current = pairEdges.get(key);
+      if (!current) {
+        pairEdges.set(key, {
+          source: relation.source,
+          target: relation.target,
+          grade: relation.grade ?? undefined,
+          kinds: relation.kind ? [relation.kind] : [],
+          digit,
+        });
+      } else {
+        if (relation.kind && !current.kinds.includes(relation.kind)) current.kinds.push(relation.kind);
+        if (digit !== undefined && (current.digit === undefined || digit < current.digit)) {
+          current.digit = digit;
+          current.grade = relation.grade ?? undefined;
+        }
+      }
+      if (digit !== undefined) {
+        for (const path of [relation.source, relation.target]) {
+          const best = evidence.get(path);
+          if (best === undefined || digit < best) evidence.set(path, digit);
+        }
+      }
+    });
     snapshot.edges.forEach((edge) => {
       const a = indexOf.get(edge.source);
       const b = indexOf.get(edge.target);
       if (a === undefined || b === undefined || a === b) return;
-      const key = a < b ? `${a}:${b}` : `${b}:${a}`;
+      const key = pairKey(a, b);
+      if (!pairEdges.has(key)) pairEdges.set(key, { source: edge.source, target: edge.target, kinds: [] });
+    });
+    const pairs: Array<[number, number]> = [];
+    pairEdges.forEach((edge) => {
       degree.set(edge.source, (degree.get(edge.source) ?? 0) + 1);
       degree.set(edge.target, (degree.get(edge.target) ?? 0) + 1);
-      if (seen.has(key)) return;
-      seen.add(key);
-      pairs.push([a, b]);
+      pairs.push([indexOf.get(edge.source) ?? 0, indexOf.get(edge.target) ?? 0]);
     });
 
     const layout = new ForceLayout(snapshot.nodes.length, pairs);
@@ -123,12 +164,15 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
         typeKey: type,
         fullTitle: node.title,
         isFocus,
+        evidence: evidence.get(node.path),
       });
     });
-    snapshot.edges.forEach((edge, index) => {
-      if (graph.hasNode(edge.source) && graph.hasNode(edge.target) && edge.source !== edge.target) {
-        graph.addDirectedEdgeWithKey(`${edge.source}->${edge.target}#${index}`, edge.source, edge.target, { size: 1 });
-      }
+    pairEdges.forEach((edge, key) => {
+      graph.addDirectedEdgeWithKey(`pair:${key}`, edge.source, edge.target, {
+        size: 1,
+        grade: edge.grade,
+        kinds: edge.kinds.join("; "),
+      });
     });
 
     const view = viewRef.current;
@@ -171,29 +215,11 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
         }
         return result;
       },
-      edgeReducer: (edge, data) => {
-        const result = { ...data };
-        const [source, target] = graph.extremities(edge);
-        const hiddenEnd =
-          view.hidden.has(String(graph.getNodeAttribute(source, "typeKey"))) ||
-          view.hidden.has(String(graph.getNodeAttribute(target, "typeKey")));
-        if (hiddenEnd) {
-          result.hidden = true;
-          return result;
-        }
-        const focus = view.hovered;
-        if (focus !== null) {
-          if (source === focus || target === focus) {
-            result.color = edgeActive;
-            result.size = 2;
-          } else {
-            result.hidden = true;
-          }
-        }
-        return result;
-      },
+      // Lines are drawn by the overlay (dashes by grade); hide Sigma's own.
+      edgeReducer: (_edge, data) => ({ ...data, hidden: true }),
     });
     rendererRef.current = renderer;
+    const detachOverlay = attachOverlay(container, renderer, graph, view, dark);
 
     // Hover: highlight the node with its neighbours, show a small card.
     renderer.on("enterNode", ({ node }) => {
@@ -261,6 +287,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
 
     return () => {
       cancelAnimationFrame(frame);
+      detachOverlay();
       renderer.kill();
       rendererRef.current = null;
     };

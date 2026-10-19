@@ -46,7 +46,9 @@ pub use git_sync::{
     plan_git_pull, plan_git_pull_preflight, validate_git_remote, GitHttpsCredentials,
     GitPullPreflight, GitPullRelation, GitRepositoryInfo,
 };
-pub use graph::{knowledge_graph, GraphEdge, GraphNode, KnowledgeGraph};
+pub use graph::{
+    knowledge_graph, with_relations, GraphEdge, GraphNode, GraphRelation, KnowledgeGraph,
+};
 pub use index::{Backlink, Index, NoteSummary, SearchHit, SyncStats, TagCount, UnresolvedLink};
 pub use markdown::WikiLink;
 pub use note::Note;
