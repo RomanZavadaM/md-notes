@@ -34,6 +34,14 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.9](https://github.com/RomanZavadaM/md-notes/compare/v0.3.8...v0.3.9) (2026-10-19)
+
+
+### Нові можливості
+
+* **app:** меню «Файл» з пунктом «Вийти» (Ctrl+Q), 7 мов ([0c00377](https://github.com/RomanZavadaM/md-notes/commit/0c003770c3393f81efa3309b3fbd44424b88572e))
+* **app:** меню Файл з пунктом Вийти ([295a8af](https://github.com/RomanZavadaM/md-notes/commit/295a8afd0c6cfc97f1cff7413a6f4713e02c7078))
+
 ## [0.3.8](https://github.com/RomanZavadaM/md-notes/compare/v0.3.7...v0.3.8) (2026-10-19)
 
 
