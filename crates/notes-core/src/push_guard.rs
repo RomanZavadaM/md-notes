@@ -13,10 +13,13 @@ use std::path::Path;
 
 use serde::Serialize;
 
-use crate::encrypted_vault::ENCRYPTION_FILE;
 use crate::error::{io_err, Error, Result};
 use crate::vault::SERVICE_DIR;
 
+/// File name inside `.mdnotes/` that marks an encrypted vault (same as
+/// `encrypted_vault::ENCRYPTION_FILE`, repeated so the guard works in builds
+/// without the `encrypted-vault` feature).
+const ENCRYPTION_FILE: &str = "encryption.json";
 const AGE_MAGIC: &[u8] = b"age-encryption.org/v1";
 const ENCRYPTED_SUFFIX: &str = ".age";
 /// Local-only service folders that Git never receives (`.mdnotes/.gitignore`).
@@ -128,7 +131,7 @@ fn has_age_header(path: &Path) -> Result<bool> {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "encrypted-vault"))]
 mod tests {
     use super::*;
     use crate::encrypted_vault::create_encrypted_vault;
