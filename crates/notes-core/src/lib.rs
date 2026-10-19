@@ -5,6 +5,8 @@
 //! Tauri application and any future tools are thin layers on top of it.
 
 pub mod attachments;
+#[cfg(feature = "encrypted-vault")]
+pub mod encrypted;
 pub mod error;
 pub mod git_sync;
 pub mod graph;
@@ -22,6 +24,8 @@ pub mod vault;
 pub mod vault_storage;
 
 pub use attachments::AttachmentInfo;
+#[cfg(feature = "encrypted-vault")]
+pub use encrypted::{EncryptedProvider, ENCRYPTED_SUFFIX};
 pub use error::{Error, Result};
 pub use git_sync::{
     apply_git_fast_forward, classify_git_pull_relation, clone_git_repository, commit_git_worktree,

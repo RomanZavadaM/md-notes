@@ -16,6 +16,12 @@ serde_json = { workspace = true }
 serde_yaml = "0.9"
 thiserror = { workspace = true }
 ulid = "1"
+# Optional encrypted vault (ADR-0007). No default features: no async, CLI, plugin or SSH code.
+age = { version = "0.12", default-features = false, optional = true }
+
+[features]
+# Opt-in support for encrypted vaults. Builds without it are the full product without encryption.
+encrypted-vault = ["dep:age"]
 
 [dev-dependencies]
 tempfile = "3"

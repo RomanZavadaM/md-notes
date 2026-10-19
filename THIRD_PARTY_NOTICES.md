@@ -15,6 +15,7 @@ Core library `crates/notes-core`:
 - serde_yaml — MIT OR Apache-2.0, YAML front matter parsing
 - thiserror — MIT OR Apache-2.0, error types
 - ulid — MIT, stable note identifiers
+- age (optional feature `encrypted-vault`, ADR-0007) — MIT OR Apache-2.0, file encryption in the open age format; no default features (no async, CLI, plugin or SSH code)
 - tempfile — MIT OR Apache-2.0 (development dependency, tests only)
 
 Application `app/src-tauri`:
