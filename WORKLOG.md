@@ -117,3 +117,17 @@ Safety requirements для Git push мають зберігати існуючі
 - large vault open/indexing can still be synchronous;
 - graph still lacks ForceAtlas2/clustering/layout persistence;
 - builds are unsigned unless explicitly stated otherwise.
+
+## ADR-0007, зріз 0 — висновки дослідження (19.10.2026)
+
+Де ядро читає/пише файли поза `StorageProvider`:
+
+- `Vault::open(root)` жорстко створює `LocalFsProvider`; потрібен конструктор з довільним провайдером (`Vault::open_with_provider(root, provider)`; `root` лишається для кешу, шаблонів і службових операцій).
+- Через `VaultStorage` уже ідуть: `tree`, `note_paths`, `read_note`, `write_note`, `unique_path`. Шифрування в `EncryptedProvider` працює для них без змін логіки сховища.
+- Напряму через `std::fs` (потрібно перевести на провайдера або явно обмежити): `Vault::rename`, `Vault::move_to_trash`, `Vault::create_folder`, `Vault::init` (теки шаблонів), `Vault::cache_dir`; `index.rs::file_stamp` (`fs::metadata(root + rel)` - для логічного шляху `a.md` у зашифрованому сховищі такого файла немає, є `a.md.age`); `attachments.rs`, `templates.rs`, `presets.rs`, `sync.rs`, `schema.rs` (по кілька викликів `fs::`).
+- `git_sync.rs` (gix над справжнім робочим деревом) ортогональний: Git бачить `*.age` як звичайні двійкові файли.
+- Трейт `StorageProvider` не має `rename`; потрібне додавання методу (за замовчуванням: читання + запис + видалення; `LocalFsProvider` - `fs::rename`), інакше `EncryptedProvider` не зможе зберегти відповідність «логічний шлях ↔ файл `.age`» при перейменуванні й кошику.
+- Службові шляхи `.mdnotes/` (налаштування, схема, список публічних ключів) лишаються відкритими: `EncryptedProvider` пропускає їх без шифрування. Кеш `.mdnotes/cache` і кошик `.mdnotes/trash` і так поза синхронізацією (ADR-0002).
+- Назви нотаток: `Note::parse` бере `title` з властивості `title`, інакше з першого заголовка, інакше з імені файла; граф несе `title`. Для випадкових імен файлів потрібно лише перевірити, що дерево, швидке відкриття й пошук показують `title` (зріз 3).
+
+План зрізу 1 за цими висновками: (1) `StorageProvider::rename`; (2) `Vault::open_with_provider`; (3) `EncryptedProvider` за feature `encrypted-vault` (крейт age після `cargo deny check licenses`); (4) `index.rs::file_stamp` через провайдера; (5) тести: круг туди-назад, кілька одержувачів, неправильний ключ, пошкоджений шифротекст, список без суфікса, rename/кошик, відсутність відкритого тексту у викликах внутрішнього `write`, звичайне сховище й збірка без feature - як раніше.
