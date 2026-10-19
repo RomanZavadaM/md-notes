@@ -214,6 +214,18 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, [isDesktop, quitApp]);
 
+  // Toasts disappear on their own (a click still closes them at once).
+  useEffect(() => {
+    if (!notice) return;
+    const timer = window.setTimeout(() => setNotice(null), 6000);
+    return () => window.clearTimeout(timer);
+  }, [notice]);
+  useEffect(() => {
+    if (!error) return;
+    const timer = window.setTimeout(() => setError(null), 12000);
+    return () => window.clearTimeout(timer);
+  }, [error]);
+
   useEffect(() => {
     void api.runtimePlatform().then(setPlatform).catch(() => setPlatform("unknown"));
     let disposed = false;
