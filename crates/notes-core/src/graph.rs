@@ -35,6 +35,7 @@ pub struct GraphRelation {
     pub grade: Option<String>,
     pub origin: Option<String>,
     pub status: Option<String>,
+    pub evidence: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -125,7 +126,9 @@ pub fn knowledge_graph(index: &Index, focus: Option<&str>) -> Result<KnowledgeGr
 ///
 /// Each entry of a note's `relations` list needs a `to` (a note title, file
 /// name or path, resolved like a `[[link]]`) and may carry `type`, `grade`,
-/// `origin` and `status`. Relations whose target does not resolve to a note
+/// `origin`, `status` and `evidence`; `dir: in` means the relation points
+/// from the `to` note to the note that holds it (default: from the holder).
+/// Relations whose target does not resolve to a note
 /// of the snapshot are ignored. Notes that cannot be read are skipped.
 pub fn with_relations(vault: &Vault, mut graph: KnowledgeGraph) -> Result<KnowledgeGraph> {
     let known: HashSet<String> = graph.nodes.iter().map(|node| node.path.clone()).collect();
@@ -153,13 +156,20 @@ pub fn with_relations(vault: &Vault, mut graph: KnowledgeGraph) -> Result<Knowle
                 continue;
             }
             let text = |key: &str| item.get(key).and_then(Value::as_str).map(str::to_string);
+            let reversed = item.get("dir").and_then(Value::as_str) == Some("in");
+            let (source, target) = if reversed {
+                (target, node.path.clone())
+            } else {
+                (node.path.clone(), target)
+            };
             relations.insert(GraphRelation {
-                source: node.path.clone(),
+                source,
                 target,
                 kind: text("type").unwrap_or_default(),
                 grade: text("grade"),
                 origin: text("origin"),
                 status: text("status"),
+                evidence: text("evidence"),
             });
         }
     }
@@ -253,8 +263,32 @@ mod tests {
                 grade: Some("B2".into()),
                 origin: Some("registry".into()),
                 status: Some("unverified".into()),
+                evidence: None,
             }]
         );
+    }
+
+    #[test]
+    fn dir_in_points_the_relation_at_the_holder_and_keeps_evidence() {
+        let dir = tempfile::tempdir().unwrap();
+        let vault = Vault::init(dir.path(), None).unwrap();
+        vault
+            .write_note(
+                "Company.md",
+                "---\ntype: company\nrelations:\n  - {type: \"owned by\", to: \"Person\", dir: \"in\", grade: \"A1\", evidence: \"EDR extract\"}\n---\n# Company\n",
+            )
+            .unwrap();
+        vault
+            .write_note("Person.md", "---\ntype: person\n---\n# Person\n")
+            .unwrap();
+        let mut index = Index::open_in_memory().unwrap();
+        index.sync(&vault).unwrap();
+
+        let graph = with_relations(&vault, knowledge_graph(&index, None).unwrap()).unwrap();
+        assert_eq!(graph.relations.len(), 1);
+        assert_eq!(graph.relations[0].source, "Person.md");
+        assert_eq!(graph.relations[0].target, "Company.md");
+        assert_eq!(graph.relations[0].evidence.as_deref(), Some("EDR extract"));
     }
 
     #[test]

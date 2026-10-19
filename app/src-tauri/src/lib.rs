@@ -444,9 +444,12 @@ fn git_fetch_with_stored_credentials(
 #[tauri::command]
 fn import_folder(
     source: String,
+    overwrite: bool,
     state: State<'_, AppState>,
 ) -> CmdResult<notes_core::ImportReport> {
-    with_session(&state, |s| s.vault.import_folder(Path::new(&source)))
+    with_session(&state, |s| {
+        s.vault.import_folder(Path::new(&source), overwrite)
+    })
 }
 
 /// Closes the application (the File menu's Quit).

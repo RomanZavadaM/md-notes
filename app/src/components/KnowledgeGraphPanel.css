@@ -143,3 +143,71 @@
 .knowledge-graph.expanded .knowledge-graph-canvas.has-graph {
   min-height: 0;
 }
+
+/* Relation card */
+.relation-card {
+  position: absolute;
+  z-index: 4;
+  width: min(22rem, 90%);
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  font-size: 0.82rem;
+  pointer-events: none;
+}
+
+.relation-card.rumour {
+  border-top: 5px solid #c62828;
+  background-image: repeating-linear-gradient(135deg, rgba(198, 40, 40, 0.1) 0 6px, transparent 6px 12px);
+  background-size: 100% 5px;
+  background-repeat: no-repeat;
+}
+
+.relation-rumour {
+  color: #b3261e;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.relation-ends {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.relation-card ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.relation-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.relation-chip {
+  display: inline-block;
+  min-width: 2rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.relation-meta,
+.relation-dir {
+  display: block;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}

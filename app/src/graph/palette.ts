@@ -84,3 +84,12 @@ export function evidenceStyle(best: number | undefined): EvidenceStyle {
   if (best <= 4) return { dash: [6, 4], rumour: false };
   return { dash: [1.5, 3], rumour: true };
 }
+
+/** Grade chip colours (spec: ok 1-2, mid 3-4, low 5-6, none). */
+export function chipColors(grade: string | undefined): { background: string; color: string } {
+  const digit = gradeDigit(grade);
+  if (digit === undefined) return { background: "#4B5563", color: "#FFFFFF" };
+  if (digit <= 2) return { background: "#2E7D32", color: "#FFFFFF" };
+  if (digit <= 4) return { background: "#8F5A00", color: "#FFFFFF" };
+  return { background: "#B3261E", color: "#FFFFFF" };
+}

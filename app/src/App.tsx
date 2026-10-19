@@ -271,8 +271,13 @@ export default function App() {
     const dir = await open({ directory: true, multiple: false, title: strings.pickTitle });
     if (typeof dir !== "string") return;
     try {
-      const report = await api.importFolder(dir);
-      setNotice(strings.result(report.created, report.skipped, report.rejected));
+      let result = await api.importFolder(dir, false);
+      // Files that are already there are left alone unless the user agrees to update them.
+      if (result.skipped > 0 && (await ask(strings.overwritePrompt(result.skipped), { kind: "warning" }))) {
+        const second = await api.importFolder(dir, true);
+        result = { ...result, updated: second.updated, skipped: second.skipped };
+      }
+      setNotice(strings.result(result.created, result.updated, result.skipped, result.rejected));
       await refreshTree();
       bump();
     } catch (e) {
