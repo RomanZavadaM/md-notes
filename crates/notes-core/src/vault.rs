@@ -89,6 +89,11 @@ impl Vault {
         Ok(Self { root, storage })
     }
 
+    /// The storage provider behind this vault.
+    pub fn provider(&self) -> Arc<dyn StorageProvider> {
+        self.storage.provider()
+    }
+
     /// Creates the service folder (if missing) and opens the vault.
     pub fn init(root: impl AsRef<Path>, name: Option<String>) -> Result<Self> {
         let root = root.as_ref();
@@ -245,20 +250,16 @@ impl Vault {
         if from.is_empty() || to.is_empty() {
             return Err(Error::InvalidPath("vault root".into()));
         }
-        let source = paths::resolve(&self.root, &from)?;
-        let target = paths::resolve(&self.root, &to)?;
-        if !source.exists() {
+        let provider = self.storage.provider();
+        if provider.metadata(&from)?.is_none() {
             return Err(Error::NotFound(from));
         }
         // Allow changing only the letter case of a name on case-insensitive
         // file systems.
-        if target.exists() && from.to_lowercase() != to.to_lowercase() {
+        if provider.metadata(&to)?.is_some() && from.to_lowercase() != to.to_lowercase() {
             return Err(Error::AlreadyExists(to));
         }
-        if let Some(parent) = target.parent() {
-            fs::create_dir_all(parent).map_err(io_err(parent))?;
-        }
-        fs::rename(&source, &target).map_err(io_err(&source))?;
+        provider.rename(&from, &to)?;
         Ok(to)
     }
 
@@ -268,17 +269,13 @@ impl Vault {
         if rel.is_empty() {
             return Err(Error::InvalidPath("vault root".into()));
         }
-        let source = paths::resolve(&self.root, &rel)?;
-        if !source.exists() {
+        let provider = self.storage.provider();
+        if provider.metadata(&rel)?.is_none() {
             return Err(Error::NotFound(rel));
         }
         let stamp = chrono::Local::now().format("%Y%m%d-%H%M%S%3f").to_string();
         let trash_rel = format!("{SERVICE_DIR}/trash/{stamp}/{rel}");
-        let target = paths::resolve(&self.root, &trash_rel)?;
-        if let Some(parent) = target.parent() {
-            fs::create_dir_all(parent).map_err(io_err(parent))?;
-        }
-        fs::rename(&source, &target).map_err(io_err(&source))?;
+        provider.rename(&rel, &trash_rel)?;
         Ok(trash_rel)
     }
 }

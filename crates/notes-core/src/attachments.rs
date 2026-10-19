@@ -1,11 +1,12 @@
 use std::fmt::Write as _;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use serde::Serialize;
 
 use crate::error::{io_err, Error, Result};
 use crate::paths;
+use crate::storage::{StorageEntryKind, StorageProvider};
 use crate::vault::Vault;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -19,6 +20,8 @@ pub struct AttachmentInfo {
 impl Vault {
     /// Copies a file into `<attachments_dir>/YYYY/MM/` and returns its
     /// vault-relative path. Existing files are never overwritten silently.
+    /// The file is written through the vault's storage provider, so an
+    /// encrypted vault stores the attachment encrypted.
     pub fn import_attachment(&self, source: impl AsRef<Path>) -> Result<AttachmentInfo> {
         let source = source.as_ref();
         if !source.is_file() {
@@ -41,24 +44,23 @@ impl Vault {
             now.format("%Y"),
             now.format("%m")
         );
-        let dir_path = paths::resolve(self.root(), &dir)?;
-        fs::create_dir_all(&dir_path).map_err(io_err(&dir_path))?;
 
-        let rel = unique_attachment_path(self.root(), &dir, &clean_name);
-        let target = paths::resolve(self.root(), &rel)?;
-        copy_atomic(source, &target)?;
-        attachment_info(&rel, &target)
+        let provider = self.provider();
+        let rel = unique_attachment_path(provider.as_ref(), &dir, &clean_name)?;
+        let bytes = fs::read(source).map_err(io_err(source))?;
+        provider.write(&rel, &bytes)?;
+        attachment_info(provider.as_ref(), &rel)
     }
 
     /// Lists all files under the configured attachments directory.
     pub fn attachments(&self) -> Result<Vec<AttachmentInfo>> {
         let base = paths::normalize(&self.config().attachments_dir)?;
-        let root = paths::resolve(self.root(), &base)?;
-        if !root.exists() {
+        let provider = self.provider();
+        if provider.metadata(&base)?.is_none() {
             return Ok(Vec::new());
         }
         let mut out = Vec::new();
-        collect_attachments(self.root(), &root, &mut out)?;
+        collect_attachments(provider.as_ref(), &base, &mut out)?;
         out.sort_by_key(|a| a.path.to_lowercase());
         Ok(out)
     }
@@ -90,33 +92,29 @@ impl Vault {
     }
 }
 
-fn attachment_info(rel: &str, path: &Path) -> Result<AttachmentInfo> {
-    let meta = fs::metadata(path).map_err(io_err(path))?;
+fn attachment_info(provider: &dyn StorageProvider, rel: &str) -> Result<AttachmentInfo> {
+    let entry = provider
+        .metadata(rel)?
+        .ok_or_else(|| Error::NotFound(rel.to_string()))?;
     Ok(AttachmentInfo {
         name: paths::file_name(rel).to_string(),
         path: rel.to_string(),
-        size: meta.len(),
+        size: entry.size,
     })
 }
 
-fn collect_attachments(vault_root: &Path, dir: &Path, out: &mut Vec<AttachmentInfo>) -> Result<()> {
-    for entry in fs::read_dir(dir).map_err(io_err(dir))? {
-        let entry = entry.map_err(io_err(dir))?;
-        let path = entry.path();
-        let name = entry.file_name().to_string_lossy().into_owned();
-        if name.starts_with('.') {
+fn collect_attachments(
+    provider: &dyn StorageProvider,
+    dir: &str,
+    out: &mut Vec<AttachmentInfo>,
+) -> Result<()> {
+    for entry in provider.list(dir)? {
+        if paths::file_name(&entry.path).starts_with('.') {
             continue;
         }
-        let file_type = entry.file_type().map_err(io_err(&path))?;
-        if file_type.is_dir() {
-            collect_attachments(vault_root, &path, out)?;
-        } else if file_type.is_file() {
-            let rel = path
-                .strip_prefix(vault_root)
-                .map_err(|_| Error::InvalidPath(path.display().to_string()))?
-                .to_string_lossy()
-                .replace('\\', "/");
-            out.push(attachment_info(&rel, &path)?);
+        match entry.kind {
+            StorageEntryKind::Dir => collect_attachments(provider, &entry.path, out)?,
+            StorageEntryKind::File => out.push(attachment_info(provider, &entry.path)?),
         }
     }
     Ok(())
@@ -137,7 +135,11 @@ fn markdown_url_path(path: &str) -> String {
     out
 }
 
-fn unique_attachment_path(root: &Path, dir: &str, file_name: &str) -> String {
+fn unique_attachment_path(
+    provider: &dyn StorageProvider,
+    dir: &str,
+    file_name: &str,
+) -> Result<String> {
     let source = Path::new(file_name);
     let stem = source
         .file_stem()
@@ -156,20 +158,11 @@ fn unique_attachment_path(root: &Path, dir: &str, file_name: &str) -> String {
             format!("{stem} {n}{ext}")
         };
         let rel = paths::join(dir, &name);
-        if !root.join(&rel).exists() {
-            return rel;
+        if provider.metadata(&rel)?.is_none() {
+            return Ok(rel);
         }
     }
     unreachable!()
-}
-
-fn copy_atomic(source: &Path, target: &Path) -> Result<()> {
-    let mut tmp_name = target.as_os_str().to_owned();
-    tmp_name.push(".mdnotes-tmp");
-    let tmp = PathBuf::from(tmp_name);
-    fs::copy(source, &tmp).map_err(io_err(&tmp))?;
-    fs::rename(&tmp, target).map_err(io_err(target))?;
-    Ok(())
 }
 
 #[cfg(test)]

@@ -7,7 +7,6 @@
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::path::Path;
-use std::time::UNIX_EPOCH;
 
 use rusqlite::{params, Connection, Transaction};
 use serde::Serialize;
@@ -441,15 +440,12 @@ fn fts_query(input: &str) -> Option<String> {
 }
 
 fn file_stamp(vault: &Vault, rel: &str) -> Result<(i64, i64)> {
-    let path = paths::resolve(vault.root(), rel)?;
-    let meta = fs::metadata(&path).map_err(io_err(&path))?;
-    let mtime = meta
-        .modified()
-        .ok()
-        .and_then(|t| t.duration_since(UNIX_EPOCH).ok())
-        .map(|d| d.as_millis() as i64)
-        .unwrap_or_default();
-    Ok((mtime, meta.len() as i64))
+    let entry = vault
+        .provider()
+        .metadata(rel)?
+        .ok_or_else(|| crate::error::Error::NotFound(rel.to_string()))?;
+    let mtime = entry.modified_ms.map(|ms| ms as i64).unwrap_or_default();
+    Ok((mtime, entry.size as i64))
 }
 
 fn delete(tx: &Transaction, path: &str) -> Result<()> {

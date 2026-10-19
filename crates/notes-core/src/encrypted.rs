@@ -7,8 +7,9 @@
 //! never handed to the underlying storage.
 //!
 //! The service folder (`.mdnotes/`) is passed through unencrypted: it only
-//! holds settings, the schema and the list of public recipient keys. Plain
-//! files that are not `*.age` are hidden from listings of an encrypted vault.
+//! holds settings, the schema and the list of public recipient keys. The one
+//! exception is `.mdnotes/trash/`, which keeps encrypted files. Plain files
+//! that are not `*.age` are hidden from listings of an encrypted vault.
 //! Private keys never live in the vault; the caller supplies identities that
 //! were loaded from the OS secret store.
 
@@ -65,6 +66,17 @@ impl EncryptedProvider {
         rel == SERVICE_DIR || rel.starts_with(&format!("{SERVICE_DIR}/"))
     }
 
+    fn is_trash(rel: &str) -> bool {
+        let trash = format!("{SERVICE_DIR}/trash");
+        rel == trash || rel.starts_with(&format!("{trash}/"))
+    }
+
+    /// Service files that stay unencrypted. The trash is the exception: it
+    /// holds moved notes and attachments, so its files keep the `.age` suffix.
+    fn is_plain(rel: &str) -> bool {
+        Self::is_service(rel) && !Self::is_trash(rel)
+    }
+
     fn physical(rel: &str) -> String {
         format!("{rel}{ENCRYPTED_SUFFIX}")
     }
@@ -111,7 +123,7 @@ impl EncryptedProvider {
 
     /// Maps an entry of the inner storage to its logical form; `None` hides it.
     fn to_logical(entry: StorageEntry) -> Option<StorageEntry> {
-        if entry.kind == StorageEntryKind::Dir || Self::is_service(&entry.path) {
+        if entry.kind == StorageEntryKind::Dir || Self::is_plain(&entry.path) {
             return Some(entry);
         }
         let logical = entry.path.strip_suffix(ENCRYPTED_SUFFIX)?.to_string();
@@ -133,7 +145,7 @@ impl StorageProvider for EncryptedProvider {
     fn list(&self, rel: &str) -> Result<Vec<StorageEntry>> {
         let rel = paths::normalize(rel)?;
         let entries = self.inner.list(&rel)?;
-        if Self::is_service(&rel) {
+        if Self::is_plain(&rel) {
             return Ok(entries);
         }
         Ok(entries.into_iter().filter_map(Self::to_logical).collect())
@@ -141,7 +153,7 @@ impl StorageProvider for EncryptedProvider {
 
     fn read(&self, rel: &str) -> Result<Vec<u8>> {
         let rel = paths::normalize(rel)?;
-        if Self::is_service(&rel) {
+        if Self::is_plain(&rel) {
             return self.inner.read(&rel);
         }
         let data = self.inner.read(&Self::physical(&rel))?;
@@ -150,7 +162,7 @@ impl StorageProvider for EncryptedProvider {
 
     fn write(&self, rel: &str, bytes: &[u8]) -> Result<()> {
         let rel = paths::normalize(rel)?;
-        if Self::is_service(&rel) {
+        if Self::is_plain(&rel) {
             return self.inner.write(&rel, bytes);
         }
         let encrypted = self.encrypt(bytes)?;
@@ -159,7 +171,7 @@ impl StorageProvider for EncryptedProvider {
 
     fn remove(&self, rel: &str) -> Result<()> {
         let rel = paths::normalize(rel)?;
-        if Self::is_service(&rel) || self.is_inner_dir(&rel)? {
+        if Self::is_plain(&rel) || self.is_inner_dir(&rel)? {
             return self.inner.remove(&rel);
         }
         self.inner.remove(&Self::physical(&rel))
@@ -168,7 +180,7 @@ impl StorageProvider for EncryptedProvider {
     fn rename(&self, from: &str, to: &str) -> Result<()> {
         let from = paths::normalize(from)?;
         let to = paths::normalize(to)?;
-        if Self::is_service(&from) || Self::is_service(&to) || self.is_inner_dir(&from)? {
+        if Self::is_plain(&from) || Self::is_plain(&to) || self.is_inner_dir(&from)? {
             return self.inner.rename(&from, &to);
         }
         self.inner
@@ -177,7 +189,7 @@ impl StorageProvider for EncryptedProvider {
 
     fn metadata(&self, rel: &str) -> Result<Option<StorageEntry>> {
         let rel = paths::normalize(rel)?;
-        if Self::is_service(&rel) {
+        if Self::is_plain(&rel) {
             return self.inner.metadata(&rel);
         }
         if let Some(entry) = self.inner.metadata(&rel)? {
@@ -424,5 +436,118 @@ mod tests {
         assert_eq!(note.title, "Visible title");
         assert!(dir.path().join("folder/entry.md.age").is_file());
         assert!(!dir.path().join("folder/entry.md").exists());
+    }
+}
+
+#[cfg(test)]
+mod vault_tests {
+    use super::*;
+    use crate::index::{Index, SyncStats};
+    use crate::refactor::rename_with_links;
+    use crate::storage::LocalFsProvider;
+    use crate::vault::Vault;
+    use std::path::Path;
+
+    fn encrypted_vault(dir: &Path) -> Vault {
+        let identity = age::x25519::Identity::generate();
+        let provider = EncryptedProvider::from_identity(
+            Arc::new(LocalFsProvider::new(dir).unwrap()),
+            identity,
+            vec![],
+        )
+        .unwrap();
+        Vault::open_with_provider(dir, Arc::new(provider)).unwrap()
+    }
+
+    /// Every file under `dir` (recursively) whose bytes contain `needle`.
+    fn files_containing(dir: &Path, needle: &[u8]) -> Vec<String> {
+        let mut found = Vec::new();
+        let mut stack = vec![dir.to_path_buf()];
+        while let Some(current) = stack.pop() {
+            for entry in std::fs::read_dir(&current).unwrap() {
+                let path = entry.unwrap().path();
+                if path.is_dir() {
+                    stack.push(path);
+                } else if std::fs::read(&path)
+                    .unwrap()
+                    .windows(needle.len())
+                    .any(|w| w == needle)
+                {
+                    found.push(path.display().to_string());
+                }
+            }
+        }
+        found
+    }
+
+    #[test]
+    fn index_and_search_work_over_encrypted_storage() {
+        let dir = tempfile::tempdir().unwrap();
+        let vault = encrypted_vault(dir.path());
+        vault
+            .write_note("a.md", "# Alpha\nuniqueword text\n")
+            .unwrap();
+
+        let mut index = Index::open_in_memory().unwrap();
+        assert_eq!(index.sync(&vault).unwrap().added, 1);
+        assert_eq!(index.search("uniqueword", 10).unwrap().len(), 1);
+        assert_eq!(index.sync(&vault).unwrap(), SyncStats::default());
+    }
+
+    #[test]
+    fn rename_with_links_keeps_notes_encrypted() {
+        let dir = tempfile::tempdir().unwrap();
+        let vault = encrypted_vault(dir.path());
+        vault.write_note("folder/Target.md", "# T\n").unwrap();
+        vault.write_note("a.md", "see [[Target]]\n").unwrap();
+
+        let mut index = Index::open_in_memory().unwrap();
+        rename_with_links(&vault, &mut index, "folder/Target.md", "folder/Renamed.md").unwrap();
+
+        assert!(vault
+            .read_note("a.md")
+            .unwrap()
+            .content
+            .contains("[[Renamed]]"));
+        assert_eq!(vault.read_note("folder/Renamed.md").unwrap().title, "T");
+        assert!(dir.path().join("folder/Renamed.md.age").is_file());
+        assert!(!dir.path().join("folder/Target.md.age").exists());
+    }
+
+    #[test]
+    fn trash_keeps_ciphertext_only() {
+        let dir = tempfile::tempdir().unwrap();
+        let vault = encrypted_vault(dir.path());
+        vault.write_note("t.md", "TRASH-MARKER body").unwrap();
+
+        let trash = vault.move_to_trash("t.md").unwrap();
+        assert!(trash.starts_with(".mdnotes/trash/"));
+        assert!(vault.note_paths().unwrap().is_empty());
+        assert!(dir.path().join(format!("{trash}.age")).is_file());
+        assert!(files_containing(dir.path(), b"TRASH-MARKER").is_empty());
+        let restored = vault.provider().read(&trash).unwrap();
+        assert!(restored.windows(12).any(|w| w == b"TRASH-MARKER"));
+    }
+
+    #[test]
+    fn attachments_are_stored_encrypted_and_listed_by_logical_name() {
+        let dir = tempfile::tempdir().unwrap();
+        let vault = encrypted_vault(dir.path());
+        let source_dir = tempfile::tempdir().unwrap();
+        let source = source_dir.path().join("pic.png");
+        std::fs::write(&source, b"ATTACH-MARKER bytes").unwrap();
+
+        let info = vault.import_attachment(&source).unwrap();
+        assert!(info.path.ends_with("pic.png"));
+        assert!(dir.path().join(format!("{}.age", info.path)).is_file());
+        assert!(files_containing(dir.path(), b"ATTACH-MARKER").is_empty());
+
+        let listed = vault.attachments().unwrap();
+        assert_eq!(listed.len(), 1);
+        assert_eq!(listed[0].path, info.path);
+        assert_eq!(
+            vault.provider().read(&info.path).unwrap(),
+            b"ATTACH-MARKER bytes"
+        );
     }
 }
