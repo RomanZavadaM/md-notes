@@ -133,6 +133,35 @@ impl EncryptedProvider {
         })
     }
 
+    /// Re-encrypts every stored file for the current recipient list (used
+    /// after a recipient was added). Plain service files and `.git` are left
+    /// alone. Returns the number of files rewritten.
+    pub fn reencrypt_all(&self) -> Result<u32> {
+        self.reencrypt_dir("")
+    }
+
+    fn reencrypt_dir(&self, dir: &str) -> Result<u32> {
+        let mut rewritten = 0;
+        for entry in self.inner.list(dir)? {
+            match entry.kind {
+                StorageEntryKind::Dir => {
+                    if entry.path != ".git" {
+                        rewritten += self.reencrypt_dir(&entry.path)?;
+                    }
+                }
+                StorageEntryKind::File => {
+                    if Self::is_plain(&entry.path) || !entry.path.ends_with(ENCRYPTED_SUFFIX) {
+                        continue;
+                    }
+                    let plain = self.decrypt(&self.inner.read(&entry.path)?)?;
+                    self.inner.write(&entry.path, &self.encrypt(&plain)?)?;
+                    rewritten += 1;
+                }
+            }
+        }
+        Ok(rewritten)
+    }
+
     fn is_inner_dir(&self, rel: &str) -> Result<bool> {
         Ok(self
             .inner
