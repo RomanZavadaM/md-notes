@@ -34,6 +34,27 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.2](https://github.com/RomanZavadaM/md-notes/compare/v0.3.1...v0.3.2) (2026-10-19)
+
+
+### Нові можливості
+
+* **app:** зашифроване сховище в застосунку - ключ в ОС, команди (зріз 3б) ([766a9c0](https://github.com/RomanZavadaM/md-notes/commit/766a9c06e92c4cfb07baf080622615a8571de15f))
+* **app:** інтерфейс зашифрованого сховища - створення, показ ключа, імпорт, позначка (зріз 3в) ([ade102e](https://github.com/RomanZavadaM/md-notes/commit/ade102e259f40e23ec20a4348de0dc887f29da99))
+* **app:** інтерфейс зашифрованого сховища (зріз 3в) ([220d735](https://github.com/RomanZavadaM/md-notes/commit/220d7354891574fc798856b853ae0cb9c15a1278))
+* **app:** команди зашифрованого сховища, ключ у системному сховищі секретів (зріз 3б) ([f57c0ce](https://github.com/RomanZavadaM/md-notes/commit/f57c0cedd32e919de59b590ddf4218c4ccd9baa6))
+* **core:** rename, кошик, індекс і вкладення через StorageProvider (ADR-0007, зріз 2) ([0405814](https://github.com/RomanZavadaM/md-notes/commit/04058149591361abc0cefd9e158250f798610b10))
+* **core:** rename, кошик, індекс і вкладення через StorageProvider (ADR-0007, зріз 2) ([aefe24d](https://github.com/RomanZavadaM/md-notes/commit/aefe24dccfca0b43be8e27d83896d8bf2683f82a))
+* **core:** опціональний EncryptedProvider (age) і StorageProvider::rename ([9d4a428](https://github.com/RomanZavadaM/md-notes/commit/9d4a428d72139fed0360c39bdeb6c4b6f712ccf7))
+* **core:** опціональний EncryptedProvider (age), ADR-0007 зріз 1 ([4c0fd11](https://github.com/RomanZavadaM/md-notes/commit/4c0fd11ad6df0374c4703134ecee71e4e46c1985))
+* **core:** створення й відкриття зашифрованого сховища (ADR-0007, зріз 3a) ([8312c39](https://github.com/RomanZavadaM/md-notes/commit/8312c3984c86c3404396716b7d4dd2a25516a8e8))
+* **core:** створення й відкриття зашифрованого сховища, додавання одержувача (ADR-0007, зріз 3a) ([65a04d9](https://github.com/RomanZavadaM/md-notes/commit/65a04d9ccfc3ae6a130b232492ed2988a62e3ebc))
+
+
+### Виправлення
+
+* **core:** clippy і rustfmt для модуля зашифрованого сховища ([5cc4c97](https://github.com/RomanZavadaM/md-notes/commit/5cc4c97d637fb0e3b5c1230074d075c3665de4f1))
+
 ## [0.3.1](https://github.com/RomanZavadaM/md-notes/compare/v0.3.0...v0.3.1) (2026-10-18)
 
 
