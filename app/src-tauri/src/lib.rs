@@ -16,6 +16,7 @@ use serde::Serialize;
 use serde_json::Value;
 use tauri::{AppHandle, Emitter, Manager, State};
 
+mod encryption;
 mod mobile;
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 mod watch;
@@ -385,7 +386,7 @@ fn open_mobile_sandbox_vault(app: AppHandle, state: State<'_, AppState>) -> CmdR
 
 #[tauri::command]
 fn open_vault(path: String, app: AppHandle, state: State<'_, AppState>) -> CmdResult<VaultInfo> {
-    let vault = Vault::open(&path).map_err(|e| e.to_string())?;
+    let vault = encryption::open_any(&path)?;
     activate_vault(vault, app, state)
 }
 
@@ -444,6 +445,14 @@ fn on_files_changed(app: &AppHandle, changed: Vec<String>) {
             }
         }
     }
+    // Encrypted vaults store notes as `<name>.age`; the UI works with logical names.
+    let changed: Vec<String> = changed
+        .into_iter()
+        .map(|path| match path.strip_suffix(".age") {
+            Some(logical) => logical.to_string(),
+            None => path,
+        })
+        .collect();
     let _ = app.emit(VAULT_CHANGED, changed);
 }
 
@@ -623,6 +632,10 @@ pub fn run() {
             configure_markdown_association,
             open_vault,
             create_vault,
+            encryption::encryption_status,
+            encryption::create_encrypted_vault_cmd,
+            encryption::import_encryption_key,
+            encryption::add_encryption_recipient,
             save_git_credentials,
             has_git_credentials,
             clear_git_credentials,
