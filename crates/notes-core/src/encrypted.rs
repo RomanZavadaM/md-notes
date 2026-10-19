@@ -94,8 +94,7 @@ impl EncryptedProvider {
         if self.identities.is_empty() {
             return Err(Error::Crypto("no identity available to decrypt".into()));
         }
-        let decryptor =
-            age::Decryptor::new(data).map_err(|err| Error::Crypto(err.to_string()))?;
+        let decryptor = age::Decryptor::new(data).map_err(|err| Error::Crypto(err.to_string()))?;
         let identities = self
             .identities
             .iter()
@@ -335,7 +334,9 @@ mod tests {
         let names: Vec<String> = enc.list("").unwrap().into_iter().map(|e| e.path).collect();
         assert!(names.contains(&"n.md".to_string()));
         assert!(names.contains(&"dir".to_string()));
-        assert!(!names.iter().any(|n| n.ends_with(".age") || n == "stray.txt"));
+        assert!(!names
+            .iter()
+            .any(|n| n.ends_with(".age") || n == "stray.txt"));
         assert_eq!(
             enc.list("dir")
                 .unwrap()
@@ -394,8 +395,7 @@ mod tests {
             inner: LocalFsProvider::new(dir.path()).unwrap(),
             writes: Mutex::new(Vec::new()),
         });
-        let enc =
-            EncryptedProvider::from_identity(spy.clone(), identity.clone(), vec![]).unwrap();
+        let enc = EncryptedProvider::from_identity(spy.clone(), identity.clone(), vec![]).unwrap();
 
         enc.write("n.md", b"PLAINTEXT-MARKER body").unwrap();
         enc.write("a/img.bin", &[0xAB; 64]).unwrap();

@@ -275,6 +275,9 @@ mod rename_tests {
         assert_eq!(provider.read("sub/b.md").unwrap(), b"1");
         provider.rename("sub", "moved").unwrap();
         assert_eq!(provider.read("moved/b.md").unwrap(), b"1");
-        assert!(matches!(provider.rename("nope.md", "x.md"), Err(Error::NotFound(_))));
+        assert!(matches!(
+            provider.rename("nope.md", "x.md"),
+            Err(Error::NotFound(_))
+        ));
     }
 }
