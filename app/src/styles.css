@@ -932,3 +932,44 @@ mark {
   padding-left: 1.25rem;
   overflow-wrap: anywhere;
 }
+
+/* File menu */
+.app-menu {
+  position: relative;
+  flex: none;
+}
+
+.app-menu-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 60;
+  min-width: 16rem;
+  margin: 0;
+  padding: 0.25rem;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.app-menu-list li.separator {
+  margin-top: 0.25rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.app-menu-list button {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+}
+
+.app-menu-list button:hover,
+.app-menu-list button:focus-visible {
+  background: var(--bg-soft);
+}

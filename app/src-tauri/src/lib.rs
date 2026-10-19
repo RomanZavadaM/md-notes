@@ -449,6 +449,12 @@ fn import_folder(
     with_session(&state, |s| s.vault.import_folder(Path::new(&source)))
 }
 
+/// Closes the application (the File menu's Quit).
+#[tauri::command]
+fn quit_app(app: AppHandle) {
+    app.exit(0);
+}
+
 #[tauri::command]
 fn git_push_with_stored_credentials(
     remote_name: Option<String>,
@@ -690,6 +696,7 @@ pub fn run() {
             git_fetch_with_stored_credentials,
             git_push_with_stored_credentials,
             import_folder,
+            quit_app,
             git::git_status_cmd,
             git::git_init_repo,
             git::git_set_remote_url,
