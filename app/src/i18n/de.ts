@@ -3,6 +3,7 @@ import type { Strings } from "./uk";
 export const de: Strings = {
   appTagline: "Eine persönliche Wissensdatenbank in einfachen Markdown-Dateien.",
   openFolder: "Ordner öffnen",
+  backToVault: "← Zurück zum Tresor",
   pickFolderTitle: "Tresor-Ordner auswählen",
   openMarkdownFile: "Markdown-Datei öffnen…",
   pickMarkdownFileTitle: "Markdown-Datei auswählen",

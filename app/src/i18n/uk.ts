@@ -3,6 +3,7 @@
 export const uk = {
   appTagline: "Особиста база знань у звичайних Markdown-файлах.",
   openFolder: "Відкрити папку",
+  backToVault: "← До сховища",
   pickFolderTitle: "Виберіть папку сховища",
   openMarkdownFile: "Відкрити Markdown-файл…",
   pickMarkdownFileTitle: "Виберіть Markdown-файл",
