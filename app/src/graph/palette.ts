@@ -51,3 +51,36 @@ export function isDarkBackground(): boolean {
   const [r, g, b] = match.slice(0, 3).map(Number);
   return 0.2126 * r + 0.7152 * g + 0.0722 * b < 128;
 }
+
+/** Credibility digit (1-6) of a grade such as "B2"; `undefined` when absent. */
+export function gradeDigit(grade: string | null | undefined): number | undefined {
+  const match = grade?.match(/([1-6])\s*$/);
+  return match ? Number(match[1]) : undefined;
+}
+
+export interface EdgeStyle {
+  color: string;
+  width: number;
+  dash: number[];
+}
+
+/** Line style by grade: solid green (1-2), dashed amber (3-4), dotted red (5-6). */
+export function edgeStyle(grade: string | undefined, dark: boolean): EdgeStyle {
+  const digit = gradeDigit(grade);
+  if (digit === undefined) return { color: dark ? "#5B6475" : "#A3ABB9", width: 1, dash: [] };
+  if (digit <= 2) return { color: dark ? "#66BB6A" : "#2E7D32", width: 2.2, dash: [] };
+  if (digit <= 4) return { color: dark ? "#E0A84A" : "#B26A00", width: 1.6, dash: [7, 4] };
+  return { color: dark ? "#FF7A70" : "#C62828", width: 1.6, dash: [2, 4] };
+}
+
+export interface EvidenceStyle {
+  dash: number[];
+  rumour: boolean;
+}
+
+/** Node outline by the best evidence digit among its relations. */
+export function evidenceStyle(best: number | undefined): EvidenceStyle {
+  if (best === undefined || best <= 2) return { dash: [], rumour: false };
+  if (best <= 4) return { dash: [6, 4], rumour: false };
+  return { dash: [1.5, 3], rumour: true };
+}

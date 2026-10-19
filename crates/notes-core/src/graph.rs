@@ -2,7 +2,10 @@ use std::collections::{BTreeSet, HashSet};
 
 use serde::Serialize;
 
+use serde_json::Value;
+
 use crate::index::Index;
+use crate::vault::Vault;
 use crate::Result;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -20,11 +23,26 @@ pub struct GraphEdge {
     pub target: String,
 }
 
+/// A typed relation read from the `relations` list of a note's front matter
+/// (for example ownership with a grade A1-F6). It connects two notes of the
+/// graph and carries what the viewer needs to style the line.
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GraphRelation {
+    pub source: String,
+    pub target: String,
+    pub kind: String,
+    pub grade: Option<String>,
+    pub origin: Option<String>,
+    pub status: Option<String>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct KnowledgeGraph {
     pub nodes: Vec<GraphNode>,
     pub edges: Vec<GraphEdge>,
+    pub relations: Vec<GraphRelation>,
 }
 
 /// Builds a graph snapshot from the existing SQLite index.
@@ -45,6 +63,7 @@ pub fn knowledge_graph(index: &Index, focus: Option<&str>) -> Result<KnowledgeGr
         return Ok(KnowledgeGraph {
             nodes: Vec::new(),
             edges: Vec::new(),
+            relations: Vec::new(),
         });
     }
 
@@ -95,7 +114,57 @@ pub fn knowledge_graph(index: &Index, focus: Option<&str>) -> Result<KnowledgeGr
         })
         .collect();
 
-    Ok(KnowledgeGraph { nodes, edges })
+    Ok(KnowledgeGraph {
+        nodes,
+        edges,
+        relations: Vec::new(),
+    })
+}
+
+/// Adds typed relations from the notes' front matter to a snapshot.
+///
+/// Each entry of a note's `relations` list needs a `to` (a note title, file
+/// name or path, resolved like a `[[link]]`) and may carry `type`, `grade`,
+/// `origin` and `status`. Relations whose target does not resolve to a note
+/// of the snapshot are ignored. Notes that cannot be read are skipped.
+pub fn with_relations(vault: &Vault, mut graph: KnowledgeGraph) -> Result<KnowledgeGraph> {
+    let known: HashSet<String> = graph.nodes.iter().map(|node| node.path.clone()).collect();
+    let mut relations = BTreeSet::new();
+    for node in &graph.nodes {
+        let Ok(note) = vault.read_note(&node.path) else {
+            continue;
+        };
+        let Some(list) = note
+            .front_matter
+            .as_ref()
+            .and_then(|front| front.get("relations"))
+            .and_then(Value::as_array)
+        else {
+            continue;
+        };
+        for item in list {
+            let Some(to) = item.get("to").and_then(Value::as_str) else {
+                continue;
+            };
+            let Some(target) = vault.resolve_link(to)? else {
+                continue;
+            };
+            if target == node.path || !known.contains(&target) {
+                continue;
+            }
+            let text = |key: &str| item.get(key).and_then(Value::as_str).map(str::to_string);
+            relations.insert(GraphRelation {
+                source: node.path.clone(),
+                target,
+                kind: text("type").unwrap_or_default(),
+                grade: text("grade"),
+                origin: text("origin"),
+                status: text("status"),
+            });
+        }
+    }
+    graph.relations = relations.into_iter().collect();
+    Ok(graph)
 }
 
 #[cfg(test)]
@@ -159,6 +228,36 @@ mod tests {
     }
 
     #[test]
+    fn relations_from_front_matter_are_resolved_and_filtered() {
+        let dir = tempfile::tempdir().unwrap();
+        let vault = Vault::init(dir.path(), None).unwrap();
+        vault
+            .write_note(
+                "Person.md",
+                "---\ntype: person\nrelations:\n  - {type: \"owner\", to: \"Company\", grade: \"B2\", origin: \"registry\", status: \"unverified\"}\n  - {type: \"ghost\", to: \"Nobody\", grade: \"F6\"}\n  - {type: \"self\", to: \"Person\"}\n  - {grade: \"A1\"}\n---\n# Person\n",
+            )
+            .unwrap();
+        vault
+            .write_note("Company.md", "---\ntype: company\n---\n# Company\n")
+            .unwrap();
+        let mut index = Index::open_in_memory().unwrap();
+        index.sync(&vault).unwrap();
+
+        let graph = with_relations(&vault, knowledge_graph(&index, None).unwrap()).unwrap();
+        assert_eq!(
+            graph.relations,
+            vec![GraphRelation {
+                source: "Person.md".into(),
+                target: "Company.md".into(),
+                kind: "owner".into(),
+                grade: Some("B2".into()),
+                origin: Some("registry".into()),
+                status: Some("unverified".into()),
+            }]
+        );
+    }
+
+    #[test]
     fn local_graph_for_missing_focus_is_empty() {
         let (_dir, _vault, index) = indexed_vault();
         assert_eq!(
@@ -166,6 +265,7 @@ mod tests {
             KnowledgeGraph {
                 nodes: Vec::new(),
                 edges: Vec::new(),
+                relations: Vec::new(),
             }
         );
     }

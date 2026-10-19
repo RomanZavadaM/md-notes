@@ -623,7 +623,10 @@ fn knowledge_graph_snapshot(
     focus: Option<String>,
     state: State<'_, AppState>,
 ) -> CmdResult<KnowledgeGraph> {
-    with_session(&state, |s| knowledge_graph(&s.index, focus.as_deref()))
+    with_session(&state, |s| {
+        let graph = knowledge_graph(&s.index, focus.as_deref())?;
+        notes_core::with_relations(&s.vault, graph)
+    })
 }
 
 #[tauri::command]

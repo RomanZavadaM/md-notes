@@ -105,9 +105,19 @@ export interface GraphEdge {
   target: string;
 }
 
+export interface GraphRelation {
+  source: string;
+  target: string;
+  kind: string;
+  grade: string | null;
+  origin: string | null;
+  status: string | null;
+}
+
 export interface KnowledgeGraph {
   nodes: GraphNode[];
   edges: GraphEdge[];
+  relations: GraphRelation[];
 }
 
 export interface UnresolvedLink {
