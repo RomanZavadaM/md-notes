@@ -168,7 +168,9 @@ mod tests {
         let found = find_plaintext(tmp.path()).unwrap();
         let paths: Vec<_> = found.iter().map(|f| f.path.as_str()).collect();
         assert_eq!(paths, vec!["dir/pic.png", "leak.md"]);
-        assert!(found.iter().all(|f| f.reason == PlaintextReason::NotEncrypted));
+        assert!(found
+            .iter()
+            .all(|f| f.reason == PlaintextReason::NotEncrypted));
         let err = ensure_push_safe(tmp.path()).unwrap_err().to_string();
         assert!(err.contains("push refused"), "{err}");
         assert!(err.contains("dir/pic.png"), "{err}");
