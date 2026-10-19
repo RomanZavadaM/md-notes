@@ -237,8 +237,8 @@ impl Vault {
             return Err(Error::InvalidPath(name.to_string()));
         }
         let rel = self.storage.unique_path(&parent, &base, "")?;
-        let path = paths::resolve(&self.root, &rel)?;
-        fs::create_dir_all(&path).map_err(io_err(&path))?;
+        paths::resolve(&self.root, &rel)?;
+        self.storage.provider().create_dir(&rel)?;
         Ok(rel)
     }
 

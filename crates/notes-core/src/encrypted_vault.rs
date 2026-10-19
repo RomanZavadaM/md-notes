@@ -14,7 +14,7 @@ use age::x25519::{Identity, Recipient};
 use secrecy::ExposeSecret;
 use serde::{Deserialize, Serialize};
 
-use crate::encrypted::EncryptedProvider;
+use crate::encrypted::{EncryptedProvider, NameLayout};
 use crate::error::{io_err, Error, Result};
 use crate::storage::LocalFsProvider;
 use crate::vault::{write_atomic, Vault, SERVICE_DIR};
@@ -40,6 +40,10 @@ pub struct EncryptionConfig {
     pub vault_id: String,
     /// Public keys (`age1...`) every file is encrypted for.
     pub recipients: Vec<String>,
+    /// How files are named on disk. Vaults created before random names were
+    /// introduced have no such field and keep `named`.
+    #[serde(default)]
+    pub names: NameLayout,
 }
 
 impl EncryptionConfig {
@@ -139,12 +143,14 @@ fn provider_for(
     root: &Path,
     recipients: Vec<Recipient>,
     identity: Identity,
+    layout: NameLayout,
 ) -> Result<EncryptedProvider> {
-    EncryptedProvider::new(
+    Ok(EncryptedProvider::new(
         Arc::new(LocalFsProvider::new(root)?),
         recipients,
         vec![identity],
-    )
+    )?
+    .with_layout(layout))
 }
 
 fn open_with_identity(root: &Path, config: &EncryptionConfig, identity: Identity) -> Result<Vault> {
@@ -154,7 +160,7 @@ fn open_with_identity(root: &Path, config: &EncryptionConfig, identity: Identity
             "the key does not belong to this vault".into(),
         ));
     }
-    let provider = provider_for(root, config.parse_recipients()?, identity)?;
+    let provider = provider_for(root, config.parse_recipients()?, identity, config.names)?;
     Vault::open_with_provider(root, Arc::new(provider))
 }
 
@@ -206,6 +212,7 @@ pub fn create_encrypted_vault(
         version: ENCRYPTION_VERSION,
         vault_id: ulid::Ulid::new().to_string(),
         recipients,
+        names: NameLayout::Random,
     };
     config.save(root)?;
 
@@ -242,7 +249,7 @@ pub fn add_recipient(root: &Path, secret_key: &str, recipient: &str) -> Result<u
         return Ok(0);
     }
     config.recipients.push(new);
-    let provider = provider_for(root, config.parse_recipients()?, identity)?;
+    let provider = provider_for(root, config.parse_recipients()?, identity, config.names)?;
     let rewritten = provider.reencrypt_all()?;
     config.save(root)?;
     Ok(rewritten)
@@ -267,8 +274,16 @@ mod tests {
 
         assert!(created.secret_key.starts_with("AGE-SECRET-KEY-"));
         assert!(created.public_key.starts_with("age1"));
-        assert!(tmp.path().join("a.md.age").is_file());
+        // Random file names: neither the note name nor its title is on disk.
+        assert!(!tmp.path().join("a.md.age").exists());
         assert!(!tmp.path().join("a.md").exists());
+        let stored: Vec<_> = fs::read_dir(tmp.path())
+            .unwrap()
+            .map(|e| e.unwrap().file_name().to_string_lossy().into_owned())
+            .filter(|n| n.ends_with(".age"))
+            .collect();
+        assert_eq!(stored.len(), 1);
+        assert_eq!(stored[0].len(), 16 + 4);
 
         let config_text =
             fs::read_to_string(tmp.path().join(SERVICE_DIR).join(ENCRYPTION_FILE)).unwrap();
@@ -348,6 +363,7 @@ mod tests {
             version: ENCRYPTION_VERSION,
             vault_id: "01J".into(),
             recipients: vec![public],
+            names: NameLayout::Random,
         };
         assert!(good.validate().is_ok());
 
