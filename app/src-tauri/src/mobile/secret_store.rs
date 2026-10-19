@@ -56,6 +56,33 @@ pub(crate) fn load_git_credentials() -> Result<Option<GitHttpsCredentials>, Stri
         .map_err(|error| error.to_string())
 }
 
+#[cfg(feature = "encrypted-vault")]
+const VAULT_KEY_SERVICE: &str = "com.romanzavada.md-notes.vault-key";
+
+/// Stores the private key of an encrypted vault in the OS secret store.
+#[cfg(feature = "encrypted-vault")]
+pub(crate) fn save_vault_key(vault_id: &str, secret_key: &str) -> Result<(), String> {
+    vault_key_entry(vault_id)?
+        .set_password(secret_key)
+        .map_err(store_error)
+}
+
+/// Reads the private key of an encrypted vault; `None` when this device has none.
+#[cfg(feature = "encrypted-vault")]
+pub(crate) fn load_vault_key(vault_id: &str) -> Result<Option<String>, String> {
+    match vault_key_entry(vault_id)?.get_password() {
+        Ok(key) => Ok(Some(key)),
+        Err(keyring_core::Error::NoEntry) => Ok(None),
+        Err(error) => Err(store_error(error)),
+    }
+}
+
+#[cfg(feature = "encrypted-vault")]
+fn vault_key_entry(vault_id: &str) -> Result<keyring_core::Entry, String> {
+    ensure_store()?;
+    keyring_core::Entry::new(VAULT_KEY_SERVICE, vault_id).map_err(store_error)
+}
+
 fn credential_entry() -> Result<keyring_core::Entry, String> {
     ensure_store()?;
     keyring_core::Entry::new(GIT_CREDENTIAL_SERVICE, GIT_CREDENTIAL_ACCOUNT).map_err(store_error)

@@ -12,6 +12,11 @@ publish = false
 name = "md_notes_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
+[features]
+# Encrypted vaults (age). On by default for the app; notes-core stays opt-in.
+default = ["encrypted-vault"]
+encrypted-vault = ["notes-core/encrypted-vault"]
+
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 
