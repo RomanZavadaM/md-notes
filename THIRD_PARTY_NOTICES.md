@@ -16,6 +16,7 @@ Core library `crates/notes-core`:
 - thiserror — MIT OR Apache-2.0, error types
 - ulid — MIT, stable note identifiers
 - age (optional feature `encrypted-vault`, ADR-0007) — MIT OR Apache-2.0, file encryption in the open age format; no default features (no async, CLI, plugin or SSH code)
+- secrecy (optional feature `encrypted-vault`, ADR-0007) — MIT OR Apache-2.0, reading the secret string of an age key (already a transitive dependency of age)
 - tempfile — MIT OR Apache-2.0 (development dependency, tests only)
 
 Application `app/src-tauri`:
