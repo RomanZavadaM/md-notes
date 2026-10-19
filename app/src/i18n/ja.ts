@@ -3,6 +3,7 @@ import type { Strings } from "./uk";
 export const ja: Strings = {
   appTagline: "通常の Markdown ファイルによる個人ナレッジベース。",
   openFolder: "フォルダーを開く",
+  backToVault: "← 保管庫に戻る",
   pickFolderTitle: "保管庫のフォルダーを選択",
   openMarkdownFile: "Markdownファイルを開く…",
   pickMarkdownFileTitle: "Markdownファイルを選択",

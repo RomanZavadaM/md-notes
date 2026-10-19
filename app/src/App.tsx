@@ -29,7 +29,7 @@ import { AttachmentsPanel } from "./components/AttachmentsPanel";
 import { AboutDialog, COPYRIGHT } from "./components/AboutDialog";
 import { LANGUAGES, useI18n, type LanguageCode } from "./i18n";
 import { ENCRYPTION_STRINGS } from "./i18n/encryption";
-import { storage, useStoredState } from "./storage";
+import { getRememberedVault, storage, useStoredState } from "./storage";
 
 type ViewMode = "edit" | "split" | "preview";
 type Theme = "system" | "light" | "dark";
@@ -49,6 +49,8 @@ export default function App() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [encrypted, setEncrypted] = useState(false);
   const [keyPrompt, setKeyPrompt] = useState<string | null>(null);
+  // Last vault that was open; offered as a way back from a standalone Markdown file.
+  const lastVaultRef = useRef<string | null>(null);
   const [platform, setPlatform] = useState<RuntimePlatform>("unknown");
   const [vault, setVault] = useState<VaultInfo | null>(null);
   const [standalone, setStandalone] = useState<StandaloneMarkdown | null>(null);
@@ -139,6 +141,7 @@ export default function App() {
         setSelected(null);
         showNote(null);
         storage.set(LAST_VAULT_KEY, path);
+        lastVaultRef.current = path;
         setTree(await api.getTree());
         bump();
       } catch (e) {
@@ -510,6 +513,18 @@ export default function App() {
     return (
       <div className="app">
         <header className="toolbar">
+          {(lastVaultRef.current ?? getRememberedVault()) && (
+            <button
+              type="button"
+              className="back-to-vault"
+              onClick={() => {
+                const target = lastVaultRef.current ?? getRememberedVault();
+                if (target) void openVaultAt(target);
+              }}
+            >
+              {t.backToVault}
+            </button>
+          )}
           <span className="vault-name" title={standalone.path}>
             {standalone.name}
           </span>
