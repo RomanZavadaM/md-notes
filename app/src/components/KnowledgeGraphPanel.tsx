@@ -3,10 +3,11 @@ import Graph from "graphology";
 import Sigma from "sigma";
 import { api, type KnowledgeGraph } from "../api";
 import { ForceLayout } from "../graph/layout";
-import { attachOverlay } from "../graph/overlay";
+import { attachOverlay, type EdgeHit } from "../graph/overlay";
 import { gradeDigit, isDarkBackground, nodeSize, typeColor } from "../graph/palette";
 import { useI18n } from "../i18n";
 import { GRAPH_STRINGS } from "../i18n/graph";
+import { RelationCard, type RelationCardData, type RelationItem } from "./RelationCard";
 import "./KnowledgeGraphPanel.css";
 
 interface Props {
@@ -43,6 +44,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
   const [search, setSearch] = useState("");
   const [hiddenTypes, setHiddenTypes] = useState<Set<string>>(new Set());
   const [hover, setHover] = useState<Hover | null>(null);
+  const [edgeCard, setEdgeCard] = useState<RelationCardData | null>(null);
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
@@ -95,13 +97,14 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       degree.set(node.path, 0);
     });
 
-    // One line per pair of notes: a typed relation (styled by grade) wins over
-    // a plain [[link]] between the same notes.
+    // One line per pair of notes: typed relations (styled by grade, with an
+    // arrow and a card) win over a plain [[link]] between the same notes.
+    const titleOf = new Map(snapshot.nodes.map((node) => [node.path, node.title]));
     interface PairEdge {
       source: string;
       target: string;
       grade?: string;
-      kinds: string[];
+      items: RelationItem[];
       digit?: number;
     }
     const pairEdges = new Map<string, PairEdge>();
@@ -113,20 +116,31 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       if (a === undefined || b === undefined || a === b) return;
       const key = pairKey(a, b);
       const digit = gradeDigit(relation.grade);
+      const item: RelationItem = {
+        kind: relation.kind,
+        grade: relation.grade ?? undefined,
+        origin: relation.origin ?? undefined,
+        status: relation.status ?? undefined,
+        evidence: relation.evidence ?? undefined,
+        from: titleOf.get(relation.source) ?? relation.source,
+        to: titleOf.get(relation.target) ?? relation.target,
+      };
       const current = pairEdges.get(key);
       if (!current) {
         pairEdges.set(key, {
           source: relation.source,
           target: relation.target,
           grade: relation.grade ?? undefined,
-          kinds: relation.kind ? [relation.kind] : [],
+          items: [item],
           digit,
         });
       } else {
-        if (relation.kind && !current.kinds.includes(relation.kind)) current.kinds.push(relation.kind);
+        current.items.push(item);
         if (digit !== undefined && (current.digit === undefined || digit < current.digit)) {
           current.digit = digit;
           current.grade = relation.grade ?? undefined;
+          current.source = relation.source;
+          current.target = relation.target;
         }
       }
       if (digit !== undefined) {
@@ -141,7 +155,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       const b = indexOf.get(edge.target);
       if (a === undefined || b === undefined || a === b) return;
       const key = pairKey(a, b);
-      if (!pairEdges.has(key)) pairEdges.set(key, { source: edge.source, target: edge.target, kinds: [] });
+      if (!pairEdges.has(key)) pairEdges.set(key, { source: edge.source, target: edge.target, items: [] });
     });
     const pairs: Array<[number, number]> = [];
     pairEdges.forEach((edge) => {
@@ -171,7 +185,9 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       graph.addDirectedEdgeWithKey(`pair:${key}`, edge.source, edge.target, {
         size: 1,
         grade: edge.grade,
-        kinds: edge.kinds.join("; "),
+        arrow: edge.items.length > 0,
+        hasItems: edge.items.length > 0,
+        items: edge.items,
       });
     });
 
@@ -219,7 +235,21 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       edgeReducer: (_edge, data) => ({ ...data, hidden: true }),
     });
     rendererRef.current = renderer;
-    const detachOverlay = attachOverlay(container, renderer, graph, view, dark);
+    const detachOverlay = attachOverlay(container, renderer, graph, view, dark, (hit: EdgeHit | null) => {
+      if (!hit || !graph.hasEdge(hit.edge)) {
+        setEdgeCard(null);
+        return;
+      }
+      const [source, target] = graph.extremities(hit.edge);
+      const items = graph.getEdgeAttribute(hit.edge, "items") as RelationItem[];
+      setEdgeCard({
+        x: hit.x,
+        y: hit.y,
+        from: String(graph.getNodeAttribute(source, "fullTitle")),
+        to: String(graph.getNodeAttribute(target, "fullTitle")),
+        items,
+      });
+    });
 
     // Hover: highlight the node with its neighbours, show a small card.
     renderer.on("enterNode", ({ node }) => {
@@ -361,6 +391,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       {!loading && !error && snapshot?.nodes.length === 0 && <p className="panel-note">{strings.empty}</p>}
       <div className="knowledge-graph-stage">
         <div ref={containerRef} className={`knowledge-graph-canvas ${hasGraph ? "has-graph" : ""}`} />
+        {edgeCard && !hover && <RelationCard card={edgeCard} />}
         {hover && (
           <div className="knowledge-graph-card" style={{ left: hover.x + 14, top: hover.y + 14 }}>
             <strong>{hover.title}</strong>

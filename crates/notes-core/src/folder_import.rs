@@ -26,6 +26,8 @@ const SCHEMA_FILE: &str = "schema.json";
 pub struct ImportReport {
     /// Files written to the vault.
     pub created: u32,
+    /// Existing files replaced because their content differed (overwrite mode).
+    pub updated: u32,
     /// Files left alone because the vault already has a file at that path.
     pub skipped: u32,
     /// Files that could not be imported (too large, odd names, unreadable).
@@ -34,8 +36,10 @@ pub struct ImportReport {
 
 impl Vault {
     /// Imports `source` (a plain folder) into the vault, keeping its folder
-    /// structure. Returns how many files were created, skipped or rejected.
-    pub fn import_folder(&self, source: &Path) -> Result<ImportReport> {
+    /// structure. Existing files are left alone unless `overwrite` is set, in
+    /// which case files with different content are replaced. Returns how many
+    /// files were created, updated, skipped or rejected.
+    pub fn import_folder(&self, source: &Path, overwrite: bool) -> Result<ImportReport> {
         if !source.is_dir() {
             return Err(Error::NotFound(source.display().to_string()));
         }
@@ -48,11 +52,17 @@ impl Vault {
             }
         }
         let mut report = ImportReport::default();
-        self.import_dir(source, "", &mut report)?;
+        self.import_dir(source, "", overwrite, &mut report)?;
         Ok(report)
     }
 
-    fn import_dir(&self, dir: &Path, rel: &str, report: &mut ImportReport) -> Result<()> {
+    fn import_dir(
+        &self,
+        dir: &Path,
+        rel: &str,
+        overwrite: bool,
+        report: &mut ImportReport,
+    ) -> Result<()> {
         let provider = self.provider();
         for entry in fs::read_dir(dir).map_err(io_err(dir))? {
             let entry = entry.map_err(io_err(dir))?;
@@ -71,9 +81,9 @@ impl Vault {
             };
             if file_type.is_dir() {
                 if name == SERVICE_DIR && rel.is_empty() {
-                    self.import_schema(&entry.path(), report)?;
+                    self.import_schema(&entry.path(), overwrite, report)?;
                 } else if !name.starts_with('.') {
-                    self.import_dir(&entry.path(), &child_rel, report)?;
+                    self.import_dir(&entry.path(), &child_rel, overwrite, report)?;
                 }
                 continue;
             }
@@ -89,32 +99,57 @@ impl Vault {
                 report.rejected += 1;
                 continue;
             }
-            if provider.metadata(&path)?.is_some() {
+            let exists = provider.metadata(&path)?.is_some();
+            if exists && !overwrite {
                 report.skipped += 1;
                 continue;
             }
             let bytes = fs::read(entry.path()).map_err(io_err(&entry.path()))?;
-            provider.write(&path, &bytes)?;
-            report.created += 1;
+            if exists {
+                if provider.read(&path)? == bytes {
+                    report.skipped += 1;
+                    continue;
+                }
+                provider.write(&path, &bytes)?;
+                report.updated += 1;
+            } else {
+                provider.write(&path, &bytes)?;
+                report.created += 1;
+            }
         }
         Ok(())
     }
 
     /// Copies `.mdnotes/schema.json` when the vault has none yet.
-    fn import_schema(&self, service_dir: &Path, report: &mut ImportReport) -> Result<()> {
+    fn import_schema(
+        &self,
+        service_dir: &Path,
+        overwrite: bool,
+        report: &mut ImportReport,
+    ) -> Result<()> {
         let source = service_dir.join(SCHEMA_FILE);
         if !source.is_file() {
             return Ok(());
         }
         let target = format!("{SERVICE_DIR}/{SCHEMA_FILE}");
         let provider = self.provider();
-        if provider.metadata(&target)?.is_some() {
+        let exists = provider.metadata(&target)?.is_some();
+        if exists && !overwrite {
             report.skipped += 1;
             return Ok(());
         }
         let bytes = fs::read(&source).map_err(io_err(&source))?;
-        provider.write(&target, &bytes)?;
-        report.created += 1;
+        if exists {
+            if provider.read(&target)? == bytes {
+                report.skipped += 1;
+                return Ok(());
+            }
+            provider.write(&target, &bytes)?;
+            report.updated += 1;
+        } else {
+            provider.write(&target, &bytes)?;
+            report.created += 1;
+        }
         Ok(())
     }
 }
@@ -148,11 +183,12 @@ mod tests {
         let vault = Vault::init(dir.path(), None).unwrap();
         let src = source_folder();
 
-        let report = vault.import_folder(src.path()).unwrap();
+        let report = vault.import_folder(src.path(), false).unwrap();
         assert_eq!(
             report,
             ImportReport {
                 created: 4,
+                updated: 0,
                 skipped: 0,
                 rejected: 0
             }
@@ -166,12 +202,21 @@ mod tests {
 
         // The second run leaves existing files untouched.
         fs::write(dir.path().join("Головна.md"), "# Змінено\n").unwrap();
-        let again = vault.import_folder(src.path()).unwrap();
+        let again = vault.import_folder(src.path(), false).unwrap();
         assert_eq!(again.created, 0);
         assert_eq!(again.skipped, 4);
         assert!(fs::read_to_string(dir.path().join("Головна.md"))
             .unwrap()
             .contains("Змінено"));
+
+        // Overwrite mode replaces only what differs.
+        let replaced = vault.import_folder(src.path(), true).unwrap();
+        assert_eq!(replaced.updated, 1);
+        assert_eq!(replaced.created, 0);
+        assert_eq!(replaced.skipped, 3);
+        assert!(fs::read_to_string(dir.path().join("Головна.md"))
+            .unwrap()
+            .contains("[[Справи/Одна]]"));
     }
 
     #[test]
@@ -179,11 +224,11 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let vault = Vault::init(dir.path(), None).unwrap();
         assert!(matches!(
-            vault.import_folder(dir.path()),
+            vault.import_folder(dir.path(), false),
             Err(Error::InvalidPath(_))
         ));
         assert!(matches!(
-            vault.import_folder(&dir.path().join("missing")),
+            vault.import_folder(&dir.path().join("missing"), false),
             Err(Error::NotFound(_))
         ));
     }
@@ -197,7 +242,7 @@ mod tests {
         let created = create_encrypted_vault(dir.path(), None, &[]).unwrap();
         let src = source_folder();
 
-        let report = created.vault.import_folder(src.path()).unwrap();
+        let report = created.vault.import_folder(src.path(), false).unwrap();
         assert_eq!(report.created, 4);
         assert_eq!(
             created.vault.read_note("Справи/Одна.md").unwrap().title,

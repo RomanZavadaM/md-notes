@@ -53,6 +53,7 @@ export const KEY_MISSING = "KEY_MISSING";
 
 export interface ImportReport {
   created: number;
+  updated: number;
   skipped: number;
   rejected: number;
 }
@@ -112,6 +113,7 @@ export interface GraphRelation {
   grade: string | null;
   origin: string | null;
   status: string | null;
+  evidence: string | null;
 }
 
 export interface KnowledgeGraph {
@@ -218,7 +220,7 @@ export const api = {
     invoke<"pushed" | "upToDate">("git_push_with_stored_credentials", { remoteName }),
   /** Closes the application (desktop). */
   quitApp: () => invoke<void>("quit_app"),
-  importFolder: (source: string) => invoke<ImportReport>("import_folder", { source }),
+  importFolder: (source: string, overwrite = false) => invoke<ImportReport>("import_folder", { source, overwrite }),
   gitStatus: (remoteName: string | null = null) => invoke<GitStatus>("git_status_cmd", { remoteName }),
   gitInit: () => invoke<void>("git_init_repo"),
   gitSetRemote: (url: string, remoteName: string | null = null) =>

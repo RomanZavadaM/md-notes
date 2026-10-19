@@ -10,6 +10,21 @@ export interface OverlayView {
   hidden: Set<string>;
 }
 
+/** A line under the pointer (graph edge key and pointer position in the container). */
+export interface EdgeHit {
+  edge: string;
+  x: number;
+  y: number;
+}
+
+interface Segment {
+  edge: string;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+}
+
 function fitCanvas(canvas: HTMLCanvasElement, width: number, height: number): CanvasRenderingContext2D | null {
   const ratio = window.devicePixelRatio || 1;
   const w = Math.max(1, Math.round(width * ratio));
@@ -35,10 +50,20 @@ function layer(): HTMLCanvasElement {
   return canvas;
 }
 
+function distanceToSegment(px: number, py: number, s: Segment): number {
+  const dx = s.x2 - s.x1;
+  const dy = s.y2 - s.y1;
+  const lengthSquared = dx * dx + dy * dy;
+  let t = lengthSquared === 0 ? 0 : ((px - s.x1) * dx + (py - s.y1) * dy) / lengthSquared;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(px - (s.x1 + t * dx), py - (s.y1 + t * dy));
+}
+
 /**
  * Draws what WebGL lines and fills cannot: dashed and dotted lines by grade
- * under the nodes, and outlines by evidence (plus a rumour badge) above them.
- * Sigma's own edges are hidden by the panel's edge reducer.
+ * with direction arrowheads under the nodes, and outlines by evidence (plus a
+ * rumour badge) above them. Sigma's own edges are hidden by the panel's edge
+ * reducer. Also finds the line under the pointer so the panel can show a card.
  */
 export function attachOverlay(
   container: HTMLElement,
@@ -46,12 +71,14 @@ export function attachOverlay(
   graph: Graph,
   view: OverlayView,
   dark: boolean,
+  onEdgeHover: (hit: EdgeHit | null) => void,
 ): () => void {
   const below = layer();
   const above = layer();
   container.insertBefore(below, container.firstChild);
   container.appendChild(above);
   const outline = dark ? "#E5E7EB" : "#1F2937";
+  let segments: Segment[] = [];
 
   const draw = () => {
     const width = container.clientWidth;
@@ -61,24 +88,49 @@ export function attachOverlay(
     if (!lines || !rings) return;
     const searching = view.search.length > 0;
     const focus = view.hovered;
+    segments = [];
 
-    graph.forEachEdge((_edge, attributes, source, target) => {
+    graph.forEachEdge((edge, attributes, source, target) => {
       const sourceData = graph.getNodeAttributes(source);
       const targetData = graph.getNodeAttributes(target);
       if (view.hidden.has(String(sourceData.typeKey)) || view.hidden.has(String(targetData.typeKey))) return;
       const style = edgeStyle(attributes.grade as string | undefined, dark);
       const from = renderer.graphToViewport({ x: sourceData.x, y: sourceData.y });
       const to = renderer.graphToViewport({ x: targetData.x, y: targetData.y });
+      if (attributes.hasItems === true) {
+        segments.push({ edge, x1: from.x, y1: from.y, x2: to.x, y2: to.y });
+      }
       const incident = focus !== null && (source === focus || target === focus);
       lines.save();
       lines.globalAlpha = focus === null ? (searching ? 0.4 : 0.9) : incident ? 1 : 0.07;
       lines.strokeStyle = style.color;
+      lines.fillStyle = style.color;
       lines.lineWidth = style.width + (incident ? 1 : 0);
       lines.setLineDash(style.dash);
       lines.beginPath();
       lines.moveTo(from.x, from.y);
       lines.lineTo(to.x, to.y);
       lines.stroke();
+
+      // Arrowhead at the target end, just outside the node.
+      if (attributes.arrow === true) {
+        const length = Math.hypot(to.x - from.x, to.y - from.y);
+        if (length > 1) {
+          const ux = (to.x - from.x) / length;
+          const uy = (to.y - from.y) / length;
+          const gap = renderer.scaleSize(Number(targetData.size)) + 3;
+          const tipX = to.x - ux * gap;
+          const tipY = to.y - uy * gap;
+          const head = 6 + style.width * 1.5;
+          lines.setLineDash([]);
+          lines.beginPath();
+          lines.moveTo(tipX, tipY);
+          lines.lineTo(tipX - ux * head - uy * head * 0.45, tipY - uy * head + ux * head * 0.45);
+          lines.lineTo(tipX - ux * head + uy * head * 0.45, tipY - uy * head - ux * head * 0.45);
+          lines.closePath();
+          lines.fill();
+        }
+      }
       lines.restore();
     });
 
@@ -118,9 +170,48 @@ export function attachOverlay(
     });
   };
 
+  // Find the typed line under the pointer (when no node is hovered).
+  let pending = false;
+  let lastEvent: MouseEvent | null = null;
+  const onMove = (event: MouseEvent) => {
+    lastEvent = event;
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(() => {
+      pending = false;
+      const current = lastEvent;
+      if (!current) return;
+      if (view.hovered !== null) {
+        onEdgeHover(null);
+        return;
+      }
+      const rect = container.getBoundingClientRect();
+      const x = current.clientX - rect.left;
+      const y = current.clientY - rect.top;
+      let best: Segment | null = null;
+      let bestDistance = 7;
+      for (const segment of segments) {
+        const d = distanceToSegment(x, y, segment);
+        if (d < bestDistance) {
+          bestDistance = d;
+          best = segment;
+        }
+      }
+      onEdgeHover(best ? { edge: best.edge, x, y } : null);
+    });
+  };
+  const onLeave = () => {
+    lastEvent = null;
+    onEdgeHover(null);
+  };
+  container.addEventListener("mousemove", onMove);
+  container.addEventListener("mouseleave", onLeave);
+
   renderer.on("afterRender", draw);
   draw();
   return () => {
+    container.removeEventListener("mousemove", onMove);
+    container.removeEventListener("mouseleave", onLeave);
     renderer.off("afterRender", draw);
     below.remove();
     above.remove();
