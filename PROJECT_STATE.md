@@ -68,6 +68,7 @@ Builds не вважаються підписаними/нотаризовани
 
 - Windows v0.2.2 runtime — підтверджено власником;
 - Android/iOS buildability — підтверджено CI, physical-device runtime ще не підтверджений;
+- зашифроване сховище (ADR-0007) ще не реалізоване;
 - Git push ще не реалізований;
 - Git sync ще не зв’язаний повністю з `SyncManifest` / ADR-0005 conflict resolution;
 - WebDAV ще не реалізований;
@@ -78,7 +79,8 @@ Builds не вважаються підписаними/нотаризовани
 
 ## Наступний напрям
 
-1. **Git push.**
+1. **Зашифроване сховище (age, ADR-0007), зрізи 0-3.**
+1a. **Git push** (одразу після зрізу 3).
 2. Integration Git state ↔ `SyncManifest` / ADR-0005.
 3. WebDAV.
 4. Physical-device Android/iOS runtime validation.
