@@ -81,7 +81,7 @@ fn push_inner(
         let detail: &str = if stderr.trim().is_empty() {
             stdout.as_str()
         } else {
-            &*stderr
+            &stderr
         };
         return Err(Error::Git(format!(
             "git push failed: {}",
@@ -133,7 +133,9 @@ fn current_branch(root: &Path) -> Result<String> {
     if ok {
         Ok(branch)
     } else {
-        Err(Error::Git("current Git branch name is not supported".into()))
+        Err(Error::Git(
+            "current Git branch name is not supported".into(),
+        ))
     }
 }
 
@@ -209,12 +211,12 @@ fn sanitize(text: &str, credentials: Option<&GitHttpsCredentials>) -> String {
     let mut out = text.to_string();
     if let Some(credentials) = credentials {
         let header = authorization_header(credentials);
-        let encoded = header
-            .rsplit(' ')
-            .next()
-            .unwrap_or_default()
-            .to_string();
-        for secret in [credentials.token.as_str(), header.as_str(), encoded.as_str()] {
+        let encoded = header.rsplit(' ').next().unwrap_or_default().to_string();
+        for secret in [
+            credentials.token.as_str(),
+            header.as_str(),
+            encoded.as_str(),
+        ] {
             if !secret.is_empty() {
                 out = out.replace(secret, "***");
             }
@@ -383,7 +385,10 @@ mod tests {
         git(&work, &["commit", "-m", "init"]);
         push_inner(&work, "origin", None, false).unwrap();
         let remote_head = git(&bare, &["rev-parse", "refs/heads/main"]);
-        git(&work, &["commit", "--amend", "-m", "rewritten", "--allow-empty"]);
+        git(
+            &work,
+            &["commit", "--amend", "-m", "rewritten", "--allow-empty"],
+        );
         let err = push_inner(&work, "origin", None, false)
             .unwrap_err()
             .to_string();
@@ -415,7 +420,12 @@ mod tests {
         fn encrypted_repo() -> (tempfile::TempDir, std::path::PathBuf, std::path::PathBuf) {
             let (tmp, work, bare) = repo_with_remote();
             let created = create_encrypted_vault(&work, None, &[]).unwrap();
-            created.vault.write_note("secret.md", "# Secret\n\nbody").unwrap();
+            created
+                .vault
+                .write_note("secret.md", "# Secret
+
+body")
+                .unwrap();
             (tmp, work, bare)
         }
 
