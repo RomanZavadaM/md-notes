@@ -51,6 +51,12 @@ pub trait StorageProvider: Send + Sync {
         self.remove(from)
     }
 
+    /// Creates a folder (and its parents). Providers whose folders exist only
+    /// implicitly may keep the default, which does nothing.
+    fn create_dir(&self, _rel: &str) -> Result<()> {
+        Ok(())
+    }
+
     /// Returns entries modified strictly after `since_ms`.
     ///
     /// Providers with a native change journal can override this efficiently.
@@ -158,6 +164,12 @@ impl StorageProvider for LocalFsProvider {
         let tmp = PathBuf::from(tmp);
         fs::write(&tmp, bytes).map_err(io_err(&tmp))?;
         fs::rename(&tmp, &path).map_err(io_err(&path))
+    }
+
+    fn create_dir(&self, rel: &str) -> Result<()> {
+        let rel = paths::normalize(rel)?;
+        let path = paths::resolve(&self.root, &rel)?;
+        fs::create_dir_all(&path).map_err(io_err(&path))
     }
 
     fn remove(&self, rel: &str) -> Result<()> {

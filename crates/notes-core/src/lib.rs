@@ -30,7 +30,7 @@ pub mod vault_storage;
 
 pub use attachments::AttachmentInfo;
 #[cfg(feature = "encrypted-vault")]
-pub use encrypted::{EncryptedProvider, ENCRYPTED_SUFFIX};
+pub use encrypted::{EncryptedProvider, NameLayout, ENCRYPTED_SUFFIX};
 pub use error::{Error, Result};
 #[cfg(not(any(target_os = "android", target_os = "ios")))]
 pub use git_push::{push_git_branch, GitPushOutcome};

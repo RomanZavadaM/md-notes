@@ -14,21 +14,40 @@
 //! were loaded from the OS secret store.
 
 use std::io::{Read, Write};
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
+
+use serde::{Deserialize, Serialize};
 
 use crate::error::{Error, Result};
 use crate::paths;
 use crate::storage::{StorageEntry, StorageEntryKind, StorageProvider};
 use crate::vault::SERVICE_DIR;
 
+mod random;
+#[cfg(test)]
+mod random_tests;
+
 /// Suffix of encrypted files in the underlying storage.
 pub const ENCRYPTED_SUFFIX: &str = ".age";
+
+/// How files are named in the underlying storage.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum NameLayout {
+    /// `a/b.md` is stored as `a/b.md.age` (names and folders are visible).
+    #[default]
+    Named,
+    /// Files get random names; the logical path lives inside the ciphertext.
+    Random,
+}
 
 /// Storage provider that keeps every non-service file encrypted with age.
 pub struct EncryptedProvider {
     inner: Arc<dyn StorageProvider>,
     recipients: Vec<age::x25519::Recipient>,
     identities: Vec<age::x25519::Identity>,
+    layout: NameLayout,
+    index: Mutex<random::NameIndex>,
 }
 
 impl EncryptedProvider {
@@ -47,7 +66,19 @@ impl EncryptedProvider {
             inner,
             recipients,
             identities,
+            layout: NameLayout::Named,
+            index: Mutex::new(random::NameIndex::default()),
         })
+    }
+
+    /// Selects how files are named in the underlying storage.
+    pub fn with_layout(mut self, layout: NameLayout) -> Self {
+        self.layout = layout;
+        self
+    }
+
+    fn random(&self) -> bool {
+        self.layout == NameLayout::Random
     }
 
     /// Convenience constructor: the identity's own public key is always a
@@ -173,6 +204,9 @@ impl EncryptedProvider {
 impl StorageProvider for EncryptedProvider {
     fn list(&self, rel: &str) -> Result<Vec<StorageEntry>> {
         let rel = paths::normalize(rel)?;
+        if self.random() && !Self::is_plain(&rel) {
+            return self.r_list(&rel);
+        }
         let entries = self.inner.list(&rel)?;
         if Self::is_plain(&rel) {
             return Ok(entries);
@@ -185,6 +219,9 @@ impl StorageProvider for EncryptedProvider {
         if Self::is_plain(&rel) {
             return self.inner.read(&rel);
         }
+        if self.random() {
+            return self.r_read(&rel);
+        }
         let data = self.inner.read(&Self::physical(&rel))?;
         self.decrypt(&data)
     }
@@ -194,13 +231,22 @@ impl StorageProvider for EncryptedProvider {
         if Self::is_plain(&rel) {
             return self.inner.write(&rel, bytes);
         }
+        if self.random() {
+            return self.r_write(&rel, bytes);
+        }
         let encrypted = self.encrypt(bytes)?;
         self.inner.write(&Self::physical(&rel), &encrypted)
     }
 
     fn remove(&self, rel: &str) -> Result<()> {
         let rel = paths::normalize(rel)?;
-        if Self::is_plain(&rel) || self.is_inner_dir(&rel)? {
+        if Self::is_plain(&rel) {
+            return self.inner.remove(&rel);
+        }
+        if self.random() {
+            return self.r_remove(&rel);
+        }
+        if self.is_inner_dir(&rel)? {
             return self.inner.remove(&rel);
         }
         self.inner.remove(&Self::physical(&rel))
@@ -209,7 +255,13 @@ impl StorageProvider for EncryptedProvider {
     fn rename(&self, from: &str, to: &str) -> Result<()> {
         let from = paths::normalize(from)?;
         let to = paths::normalize(to)?;
-        if Self::is_plain(&from) || Self::is_plain(&to) || self.is_inner_dir(&from)? {
+        if Self::is_plain(&from) || Self::is_plain(&to) {
+            return self.inner.rename(&from, &to);
+        }
+        if self.random() {
+            return self.r_rename(&from, &to);
+        }
+        if self.is_inner_dir(&from)? {
             return self.inner.rename(&from, &to);
         }
         self.inner
@@ -220,6 +272,9 @@ impl StorageProvider for EncryptedProvider {
         let rel = paths::normalize(rel)?;
         if Self::is_plain(&rel) {
             return self.inner.metadata(&rel);
+        }
+        if self.random() {
+            return self.r_metadata(&rel);
         }
         if let Some(entry) = self.inner.metadata(&rel)? {
             if entry.kind == StorageEntryKind::Dir {
@@ -235,7 +290,18 @@ impl StorageProvider for EncryptedProvider {
             }))
     }
 
+    fn create_dir(&self, rel: &str) -> Result<()> {
+        let rel = paths::normalize(rel)?;
+        if self.random() && !Self::is_plain(&rel) {
+            return self.r_create_dir(&rel);
+        }
+        self.inner.create_dir(&rel)
+    }
+
     fn changes_since(&self, since_ms: u64) -> Result<Vec<StorageEntry>> {
+        if self.random() {
+            return self.r_changes_since(since_ms);
+        }
         Ok(self
             .inner
             .changes_since(since_ms)?
