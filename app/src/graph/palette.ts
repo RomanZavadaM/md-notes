@@ -93,3 +93,61 @@ export function chipColors(grade: string | undefined): { background: string; col
   if (digit <= 4) return { background: "#8F5A00", color: "#FFFFFF" };
   return { background: "#B3261E", color: "#FFFFFF" };
 }
+
+/** Type glyphs as SVG paths in a 24x24 box centred on the origin; one string feeds Canvas `Path2D` and inline SVG. */
+export const GLYPHS: Record<string, string> = {
+  person: "M0 -9 a4.2 4.2 0 1 0 0.01 0Z M-8 10 a8 7 0 0 1 16 0 Z",
+  company: "M-8 -8 H8 V8 H-8 Z",
+  institution: "M0 -9 L8 -4.5 V4.5 L0 9 L-8 4.5 V-4.5 Z",
+  case: "M0 -10 L9 0 L0 10 L-9 0 Z",
+  material: "M0 -9 L9 8 H-9 Z",
+  group: "M-6 -3 a3 3 0 1 0 0.01 0Z M6 -3 a3 3 0 1 0 0.01 0Z M0 6 a3 3 0 1 0 0.01 0Z",
+};
+
+const GLYPH_OF: Record<string, string> = {
+  person: "person",
+  company: "company",
+  tender: "company",
+  institution: "institution",
+  market: "institution",
+  case: "case",
+  asset: "case",
+  material: "material",
+  source: "material",
+  group: "group",
+};
+
+/** SVG path of the glyph for a note type, or `null` for types without one. */
+export function glyphFor(type: string | null | undefined): string | null {
+  const name = type ? GLYPH_OF[type] : undefined;
+  return name ? GLYPHS[name] : null;
+}
+
+export type NodeState = "strong" | "medium" | "weak" | "none";
+
+/** Reliability state of a node from the best credibility digit among its typed relations. */
+export function stateOf(best: number | undefined): NodeState {
+  if (best === undefined) return "none";
+  if (best <= 2) return "strong";
+  if (best <= 4) return "medium";
+  return "weak";
+}
+
+/** Node fill by state (the same hues as the grade lines; never the only signal: the outline and the rumour badge stay). */
+export function stateColor(state: NodeState, dark: boolean): string {
+  switch (state) {
+    case "strong":
+      return dark ? "#66BB6A" : "#2E7D32";
+    case "medium":
+      return dark ? "#E0A84A" : "#B26A00";
+    case "weak":
+      return dark ? "#FF7A70" : "#C62828";
+    default:
+      return dark ? "#9AA1AD" : "#5B6475";
+  }
+}
+
+/** Glyph colour with enough contrast on the state fill. */
+export function glyphColor(dark: boolean): string {
+  return dark ? "#111827" : "#FFFFFF";
+}
