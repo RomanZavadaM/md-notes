@@ -17,7 +17,8 @@ interface Props {
   onOpen: (path: string) => void;
 }
 
-const FORCES_KEY = "mdnotes.graph.forces";
+// v2: the defaults changed (more room between nodes), so older saved values are not reused.
+const FORCES_KEY = "mdnotes.graph.forces.v2";
 const FLOAT_KEY = "mdnotes.graph.float";
 /** Energy that keeps the graph in gentle motion, and the one used while a node is dragged. */
 const FLOAT_TARGET = 0.08;
@@ -311,9 +312,10 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
 
     const renderer = new Sigma(graph, container, {
       renderEdgeLabels: false,
-      labelDensity: 1.1,
-      labelGridCellSize: 80,
-      labelRenderedSizeThreshold: 5,
+      // Fewer, larger labels: on a dense graph the names of neighbours no longer overprint each other.
+      labelDensity: 0.6,
+      labelGridCellSize: 130,
+      labelRenderedSizeThreshold: 8,
       labelColor: { color: labelColor },
       labelSize: 12,
       defaultEdgeColor: edgeColor,
