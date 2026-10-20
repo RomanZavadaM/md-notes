@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { api, MATCH_END, MATCH_START, type SearchHit } from "../api";
+import { api, MATCH_END, MATCH_START, type LookupHit, type SearchHit } from "../api";
 import { useI18n } from "../i18n";
+import { LOOKUP_STRINGS } from "../i18n/lookup";
 
 interface Props {
   /** Changes whenever the index changes, so results are refreshed. */
@@ -9,7 +10,9 @@ interface Props {
 }
 
 export function SearchPanel({ refreshKey, onOpen }: Props) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const lookupStrings = LOOKUP_STRINGS[language];
+  const [lookup, setLookup] = useState<LookupHit[]>([]);
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<SearchHit[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -17,10 +20,19 @@ export function SearchPanel({ refreshKey, onOpen }: Props) {
   useEffect(() => {
     if (!query.trim()) {
       setHits([]);
+      setLookup([]);
       return;
     }
     let cancelled = false;
     const timer = window.setTimeout(() => {
+      api
+        .lookupSubject(query)
+        .then((result) => {
+          if (!cancelled) setLookup(result);
+        })
+        .catch(() => {
+          if (!cancelled) setLookup([]);
+        });
       api
         .search(query)
         .then((result) => {
@@ -38,6 +50,11 @@ export function SearchPanel({ refreshKey, onOpen }: Props) {
     };
   }, [query, refreshKey]);
 
+  const exact = lookup.filter((hit) => hit.exact);
+  const candidates = lookup.filter((hit) => !hit.exact);
+  const shown = new Set(lookup.map((hit) => hit.path));
+  const textHits = hits.filter((hit) => !shown.has(hit.path));
+
   return (
     <div className="panel">
       <input
@@ -50,9 +67,46 @@ export function SearchPanel({ refreshKey, onOpen }: Props) {
         onChange={(e) => setQuery(e.target.value)}
       />
       {error && <p className="panel-note warn">{error}</p>}
-      {query.trim() !== "" && hits.length === 0 && !error && <p className="panel-note">{t.searchNothing}</p>}
+      {query.trim() !== "" && hits.length === 0 && lookup.length === 0 && !error && (
+        <p className="panel-note">{t.searchNothing}</p>
+      )}
+      {exact.length > 0 && (
+        <section className="lookup-group">
+          <h4>{lookupStrings.exact}</h4>
+          <ul className="result-list">
+            {exact.map((hit) => (
+              <li key={`exact:${hit.path}`}>
+                <button type="button" className="result" onClick={() => onOpen(hit.path)} title={hit.path}>
+                  <span className="result-title">{hit.title}</span>
+                  <span className="result-snippet">
+                    <span className="lookup-badge">{hit.kind === "identifier" ? `${lookupStrings.codeBadge} ${hit.key ?? ""}` : lookupStrings.nameBadge}</span>
+                    {hit.noteType ?? ""}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {candidates.length > 0 && (
+        <section className="lookup-group">
+          <h4>{lookupStrings.candidates}</h4>
+          <p className="panel-note">{lookupStrings.candidateNote}</p>
+          <ul className="result-list">
+            {candidates.map((hit) => (
+              <li key={`candidate:${hit.path}`}>
+                <button type="button" className="result" onClick={() => onOpen(hit.path)} title={hit.path}>
+                  <span className="result-title">{hit.title}</span>
+                  {hit.noteType && <span className="result-snippet">{hit.noteType}</span>}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {textHits.length > 0 && (exact.length > 0 || candidates.length > 0) && <h4 className="lookup-heading">{lookupStrings.inText}</h4>}
       <ul className="result-list">
-        {hits.map((hit) => (
+        {textHits.map((hit) => (
           <li key={hit.path}>
             <button type="button" className="result" onClick={() => onOpen(hit.path)} title={hit.path}>
               <span className="result-title">{hit.title}</span>

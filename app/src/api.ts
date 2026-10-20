@@ -63,6 +63,17 @@ export interface DuplicateGroup {
   sameCode: boolean;
 }
 
+export interface LookupHit {
+  path: string;
+  title: string;
+  noteType: string | null;
+  /** `identifier` (exact code) or `name` (title or alias). */
+  kind: "identifier" | "name";
+  key: string | null;
+  /** Exact: same code or same normalised name. Otherwise only a candidate. */
+  exact: boolean;
+}
+
 export interface RelationTreeNode {
   path: string;
   title: string;
@@ -277,6 +288,7 @@ export const api = {
   quitApp: () => invoke<void>("quit_app"),
   importFolder: (source: string, overwrite = false) => invoke<ImportReport>("import_folder", { source, overwrite }),
   possibleDuplicates: () => invoke<DuplicateGroup[]>("possible_duplicates"),
+  lookupSubject: (query: string, limit = 20) => invoke<LookupHit[]>("lookup_subject", { query, limit }),
   relationTree: (root: string, direction: "up" | "down", maxDepth: number) =>
     invoke<RelationTreeResult | null>("relation_tree_for", { root, direction, maxDepth }),
   relationPath: (from: string, to: string) => invoke<RelationPathResult | null>("relation_path_between", { from, to }),

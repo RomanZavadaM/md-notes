@@ -140,6 +140,22 @@ pub struct NameHit {
     pub exact: bool,
 }
 
+/// A result of [`Index::lookup`]: a note found by an exact identifier or by name.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LookupHit {
+    pub path: String,
+    pub title: String,
+    pub note_type: Option<String>,
+    /// `identifier` (the note carries exactly this code) or `name` (title or alias).
+    pub kind: String,
+    /// Identifier key (`edrpou`, `ipn`) for identifier hits.
+    pub key: Option<String>,
+    /// Exact match: the same code, or the same name after normalisation.
+    /// Anything else is only a candidate for a person to confirm (ADR-0008).
+    pub exact: bool,
+}
+
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SyncStats {
@@ -489,6 +505,64 @@ impl Index {
             .prepare("SELECT key, value FROM identifiers WHERE path = ?1 ORDER BY key, value")?;
         let rows = stmt.query_map([path], |row| Ok((row.get(0)?, row.get(1)?)))?;
         Ok(rows.collect::<rusqlite::Result<_>>()?)
+    }
+
+    /// Title and type of a note.
+    fn summary_of(&self, path: &str) -> Result<Option<(String, Option<String>)>> {
+        let mut stmt = self
+            .conn
+            .prepare("SELECT title, type FROM notes WHERE path = ?1")?;
+        let mut rows = stmt.query_map([path], |row| Ok((row.get(0)?, row.get(1)?)))?;
+        Ok(rows.next().transpose()?)
+    }
+
+    /// One entry point for "find this subject": a number of 8 or 10 digits is looked
+    /// up as an exact identifier (a code with lost leading zeros of 6-7 digits is
+    /// restored to 8); anything else is looked up by name, exact matches first.
+    /// Name matches are candidates, never proof of identity.
+    pub fn lookup(&self, query: &str, limit: u32) -> Result<Vec<LookupHit>> {
+        let compact: String = query
+            .chars()
+            .filter(|c| !c.is_whitespace() && *c != '-')
+            .collect();
+        let mut hits = Vec::new();
+        if !compact.is_empty() && compact.chars().all(|c| c.is_ascii_digit()) {
+            let restored = if (6..8).contains(&compact.len()) {
+                format!("{compact:0>8}")
+            } else {
+                compact
+            };
+            for (key, len) in identity::IDENTITY_KEYS {
+                if restored.len() != *len {
+                    continue;
+                }
+                for path in self.notes_with_identifier(key, &restored)? {
+                    if let Some((title, note_type)) = self.summary_of(&path)? {
+                        hits.push(LookupHit {
+                            path,
+                            title,
+                            note_type,
+                            kind: "identifier".to_string(),
+                            key: Some((*key).to_string()),
+                            exact: true,
+                        });
+                    }
+                }
+            }
+            return Ok(hits);
+        }
+        for hit in self.find_by_name(query, limit)? {
+            let note_type = self.summary_of(&hit.path)?.and_then(|(_, kind)| kind);
+            hits.push(LookupHit {
+                path: hit.path,
+                title: hit.title,
+                note_type,
+                kind: "name".to_string(),
+                key: None,
+                exact: hit.exact,
+            });
+        }
+        Ok(hits)
     }
 
     /// Notes whose title or alias matches `query` by name (exact matches first).
@@ -939,6 +1013,33 @@ mod tests {
                                                                     // the alias finds the same note once
         let by_alias = index.find_by_name("Фіакр", 10).unwrap();
         assert_eq!(by_alias.iter().filter(|h| h.path == "Фіакр.md").count(), 1);
+    }
+
+    #[test]
+    fn lookup_finds_exact_codes_restores_lost_zeros_and_labels_name_matches() {
+        let (_dir, _vault, index) = relations_vault();
+        let by_code = index.lookup("03114848", 10).unwrap();
+        assert_eq!(by_code.len(), 1);
+        assert_eq!(by_code[0].path, "Власник.md");
+        assert_eq!(by_code[0].kind, "identifier");
+        assert_eq!(by_code[0].key.as_deref(), Some("edrpou"));
+        assert!(by_code[0].exact);
+
+        // the same code typed without the lost leading zero and with spaces
+        let restored = index.lookup(" 3114 848 ", 10).unwrap();
+        assert_eq!(restored.len(), 1);
+        assert_eq!(restored[0].path, "Власник.md");
+
+        // a number is never searched as a name; an unknown code gives nothing
+        assert!(index.lookup("99999999", 10).unwrap().is_empty());
+        assert!(index.lookup("12", 10).unwrap().is_empty());
+
+        let by_name = index.lookup("ТЗОВ Фіакр-Львів", 10).unwrap();
+        assert_eq!(by_name[0].path, "Фіакр.md");
+        assert_eq!(by_name[0].kind, "name");
+        assert!(by_name[0].exact);
+        assert_eq!(by_name[0].note_type, None);
+        assert!(index.lookup("   ", 10).unwrap().is_empty());
     }
 
     #[test]

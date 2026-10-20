@@ -973,3 +973,21 @@ mark {
 .app-menu-list button:focus-visible {
   background: var(--bg-soft);
 }
+
+.lookup-group h4,
+.lookup-heading {
+  margin: 0.5rem 0 0.2rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.lookup-badge {
+  display: inline-block;
+  margin-right: 0.4rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
