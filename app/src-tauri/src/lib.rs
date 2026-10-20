@@ -641,7 +641,7 @@ fn knowledge_graph_snapshot(
 ) -> CmdResult<KnowledgeGraph> {
     with_session(&state, |s| {
         let graph = knowledge_graph(&s.index, focus.as_deref())?;
-        notes_core::with_relations(&s.vault, graph)
+        notes_core::with_indexed_relations(&s.index, graph)
     })
 }
 
@@ -658,7 +658,7 @@ fn relation_tree_for(
         .ok_or_else(|| "direction must be \"up\" or \"down\"".to_string())?;
     with_session(&state, |s| {
         let graph = knowledge_graph(&s.index, None)?;
-        let graph = notes_core::with_relations(&s.vault, graph)?;
+        let graph = notes_core::with_indexed_relations(&s.index, graph)?;
         Ok(notes_core::relation_tree(
             &graph, &root, direction, max_depth,
         ))
@@ -674,7 +674,7 @@ fn relation_path_between(
 ) -> CmdResult<Option<notes_core::RelationPath>> {
     with_session(&state, |s| {
         let graph = knowledge_graph(&s.index, None)?;
-        let graph = notes_core::with_relations(&s.vault, graph)?;
+        let graph = notes_core::with_indexed_relations(&s.index, graph)?;
         Ok(notes_core::relation_path(&graph, &from, &to, 8))
     })
 }

@@ -177,6 +177,20 @@ pub fn with_relations(vault: &Vault, mut graph: KnowledgeGraph) -> Result<Knowle
     Ok(graph)
 }
 
+/// Same as [`with_relations`], but reads the typed relations from the index
+/// instead of opening every note file: the relation tree and the path finder
+/// stay fast on large vaults.
+pub fn with_indexed_relations(index: &Index, mut graph: KnowledgeGraph) -> Result<KnowledgeGraph> {
+    let known: HashSet<&str> = graph.nodes.iter().map(|node| node.path.as_str()).collect();
+    let relations: BTreeSet<GraphRelation> = index
+        .relations()?
+        .into_iter()
+        .filter(|r| known.contains(r.source.as_str()) && known.contains(r.target.as_str()))
+        .collect();
+    graph.relations = relations.into_iter().collect();
+    Ok(graph)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
