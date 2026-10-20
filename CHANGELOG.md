@@ -34,6 +34,14 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.13](https://github.com/RomanZavadaM/md-notes/compare/v0.3.12...v0.3.13) (2026-10-20)
+
+
+### Нові можливості
+
+* список можливих дублікатів за назвою ([dda12d2](https://github.com/RomanZavadaM/md-notes/commit/dda12d23ee429175c0ca3693a1170b768395e0d7))
+* список можливих дублікатів за назвою (пункт меню, лише підказка) ([eaf2645](https://github.com/RomanZavadaM/md-notes/commit/eaf26457f86ef8ff05505c4251ada9347420eaa5))
+
 ## [0.3.12](https://github.com/RomanZavadaM/md-notes/compare/v0.3.11...v0.3.12) (2026-10-20)
 
 
