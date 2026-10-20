@@ -289,7 +289,8 @@ export default function App() {
         const second = await api.importFolder(dir, true);
         result = { ...result, updated: second.updated, skipped: second.skipped };
       }
-      setNotice(strings.result(result.created, result.updated, result.skipped, result.rejected));
+      const mergedNote = result.merged > 0 ? ` ${strings.merged(result.merged, result.conflicts)}` : "";
+      setNotice(strings.result(result.created, result.updated, result.skipped, result.rejected) + mergedNote);
       await refreshTree();
       bump();
     } catch (e) {

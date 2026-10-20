@@ -7,12 +7,14 @@
 //! `.mdnotes/schema.json` that the vault does not have yet is copied, because
 //! it only describes note types.
 
+use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
 use serde::Serialize;
 
 use crate::error::{io_err, Error, Result};
+use crate::identity;
 use crate::paths;
 use crate::vault::{Vault, SERVICE_DIR};
 
@@ -32,6 +34,44 @@ pub struct ImportReport {
     pub skipped: u32,
     /// Files that could not be imported (too large, odd names, unreadable).
     pub rejected: u32,
+    /// Notes folded into an existing note about the same subject (same identity code, ADR-0008).
+    pub merged: u32,
+    /// Differing scalar values kept from the existing note during merges.
+    pub conflicts: u32,
+}
+
+/// Identity codes of the notes already in the vault, built on first use.
+#[derive(Default)]
+struct IdentityIndex {
+    map: Option<HashMap<String, String>>,
+}
+
+impl IdentityIndex {
+    fn lookup(&mut self, vault: &Vault, key: &str) -> Result<Option<String>> {
+        if self.map.is_none() {
+            let provider = vault.provider();
+            let mut map = HashMap::new();
+            for path in vault.note_paths()? {
+                let Ok(bytes) = provider.read(&path) else {
+                    continue;
+                };
+                let Ok(text) = String::from_utf8(bytes) else {
+                    continue;
+                };
+                if let Some(found) = identity::identity_of_content(&text) {
+                    map.entry(found).or_insert(path);
+                }
+            }
+            self.map = Some(map);
+        }
+        Ok(self.map.as_ref().and_then(|m| m.get(key)).cloned())
+    }
+
+    fn remember(&mut self, key: String, path: &str) {
+        if let Some(map) = self.map.as_mut() {
+            map.entry(key).or_insert_with(|| path.to_string());
+        }
+    }
 }
 
 impl Vault {
@@ -52,7 +92,8 @@ impl Vault {
             }
         }
         let mut report = ImportReport::default();
-        self.import_dir(source, "", overwrite, &mut report)?;
+        let mut identities = IdentityIndex::default();
+        self.import_dir(source, "", overwrite, &mut report, &mut identities)?;
         Ok(report)
     }
 
@@ -62,6 +103,7 @@ impl Vault {
         rel: &str,
         overwrite: bool,
         report: &mut ImportReport,
+        identities: &mut IdentityIndex,
     ) -> Result<()> {
         let provider = self.provider();
         for entry in fs::read_dir(dir).map_err(io_err(dir))? {
@@ -83,7 +125,7 @@ impl Vault {
                 if name == SERVICE_DIR && rel.is_empty() {
                     self.import_schema(&entry.path(), overwrite, report)?;
                 } else if !name.starts_with('.') {
-                    self.import_dir(&entry.path(), &child_rel, overwrite, report)?;
+                    self.import_dir(&entry.path(), &child_rel, overwrite, report, identities)?;
                 }
                 continue;
             }
@@ -105,6 +147,13 @@ impl Vault {
                 continue;
             }
             let bytes = fs::read(entry.path()).map_err(io_err(&entry.path()))?;
+            let identity = if paths::is_note(&path) {
+                std::str::from_utf8(&bytes)
+                    .ok()
+                    .and_then(identity::identity_of_content)
+            } else {
+                None
+            };
             if exists {
                 if provider.read(&path)? == bytes {
                     report.skipped += 1;
@@ -113,11 +162,52 @@ impl Vault {
                 provider.write(&path, &bytes)?;
                 report.updated += 1;
             } else {
+                // A note about a subject the vault already knows (same code) is folded in, not duplicated.
+                if let Some(key) = &identity {
+                    if let Some(target) = identities.lookup(self, key)? {
+                        if self.merge_import(&target, &bytes, &child_rel, report)? {
+                            continue;
+                        }
+                    }
+                }
                 provider.write(&path, &bytes)?;
                 report.created += 1;
+                if let Some(key) = identity {
+                    identities.remember(key, &path);
+                }
             }
         }
         Ok(())
+    }
+
+    /// Folds an incoming note into the existing note `target` (ADR-0008). Returns
+    /// false when the merge is not possible (no valid front matter), so the
+    /// caller imports the file as a separate note.
+    fn merge_import(
+        &self,
+        target: &str,
+        incoming: &[u8],
+        incoming_path: &str,
+        report: &mut ImportReport,
+    ) -> Result<bool> {
+        let provider = self.provider();
+        let Ok(existing) = String::from_utf8(provider.read(target)?) else {
+            return Ok(false);
+        };
+        let Ok(incoming) = std::str::from_utf8(incoming) else {
+            return Ok(false);
+        };
+        let Some(outcome) = identity::merge_into(&existing, incoming, incoming_path) else {
+            return Ok(false);
+        };
+        if outcome.changed {
+            provider.write(target, outcome.content.as_bytes())?;
+            report.merged += 1;
+            report.conflicts += outcome.conflicts;
+        } else {
+            report.skipped += 1;
+        }
+        Ok(true)
     }
 
     /// Copies `.mdnotes/schema.json` when the vault has none yet.
@@ -190,7 +280,9 @@ mod tests {
                 created: 4,
                 updated: 0,
                 skipped: 0,
-                rejected: 0
+                rejected: 0,
+                merged: 0,
+                conflicts: 0
             }
         );
         assert_eq!(vault.read_note("Справи/Одна.md").unwrap().title, "Одна");
@@ -217,6 +309,77 @@ mod tests {
         assert!(fs::read_to_string(dir.path().join("Головна.md"))
             .unwrap()
             .contains("[[Справи/Одна]]"));
+    }
+
+    const FIAKR_VAULT: &str = "---\ntitle: \"ТОВ «ФІАКР-ЛЬВІВ»\"\nedrpou: \"03114848\"\nstatus: unverified\nrelations:\n  - {type: засновник, to: Левик, dir: in}\n---\n# ТОВ «ФІАКР-ЛЬВІВ»\n\nТекст у сховищі.\n";
+    const FIAKR_IMPORT: &str = "---\ntitle: \"ТЗОВ ФІАКР-ЛЬВІВ\"\nedrpou: \"03114848\"\nstatus: verified\nrelations:\n  - {type: керівник, to: Коцан, dir: in}\n---\n# ТЗОВ ФІАКР-ЛЬВІВ\n\nНовий текст.\n";
+
+    #[test]
+    fn a_note_with_a_known_code_is_merged_not_duplicated() {
+        let dir = tempfile::tempdir().unwrap();
+        let vault = Vault::init(dir.path(), None).unwrap();
+        vault.write_note("Суб'єкти/Фіакр.md", FIAKR_VAULT).unwrap();
+
+        let src = tempfile::tempdir().unwrap();
+        fs::write(src.path().join("Фіакр Львів.md"), FIAKR_IMPORT).unwrap();
+
+        let report = vault.import_folder(src.path(), false).unwrap();
+        assert_eq!(report.merged, 1);
+        assert_eq!(report.created, 0);
+        assert_eq!(report.conflicts, 1); // `status` differs
+        assert!(!dir.path().join("Фіакр Львів.md").exists());
+
+        let merged = fs::read_to_string(dir.path().join("Суб'єкти/Фіакр.md")).unwrap();
+        assert!(merged.contains("Текст у сховищі."));
+        assert!(merged.contains("Новий текст."));
+        assert!(merged.contains("ТЗОВ ФІАКР-ЛЬВІВ")); // kept as an alias
+        assert!(merged.contains("Коцан"));
+        assert!(merged.contains("Левик"));
+        assert!(merged.contains("`status`"));
+
+        // The same import again changes nothing and is not counted as a merge.
+        let again = vault.import_folder(src.path(), true).unwrap();
+        assert_eq!(again.merged, 0);
+        assert_eq!(again.created, 0);
+        assert_eq!(again.skipped, 1);
+        assert_eq!(
+            fs::read_to_string(dir.path().join("Суб'єкти/Фіакр.md")).unwrap(),
+            merged
+        );
+    }
+
+    #[test]
+    fn notes_without_a_matching_code_are_imported_as_before() {
+        let dir = tempfile::tempdir().unwrap();
+        let vault = Vault::init(dir.path(), None).unwrap();
+        vault.write_note("Суб'єкти/Фіакр.md", FIAKR_VAULT).unwrap();
+
+        let src = tempfile::tempdir().unwrap();
+        // Same name pattern but another code, and a note without any code.
+        fs::write(
+            src.path().join("Інша.md"),
+            "---\ntitle: Інша\nedrpou: \"12345678\"\n---\n# Інша\n",
+        )
+        .unwrap();
+        fs::write(src.path().join("Без коду.md"), "# Без коду\n").unwrap();
+
+        let report = vault.import_folder(src.path(), false).unwrap();
+        assert_eq!(report.merged, 0);
+        assert_eq!(report.created, 2);
+    }
+
+    #[test]
+    fn two_incoming_notes_with_one_code_are_folded_together() {
+        let dir = tempfile::tempdir().unwrap();
+        let vault = Vault::init(dir.path(), None).unwrap();
+
+        let src = tempfile::tempdir().unwrap();
+        fs::write(src.path().join("A.md"), FIAKR_VAULT).unwrap();
+        fs::write(src.path().join("B.md"), FIAKR_IMPORT).unwrap();
+
+        let report = vault.import_folder(src.path(), false).unwrap();
+        assert_eq!(report.created, 1);
+        assert_eq!(report.merged, 1);
     }
 
     #[test]
