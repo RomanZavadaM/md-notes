@@ -34,6 +34,20 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.15](https://github.com/RomanZavadaM/md-notes/compare/v0.3.14...v0.3.15) (2026-10-20)
+
+
+### Нові можливості
+
+* жива фізика графа (плаваючий граф як в Obsidian) ([d622316](https://github.com/RomanZavadaM/md-notes/commit/d622316a05e4a9841b6a3632b1bd2af88491ef6d))
+* жива фізика графа (плаваючий граф) ([bc367be](https://github.com/RomanZavadaM/md-notes/commit/bc367beb51525a779dc07504f688129028b146d8))
+
+
+### Продуктивність
+
+* індекс типізованих зв'язків, ідентифікаторів і назв (дерево й шлях без читання файлів) ([8c86b71](https://github.com/RomanZavadaM/md-notes/commit/8c86b71c0b8ca0b4c9fc929e5ff24d417510995f))
+* типізовані зв'язки, ідентифікатори й назви в індексі (схема v2); дерево, шлях і граф читають індекс, а не файли ([ea1d76a](https://github.com/RomanZavadaM/md-notes/commit/ea1d76abd4c5df3b6eaf08cb1cfe72987608635f))
+
 ## [0.3.14](https://github.com/RomanZavadaM/md-notes/compare/v0.3.13...v0.3.14) (2026-10-20)
 
 
