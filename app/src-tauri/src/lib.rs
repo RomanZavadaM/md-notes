@@ -659,7 +659,9 @@ fn relation_tree_for(
     with_session(&state, |s| {
         let graph = knowledge_graph(&s.index, None)?;
         let graph = notes_core::with_relations(&s.vault, graph)?;
-        Ok(notes_core::relation_tree(&graph, &root, direction, max_depth))
+        Ok(notes_core::relation_tree(
+            &graph, &root, direction, max_depth,
+        ))
     })
 }
 

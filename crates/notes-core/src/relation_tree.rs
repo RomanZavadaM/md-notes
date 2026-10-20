@@ -320,14 +320,16 @@ pub fn relation_path(
     }
     let mut adjacent: HashMap<&str, Vec<(&str, usize, bool)>> = HashMap::new();
     for (index, relation) in graph.relations.iter().enumerate() {
-        adjacent
-            .entry(relation.source.as_str())
-            .or_default()
-            .push((relation.target.as_str(), index, true));
-        adjacent
-            .entry(relation.target.as_str())
-            .or_default()
-            .push((relation.source.as_str(), index, false));
+        adjacent.entry(relation.source.as_str()).or_default().push((
+            relation.target.as_str(),
+            index,
+            true,
+        ));
+        adjacent.entry(relation.target.as_str()).or_default().push((
+            relation.source.as_str(),
+            index,
+            false,
+        ));
     }
     let mut previous: HashMap<&str, (&str, usize, bool)> = HashMap::new();
     let mut seen: HashSet<&str> = HashSet::from([from]);
@@ -411,9 +413,15 @@ mod tests {
 
     #[test]
     fn weakest_grade_takes_the_worse_letter_and_digit_separately() {
-        assert_eq!(weakest_grade(Some("B2"), Some("C1")), Some("C2".to_string()));
+        assert_eq!(
+            weakest_grade(Some("B2"), Some("C1")),
+            Some("C2".to_string())
+        );
         assert_eq!(weakest_grade(None, Some("B2")), Some("B2".to_string()));
-        assert_eq!(weakest_grade(Some("a1"), Some("A1")), Some("A1".to_string()));
+        assert_eq!(
+            weakest_grade(Some("a1"), Some("A1")),
+            Some("A1".to_string())
+        );
         assert_eq!(weakest_grade(None, None), None);
         assert_eq!(weakest_grade(Some("x"), None), None);
     }
@@ -423,7 +431,12 @@ mod tests {
         let tree = relation_tree(&graph(), "A.md", TreeDirection::Up, 5).unwrap();
         assert_eq!(tree.nodes, 4);
         assert!(!tree.truncated);
-        let titles: Vec<&str> = tree.root.children.iter().map(|c| c.title.as_str()).collect();
+        let titles: Vec<&str> = tree
+            .root
+            .children
+            .iter()
+            .map(|c| c.title.as_str())
+            .collect();
         assert_eq!(titles, vec!["Дельта", "Бета"]); // A1 before B2
         let beta = &tree.root.children[1];
         assert_eq!(beta.grade.as_deref(), Some("B2"));
@@ -448,17 +461,28 @@ mod tests {
     #[test]
     fn the_depth_limit_marks_further_relations() {
         let tree = relation_tree(&graph(), "A.md", TreeDirection::Up, 1).unwrap();
-        let beta = tree.root.children.iter().find(|c| c.title == "Бета").unwrap();
+        let beta = tree
+            .root
+            .children
+            .iter()
+            .find(|c| c.title == "Бета")
+            .unwrap();
         assert!(beta.has_more);
         assert!(beta.children.is_empty());
-        let delta = tree.root.children.iter().find(|c| c.title == "Дельта").unwrap();
+        let delta = tree
+            .root
+            .children
+            .iter()
+            .find(|c| c.title == "Дельта")
+            .unwrap();
         assert!(!delta.has_more);
     }
 
     #[test]
     fn a_cycle_is_unfolded_once() {
         let mut g = graph();
-        g.relations.push(rel("A.md", "C.md", "пов'язаний", Some("D4")));
+        g.relations
+            .push(rel("A.md", "C.md", "пов'язаний", Some("D4")));
         let tree = relation_tree(&g, "A.md", TreeDirection::Up, 8).unwrap();
         let mut repeated = 0;
         let mut stack = vec![&tree.root];
@@ -475,11 +499,20 @@ mod tests {
     #[test]
     fn several_lines_between_two_notes_become_one_with_the_best_grade() {
         let mut g = graph();
-        g.relations.push(rel("B.md", "A.md", "директор", Some("A2")));
+        g.relations
+            .push(rel("B.md", "A.md", "директор", Some("A2")));
         let tree = relation_tree(&g, "A.md", TreeDirection::Up, 1).unwrap();
-        let beta = tree.root.children.iter().find(|c| c.title == "Бета").unwrap();
+        let beta = tree
+            .root
+            .children
+            .iter()
+            .find(|c| c.title == "Бета")
+            .unwrap();
         assert_eq!(beta.grade.as_deref(), Some("A2"));
-        assert_eq!(beta.kinds, vec!["власник".to_string(), "директор".to_string()]);
+        assert_eq!(
+            beta.kinds,
+            vec!["власник".to_string(), "директор".to_string()]
+        );
     }
 
     #[test]
