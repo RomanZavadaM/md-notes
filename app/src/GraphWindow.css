@@ -1,0 +1,47 @@
+.graph-window {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-sizing: border-box;
+  padding: 0.6rem 0.8rem;
+  gap: 0.5rem;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+}
+
+.graph-window .graph-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.graph-window-note {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.78rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.graph-window-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.graph-window .knowledge-graph-canvas.has-graph {
+  min-height: 0;
+}
+
+.graph-window .knowledge-graph-expand {
+  display: none;
+}
+
+.graph-window .relation-tree-stage {
+  max-height: none;
+  flex: 1;
+}

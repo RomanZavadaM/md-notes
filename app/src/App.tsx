@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { listen } from "@tauri-apps/api/event";
+import { emit, listen } from "@tauri-apps/api/event";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { ask, message, open } from "@tauri-apps/plugin-dialog";
 import {
   api,
@@ -20,6 +21,8 @@ import { Editor } from "./components/Editor";
 import { ImportKeyDialog } from "./components/EncryptionDialogs";
 import { AppMenu } from "./components/AppMenu";
 import { GitPanel } from "./components/GitPanel";
+import { GRAPH_ACTIVE_NOTE, GRAPH_OPEN_NOTE, openGraphWindow, type GraphActiveNote } from "./graphWindow";
+import { GRAPH_STRINGS } from "./i18n/graph";
 import { IMPORTER_STRINGS } from "./i18n/importer";
 import { MENU_STRINGS } from "./i18n/menu";
 import { FileTree } from "./components/FileTree";
@@ -420,6 +423,31 @@ export default function App() {
     [refreshTree, bump, showNote, t],
   );
 
+  // Detached graph window: it follows the active note and asks this window to open notes.
+  const activePath = note?.path ?? null;
+  useEffect(() => {
+    if (!isDesktop || activePath === null) return;
+    const payload: GraphActiveNote = { path: activePath };
+    void emit(GRAPH_ACTIVE_NOTE, payload);
+  }, [isDesktop, activePath]);
+
+  useEffect(() => {
+    if (!isDesktop) return;
+    let cancelled = false;
+    let unlisten: (() => void) | undefined;
+    void listen<string>(GRAPH_OPEN_NOTE, (event) => {
+      void openNote(event.payload);
+      void getCurrentWindow().setFocus();
+    }).then((fn) => {
+      if (cancelled) fn();
+      else unlisten = fn;
+    });
+    return () => {
+      cancelled = true;
+      unlisten?.();
+    };
+  }, [isDesktop, openNote]);
+
   useEffect(() => {
     if (!vault) return;
     let disposed = false;
@@ -555,6 +583,14 @@ export default function App() {
         { label: t.openMarkdownFile, onSelect: () => void pickMarkdownFile() },
         ...(vault ? [{ label: IMPORTER_STRINGS[language].button, onSelect: () => void importFolder() }] : []),
         ...(vault ? [{ label: IMPORTER_STRINGS[language].duplicatesButton, onSelect: () => void showDuplicates() }] : []),
+        ...(vault && isDesktop
+          ? [
+              {
+                label: GRAPH_STRINGS[language].detach,
+                onSelect: () => void openGraphWindow(note ? "local" : "global", note?.path ?? "", GRAPH_STRINGS[language].windowTitle),
+              },
+            ]
+          : []),
         ...(vault && isDesktop ? [{ label: "Git…", onSelect: () => setGitOpen(true) }] : []),
         ...(isDesktop ? [{ label: t.makeMarkdownDefault, onSelect: () => void configureMarkdownAssociation() }] : []),
         { label: t.about, onSelect: () => setAboutOpen(true), separatorBefore: true },
