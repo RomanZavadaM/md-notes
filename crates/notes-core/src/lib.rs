@@ -51,9 +51,12 @@ pub use git_sync::{
     GitPullPreflight, GitPullRelation, GitRepositoryInfo,
 };
 pub use graph::{
-    knowledge_graph, with_relations, GraphEdge, GraphNode, GraphRelation, KnowledgeGraph,
+    knowledge_graph, with_indexed_relations, with_relations, GraphEdge, GraphNode, GraphRelation,
+    KnowledgeGraph,
 };
-pub use index::{Backlink, Index, NoteSummary, SearchHit, SyncStats, TagCount, UnresolvedLink};
+pub use index::{
+    Backlink, Index, NameHit, NoteSummary, SearchHit, SyncStats, TagCount, UnresolvedLink,
+};
 pub use markdown::WikiLink;
 pub use note::Note;
 pub use presets::{create_vault_with_preset, VaultPreset};

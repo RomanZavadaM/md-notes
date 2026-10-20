@@ -50,6 +50,32 @@ pub fn identity_key(front: &Mapping) -> Option<String> {
     })
 }
 
+/// Identity codes found in a note's front matter (JSON form, as the index sees it):
+/// `(key, normalised digits)` for every valid `edrpou` / `ipn`.
+pub fn codes_in_json(front: &serde_json::Value) -> Vec<(String, String)> {
+    let mut out = Vec::new();
+    for (name, len) in IDENTITY_KEYS {
+        let Some(value) = front.get(*name) else {
+            continue;
+        };
+        let (text, numeric) = match value {
+            serde_json::Value::String(s) => (s.clone(), false),
+            serde_json::Value::Number(n) => (n.to_string(), true),
+            _ => continue,
+        };
+        let digits: String = text.chars().filter(char::is_ascii_digit).collect();
+        let digits = if numeric && !digits.is_empty() && digits.len() < *len {
+            format!("{digits:0>len$}")
+        } else {
+            digits
+        };
+        if digits.len() == *len {
+            out.push(((*name).to_string(), digits));
+        }
+    }
+    out
+}
+
 /// Front matter mapping and body of a note, when the front matter is a valid mapping.
 fn parse(content: &str) -> Option<(Mapping, &str)> {
     let (yaml, body) = split_front_matter(content);

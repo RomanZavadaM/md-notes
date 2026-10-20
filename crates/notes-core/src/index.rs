@@ -12,7 +12,10 @@ use rusqlite::{params, Connection, Transaction};
 use serde::Serialize;
 use serde_json::Value;
 
+use crate::duplicates::name_key;
 use crate::error::{io_err, Result};
+use crate::graph::GraphRelation;
+use crate::identity;
 use crate::markdown::{
     extract_wikilinks, extract_wikilinks_with_context, mask_code, split_front_matter,
 };
@@ -21,7 +24,7 @@ use crate::paths;
 use crate::vault::Vault;
 
 /// Bump when the schema changes: the index is then rebuilt from scratch.
-const SCHEMA_VERSION: i64 = 1;
+const SCHEMA_VERSION: i64 = 2;
 
 const SCHEMA: &str = "
 CREATE TABLE notes (
@@ -47,6 +50,23 @@ CREATE INDEX tags_tag ON tags(tag);
 CREATE TABLE aliases (path TEXT NOT NULL, alias TEXT NOT NULL);
 CREATE INDEX aliases_path ON aliases(path);
 CREATE VIRTUAL TABLE fts USING fts5(path UNINDEXED, title, body);
+CREATE TABLE relations (
+    source TEXT NOT NULL,
+    target_raw TEXT NOT NULL,
+    target TEXT,
+    reversed INTEGER NOT NULL,
+    kind TEXT NOT NULL,
+    grade TEXT,
+    origin TEXT,
+    status TEXT,
+    evidence TEXT
+);
+CREATE INDEX relations_source ON relations(source);
+CREATE INDEX relations_target ON relations(target);
+CREATE TABLE identifiers (key TEXT NOT NULL, value TEXT NOT NULL, path TEXT NOT NULL);
+CREATE INDEX identifiers_lookup ON identifiers(key, value);
+CREATE INDEX identifiers_path ON identifiers(path);
+CREATE VIRTUAL TABLE names USING fts5(path UNINDEXED, name);
 ";
 
 const DROP_ALL: &str = "
@@ -55,6 +75,9 @@ DROP TABLE IF EXISTS links;
 DROP TABLE IF EXISTS tags;
 DROP TABLE IF EXISTS aliases;
 DROP TABLE IF EXISTS fts;
+DROP TABLE IF EXISTS relations;
+DROP TABLE IF EXISTS identifiers;
+DROP TABLE IF EXISTS names;
 ";
 
 /// Markers around matched words in [`SearchHit::snippet`].
@@ -104,6 +127,17 @@ pub struct SearchHit {
 pub struct TagCount {
     pub tag: String,
     pub count: u32,
+}
+
+/// A note found by name: `exact` when its title or alias equals the query after
+/// normalisation (case, quotes, hyphens, legal forms such as `ТОВ`), otherwise a
+/// prefix match. Name matches are candidates, never proof of identity (ADR-0008).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct NameHit {
+    pub path: String,
+    pub title: String,
+    pub exact: bool,
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize)]
@@ -267,6 +301,17 @@ impl Index {
                 update.execute(params![self.resolver.resolve(&target), rowid])?;
             }
         }
+        {
+            let mut select = tx.prepare("SELECT rowid, target_raw FROM relations")?;
+            let mut update = tx.prepare("UPDATE relations SET target = ?1 WHERE rowid = ?2")?;
+            let rows = select.query_map([], |row| {
+                Ok((row.get::<_, i64>(0)?, row.get::<_, String>(1)?))
+            })?;
+            for row in rows {
+                let (rowid, target) = row?;
+                update.execute(params![self.resolver.resolve(&target), rowid])?;
+            }
+        }
         tx.commit()?;
         Ok(())
     }
@@ -403,6 +448,85 @@ impl Index {
         Ok(rows.collect::<rusqlite::Result<_>>()?)
     }
 
+    /// Typed relations of the whole vault (`relations` in front matter) whose other
+    /// end resolves to a note, as directed lines `source -> target`. Read from the
+    /// index: no note file is opened.
+    pub fn relations(&self) -> Result<Vec<GraphRelation>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT CASE WHEN reversed = 1 THEN target ELSE source END,
+                    CASE WHEN reversed = 1 THEN source ELSE target END,
+                    kind, grade, origin, status, evidence
+             FROM relations WHERE target IS NOT NULL AND target != source",
+        )?;
+        let rows = stmt.query_map([], |row| {
+            Ok(GraphRelation {
+                source: row.get(0)?,
+                target: row.get(1)?,
+                kind: row.get(2)?,
+                grade: row.get(3)?,
+                origin: row.get(4)?,
+                status: row.get(5)?,
+                evidence: row.get(6)?,
+            })
+        })?;
+        Ok(rows.collect::<rusqlite::Result<_>>()?)
+    }
+
+    /// Notes that carry exactly this identifier (`key` such as `edrpou`, `value`
+    /// as normalised digits). An exact match: the basis of "follow the code".
+    pub fn notes_with_identifier(&self, key: &str, value: &str) -> Result<Vec<String>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT DISTINCT path FROM identifiers WHERE key = ?1 AND value = ?2 ORDER BY path",
+        )?;
+        let rows = stmt.query_map(params![key, value], |row| row.get::<_, String>(0))?;
+        Ok(rows.collect::<rusqlite::Result<_>>()?)
+    }
+
+    /// Identifiers of one note as `(key, value)` pairs.
+    pub fn identifiers_of(&self, path: &str) -> Result<Vec<(String, String)>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT key, value FROM identifiers WHERE path = ?1 ORDER BY key, value",
+        )?;
+        let rows = stmt.query_map([path], |row| Ok((row.get(0)?, row.get(1)?)))?;
+        Ok(rows.collect::<rusqlite::Result<_>>()?)
+    }
+
+    /// Notes whose title or alias matches `query` by name (exact matches first).
+    pub fn find_by_name(&self, query: &str, limit: u32) -> Result<Vec<NameHit>> {
+        let key = name_key(query);
+        let Some(expr) = fts_query(&key) else {
+            return Ok(Vec::new());
+        };
+        let mut stmt = self.conn.prepare(
+            "SELECT names.path, notes.title, names.name
+             FROM names JOIN notes ON notes.path = names.path
+             WHERE names MATCH ?1 LIMIT ?2",
+        )?;
+        let rows = stmt.query_map(params![expr, limit.saturating_mul(4)], |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                row.get::<_, String>(1)?,
+                row.get::<_, String>(2)?,
+            ))
+        })?;
+        let mut hits: Vec<NameHit> = Vec::new();
+        for row in rows {
+            let (path, title, name) = row?;
+            let exact = name == key;
+            match hits.iter_mut().find(|hit| hit.path == path) {
+                Some(hit) => hit.exact |= exact,
+                None => hits.push(NameHit { path, title, exact }),
+            }
+        }
+        hits.sort_by(|a, b| {
+            b.exact
+                .cmp(&a.exact)
+                .then_with(|| a.title.to_lowercase().cmp(&b.title.to_lowercase()))
+        });
+        hits.truncate(limit as usize);
+        Ok(hits)
+    }
+
     /// Full-text search over titles and bodies. Every word of `query` must
     /// match (as a prefix); titles weigh more than body text.
     pub fn search(&self, query: &str, limit: u32) -> Result<Vec<SearchHit>> {
@@ -455,6 +579,9 @@ fn delete(tx: &Transaction, path: &str) -> Result<()> {
         "DELETE FROM tags WHERE path = ?1",
         "DELETE FROM aliases WHERE path = ?1",
         "DELETE FROM fts WHERE path = ?1",
+        "DELETE FROM relations WHERE source = ?1",
+        "DELETE FROM identifiers WHERE path = ?1",
+        "DELETE FROM names WHERE path = ?1",
     ] {
         tx.execute(sql, [path])?;
     }
@@ -488,14 +615,83 @@ fn upsert(tx: &Transaction, note: &Note, (mtime, size): (i64, i64)) -> Result<()
         insert_tag.execute(params![note.path, tag])?;
     }
     let mut insert_alias = tx.prepare("INSERT INTO aliases (path, alias) VALUES (?1, ?2)")?;
-    for alias in string_list(fm.and_then(|v| v.get("aliases"))) {
+    let aliases = string_list(fm.and_then(|v| v.get("aliases")));
+    for alias in &aliases {
         insert_alias.execute(params![note.path, alias])?;
+    }
+
+    // Typed relations, identifiers and normalised names (index v2): the relation
+    // tree, the path finder and exact lookups read these tables, not the files.
+    let mut insert_relation = tx.prepare(
+        "INSERT INTO relations (source, target_raw, reversed, kind, grade, origin, status, evidence)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)",
+    )?;
+    for item in relation_items(fm) {
+        insert_relation.execute(params![
+            note.path,
+            item.to,
+            item.reversed,
+            item.kind,
+            item.grade,
+            item.origin,
+            item.status,
+            item.evidence
+        ])?;
+    }
+    if let Some(front) = fm {
+        let mut insert_identifier =
+            tx.prepare("INSERT INTO identifiers (key, value, path) VALUES (?1, ?2, ?3)")?;
+        for (key, value) in identity::codes_in_json(front) {
+            insert_identifier.execute(params![key, value, note.path])?;
+        }
+    }
+    let mut insert_name = tx.prepare("INSERT INTO names (path, name) VALUES (?1, ?2)")?;
+    let mut seen_names = HashSet::new();
+    for name in std::iter::once(&note.title).chain(aliases.iter()) {
+        let key = name_key(name);
+        if !key.is_empty() && seen_names.insert(key.clone()) {
+            insert_name.execute(params![note.path, key])?;
+        }
     }
     tx.execute(
         "INSERT INTO fts (path, title, body) VALUES (?1, ?2, ?3)",
         params![note.path, note.title, body],
     )?;
     Ok(())
+}
+
+/// One entry of a note's `relations` list, as stored in the index.
+struct RelationRow {
+    to: String,
+    reversed: bool,
+    kind: String,
+    grade: Option<String>,
+    origin: Option<String>,
+    status: Option<String>,
+    evidence: Option<String>,
+}
+
+fn relation_items(fm: Option<&Value>) -> Vec<RelationRow> {
+    let Some(list) = fm
+        .and_then(|front| front.get("relations"))
+        .and_then(Value::as_array)
+    else {
+        return Vec::new();
+    };
+    list.iter()
+        .filter_map(|item| {
+            let text = |key: &str| item.get(key).and_then(Value::as_str).map(str::to_string);
+            Some(RelationRow {
+                to: text("to")?,
+                reversed: item.get("dir").and_then(Value::as_str) == Some("in"),
+                kind: text("type").unwrap_or_default(),
+                grade: text("grade"),
+                origin: text("origin"),
+                status: text("status"),
+                evidence: text("evidence"),
+            })
+        })
+        .collect()
 }
 
 /// Strings of a YAML value that is a string or a list of strings.
@@ -653,6 +849,121 @@ mod tests {
         index.remove_note("a.md").unwrap();
         assert!(index.backlinks("b.md").unwrap().is_empty());
         assert_eq!(index.notes().unwrap().len(), 1);
+    }
+
+    const OWNER: &str = "---\ntitle: Власник\nedrpou: 3114848\n---\n# Власник\n";
+    const COMPANY: &str = "---\ntitle: \"ТОВ «ФІАКР-ЛЬВІВ»\"\nedrpou: \"12345678\"\naliases: [Фіакр]\nrelations:\n  - {to: Власник, type: засновник, grade: B2, dir: in}\n  - {to: Нікого, type: керівник}\n---\n# ТОВ «ФІАКР-ЛЬВІВ»\n";
+
+    fn relations_vault() -> (tempfile::TempDir, Vault, Index) {
+        let (dir, vault, mut index) = setup();
+        vault.write_note("Власник.md", OWNER).unwrap();
+        vault.write_note("Фіакр.md", COMPANY).unwrap();
+        index.sync(&vault).unwrap();
+        (dir, vault, index)
+    }
+
+    #[test]
+    fn indexed_relations_match_the_ones_read_from_files() {
+        let (_dir, vault, index) = relations_vault();
+        let from_index = index.relations().unwrap();
+        assert_eq!(from_index.len(), 1); // the relation to a missing note is not resolved
+        assert_eq!(from_index[0].source, "Власник.md"); // `dir: in` points to the holder
+        assert_eq!(from_index[0].target, "Фіакр.md");
+        assert_eq!(from_index[0].grade.as_deref(), Some("B2"));
+
+        let graph = crate::graph::knowledge_graph(&index, None).unwrap();
+        let by_files = crate::graph::with_relations(&vault, graph.clone()).unwrap();
+        let by_index = crate::graph::with_indexed_relations(&index, graph).unwrap();
+        assert_eq!(by_files.relations, by_index.relations);
+    }
+
+    #[test]
+    fn relations_follow_edits_and_removals() {
+        let (_dir, vault, mut index) = relations_vault();
+        vault
+            .write_note("Нікого.md", "# Нікого\n")
+            .unwrap();
+        index.sync(&vault).unwrap();
+        assert_eq!(index.relations().unwrap().len(), 2); // the target now exists
+
+        vault.write_note("Фіакр.md", "# Фіакр\n").unwrap();
+        index.sync(&vault).unwrap();
+        assert!(index.relations().unwrap().is_empty());
+
+        vault.write_note("Фіакр.md", COMPANY).unwrap();
+        index.sync(&vault).unwrap();
+        index.remove_note("Власник.md").unwrap();
+        assert_eq!(index.relations().unwrap().len(), 1); // only the one to «Нікого»
+    }
+
+    #[test]
+    fn identifiers_are_found_by_exact_value_even_without_leading_zeros() {
+        let (_dir, _vault, index) = relations_vault();
+        assert_eq!(
+            index.notes_with_identifier("edrpou", "03114848").unwrap(),
+            vec!["Власник.md".to_string()]
+        );
+        assert_eq!(
+            index.notes_with_identifier("edrpou", "12345678").unwrap(),
+            vec!["Фіакр.md".to_string()]
+        );
+        assert!(index.notes_with_identifier("edrpou", "3114848").unwrap().is_empty());
+        assert!(index.notes_with_identifier("ipn", "03114848").unwrap().is_empty());
+        assert_eq!(
+            index.identifiers_of("Власник.md").unwrap(),
+            vec![("edrpou".to_string(), "03114848".to_string())]
+        );
+    }
+
+    #[test]
+    fn names_are_found_without_legal_forms_and_exact_matches_come_first() {
+        let (_dir, vault, mut index) = relations_vault();
+        vault
+            .write_note("Фіакр Львів Плюс.md", "# Фіакр Львів Плюс\n")
+            .unwrap();
+        index.sync(&vault).unwrap();
+        let hits = index.find_by_name("ТЗОВ Фіакр-Львів", 10).unwrap();
+        let paths: Vec<&str> = hits.iter().map(|h| h.path.as_str()).collect();
+        assert_eq!(paths, vec!["Фіакр.md", "Фіакр Львів Плюс.md"]);
+        assert!(hits[0].exact);
+        assert!(!hits[1].exact);
+        assert!(index.find_by_name("Невідомий суб'єкт", 10).unwrap().is_empty());
+        assert!(index.find_by_name("ТОВ", 10).unwrap().is_empty()); // only a legal form
+        // the alias finds the same note once
+        let by_alias = index.find_by_name("Фіакр", 10).unwrap();
+        assert_eq!(by_alias.iter().filter(|h| h.path == "Фіакр.md").count(), 1);
+    }
+
+    #[test]
+    fn a_large_vault_answers_relation_queries_from_the_index_quickly() {
+        let (_dir, vault, mut index) = setup();
+        for i in 0..600 {
+            let next = (i + 1) % 600;
+            vault
+                .write_note(
+                    &format!("N{i}.md"),
+                    &format!(
+                        "---\ntitle: Суб'єкт {i}\nedrpou: \"{i:08}\"\nrelations:\n  - {{to: N{next}, type: власник, grade: B2}}\n---\n# Суб'єкт {i}\n"
+                    ),
+                )
+                .unwrap();
+        }
+        index.sync(&vault).unwrap();
+        let started = std::time::Instant::now();
+        let graph = crate::graph::knowledge_graph(&index, None).unwrap();
+        let graph = crate::graph::with_indexed_relations(&index, graph).unwrap();
+        assert_eq!(graph.relations.len(), 600);
+        let tree = crate::relation_tree::relation_tree(
+            &graph,
+            "N0.md",
+            crate::relation_tree::TreeDirection::Down,
+            8,
+        )
+        .unwrap();
+        assert!(tree.nodes > 1);
+        assert_eq!(index.notes_with_identifier("edrpou", "00000042").unwrap().len(), 1);
+        // generous bound: the point is that no note file is read (a file-reading pass over 600 notes is far slower)
+        assert!(started.elapsed() < std::time::Duration::from_secs(5), "{:?}", started.elapsed());
     }
 
     #[test]
