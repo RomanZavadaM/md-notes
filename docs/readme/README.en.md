@@ -40,6 +40,8 @@ Platforms: **Windows, macOS, Linux**. Android and iOS are active v0.3 targets; C
 - schema-driven properties through open `.mdnotes/schema.json`;
 - Empty / PARA / Zettelkasten presets;
 - global/local knowledge graph;
+- live graph physics (a “floating” graph), graph in a separate window, relation tree graded by its weakest link, path between two notes;
+- subject lookup by exact code (EDRPOU/tax number) or name, folder import with merging by code, possible duplicates;
 - seven-language UI and light/dark/system themes.
 
 ### v0.3 — integrated through the v0.3.4 checkpoint

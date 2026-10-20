@@ -40,6 +40,8 @@ Plattformen: **Windows, macOS, Linux**. Android und iOS sind aktive v0.3-Ziele; 
 - schema-gesteuerte Eigenschaften über `.mdnotes/schema.json`;
 - Empty / PARA / Zettelkasten Presets;
 - globaler/lokaler Wissensgraph;
+- lebendige Graph-Physik („schwebender“ Graph), Graph in eigenem Fenster, Beziehungsbaum mit Bewertung nach dem schwächsten Glied, Pfad zwischen zwei Notizen;
+- Subjektsuche nach exaktem Code (EDRPOU/Steuernummer) oder Name, Ordnerimport mit Zusammenführen nach Code, mögliche Duplikate;
 - Oberfläche in sieben Sprachen und Hell/Dunkel/System-Theme.
 
 ### v0.3 — integriert bis zum Checkpoint v0.3.4

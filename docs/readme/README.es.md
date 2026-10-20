@@ -40,6 +40,8 @@ Plataformas: **Windows, macOS, Linux**. Android e iOS son objetivos activos de v
 - propiedades mediante `.mdnotes/schema.json`;
 - presets Empty / PARA / Zettelkasten;
 - grafo de conocimiento global/local;
+- física viva del grafo (grafo «flotante»), grafo en otra ventana, árbol de relaciones valorado por su eslabón más débil, camino entre dos notas;
+- búsqueda de un sujeto por código exacto (EDRPOU/número fiscal) o nombre, importación de carpeta con fusión por código, posibles duplicados;
 - interfaz en siete idiomas y temas claro/oscuro/sistema.
 
 ### v0.3 — integrado hasta el checkpoint v0.3.4

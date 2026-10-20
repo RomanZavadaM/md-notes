@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](USER_GUIDE.uk.md) · **🇬🇧 English** · [🇫🇷 Français](USER_GUIDE.fr.md) · [🇩🇪 Deutsch](USER_GUIDE.de.md) · [🇪🇸 Español](USER_GUIDE.es.md) · [🇰🇷 한국어](USER_GUIDE.ko.md) · [🇯🇵 日本語](USER_GUIDE.ja.md)
 
-Applies to **v0.2.0**. The Ukrainian version is the reference text.
+Applies to **v0.3.15**. The Ukrainian version is the reference text.
 
 ## 1. First launch
 
@@ -103,7 +103,42 @@ On narrow screens the sidebar and the links panel open over the content.
 - On another computer, copy the vault folder and open it: the app asks for the key. Paste the private key and it is then kept in that computer's system secret store.
 - For now an encrypted vault does not display images and attachments, and the `.mdnotes/cache` index is not encrypted.
 
-## 12. Keyboard
+## 12. Graph, relation tree and subject lookup
+
+### Graph
+
+The **“Links”** panel has the tabs “Links”, “Local graph” and “Global graph”. A node is a note, its colour is the note `type`, a line is a `[[…]]` link or a typed relation. Click a node to open the note.
+
+- **Live physics (a “floating” graph).** Drag a node: its neighbours follow and flow around it, and the graph settles smoothly after you let go. The **“Float”** button adds a gentle drift (on by default for graphs up to 400 nodes), **“Pause”** stops the motion. **“Forces”** has sliders for centre, repulsion, link strength and link length; your choice is remembered.
+- **Typed relations** are written in the `relations` property (`to`, plus `type`, `grade`, `origin`, `status`, `evidence`, and `dir: in` for the reverse direction). A `grade` is a letter plus a digit (A1 most reliable, F6 weakest): the letter rates the source, the digit the claim. Line and node outline follow the grade; grades 5–6 carry the word **“RUMOUR”**. Colour is never the only signal.
+- **“Where it came from”** highlights the chain of owners above the selected node and the materials around it.
+- **Separate window.** The **↗** button in the graph tabs, or “File → Graph in a separate window” (desktop only), opens the graph in its own window with more room, for example on a second monitor. It follows the active note, refreshes after changes, and a click on a node opens the note in the main window.
+
+### Relation tree
+
+The **“Relation tree”** tab shows the chain of typed relations from the selected note: **“Owners and sources”** (upwards) or **“What it owns”** (downwards), depth 1–8.
+
+- Each node shows the relation kind and the line grade; next to it is the **“chain”** grade: the weakest link on the way from the root (B2 together with C1 gives C2). A chain is only as reliable as its weakest link.
+- **“−/+”** folds a branch, **◎** rebuilds the tree from another node, **“Expand all” / “Collapse all”** control every branch. A repeated node is marked and not unfolded twice; the tree is limited to 400 nodes.
+- **“Path between two notes”** finds the shortest chain of typed relations (line direction ignored) and shows its weakest link.
+- The tree uses explicit typed relations only, not plain links. The chain grade is an aid, not a legal conclusion.
+
+### Looking up a subject by code or name
+
+In the **“Search”** tab a number of 8 digits is looked up as an EDRPOU code, of 10 digits as a tax number (a code that lost its leading zeros, 6–7 digits, is restored). Results are shown separately:
+
+- **“Exact match”**: a note with the same code in the `edrpou` or `ipn` property (or the same name after normalisation);
+- **“Candidates by name”**: similar names; a name match is **not proof**, confirm it with a code or a document;
+- **“In text”**: ordinary full-text search.
+
+Names are compared ignoring case, quotes, hyphens and legal forms (LLC and similar); Latin letters that look like Cyrillic ones are folded to Cyrillic.
+
+### Folder import, merging by code and possible duplicates
+
+- **“File → Import folder…”** adds notes from a folder. A note whose code (`edrpou`/`ipn`) is already in the vault is **merged** into the existing one instead of duplicated: missing properties are added, tags, aliases and relations are united, the imported note’s title becomes an alias, differing values are not overwritten but listed for review. Importing the same folder again changes nothing.
+- **“File → Possible duplicates…”** lists groups of notes with the same normalised title or alias. It is only a hint: nothing is changed, and notes with different codes are never grouped.
+
+## 13. Keyboard
 
 | Action | Windows / Linux | macOS |
 |---|---|---|
@@ -113,7 +148,7 @@ On narrow screens the sidebar and the links panel open over the content.
 | Undo / redo | `Ctrl+Z` / `Ctrl+Shift+Z` | `Cmd+Z` / `Cmd+Shift+Z` |
 | Indent | `Tab` | `Tab` |
 
-## 13. Troubleshooting
+## 14. Troubleshooting
 
 - **Windows shows SmartScreen** — the build is not code-signed. Choose “More info → Run anyway”.
 - **macOS does not open the app** — the build is not notarized. Use **System Settings → Privacy & Security → Open Anyway**.
@@ -121,6 +156,6 @@ On narrow screens the sidebar and the links panel open over the content.
 - **Search does not find a note you just changed** — close and reopen the vault. If that does not help, delete `.mdnotes/cache/index.db` and the index will be rebuilt.
 - **An image is not shown** — check that the file is inside the vault and the path is relative.
 
-## 14. Copyright
+## 15. Copyright
 
 Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved. MD Notes is proprietary software. Your notes belong to you. See [LICENSE.md](../../LICENSE.md) and [LEGAL_AND_COPYRIGHT.md](../LEGAL_AND_COPYRIGHT.md).

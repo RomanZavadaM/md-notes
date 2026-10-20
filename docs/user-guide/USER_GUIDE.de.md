@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](USER_GUIDE.uk.md) · [🇬🇧 English](USER_GUIDE.en.md) · [🇫🇷 Français](USER_GUIDE.fr.md) · **🇩🇪 Deutsch** · [🇪🇸 Español](USER_GUIDE.es.md) · [🇰🇷 한국어](USER_GUIDE.ko.md) · [🇯🇵 日本語](USER_GUIDE.ja.md)
 
-Gilt für **v0.2.0**. Maßgeblich ist die ukrainische Fassung.
+Gilt für **v0.3.15**. Maßgeblich ist die ukrainische Fassung.
 
 ## 1. Erster Start
 
@@ -103,7 +103,42 @@ Auf schmalen Bildschirmen öffnen sich Seitenleiste und Verknüpfungsleiste übe
 - Auf einem anderen Computer kopieren Sie den Tresorordner und öffnen ihn: Die App fragt nach dem Schlüssel. Fügen Sie den privaten Schlüssel ein; er wird dann im System-Geheimnisspeicher dieses Computers abgelegt.
 - Bisher zeigt ein verschlüsselter Tresor keine Bilder und Anhänge an, und der Index `.mdnotes/cache` ist nicht verschlüsselt.
 
-## 12. Tastatur
+## 12. Graph, Beziehungsbaum und Subjektsuche
+
+### Graph
+
+Das Panel **„Verknüpfungen“** hat die Reiter „Verknüpfungen“, „Lokaler Graph“ und „Globaler Graph“. Ein Knoten ist eine Notiz, seine Farbe der `type` der Notiz, eine Linie ein `[[…]]`-Link oder eine typisierte Beziehung. Ein Klick auf einen Knoten öffnet die Notiz.
+
+- **Lebendige Physik („schwebender“ Graph).** Ziehen Sie einen Knoten: Die Nachbarn folgen ihm und weichen ihm aus, nach dem Loslassen beruhigt sich der Graph sanft. Die Schaltfläche **„Schweben“** fügt eine leichte Drift hinzu (bis 400 Knoten standardmäßig an), **„Pause“** stoppt die Bewegung. Unter **„Kräfte“** gibt es Regler für Zentrum, Abstoßung, Linkstärke und Linklänge; die Auswahl wird gespeichert.
+- **Typisierte Beziehungen** stehen in der Eigenschaft `relations` (`to`, dazu `type`, `grade`, `origin`, `status`, `evidence` und `dir: in` für die Gegenrichtung). Ein `grade` besteht aus Buchstabe und Ziffer (A1 am verlässlichsten, F6 am schwächsten): Der Buchstabe bewertet die Quelle, die Ziffer die Aussage. Linie und Knotenrand folgen der Bewertung; Bewertungen 5–6 tragen das Wort **„GERÜCHT“**. Farbe ist nie das einzige Signal.
+- **„Woher das kommt“** hebt die Eigentümerkette oberhalb des gewählten Knotens und die Materialien darum hervor.
+- **Eigenes Fenster.** Die Schaltfläche **↗** in den Graph-Reitern oder „Datei → Graph in eigenem Fenster“ (nur Desktop) öffnet den Graphen in einem eigenen Fenster mit mehr Platz, etwa auf einem zweiten Monitor. Es folgt der aktiven Notiz, aktualisiert sich nach Änderungen, und ein Klick auf einen Knoten öffnet die Notiz im Hauptfenster.
+
+### Beziehungsbaum
+
+Der Reiter **„Beziehungsbaum“** zeigt die Kette typisierter Beziehungen ab der gewählten Notiz: **„Eigentümer und Quellen“** (aufwärts) oder **„Was sie besitzt“** (abwärts), Tiefe 1–8.
+
+- Jeder Knoten zeigt die Beziehungsart und die Linienbewertung; daneben die **„Ketten“**-Bewertung: das schwächste Glied auf dem Weg von der Wurzel (B2 zusammen mit C1 ergibt C2). Eine Kette ist so verlässlich wie ihr schwächstes Glied.
+- **„−/+“** klappt einen Zweig, **◎** baut den Baum ab einem anderen Knoten neu, **„Alles aufklappen“ / „Alles zuklappen“** steuern alle Zweige. Ein wiederholter Knoten wird markiert und nicht zweimal entfaltet; der Baum ist auf 400 Knoten begrenzt.
+- **„Pfad zwischen zwei Notizen“** findet die kürzeste Kette typisierter Beziehungen (Linienrichtung egal) und zeigt ihr schwächstes Glied.
+- Der Baum nutzt nur ausdrückliche typisierte Beziehungen, keine einfachen Links. Die Kettenbewertung ist eine Hilfe, keine rechtliche Schlussfolgerung.
+
+### Subjekt nach Code oder Name suchen
+
+Im Reiter **„Suche“** wird eine Zahl mit 8 Ziffern als EDRPOU-Code, mit 10 Ziffern als Steuernummer gesucht (ein Code mit verlorenen führenden Nullen, 6–7 Ziffern, wird ergänzt). Die Ergebnisse stehen getrennt:
+
+- **„Exakter Treffer“**: eine Notiz mit demselben Code in der Eigenschaft `edrpou` oder `ipn` (oder demselben Namen nach Normalisierung);
+- **„Kandidaten nach Name“**: ähnliche Namen; ein Namenstreffer ist **kein Beweis**, bestätigen Sie ihn mit Code oder Dokument;
+- **„Im Text“**: gewöhnliche Volltextsuche.
+
+Namen werden ohne Rücksicht auf Groß-/Kleinschreibung, Anführungszeichen, Bindestriche und Rechtsformen (GmbH u. Ä.) verglichen; lateinische Buchstaben, die kyrillischen gleichen, werden auf Kyrillisch abgebildet.
+
+### Ordnerimport, Zusammenführen nach Code und mögliche Duplikate
+
+- **„Datei → Ordner importieren…“** fügt Notizen aus einem Ordner hinzu. Eine Notiz, deren Code (`edrpou`/`ipn`) schon im Tresor steht, wird mit der vorhandenen **zusammengeführt**, statt dupliziert zu werden: fehlende Eigenschaften werden ergänzt, Tags, Aliase und Beziehungen vereint, der Titel der importierten Notiz wird zum Alias, abweichende Werte werden nicht überschrieben, sondern zur Prüfung aufgelistet. Erneuter Import ändert nichts.
+- **„Datei → Mögliche Duplikate…“** listet Gruppen von Notizen mit gleichem normalisiertem Titel oder Alias. Das ist nur ein Hinweis: Nichts wird geändert, und Notizen mit verschiedenen Codes werden nie gruppiert.
+
+## 13. Tastatur
 
 | Aktion | Windows / Linux | macOS |
 |---|---|---|
@@ -113,7 +148,7 @@ Auf schmalen Bildschirmen öffnen sich Seitenleiste und Verknüpfungsleiste übe
 | Rückgängig / Wiederholen | `Ctrl+Z` / `Ctrl+Shift+Z` | `Cmd+Z` / `Cmd+Shift+Z` |
 | Einrücken | `Tab` | `Tab` |
 
-## 13. Häufige Probleme
+## 14. Häufige Probleme
 
 - **Windows zeigt SmartScreen** — der Build ist nicht signiert. Wählen Sie „Weitere Informationen → Trotzdem ausführen“.
 - **macOS öffnet die App nicht** — der Build ist nicht notarisiert. Nutzen Sie **Systemeinstellungen → Datenschutz & Sicherheit → Dennoch öffnen**.
@@ -121,6 +156,6 @@ Auf schmalen Bildschirmen öffnen sich Seitenleiste und Verknüpfungsleiste übe
 - **Die Suche findet eine gerade geänderte Notiz nicht** — schließen und öffnen Sie den Tresor erneut. Hilft das nicht, löschen Sie `.mdnotes/cache/index.db`; der Index wird neu aufgebaut.
 - **Ein Bild wird nicht angezeigt** — prüfen Sie, ob die Datei im Tresor liegt und der Pfad relativ ist.
 
-## 14. Urheberrecht
+## 15. Urheberrecht
 
 Copyright © 2026 Roman Zavada (Роман Завада). Alle Rechte vorbehalten. MD Notes ist proprietäre Software. Ihre Notizen gehören Ihnen. Siehe [LICENSE.md](../../LICENSE.md) und [LEGAL_AND_COPYRIGHT.md](../LEGAL_AND_COPYRIGHT.md).

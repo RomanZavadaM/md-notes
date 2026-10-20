@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](USER_GUIDE.uk.md) · [🇬🇧 English](USER_GUIDE.en.md) · **🇫🇷 Français** · [🇩🇪 Deutsch](USER_GUIDE.de.md) · [🇪🇸 Español](USER_GUIDE.es.md) · [🇰🇷 한국어](USER_GUIDE.ko.md) · [🇯🇵 日本語](USER_GUIDE.ja.md)
 
-S'applique à la **v0.2.0**. La version ukrainienne fait foi.
+S'applique à la **v0.3.15**. La version ukrainienne fait foi.
 
 ## 1. Premier lancement
 
@@ -103,7 +103,42 @@ Sur les écrans étroits, le panneau latéral et le panneau des liens s'ouvrent 
 - Sur un autre ordinateur, copiez le dossier du coffre et ouvrez-le : l’application demande la clé. Collez la clé privée ; elle est ensuite conservée dans le magasin de secrets de cet ordinateur.
 - Pour l’instant, un coffre chiffré n’affiche pas les images ni les pièces jointes, et l’index `.mdnotes/cache` n’est pas chiffré.
 
-## 12. Clavier
+## 12. Graphe, arbre des relations et recherche d’un sujet
+
+### Graphe
+
+Le panneau **« Liens »** propose les onglets « Liens », « Graphe local » et « Graphe global ». Un nœud est une note, sa couleur est le `type` de la note, une ligne est un lien `[[…]]` ou une relation typée. Cliquez sur un nœud pour ouvrir la note.
+
+- **Physique vivante (graphe « flottant »).** Faites glisser un nœud : ses voisins le suivent et le contournent, puis le graphe se stabilise en douceur. Le bouton **« Flottement »** ajoute une légère dérive (activé par défaut jusqu’à 400 nœuds), **« Pause »** arrête le mouvement. **« Forces »** propose des curseurs pour le centre, la répulsion, la force et la longueur des liens ; votre choix est mémorisé.
+- **Relations typées** : propriété `relations` (`to`, plus `type`, `grade`, `origin`, `status`, `evidence`, et `dir: in` pour le sens inverse). Un `grade` est une lettre et un chiffre (A1 le plus fiable, F6 le plus faible) : la lettre note la source, le chiffre l’affirmation. Le trait et le contour du nœud suivent la note ; les notes 5–6 portent le mot **« RUMEUR »**. La couleur n’est jamais le seul signal.
+- **« D’où cela vient »** met en évidence la chaîne des propriétaires au-dessus du nœud choisi et les documents autour.
+- **Fenêtre séparée.** Le bouton **↗** des onglets du graphe, ou « Fichier → Graphe dans une fenêtre séparée » (bureau uniquement), ouvre le graphe dans sa propre fenêtre, par exemple sur un second écran. Elle suit la note active, se met à jour après les modifications, et un clic sur un nœud ouvre la note dans la fenêtre principale.
+
+### Arbre des relations
+
+L’onglet **« Arbre des relations »** montre la chaîne de relations typées à partir de la note choisie : **« Propriétaires et sources »** (vers le haut) ou **« Ce qu’elle possède »** (vers le bas), profondeur 1–8.
+
+- Chaque nœud indique le type de relation et la note du trait ; à côté, la note de **« chaîne »** : le maillon le plus faible depuis la racine (B2 avec C1 donne C2). Une chaîne vaut son maillon le plus faible.
+- **« −/+ »** replie une branche, **◎** reconstruit l’arbre depuis un autre nœud, **« Tout déplier » / « Tout replier »** agissent sur toutes les branches. Un nœud répété est signalé et non redéployé ; l’arbre est limité à 400 nœuds.
+- **« Chemin entre deux notes »** trouve la plus courte chaîne de relations typées (sens des traits ignoré) et indique son maillon le plus faible.
+- L’arbre n’utilise que des relations typées explicites, pas les liens simples. La note de chaîne est une aide, pas une conclusion juridique.
+
+### Rechercher un sujet par code ou par nom
+
+Dans l’onglet **« Recherche »**, un nombre de 8 chiffres est cherché comme code EDRPOU, de 10 chiffres comme numéro fiscal (un code ayant perdu ses zéros initiaux, 6–7 chiffres, est restitué). Les résultats sont séparés :
+
+- **« Correspondance exacte »** : une note avec le même code dans la propriété `edrpou` ou `ipn` (ou le même nom après normalisation) ;
+- **« Candidats par nom »** : noms proches ; une correspondance de nom **ne prouve rien**, confirmez par un code ou un document ;
+- **« Dans le texte »** : recherche plein texte ordinaire.
+
+Les noms sont comparés sans tenir compte de la casse, des guillemets, des traits d’union et des formes juridiques (SARL, etc.) ; les lettres latines ressemblant à des cyrilliques sont ramenées au cyrillique.
+
+### Import d’un dossier, fusion par code et doublons possibles
+
+- **« Fichier → Importer un dossier… »** ajoute les notes d’un dossier. Une note dont le code (`edrpou`/`ipn`) existe déjà dans le coffre est **fusionnée** avec la note existante au lieu d’être dupliquée : les propriétés manquantes sont ajoutées, les étiquettes, alias et relations réunis, le titre de la note importée devient un alias, les valeurs divergentes ne sont pas écrasées mais listées pour relecture. Réimporter le même dossier ne change rien.
+- **« Fichier → Doublons possibles… »** liste les groupes de notes ayant le même titre ou alias normalisé. Ce n’est qu’une indication : rien n’est modifié, et des notes de codes différents ne sont jamais regroupées.
+
+## 13. Clavier
 
 | Action | Windows / Linux | macOS |
 |---|---|---|
@@ -113,7 +148,7 @@ Sur les écrans étroits, le panneau latéral et le panneau des liens s'ouvrent 
 | Annuler / rétablir | `Ctrl+Z` / `Ctrl+Shift+Z` | `Cmd+Z` / `Cmd+Shift+Z` |
 | Indenter | `Tab` | `Tab` |
 
-## 13. Problèmes courants
+## 14. Problèmes courants
 
 - **Windows affiche SmartScreen** — la version n'est pas signée. Choisissez « Informations complémentaires → Exécuter quand même ».
 - **macOS n'ouvre pas l'application** — la version n'est pas notarisée. Utilisez **Réglages Système → Confidentialité et sécurité → Ouvrir quand même**.
@@ -121,6 +156,6 @@ Sur les écrans étroits, le panneau latéral et le panneau des liens s'ouvrent 
 - **La recherche ne trouve pas une note que vous venez de modifier** — fermez puis rouvrez le coffre. Si cela ne suffit pas, supprimez `.mdnotes/cache/index.db` et l'index sera reconstruit.
 - **Une image ne s'affiche pas** — vérifiez que le fichier se trouve dans le coffre et que le chemin est relatif.
 
-## 14. Droits d'auteur
+## 15. Droits d'auteur
 
 Copyright © 2026 Roman Zavada (Роман Завада). Tous droits réservés. MD Notes est un logiciel propriétaire. Vos notes vous appartiennent. Voir [LICENSE.md](../../LICENSE.md) et [LEGAL_AND_COPYRIGHT.md](../LEGAL_AND_COPYRIGHT.md).
