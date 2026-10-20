@@ -645,6 +645,38 @@ fn knowledge_graph_snapshot(
     })
 }
 
+/// Chain of typed relations above ("up": owners, sources) or below ("down": what
+/// the note owns) a note, with the weakest-link grade of every chain.
+#[tauri::command]
+fn relation_tree_for(
+    root: String,
+    direction: String,
+    max_depth: u8,
+    state: State<'_, AppState>,
+) -> CmdResult<Option<notes_core::RelationTree>> {
+    let direction = notes_core::TreeDirection::parse(&direction)
+        .ok_or_else(|| "direction must be \"up\" or \"down\"".to_string())?;
+    with_session(&state, |s| {
+        let graph = knowledge_graph(&s.index, None)?;
+        let graph = notes_core::with_relations(&s.vault, graph)?;
+        Ok(notes_core::relation_tree(&graph, &root, direction, max_depth))
+    })
+}
+
+/// Shortest chain of typed relations between two notes (direction ignored).
+#[tauri::command]
+fn relation_path_between(
+    from: String,
+    to: String,
+    state: State<'_, AppState>,
+) -> CmdResult<Option<notes_core::RelationPath>> {
+    with_session(&state, |s| {
+        let graph = knowledge_graph(&s.index, None)?;
+        let graph = notes_core::with_relations(&s.vault, graph)?;
+        Ok(notes_core::relation_path(&graph, &from, &to, 8))
+    })
+}
+
 #[tauri::command]
 fn unresolved_links(state: State<'_, AppState>) -> CmdResult<Vec<UnresolvedLink>> {
     with_session(&state, |s| s.index.unresolved_links())
@@ -707,6 +739,8 @@ pub fn run() {
             git_push_with_stored_credentials,
             import_folder,
             possible_duplicates,
+            relation_tree_for,
+            relation_path_between,
             quit_app,
             git::git_status_cmd,
             git::git_init_repo,

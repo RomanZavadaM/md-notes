@@ -26,6 +26,7 @@ pub mod paths;
 pub mod presets;
 pub mod push_guard;
 pub mod refactor;
+pub mod relation_tree;
 pub mod schema;
 pub mod storage;
 pub mod sync;
@@ -57,6 +58,10 @@ pub use markdown::WikiLink;
 pub use note::Note;
 pub use presets::{create_vault_with_preset, VaultPreset};
 pub use refactor::{rename_with_links, RenameOutcome};
+pub use relation_tree::{
+    relation_path, relation_tree, weakest_grade, PathStep, RelationPath, RelationTree,
+    TreeDirection, TreeNode,
+};
 pub use schema::{FieldKind, FieldSpec, NoteTypeSpec, SchemaDocument};
 pub use storage::{LocalFsProvider, StorageEntry, StorageEntryKind, StorageProvider};
 pub use sync::{
