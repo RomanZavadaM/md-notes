@@ -34,6 +34,20 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.16](https://github.com/RomanZavadaM/md-notes/compare/v0.3.15...v0.3.16) (2026-10-20)
+
+
+### Нові можливості
+
+* граф в окремому вікні ([9ebf4f3](https://github.com/RomanZavadaM/md-notes/commit/9ebf4f30f2439a4c1dfc9d1747efeebf193f89f1))
+* граф в окремому вікні (кнопка ↗ і пункт меню), слідкує за активною нотаткою, клік відкриває нотатку в головному вікні ([134cc81](https://github.com/RomanZavadaM/md-notes/commit/134cc810a7184d7dccb1fb3eec18391a769f8221))
+* єдиний пошук суб'єкта за кодом чи назвою ([2809b47](https://github.com/RomanZavadaM/md-notes/commit/2809b476dc63dedb1d6aa7630dde51694c734ff0))
+
+
+### Виправлення
+
+* перейменовано graphWindow.ts на graphWindowApi.ts (конфлікт імен із GraphWindow.tsx на нечутливих до регістру файлових системах) ([90ff0b0](https://github.com/RomanZavadaM/md-notes/commit/90ff0b07ceca7c53db7d74a4cd69626924960fff))
+
 ## [0.3.15](https://github.com/RomanZavadaM/md-notes/compare/v0.3.14...v0.3.15) (2026-10-20)
 
 
