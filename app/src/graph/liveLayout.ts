@@ -20,7 +20,7 @@ export interface Forces {
   distance: number;
 }
 
-export const DEFAULT_FORCES: Forces = { center: 0.05, repel: 1, link: 0.3, distance: 1 };
+export const DEFAULT_FORCES: Forces = { center: 0.04, repel: 1.4, link: 0.3, distance: 1.3 };
 
 const ALPHA_MIN = 0.003;
 const ALPHA_DECAY = 0.0228;
