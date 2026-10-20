@@ -17,6 +17,7 @@ pub mod git_manage;
 pub mod git_push;
 pub mod git_sync;
 pub mod graph;
+pub mod identity;
 pub mod index;
 pub mod markdown;
 pub mod note;

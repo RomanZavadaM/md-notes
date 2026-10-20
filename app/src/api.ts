@@ -56,6 +56,10 @@ export interface ImportReport {
   updated: number;
   skipped: number;
   rejected: number;
+  /** Notes folded into an existing note with the same identity code (ADR-0008). */
+  merged: number;
+  /** Differing values kept from existing notes during merges, to be reviewed. */
+  conflicts: number;
 }
 
 export type GitRelation = "upToDate" | "fastForward" | "localAhead" | "diverged" | "unrelated";
