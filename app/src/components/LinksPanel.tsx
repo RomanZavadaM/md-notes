@@ -4,6 +4,7 @@ import { useI18n } from "../i18n";
 import { GRAPH_STRINGS } from "../i18n/graph";
 import { KnowledgeGraphPanel } from "./KnowledgeGraphPanel";
 import { RelationTreePanel } from "./RelationTreePanel";
+import { openGraphWindow } from "../graphWindowApi";
 import { RELATION_TREE_STRINGS } from "../i18n/relationTree";
 
 interface Props {
@@ -21,6 +22,14 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
   const graphStrings = GRAPH_STRINGS[language];
   const [backlinks, setBacklinks] = useState<Backlink[]>([]);
   const [mode, setMode] = useState<PanelMode>("links");
+  const [desktop, setDesktop] = useState(false);
+
+  useEffect(() => {
+    api
+      .runtimePlatform()
+      .then((platform) => setDesktop(platform === "windows" || platform === "linux" || platform === "macos"))
+      .catch(() => setDesktop(false));
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -61,6 +70,16 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
             {label}
           </button>
         ))}
+        {desktop && mode !== "links" && (
+          <button
+            type="button"
+            className="graph-detach"
+            title={graphStrings.detach}
+            onClick={() => void openGraphWindow(mode, note.path, graphStrings.windowTitle)}
+          >
+            ↗
+          </button>
+        )}
       </div>
 
       {mode === "links" ? (

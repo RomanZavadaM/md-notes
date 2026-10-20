@@ -32,6 +32,9 @@ export interface GraphStrings {
   forceLink: string;
   forceDistance: string;
   forcesReset: string;
+  detach: string;
+  windowTitle: string;
+  windowNoNote: string;
 }
 
 export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
@@ -67,6 +70,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     forceLink: "Сила зв’язків",
     forceDistance: "Довжина зв’язків",
     forcesReset: "Скинути сили",
+    detach: "Граф в окремому вікні",
+    windowTitle: "Граф знань",
+    windowNoNote: "Відкрийте нотатку в головному вікні, щоб побачити її зв’язки.",
   },
   en: {
     linksMode: "Links",
@@ -100,6 +106,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     forceLink: "Link strength",
     forceDistance: "Link length",
     forcesReset: "Reset forces",
+    detach: "Graph in a separate window",
+    windowTitle: "Knowledge graph",
+    windowNoNote: "Open a note in the main window to see its connections.",
   },
   fr: {
     linksMode: "Liens",
@@ -133,6 +142,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     forceLink: "Force des liens",
     forceDistance: "Longueur des liens",
     forcesReset: "Réinitialiser",
+    detach: "Graphe dans une fenêtre séparée",
+    windowTitle: "Graphe de connaissances",
+    windowNoNote: "Ouvrez une note dans la fenêtre principale pour voir ses liens.",
   },
   de: {
     linksMode: "Verknüpfungen",
@@ -166,6 +178,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     forceLink: "Linkstärke",
     forceDistance: "Linklänge",
     forcesReset: "Zurücksetzen",
+    detach: "Graph in eigenem Fenster",
+    windowTitle: "Wissensgraph",
+    windowNoNote: "Öffnen Sie eine Notiz im Hauptfenster, um ihre Verbindungen zu sehen.",
   },
   es: {
     linksMode: "Enlaces",
@@ -199,6 +214,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     forceLink: "Fuerza de enlaces",
     forceDistance: "Longitud de enlaces",
     forcesReset: "Restablecer",
+    detach: "Grafo en otra ventana",
+    windowTitle: "Grafo de conocimiento",
+    windowNoNote: "Abra una nota en la ventana principal para ver sus conexiones.",
   },
   ko: {
     linksMode: "링크",
@@ -232,6 +250,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     forceLink: "링크 강도",
     forceDistance: "링크 길이",
     forcesReset: "초기화",
+    detach: "별도 창에서 그래프 보기",
+    windowTitle: "지식 그래프",
+    windowNoNote: "연결을 보려면 기본 창에서 노트를 여세요.",
   },
   ja: {
     linksMode: "リンク",
@@ -265,5 +286,8 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     forceLink: "リンクの強さ",
     forceDistance: "リンクの長さ",
     forcesReset: "リセット",
+    detach: "別ウィンドウでグラフを開く",
+    windowTitle: "ナレッジグラフ",
+    windowNoNote: "接続を表示するには、メインウィンドウでノートを開いてください。",
   },
 };
