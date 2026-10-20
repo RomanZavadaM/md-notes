@@ -51,6 +51,18 @@ export interface CreatedEncryptedVault {
 /** Error text of `openVault` when the vault is encrypted and this device has no key. */
 export const KEY_MISSING = "KEY_MISSING";
 
+export interface DuplicateNote {
+  path: string;
+  title: string;
+  identity: string | null;
+}
+
+export interface DuplicateGroup {
+  notes: DuplicateNote[];
+  /** Every note carries the same identity code: they should have been merged. */
+  sameCode: boolean;
+}
+
 export interface ImportReport {
   created: number;
   updated: number;
@@ -225,6 +237,7 @@ export const api = {
   /** Closes the application (desktop). */
   quitApp: () => invoke<void>("quit_app"),
   importFolder: (source: string, overwrite = false) => invoke<ImportReport>("import_folder", { source, overwrite }),
+  possibleDuplicates: () => invoke<DuplicateGroup[]>("possible_duplicates"),
   gitStatus: (remoteName: string | null = null) => invoke<GitStatus>("git_status_cmd", { remoteName }),
   gitInit: () => invoke<void>("git_init_repo"),
   gitSetRemote: (url: string, remoteName: string | null = null) =>

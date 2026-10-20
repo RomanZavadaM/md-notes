@@ -452,6 +452,13 @@ fn import_folder(
     })
 }
 
+/// Lists groups of notes that probably describe the same subject (a read-only
+/// hint; nothing is changed, ADR-0008).
+#[tauri::command]
+fn possible_duplicates(state: State<'_, AppState>) -> CmdResult<Vec<notes_core::DuplicateGroup>> {
+    with_session(&state, |s| s.vault.possible_duplicates())
+}
+
 /// Closes the application (the File menu's Quit).
 #[tauri::command]
 fn quit_app(app: AppHandle) {
@@ -699,6 +706,7 @@ pub fn run() {
             git_fetch_with_stored_credentials,
             git_push_with_stored_credentials,
             import_folder,
+            possible_duplicates,
             quit_app,
             git::git_status_cmd,
             git::git_init_repo,

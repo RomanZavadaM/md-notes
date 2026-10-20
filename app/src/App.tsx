@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
-import { ask, open } from "@tauri-apps/plugin-dialog";
+import { ask, message, open } from "@tauri-apps/plugin-dialog";
 import {
   api,
   joinPath,
@@ -298,6 +298,29 @@ export default function App() {
     }
   };
 
+  const showDuplicates = async () => {
+    const strings = IMPORTER_STRINGS[language];
+    try {
+      const groups = await api.possibleDuplicates();
+      if (groups.length === 0) {
+        await message(strings.duplicatesNone, { title: strings.duplicatesTitle, kind: "info" });
+        return;
+      }
+      const shown = groups.slice(0, 12).map((group) => {
+        const names = group.notes.map((n) => `${n.title} (${n.path})`).join("  =  ");
+        return group.sameCode ? `${names}  [${strings.duplicatesSameCode}]` : names;
+      });
+      const more = groups.length > shown.length ? `\n… ${groups.length - shown.length}` : "";
+      const text = [strings.duplicatesFound(groups.length), "", ...shown].join("\n");
+      await message(`${text}${more}\n\n${strings.duplicatesHint}`, {
+        title: strings.duplicatesTitle,
+        kind: "info",
+      });
+    } catch (e) {
+      report(e);
+    }
+  };
+
   const pickMarkdownFile = async () => {
     const file = await open({
       directory: false,
@@ -531,6 +554,7 @@ export default function App() {
         { label: t.otherVault, onSelect: () => void pickVault() },
         { label: t.openMarkdownFile, onSelect: () => void pickMarkdownFile() },
         ...(vault ? [{ label: IMPORTER_STRINGS[language].button, onSelect: () => void importFolder() }] : []),
+        ...(vault ? [{ label: IMPORTER_STRINGS[language].duplicatesButton, onSelect: () => void showDuplicates() }] : []),
         ...(vault && isDesktop ? [{ label: "Git…", onSelect: () => setGitOpen(true) }] : []),
         ...(isDesktop ? [{ label: t.makeMarkdownDefault, onSelect: () => void configureMarkdownAssociation() }] : []),
         { label: t.about, onSelect: () => setAboutOpen(true), separatorBefore: true },
