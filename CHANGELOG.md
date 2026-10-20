@@ -34,6 +34,14 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.14](https://github.com/RomanZavadaM/md-notes/compare/v0.3.13...v0.3.14) (2026-10-20)
+
+
+### Нові можливості
+
+* дерево зв'язків (власники й джерела вгору/вниз, найслабша ланка, шлях між двома нотатками) ([2fa3850](https://github.com/RomanZavadaM/md-notes/commit/2fa385041c7d2ab9065b4785941b58c3fcdbe2f3))
+* дерево зв'язків і шлях між нотатками ([996f025](https://github.com/RomanZavadaM/md-notes/commit/996f0255e63a2e460c32780c56c779558d311603))
+
 ## [0.3.13](https://github.com/RomanZavadaM/md-notes/compare/v0.3.12...v0.3.13) (2026-10-20)
 
 
