@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](USER_GUIDE.uk.md) · [🇬🇧 English](USER_GUIDE.en.md) · [🇫🇷 Français](USER_GUIDE.fr.md) · [🇩🇪 Deutsch](USER_GUIDE.de.md) · **🇪🇸 Español** · [🇰🇷 한국어](USER_GUIDE.ko.md) · [🇯🇵 日本語](USER_GUIDE.ja.md)
 
-Aplicable a la **v0.2.0**. La versión ucraniana es el texto de referencia.
+Aplicable a la **v0.3.15**. La versión ucraniana es el texto de referencia.
 
 ## 1. Primer inicio
 
@@ -103,7 +103,42 @@ En pantallas estrechas, el panel lateral y el panel de enlaces se abren sobre el
 - En otro ordenador, copie la carpeta de la bóveda y ábrala: la aplicación pedirá la clave. Pegue la clave privada y se guardará en el almacén de secretos de ese ordenador.
 - Por ahora una bóveda cifrada no muestra imágenes ni adjuntos, y el índice `.mdnotes/cache` no está cifrado.
 
-## 12. Teclado
+## 12. Grafo, árbol de relaciones y búsqueda de un sujeto
+
+### Grafo
+
+El panel **«Enlaces»** tiene las pestañas «Enlaces», «Grafo local» y «Grafo global». Un nodo es una nota, su color es el `type` de la nota, una línea es un enlace `[[…]]` o una relación tipada. Haga clic en un nodo para abrir la nota.
+
+- **Física viva (grafo «flotante»).** Arrastre un nodo: sus vecinos lo siguen y lo rodean, y al soltarlo el grafo se calma suavemente. El botón **«Flotar»** añade una ligera deriva (activado por defecto hasta 400 nodos), **«Pausa»** detiene el movimiento. **«Fuerzas»** ofrece controles de centro, repulsión, fuerza y longitud de los enlaces; su elección se recuerda.
+- **Relaciones tipadas** en la propiedad `relations` (`to`, además de `type`, `grade`, `origin`, `status`, `evidence` y `dir: in` para el sentido inverso). Un `grade` es una letra y un dígito (A1 el más fiable, F6 el más débil): la letra valora la fuente, el dígito la afirmación. La línea y el borde del nodo siguen la valoración; las valoraciones 5–6 llevan la palabra **«RUMOR»**. El color nunca es la única señal.
+- **«De dónde viene»** resalta la cadena de propietarios por encima del nodo elegido y los materiales a su alrededor.
+- **Ventana aparte.** El botón **↗** de las pestañas del grafo, o «Archivo → Grafo en otra ventana» (solo escritorio), abre el grafo en su propia ventana con más espacio, por ejemplo en un segundo monitor. Sigue la nota activa, se actualiza tras los cambios y un clic en un nodo abre la nota en la ventana principal.
+
+### Árbol de relaciones
+
+La pestaña **«Árbol de relaciones»** muestra la cadena de relaciones tipadas desde la nota elegida: **«Propietarios y fuentes»** (hacia arriba) o **«Lo que posee»** (hacia abajo), profundidad 1–8.
+
+- Cada nodo muestra el tipo de relación y la valoración de la línea; al lado, la valoración de **«cadena»**: el eslabón más débil desde la raíz (B2 junto con C1 da C2). Una cadena es tan fiable como su eslabón más débil.
+- **«−/+»** pliega una rama, **◎** reconstruye el árbol desde otro nodo, **«Desplegar todo» / «Plegar todo»** controlan todas las ramas. Un nodo repetido se marca y no se despliega dos veces; el árbol se limita a 400 nodos.
+- **«Camino entre dos notas»** encuentra la cadena más corta de relaciones tipadas (se ignora el sentido de las líneas) y muestra su eslabón más débil.
+- El árbol usa solo relaciones tipadas explícitas, no enlaces simples. La valoración de la cadena es una ayuda, no una conclusión jurídica.
+
+### Buscar un sujeto por código o nombre
+
+En la pestaña **«Búsqueda»**, un número de 8 dígitos se busca como código EDRPOU y uno de 10 como número fiscal (un código que perdió ceros iniciales, de 6–7 dígitos, se restituye). Los resultados se muestran por separado:
+
+- **«Coincidencia exacta»**: una nota con el mismo código en la propiedad `edrpou` o `ipn` (o el mismo nombre tras la normalización);
+- **«Candidatos por nombre»**: nombres parecidos; una coincidencia de nombre **no es una prueba**, confírmela con un código o un documento;
+- **«En el texto»**: búsqueda de texto completo habitual.
+
+Los nombres se comparan sin distinguir mayúsculas, comillas, guiones ni formas jurídicas (S.L. y similares); las letras latinas que parecen cirílicas se reducen al cirílico.
+
+### Importar una carpeta, fusionar por código y posibles duplicados
+
+- **«Archivo → Importar carpeta…»** añade las notas de una carpeta. Una nota cuyo código (`edrpou`/`ipn`) ya está en la bóveda se **fusiona** con la existente en lugar de duplicarse: se añaden las propiedades que faltan, se unen etiquetas, alias y relaciones, el título de la nota importada pasa a ser alias, los valores distintos no se sobrescriben y se listan para revisión. Volver a importar la misma carpeta no cambia nada.
+- **«Archivo → Posibles duplicados…»** lista grupos de notas con el mismo título o alias normalizado. Es solo una pista: no se cambia nada y las notas con códigos distintos nunca se agrupan.
+
+## 13. Teclado
 
 | Acción | Windows / Linux | macOS |
 |---|---|---|
@@ -113,7 +148,7 @@ En pantallas estrechas, el panel lateral y el panel de enlaces se abren sobre el
 | Deshacer / rehacer | `Ctrl+Z` / `Ctrl+Shift+Z` | `Cmd+Z` / `Cmd+Shift+Z` |
 | Sangría | `Tab` | `Tab` |
 
-## 13. Problemas frecuentes
+## 14. Problemas frecuentes
 
 - **Windows muestra SmartScreen** — la compilación no está firmada. Elige «Más información → Ejecutar de todas formas».
 - **macOS no abre la aplicación** — la compilación no está notarizada. Usa **Ajustes del Sistema → Privacidad y seguridad → Abrir igualmente**.
@@ -121,6 +156,6 @@ En pantallas estrechas, el panel lateral y el panel de enlaces se abren sobre el
 - **La búsqueda no encuentra una nota que acabas de cambiar** — cierra y vuelve a abrir la bóveda. Si no basta, elimina `.mdnotes/cache/index.db` y el índice se reconstruirá.
 - **Una imagen no se muestra** — comprueba que el archivo está dentro de la bóveda y que la ruta es relativa.
 
-## 14. Derechos de autor
+## 15. Derechos de autor
 
 Copyright © 2026 Roman Zavada (Роман Завада). Todos los derechos reservados. MD Notes es software propietario. Tus notas te pertenecen. Consulta [LICENSE.md](../../LICENSE.md) y [LEGAL_AND_COPYRIGHT.md](../LEGAL_AND_COPYRIGHT.md).

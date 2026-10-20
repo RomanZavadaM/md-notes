@@ -40,6 +40,8 @@
 - `.mdnotes/schema.json` 기반 속성;
 - Empty / PARA / Zettelkasten preset;
 - global/local knowledge graph;
+- 살아 있는 그래프 물리(“떠다니는” 그래프), 별도 창 그래프, 가장 약한 고리로 평가하는 관계 트리, 두 노트 사이의 경로;
+- 정확한 코드(EDRPOU/납세 번호) 또는 이름으로 대상 찾기, 코드로 병합하는 폴더 가져오기, 중복 가능성;
 - 7개 언어 UI와 라이트/다크/시스템 테마.
 
 ### v0.3 — v0.3.4 체크포인트까지 통합됨

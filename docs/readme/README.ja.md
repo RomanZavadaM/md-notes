@@ -40,6 +40,8 @@
 - `.mdnotes/schema.json` による schema-driven properties;
 - Empty / PARA / Zettelkasten preset;
 - global/local knowledge graph;
+- 生きたグラフ物理（「浮遊する」グラフ）、別ウィンドウのグラフ、最も弱いリンクで評価する関係ツリー、2つのノート間の経路；
+- 正確なコード（EDRPOU/納税者番号）または名前による対象検索、コードで統合するフォルダーインポート、重複の可能性；
 - 7 言語 UI とライト/ダーク/システムテーマ。
 
 ### v0.3 — v0.3.4 checkpoint まで統合済み

@@ -40,6 +40,8 @@ Plateformes : **Windows, macOS, Linux**. Android et iOS sont des cibles actives 
 - propriétés pilotées par `.mdnotes/schema.json` ;
 - presets Empty / PARA / Zettelkasten ;
 - graphe de connaissances global/local ;
+- physique de graphe vivante (graphe « flottant »), graphe dans une fenêtre séparée, arbre des relations noté par son maillon le plus faible, chemin entre deux notes ;
+- recherche d’un sujet par code exact (EDRPOU/numéro fiscal) ou par nom, import de dossier avec fusion par code, doublons possibles ;
 - interface en sept langues et thèmes clair/sombre/système.
 
 ### v0.3 — intégré jusqu’au checkpoint v0.3.4
