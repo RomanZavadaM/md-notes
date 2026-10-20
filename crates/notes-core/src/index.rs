@@ -484,9 +484,9 @@ impl Index {
 
     /// Identifiers of one note as `(key, value)` pairs.
     pub fn identifiers_of(&self, path: &str) -> Result<Vec<(String, String)>> {
-        let mut stmt = self.conn.prepare(
-            "SELECT key, value FROM identifiers WHERE path = ?1 ORDER BY key, value",
-        )?;
+        let mut stmt = self
+            .conn
+            .prepare("SELECT key, value FROM identifiers WHERE path = ?1 ORDER BY key, value")?;
         let rows = stmt.query_map([path], |row| Ok((row.get(0)?, row.get(1)?)))?;
         Ok(rows.collect::<rusqlite::Result<_>>()?)
     }
@@ -880,9 +880,7 @@ mod tests {
     #[test]
     fn relations_follow_edits_and_removals() {
         let (_dir, vault, mut index) = relations_vault();
-        vault
-            .write_note("Нікого.md", "# Нікого\n")
-            .unwrap();
+        vault.write_note("Нікого.md", "# Нікого\n").unwrap();
         index.sync(&vault).unwrap();
         assert_eq!(index.relations().unwrap().len(), 2); // the target now exists
 
@@ -907,8 +905,14 @@ mod tests {
             index.notes_with_identifier("edrpou", "12345678").unwrap(),
             vec!["Фіакр.md".to_string()]
         );
-        assert!(index.notes_with_identifier("edrpou", "3114848").unwrap().is_empty());
-        assert!(index.notes_with_identifier("ipn", "03114848").unwrap().is_empty());
+        assert!(index
+            .notes_with_identifier("edrpou", "3114848")
+            .unwrap()
+            .is_empty());
+        assert!(index
+            .notes_with_identifier("ipn", "03114848")
+            .unwrap()
+            .is_empty());
         assert_eq!(
             index.identifiers_of("Власник.md").unwrap(),
             vec![("edrpou".to_string(), "03114848".to_string())]
@@ -927,9 +931,12 @@ mod tests {
         assert_eq!(paths, vec!["Фіакр.md", "Фіакр Львів Плюс.md"]);
         assert!(hits[0].exact);
         assert!(!hits[1].exact);
-        assert!(index.find_by_name("Невідомий суб'єкт", 10).unwrap().is_empty());
+        assert!(index
+            .find_by_name("Невідомий суб'єкт", 10)
+            .unwrap()
+            .is_empty());
         assert!(index.find_by_name("ТОВ", 10).unwrap().is_empty()); // only a legal form
-        // the alias finds the same note once
+                                                                    // the alias finds the same note once
         let by_alias = index.find_by_name("Фіакр", 10).unwrap();
         assert_eq!(by_alias.iter().filter(|h| h.path == "Фіакр.md").count(), 1);
     }
@@ -961,9 +968,19 @@ mod tests {
         )
         .unwrap();
         assert!(tree.nodes > 1);
-        assert_eq!(index.notes_with_identifier("edrpou", "00000042").unwrap().len(), 1);
+        assert_eq!(
+            index
+                .notes_with_identifier("edrpou", "00000042")
+                .unwrap()
+                .len(),
+            1
+        );
         // generous bound: the point is that no note file is read (a file-reading pass over 600 notes is far slower)
-        assert!(started.elapsed() < std::time::Duration::from_secs(5), "{:?}", started.elapsed());
+        assert!(
+            started.elapsed() < std::time::Duration::from_secs(5),
+            "{:?}",
+            started.elapsed()
+        );
     }
 
     #[test]
