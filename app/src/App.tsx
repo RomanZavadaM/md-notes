@@ -21,7 +21,7 @@ import { Editor } from "./components/Editor";
 import { ImportKeyDialog } from "./components/EncryptionDialogs";
 import { AppMenu } from "./components/AppMenu";
 import { GitPanel } from "./components/GitPanel";
-import { GRAPH_ACTIVE_NOTE, GRAPH_OPEN_NOTE, openGraphWindow, type GraphActiveNote } from "./graphWindow";
+import { GRAPH_ACTIVE_NOTE, GRAPH_OPEN_NOTE, openGraphWindow, type GraphActiveNote } from "./graphWindowApi";
 import { GRAPH_STRINGS } from "./i18n/graph";
 import { IMPORTER_STRINGS } from "./i18n/importer";
 import { MENU_STRINGS } from "./i18n/menu";

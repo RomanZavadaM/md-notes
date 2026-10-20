@@ -6,7 +6,7 @@ import { RelationTreePanel } from "./components/RelationTreePanel";
 import { useI18n } from "./i18n";
 import { GRAPH_STRINGS } from "./i18n/graph";
 import { RELATION_TREE_STRINGS } from "./i18n/relationTree";
-import { GRAPH_ACTIVE_NOTE, GRAPH_OPEN_NOTE, type GraphActiveNote, type GraphWindowMode } from "./graphWindow";
+import { GRAPH_ACTIVE_NOTE, GRAPH_OPEN_NOTE, type GraphActiveNote, type GraphWindowMode } from "./graphWindowApi";
 import "./GraphWindow.css";
 
 function initialMode(value: string | null, hasNote: boolean): GraphWindowMode {

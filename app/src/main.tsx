@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { I18nProvider } from "./i18n";
 import { GraphWindow } from "./GraphWindow";
-import { isGraphWindow } from "./graphWindow";
+import { isGraphWindow } from "./graphWindowApi";
 import { StartupGate } from "./StartupGate";
 import "./styles.css";
 

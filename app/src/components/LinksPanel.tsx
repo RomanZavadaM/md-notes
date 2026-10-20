@@ -4,7 +4,7 @@ import { useI18n } from "../i18n";
 import { GRAPH_STRINGS } from "../i18n/graph";
 import { KnowledgeGraphPanel } from "./KnowledgeGraphPanel";
 import { RelationTreePanel } from "./RelationTreePanel";
-import { openGraphWindow } from "../graphWindow";
+import { openGraphWindow } from "../graphWindowApi";
 import { RELATION_TREE_STRINGS } from "../i18n/relationTree";
 
 interface Props {
