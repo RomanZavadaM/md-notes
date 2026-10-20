@@ -34,6 +34,14 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.12](https://github.com/RomanZavadaM/md-notes/compare/v0.3.11...v0.3.12) (2026-10-20)
+
+
+### Нові можливості
+
+* **core:** імпорт об'єднує нотатки за кодом (ЄДРПОУ, ІПН), ADR-0008 ([c3e2599](https://github.com/RomanZavadaM/md-notes/commit/c3e2599f9d5342f64570ad7d6f6a298d377883c6))
+* **core:** імпорт папки об'єднує нотатки за кодом (ЄДРПОУ, ІПН), ADR-0008 ([5af724b](https://github.com/RomanZavadaM/md-notes/commit/5af724b51b84bf7308c73585d52143d98f3ecae8))
+
 ## [0.3.11](https://github.com/RomanZavadaM/md-notes/compare/v0.3.10...v0.3.11) (2026-10-19)
 
 
