@@ -23,6 +23,15 @@ export interface GraphStrings {
   traceMaterials: string;
   traceClear: string;
   traceFor: string;
+  float: string;
+  pause: string;
+  resume: string;
+  forces: string;
+  forceCenter: string;
+  forceRepel: string;
+  forceLink: string;
+  forceDistance: string;
+  forcesReset: string;
 }
 
 export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
@@ -49,6 +58,15 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     traceMaterials: "Матеріали",
     traceClear: "Скинути",
     traceFor: "Ланцюжок для",
+    float: "Плавання",
+    pause: "Пауза",
+    resume: "Продовжити",
+    forces: "Сили",
+    forceCenter: "Центр",
+    forceRepel: "Відштовхування",
+    forceLink: "Сила зв’язків",
+    forceDistance: "Довжина зв’язків",
+    forcesReset: "Скинути сили",
   },
   en: {
     linksMode: "Links",
@@ -73,6 +91,15 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     traceMaterials: "Materials",
     traceClear: "Reset",
     traceFor: "Chain for",
+    float: "Float",
+    pause: "Pause",
+    resume: "Resume",
+    forces: "Forces",
+    forceCenter: "Centre",
+    forceRepel: "Repel",
+    forceLink: "Link strength",
+    forceDistance: "Link length",
+    forcesReset: "Reset forces",
   },
   fr: {
     linksMode: "Liens",
@@ -97,6 +124,15 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     traceMaterials: "Documents",
     traceClear: "Réinitialiser",
     traceFor: "Chaîne pour",
+    float: "Flottement",
+    pause: "Pause",
+    resume: "Reprendre",
+    forces: "Forces",
+    forceCenter: "Centre",
+    forceRepel: "Répulsion",
+    forceLink: "Force des liens",
+    forceDistance: "Longueur des liens",
+    forcesReset: "Réinitialiser",
   },
   de: {
     linksMode: "Verknüpfungen",
@@ -121,6 +157,15 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     traceMaterials: "Materialien",
     traceClear: "Zurücksetzen",
     traceFor: "Kette für",
+    float: "Schweben",
+    pause: "Pause",
+    resume: "Fortsetzen",
+    forces: "Kräfte",
+    forceCenter: "Zentrum",
+    forceRepel: "Abstoßung",
+    forceLink: "Linkstärke",
+    forceDistance: "Linklänge",
+    forcesReset: "Zurücksetzen",
   },
   es: {
     linksMode: "Enlaces",
@@ -145,6 +190,15 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     traceMaterials: "Materiales",
     traceClear: "Restablecer",
     traceFor: "Cadena de",
+    float: "Flotar",
+    pause: "Pausa",
+    resume: "Reanudar",
+    forces: "Fuerzas",
+    forceCenter: "Centro",
+    forceRepel: "Repulsión",
+    forceLink: "Fuerza de enlaces",
+    forceDistance: "Longitud de enlaces",
+    forcesReset: "Restablecer",
   },
   ko: {
     linksMode: "링크",
@@ -169,6 +223,15 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     traceMaterials: "자료",
     traceClear: "초기화",
     traceFor: "추적 대상:",
+    float: "부유",
+    pause: "일시정지",
+    resume: "재개",
+    forces: "힘",
+    forceCenter: "중심",
+    forceRepel: "반발력",
+    forceLink: "링크 강도",
+    forceDistance: "링크 길이",
+    forcesReset: "초기화",
   },
   ja: {
     linksMode: "リンク",
@@ -193,5 +256,14 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     traceMaterials: "資料",
     traceClear: "リセット",
     traceFor: "連鎖の対象:",
+    float: "浮遊",
+    pause: "一時停止",
+    resume: "再開",
+    forces: "力",
+    forceCenter: "中心",
+    forceRepel: "反発",
+    forceLink: "リンクの強さ",
+    forceDistance: "リンクの長さ",
+    forcesReset: "リセット",
   },
 };

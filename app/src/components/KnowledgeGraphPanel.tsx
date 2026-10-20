@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Graph from "graphology";
 import Sigma from "sigma";
 import { api, type KnowledgeGraph } from "../api";
-import { ForceLayout } from "../graph/layout";
+import { DEFAULT_FORCES, LiveLayout, type Forces } from "../graph/liveLayout";
 import { attachOverlay, type EdgeHit } from "../graph/overlay";
 import { chipColors, gradeDigit, isDarkBackground, nodeSize, typeColor } from "../graph/palette";
 import { useI18n } from "../i18n";
@@ -15,6 +15,34 @@ interface Props {
   notePath: string;
   refreshKey: number;
   onOpen: (path: string) => void;
+}
+
+const FORCES_KEY = "mdnotes.graph.forces";
+const FLOAT_KEY = "mdnotes.graph.float";
+/** Energy that keeps the graph in gentle motion, and the one used while a node is dragged. */
+const FLOAT_TARGET = 0.08;
+const FLOAT_DRIFT = 0.08;
+const DRAG_TARGET = 0.3;
+/** Above this many nodes the graph settles by default instead of drifting. */
+const FLOAT_AUTO_LIMIT = 400;
+
+function readForces(): Forces {
+  try {
+    const raw = localStorage.getItem(FORCES_KEY);
+    if (raw) return { ...DEFAULT_FORCES, ...(JSON.parse(raw) as Partial<Forces>) };
+  } catch {
+    // storage unavailable: defaults
+  }
+  return { ...DEFAULT_FORCES };
+}
+
+function readFloat(): boolean | null {
+  try {
+    const raw = localStorage.getItem(FLOAT_KEY);
+    return raw === null ? null : raw === "1";
+  } catch {
+    return null;
+  }
 }
 
 interface Hover {
@@ -96,6 +124,15 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
   const viewRef = useRef<ViewState>({ hovered: null, neighbours: new Set(), search: "", hidden: new Set(), trace: null });
   const graphRef = useRef<Graph | null>(null);
   const traceModeRef = useRef(false);
+  const simRef = useRef<LiveLayout | null>(null);
+  const wakeRef = useRef<() => void>(() => undefined);
+  const positionsRef = useRef<Map<string, { x: number; y: number }>>(new Map());
+  const [forces, setForces] = useState<Forces>(readForces);
+  const [floating, setFloating] = useState<boolean | null>(readFloat);
+  const [paused, setPaused] = useState(false);
+  const forcesRef = useRef(forces);
+  const floatRef = useRef(false);
+  const pausedRef = useRef(false);
   const [snapshot, setSnapshot] = useState<KnowledgeGraph | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -227,15 +264,29 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       pairs.push([indexOf.get(edge.source) ?? 0, indexOf.get(edge.target) ?? 0]);
     });
 
-    const layout = new ForceLayout(snapshot.nodes.length, pairs);
+    const sim = new LiveLayout(snapshot.nodes.length, pairs, forcesRef.current);
+    // Keep the positions of nodes that were already on the screen (a refresh must not scramble the picture).
+    let known = 0;
+    snapshot.nodes.forEach((node, index) => {
+      const previous = positionsRef.current.get(node.path);
+      if (previous) {
+        sim.place(index, previous.x, previous.y);
+        known += 1;
+      }
+    });
+    if (known > snapshot.nodes.length / 2) sim.setEnergy(0.3);
+    simRef.current = sim;
+    floatRef.current = floating ?? snapshot.nodes.length <= FLOAT_AUTO_LIMIT;
+    sim.setTarget(floatRef.current ? FLOAT_TARGET : 0);
+    sim.setDrift(floatRef.current ? FLOAT_DRIFT : 0);
     snapshot.nodes.forEach((node, index) => {
       const isFocus = mode === "local" && node.path === notePath;
       const type = node.noteType ?? "";
       const size = nodeSize(degree.get(node.path) ?? 0) * fit;
       graph.addNode(node.path, {
         label: node.title,
-        x: layout.x[index],
-        y: layout.y[index],
+        x: sim.x[index],
+        y: sim.y[index],
         size: isFocus ? size + 4 * fit : size,
         color: typeColor(type),
         typeKey: type,
@@ -346,17 +397,28 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       renderer.refresh();
     });
 
-    // Let the layout settle visibly, a few iterations per frame.
+    // Live simulation: runs while the graph is warm, sleeps when it has settled, wakes on interaction.
     let frame = 0;
     const tick = () => {
-      for (let i = 0; i < layout.perFrame && !layout.done; i += 1) layout.step();
-      graph.updateEachNodeAttributes((node, attributes) => {
-        const index = indexOf.get(node) ?? 0;
-        return { ...attributes, x: layout.x[index], y: layout.y[index] };
-      });
-      if (!layout.done) frame = requestAnimationFrame(tick);
+      frame = 0;
+      if (!pausedRef.current) {
+        const steps = sim.energy > 0.5 && snapshot.nodes.length > 300 ? 2 : 1;
+        for (let i = 0; i < steps; i += 1) sim.tick();
+        graph.updateEachNodeAttributes((node, attributes) => {
+          const index = indexOf.get(node) ?? 0;
+          return { ...attributes, x: sim.x[index], y: sim.y[index] };
+        });
+        snapshot.nodes.forEach((node, index) => {
+          positionsRef.current.set(node.path, { x: sim.x[index], y: sim.y[index] });
+        });
+      }
+      if (!sim.settled && !pausedRef.current) frame = requestAnimationFrame(tick);
     };
-    frame = requestAnimationFrame(tick);
+    const wake = () => {
+      if (frame === 0) frame = requestAnimationFrame(tick);
+    };
+    wakeRef.current = wake;
+    wake();
 
     // Drag a node to move it; a click without movement opens the note.
     let dragged: string | null = null;
@@ -364,7 +426,6 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
     renderer.on("downNode", (event) => {
       dragged = event.node;
       moved = false;
-      cancelAnimationFrame(frame);
     });
     renderer.getMouseCaptor().on("mousedown", () => {
       if (!renderer.getCustomBBox()) renderer.setCustomBBox(renderer.getBBox());
@@ -373,14 +434,24 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       if (dragged === null) return;
       moved = true;
       const position = renderer.viewportToGraph(event);
+      const draggedIndex = indexOf.get(dragged) ?? 0;
+      sim.pin(draggedIndex, position.x, position.y);
+      sim.setTarget(DRAG_TARGET);
+      sim.reheat(0.3);
       graph.setNodeAttribute(dragged, "x", position.x);
       graph.setNodeAttribute(dragged, "y", position.y);
+      wake();
       setHover(null);
       event.preventSigmaDefault();
       event.original.preventDefault();
       event.original.stopPropagation();
     });
     renderer.getMouseCaptor().on("mouseup", () => {
+      if (dragged !== null) {
+        sim.unpin(indexOf.get(dragged) ?? 0);
+        sim.setTarget(floatRef.current ? FLOAT_TARGET : 0);
+        wake();
+      }
       dragged = null;
     });
     renderer.on("clickNode", ({ node }) => {
@@ -393,12 +464,41 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
 
     return () => {
       cancelAnimationFrame(frame);
+      simRef.current = null;
+      wakeRef.current = () => undefined;
       detachOverlay();
       renderer.kill();
       rendererRef.current = null;
       graphRef.current = null;
     };
   }, [snapshot, mode, notePath, onOpen, expanded]);
+
+  // Force sliders, drift and pause act on the running simulation without rebuilding the graph.
+  useEffect(() => {
+    forcesRef.current = forces;
+    simRef.current?.setForces(forces);
+    wakeRef.current();
+    try {
+      localStorage.setItem(FORCES_KEY, JSON.stringify(forces));
+    } catch {
+      // storage unavailable: the choice just is not remembered
+    }
+  }, [forces]);
+
+  useEffect(() => {
+    const sim = simRef.current;
+    const count = snapshot?.nodes.length ?? 0;
+    floatRef.current = floating ?? count <= FLOAT_AUTO_LIMIT;
+    sim?.setTarget(floatRef.current ? FLOAT_TARGET : 0);
+    sim?.setDrift(floatRef.current ? FLOAT_DRIFT : 0);
+    if (floatRef.current) sim?.reheat(0.1);
+    wakeRef.current();
+  }, [floating, snapshot]);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+    wakeRef.current();
+  }, [paused]);
 
   // Search and type filters only change what the reducers return.
   useEffect(() => {
@@ -432,6 +532,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
   };
 
   const hasGraph = !!snapshot && snapshot.nodes.length > 0;
+  const floatOn = floating ?? (snapshot?.nodes.length ?? 0) <= FLOAT_AUTO_LIMIT;
 
   return (
     <section
@@ -473,6 +574,45 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
             {strings.trace}
           </button>
           {traceMode && traceRoot === null && <small className="knowledge-graph-hint">{strings.traceHint}</small>}
+          <div className="knowledge-graph-physics">
+            <button
+              type="button"
+              aria-pressed={floatOn}
+              className={floatOn ? "on" : ""}
+              onClick={() => setFloating(!floatOn)}
+            >
+              {strings.float}
+            </button>
+            <button type="button" aria-pressed={paused} className={paused ? "on" : ""} onClick={() => setPaused((value) => !value)}>
+              {paused ? strings.resume : strings.pause}
+            </button>
+            <details>
+              <summary>{strings.forces}</summary>
+              {(
+                [
+                  ["center", strings.forceCenter, 0, 0.3, 0.01],
+                  ["repel", strings.forceRepel, 0, 3, 0.05],
+                  ["link", strings.forceLink, 0, 1, 0.02],
+                  ["distance", strings.forceDistance, 0.3, 3, 0.05],
+                ] as const
+              ).map(([key, label, min, max, step]) => (
+                <label key={key} className="knowledge-graph-slider">
+                  {label}
+                  <input
+                    type="range"
+                    min={min}
+                    max={max}
+                    step={step}
+                    value={forces[key]}
+                    onChange={(event) => setForces({ ...forces, [key]: Number(event.target.value) })}
+                  />
+                </label>
+              ))}
+              <button type="button" onClick={() => setForces({ ...DEFAULT_FORCES })}>
+                {strings.forcesReset}
+              </button>
+            </details>
+          </div>
           <ul className="knowledge-graph-legend" aria-label={strings.typesHeading}>
             {legend.map(([type, count]) => (
               <li key={type || "_none"}>

@@ -272,3 +272,40 @@
 .knowledge-graph-trace small {
   color: var(--muted);
 }
+
+.knowledge-graph-physics {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+
+.knowledge-graph-physics button {
+  font-size: 0.78rem;
+  padding: 0.1rem 0.5rem;
+}
+
+.knowledge-graph-physics button.on {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.knowledge-graph-physics details {
+  flex-basis: 100%;
+  font-size: 0.78rem;
+}
+
+.knowledge-graph-physics summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+.knowledge-graph-slider {
+  display: grid;
+  grid-template-columns: 9rem 1fr;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.15rem 0;
+  color: var(--muted);
+}
