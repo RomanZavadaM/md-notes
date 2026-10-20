@@ -63,6 +63,45 @@ export interface DuplicateGroup {
   sameCode: boolean;
 }
 
+export interface RelationTreeNode {
+  path: string;
+  title: string;
+  noteType: string | null;
+  kinds: string[];
+  /** Best grade among the lines between this note and its parent. */
+  grade: string | null;
+  /** Weakest grade along the chain from the root to this note. */
+  pathGrade: string | null;
+  origin: string | null;
+  status: string | null;
+  evidence: string | null;
+  repeated: boolean;
+  hasMore: boolean;
+  children: RelationTreeNode[];
+}
+
+export interface RelationTreeResult {
+  root: RelationTreeNode;
+  nodes: number;
+  truncated: boolean;
+}
+
+export interface RelationPathStep {
+  path: string;
+  title: string;
+  noteType: string | null;
+  kind: string | null;
+  grade: string | null;
+  forward: boolean;
+  origin: string | null;
+  status: string | null;
+}
+
+export interface RelationPathResult {
+  steps: RelationPathStep[];
+  weakest: string | null;
+}
+
 export interface ImportReport {
   created: number;
   updated: number;
@@ -238,6 +277,9 @@ export const api = {
   quitApp: () => invoke<void>("quit_app"),
   importFolder: (source: string, overwrite = false) => invoke<ImportReport>("import_folder", { source, overwrite }),
   possibleDuplicates: () => invoke<DuplicateGroup[]>("possible_duplicates"),
+  relationTree: (root: string, direction: "up" | "down", maxDepth: number) =>
+    invoke<RelationTreeResult | null>("relation_tree_for", { root, direction, maxDepth }),
+  relationPath: (from: string, to: string) => invoke<RelationPathResult | null>("relation_path_between", { from, to }),
   gitStatus: (remoteName: string | null = null) => invoke<GitStatus>("git_status_cmd", { remoteName }),
   gitInit: () => invoke<void>("git_init_repo"),
   gitSetRemote: (url: string, remoteName: string | null = null) =>

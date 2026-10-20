@@ -3,6 +3,8 @@ import { api, type Backlink, type Note } from "../api";
 import { useI18n } from "../i18n";
 import { GRAPH_STRINGS } from "../i18n/graph";
 import { KnowledgeGraphPanel } from "./KnowledgeGraphPanel";
+import { RelationTreePanel } from "./RelationTreePanel";
+import { RELATION_TREE_STRINGS } from "../i18n/relationTree";
 
 interface Props {
   note: Note;
@@ -11,7 +13,7 @@ interface Props {
   onOpenLink: (target: string) => void;
 }
 
-type PanelMode = "links" | "local" | "global";
+type PanelMode = "links" | "local" | "global" | "tree";
 
 /** Right-hand panel: textual links plus local/global knowledge graph views. */
 export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
@@ -45,6 +47,7 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
             ["links", graphStrings.linksMode],
             ["local", graphStrings.localMode],
             ["global", graphStrings.globalMode],
+            ["tree", RELATION_TREE_STRINGS[language].tab],
           ] as const
         ).map(([value, label]) => (
           <button
@@ -99,6 +102,8 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
             </section>
           )}
         </>
+      ) : mode === "tree" ? (
+        <RelationTreePanel notePath={note.path} refreshKey={refreshKey} onOpen={onOpen} />
       ) : (
         <KnowledgeGraphPanel mode={mode} notePath={note.path} refreshKey={refreshKey} onOpen={onOpen} />
       )}
