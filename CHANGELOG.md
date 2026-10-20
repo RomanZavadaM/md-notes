@@ -34,6 +34,20 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.17](https://github.com/RomanZavadaM/md-notes/compare/v0.3.16...v0.3.17) (2026-10-20)
+
+
+### Нові можливості
+
+* «Форми» (гліф типу у вузлі, колір за надійністю) і панель «Умовні позначення»; документація сімома мовами ([e77772a](https://github.com/RomanZavadaM/md-notes/commit/e77772afe270d1f71fb9fdc760077a984a74e81f))
+* форми вузлів за типом, колір за надійністю, умовні позначення ([41f17ea](https://github.com/RomanZavadaM/md-notes/commit/41f17ea3fa57c658a86d74c24e1f5cc062ffec89))
+
+
+### Виправлення
+
+* менше накладання підписів на щільному графі, просторіші типові сили ([5fae5b3](https://github.com/RomanZavadaM/md-notes/commit/5fae5b317bdebd8732e41d3be1130957295aec09))
+* підписи графа не накладаються, просторіші типові сили ([c0263b1](https://github.com/RomanZavadaM/md-notes/commit/c0263b161e2035643c67ecc391a27c9e2cdaf6c1))
+
 ## [0.3.16](https://github.com/RomanZavadaM/md-notes/compare/v0.3.15...v0.3.16) (2026-10-20)
 
 
