@@ -35,6 +35,17 @@ export interface GraphStrings {
   detach: string;
   windowTitle: string;
   windowNoNote: string;
+  shapes: string;
+  shapesHint: string;
+  stateStrong: string;
+  stateMedium: string;
+  stateWeak: string;
+  stateNone: string;
+  legend: string;
+  legendTypes: string;
+  legendState: string;
+  legendLines: string;
+  legendRumour: string;
 }
 
 export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
@@ -73,6 +84,17 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "Граф в окремому вікні",
     windowTitle: "Граф знань",
     windowNoNote: "Відкрийте нотатку в головному вікні, щоб побачити її зв’язки.",
+    shapes: "Форми",
+    shapesHint: "Форма вузла показує тип, колір - надійність найкращої оцінки його зв’язків",
+    stateStrong: "надійно (1–2)",
+    stateMedium: "середньо (3–4)",
+    stateWeak: "слабко (5–6)",
+    stateNone: "без оцінки",
+    legend: "Умовні позначення",
+    legendTypes: "Тип (форма): ",
+    legendState: "Надійність (колір у режимі «Форми»): ",
+    legendLines: "Лінії за оцінкою: ",
+    legendRumour: "Пунктир рамки й значок «Ч» означають чутку (оцінка 5–6); колір ніколи не єдина ознака.",
   },
   en: {
     linksMode: "Links",
@@ -109,6 +131,17 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "Graph in a separate window",
     windowTitle: "Knowledge graph",
     windowNoNote: "Open a note in the main window to see its connections.",
+    shapes: "Shapes",
+    shapesHint: "The glyph shows the type, the colour the reliability of the best grade among its relations",
+    stateStrong: "reliable (1–2)",
+    stateMedium: "medium (3–4)",
+    stateWeak: "weak (5–6)",
+    stateNone: "no grade",
+    legend: "Legend",
+    legendTypes: "Type (shape): ",
+    legendState: "Reliability (colour in “Shapes” mode): ",
+    legendLines: "Lines by grade: ",
+    legendRumour: "A dashed outline and the “Ч” badge mean a rumour (grade 5–6); colour is never the only signal.",
   },
   fr: {
     linksMode: "Liens",
@@ -145,6 +178,17 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "Graphe dans une fenêtre séparée",
     windowTitle: "Graphe de connaissances",
     windowNoNote: "Ouvrez une note dans la fenêtre principale pour voir ses liens.",
+    shapes: "Formes",
+    shapesHint: "Le symbole indique le type, la couleur la fiabilité de la meilleure note de ses relations",
+    stateStrong: "fiable (1–2)",
+    stateMedium: "moyen (3–4)",
+    stateWeak: "faible (5–6)",
+    stateNone: "sans note",
+    legend: "Légende",
+    legendTypes: "Type (forme) : ",
+    legendState: "Fiabilité (couleur en mode « Formes ») : ",
+    legendLines: "Traits selon la note : ",
+    legendRumour: "Un contour en pointillés et le badge « Ч » signalent une rumeur (note 5–6) ; la couleur n’est jamais le seul signal.",
   },
   de: {
     linksMode: "Verknüpfungen",
@@ -181,6 +225,17 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "Graph in eigenem Fenster",
     windowTitle: "Wissensgraph",
     windowNoNote: "Öffnen Sie eine Notiz im Hauptfenster, um ihre Verbindungen zu sehen.",
+    shapes: "Formen",
+    shapesHint: "Das Symbol zeigt den Typ, die Farbe die Verlässlichkeit der besten Bewertung seiner Beziehungen",
+    stateStrong: "verlässlich (1–2)",
+    stateMedium: "mittel (3–4)",
+    stateWeak: "schwach (5–6)",
+    stateNone: "ohne Bewertung",
+    legend: "Legende",
+    legendTypes: "Typ (Form): ",
+    legendState: "Verlässlichkeit (Farbe im Modus „Formen“): ",
+    legendLines: "Linien nach Bewertung: ",
+    legendRumour: "Ein gestrichelter Rand und das Zeichen „Ч“ bedeuten ein Gerücht (Bewertung 5–6); Farbe ist nie das einzige Signal.",
   },
   es: {
     linksMode: "Enlaces",
@@ -217,6 +272,17 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "Grafo en otra ventana",
     windowTitle: "Grafo de conocimiento",
     windowNoNote: "Abra una nota en la ventana principal para ver sus conexiones.",
+    shapes: "Formas",
+    shapesHint: "El símbolo muestra el tipo y el color la fiabilidad de la mejor valoración de sus relaciones",
+    stateStrong: "fiable (1–2)",
+    stateMedium: "media (3–4)",
+    stateWeak: "débil (5–6)",
+    stateNone: "sin valoración",
+    legend: "Leyenda",
+    legendTypes: "Tipo (forma): ",
+    legendState: "Fiabilidad (color en modo «Formas»): ",
+    legendLines: "Líneas por valoración: ",
+    legendRumour: "Un borde discontinuo y la insignia «Ч» indican un rumor (valoración 5–6); el color nunca es la única señal.",
   },
   ko: {
     linksMode: "링크",
@@ -253,6 +319,17 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "별도 창에서 그래프 보기",
     windowTitle: "지식 그래프",
     windowNoNote: "연결을 보려면 기본 창에서 노트를 여세요.",
+    shapes: "도형",
+    shapesHint: "도형은 유형을, 색은 관계의 최고 등급이 나타내는 신뢰도를 보여 줍니다",
+    stateStrong: "신뢰 (1–2)",
+    stateMedium: "보통 (3–4)",
+    stateWeak: "약함 (5–6)",
+    stateNone: "등급 없음",
+    legend: "범례",
+    legendTypes: "유형(도형): ",
+    legendState: "신뢰도(“도형” 모드의 색): ",
+    legendLines: "등급별 선: ",
+    legendRumour: "점선 윤곽과 “Ч” 표시는 소문(5–6등급)을 뜻합니다. 색만으로 구분하지 않습니다.",
   },
   ja: {
     linksMode: "リンク",
@@ -289,5 +366,16 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "別ウィンドウでグラフを開く",
     windowTitle: "ナレッジグラフ",
     windowNoNote: "接続を表示するには、メインウィンドウでノートを開いてください。",
+    shapes: "図形",
+    shapesHint: "図形は種類を、色は関係の最良の評価による信頼度を表します",
+    stateStrong: "信頼できる (1–2)",
+    stateMedium: "中程度 (3–4)",
+    stateWeak: "弱い (5–6)",
+    stateNone: "評価なし",
+    legend: "凡例",
+    legendTypes: "種類（図形）：",
+    legendState: "信頼度（「図形」モードの色）：",
+    legendLines: "評価別の線：",
+    legendRumour: "破線の輪郭と「Ч」の印は噂（評価 5〜6）を表します。色だけで区別することはありません。",
   },
 };

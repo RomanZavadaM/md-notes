@@ -1,6 +1,6 @@
 import type Graph from "graphology";
 import type Sigma from "sigma";
-import { edgeStyle, evidenceStyle } from "./palette";
+import { edgeStyle, evidenceStyle, glyphColor } from "./palette";
 
 /** Parts of the panel state the overlay needs to draw. */
 export interface OverlayView {
@@ -10,6 +10,8 @@ export interface OverlayView {
   hidden: Set<string>;
   /** Provenance trace: nodes and edge keys kept bright; `null` when off. */
   trace: { nodes: Set<string>; edges: Set<string> } | null;
+  /** Draw a glyph for the note type inside every node (node colour then shows reliability). */
+  shapes: boolean;
 }
 
 /** A line under the pointer (graph edge key and pointer position in the container). */
@@ -180,6 +182,16 @@ export function attachOverlay(
         rings.textAlign = "center";
         rings.textBaseline = "middle";
         rings.fillText("Ч", bx, by + 0.5);
+      }
+      if (view.shapes && typeof attributes.glyph === "string") {
+        rings.save();
+        rings.globalAlpha = dimmed ? 0.25 : 1;
+        rings.translate(point.x, point.y);
+        const scale = (radius * 0.62) / 10;
+        rings.scale(scale, scale);
+        rings.fillStyle = glyphColor(dark);
+        rings.fill(new Path2D(attributes.glyph));
+        rings.restore();
       }
       rings.restore();
     });

@@ -4,7 +4,7 @@ import Sigma from "sigma";
 import { api, type KnowledgeGraph } from "../api";
 import { DEFAULT_FORCES, LiveLayout, type Forces } from "../graph/liveLayout";
 import { attachOverlay, type EdgeHit } from "../graph/overlay";
-import { chipColors, gradeDigit, isDarkBackground, nodeSize, typeColor } from "../graph/palette";
+import { chipColors, edgeStyle, gradeDigit, glyphFor, isDarkBackground, nodeSize, stateColor, stateOf, typeColor, type NodeState } from "../graph/palette";
 import { useI18n } from "../i18n";
 import { GRAPH_STRINGS } from "../i18n/graph";
 import { RelationCard, type RelationCardData, type RelationItem } from "./RelationCard";
@@ -20,6 +20,7 @@ interface Props {
 // v2: the defaults changed (more room between nodes), so older saved values are not reused.
 const FORCES_KEY = "mdnotes.graph.forces.v2";
 const FLOAT_KEY = "mdnotes.graph.float";
+const SHAPES_KEY = "mdnotes.graph.shapes";
 /** Energy that keeps the graph in gentle motion, and the one used while a node is dragged. */
 const FLOAT_TARGET = 0.08;
 const FLOAT_DRIFT = 0.08;
@@ -35,6 +36,25 @@ function readForces(): Forces {
     // storage unavailable: defaults
   }
   return { ...DEFAULT_FORCES };
+}
+
+function readShapes(): boolean {
+  try {
+    return localStorage.getItem(SHAPES_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+/** Type glyph on a round token, for the legend. */
+function GlyphIcon({ type, color }: { type: string; color: string }) {
+  const path = glyphFor(type);
+  return (
+    <svg className="glyph-icon" viewBox="-12 -12 24 24" width="16" height="16" aria-hidden="true">
+      <circle r="11" fill={color} />
+      {path && <path d={path} fill="#FFFFFF" transform="scale(0.62)" />}
+    </svg>
+  );
 }
 
 function readFloat(): boolean | null {
@@ -60,6 +80,7 @@ interface ViewState {
   search: string;
   hidden: Set<string>;
   trace: { nodes: Set<string>; edges: Set<string> } | null;
+  shapes: boolean;
 }
 
 interface TraceNode {
@@ -122,7 +143,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
   const strings = GRAPH_STRINGS[language];
   const containerRef = useRef<HTMLDivElement | null>(null);
   const rendererRef = useRef<Sigma | null>(null);
-  const viewRef = useRef<ViewState>({ hovered: null, neighbours: new Set(), search: "", hidden: new Set(), trace: null });
+  const viewRef = useRef<ViewState>({ hovered: null, neighbours: new Set(), search: "", hidden: new Set(), trace: null, shapes: false });
   const graphRef = useRef<Graph | null>(null);
   const traceModeRef = useRef(false);
   const simRef = useRef<LiveLayout | null>(null);
@@ -131,6 +152,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
   const [forces, setForces] = useState<Forces>(readForces);
   const [floating, setFloating] = useState<boolean | null>(readFloat);
   const [paused, setPaused] = useState(false);
+  const [shapes, setShapes] = useState<boolean>(readShapes);
   const forcesRef = useRef(forces);
   const floatRef = useRef(false);
   const pausedRef = useRef(false);
@@ -294,6 +316,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
         fullTitle: node.title,
         isFocus,
         evidence: evidence.get(node.path),
+        glyph: glyphFor(type) ?? undefined,
       });
     });
     pairEdges.forEach((edge, key) => {
@@ -322,6 +345,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       zIndex: true,
       nodeReducer: (node, data) => {
         const result = { ...data };
+        if (view.shapes) result.color = stateColor(stateOf(data.evidence as number | undefined), dark);
         if (view.hidden.has(String(data.typeKey))) {
           result.hidden = true;
           return result;
@@ -502,6 +526,17 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
     wakeRef.current();
   }, [paused]);
 
+  // The glyph mode only changes what the reducers and the overlay draw.
+  useEffect(() => {
+    viewRef.current.shapes = shapes;
+    rendererRef.current?.refresh();
+    try {
+      localStorage.setItem(SHAPES_KEY, shapes ? "1" : "0");
+    } catch {
+      // storage unavailable: the choice just is not remembered
+    }
+  }, [shapes, snapshot]);
+
   // Search and type filters only change what the reducers return.
   useEffect(() => {
     viewRef.current.search = search.trim().toLowerCase();
@@ -585,6 +620,9 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
             >
               {strings.float}
             </button>
+            <button type="button" aria-pressed={shapes} className={shapes ? "on" : ""} title={strings.shapesHint} onClick={() => setShapes((value) => !value)}>
+              {strings.shapes}
+            </button>
             <button type="button" aria-pressed={paused} className={paused ? "on" : ""} onClick={() => setPaused((value) => !value)}>
               {paused ? strings.resume : strings.pause}
             </button>
@@ -615,6 +653,42 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
               </button>
             </details>
           </div>
+          <details className="knowledge-graph-key">
+            <summary>{strings.legend}</summary>
+            <p>
+              <strong>{strings.legendTypes}</strong>
+              {["person", "company", "institution", "case", "material", "group"].map((type) => (
+                <span key={type} className="knowledge-graph-key-item">
+                  <GlyphIcon type={type} color={stateColor("none", isDarkBackground())} />
+                  {type}
+                </span>
+              ))}
+            </p>
+            <p>
+              <strong>{strings.legendState}</strong>
+              {(["strong", "medium", "weak", "none"] as NodeState[]).map((state) => (
+                <span key={state} className="knowledge-graph-key-item">
+                  <span className="dot" style={{ background: stateColor(state, isDarkBackground()) }} />
+                  {state === "strong" ? strings.stateStrong : state === "medium" ? strings.stateMedium : state === "weak" ? strings.stateWeak : strings.stateNone}
+                </span>
+              ))}
+            </p>
+            <p>
+              <strong>{strings.legendLines}</strong>
+              {(["A1", "C3", "F6", undefined] as Array<string | undefined>).map((grade) => {
+                const style = edgeStyle(grade, isDarkBackground());
+                return (
+                  <span key={grade ?? "none"} className="knowledge-graph-key-item">
+                    <svg width="34" height="8" aria-hidden="true">
+                      <line x1="1" y1="4" x2="33" y2="4" stroke={style.color} strokeWidth={style.width} strokeDasharray={style.dash.join(" ")} />
+                    </svg>
+                    {grade ?? strings.stateNone}
+                  </span>
+                );
+              })}
+            </p>
+            <p>{strings.legendRumour}</p>
+          </details>
           <ul className="knowledge-graph-legend" aria-label={strings.typesHeading}>
             {legend.map(([type, count]) => (
               <li key={type || "_none"}>
@@ -624,12 +698,22 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
                   aria-pressed={!hiddenTypes.has(type)}
                   onClick={() => toggleType(type)}
                 >
-                  <span className="dot" style={{ background: typeColor(type) }} />
+                  {shapes ? <GlyphIcon type={type} color={stateColor("none", isDarkBackground())} /> : <span className="dot" style={{ background: typeColor(type) }} />}
                   {type || strings.noType} <small>{count}</small>
                 </button>
               </li>
             ))}
           </ul>
+          {shapes && (
+            <ul className="knowledge-graph-states" aria-label={strings.shapesHint}>
+              {(["strong", "medium", "weak", "none"] as NodeState[]).map((state) => (
+                <li key={state}>
+                  <span className="dot" style={{ background: stateColor(state, isDarkBackground()) }} />
+                  {state === "strong" ? strings.stateStrong : state === "medium" ? strings.stateMedium : state === "weak" ? strings.stateWeak : strings.stateNone}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
       {traceMode && traceResult && (
