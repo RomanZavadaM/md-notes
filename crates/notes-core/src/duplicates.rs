@@ -16,8 +16,8 @@ use crate::vault::Vault;
 
 /// Legal-form words dropped from the start or the end of a name.
 const LEGAL_FORMS: &[&str] = &[
-    "тов", "тзов", "пп", "ат", "пат", "прат", "кп", "дп", "фоп", "ооо", "llc", "ltd", "inc", "gmbh",
-    "corp",
+    "тов", "тзов", "пп", "ат", "пат", "прат", "кп", "дп", "фоп", "ооо", "llc", "ltd", "inc",
+    "gmbh", "corp",
 ];
 
 /// A Latin letter that looks like a Cyrillic one is folded onto the Cyrillic letter.
