@@ -694,6 +694,16 @@ fn search(query: String, limit: u32, state: State<'_, AppState>) -> CmdResult<Ve
     with_session(&state, |s| s.index.search(&query, limit))
 }
 
+/// Exact lookup by code (8 or 10 digits) or by name (candidates), for the search panel.
+#[tauri::command]
+fn lookup_subject(
+    query: String,
+    limit: u32,
+    state: State<'_, AppState>,
+) -> CmdResult<Vec<notes_core::LookupHit>> {
+    with_session(&state, |s| s.index.lookup(&query, limit))
+}
+
 #[tauri::command]
 fn import_attachment(source: String, state: State<'_, AppState>) -> CmdResult<AttachmentInfo> {
     with_session(&state, |s| s.vault.import_attachment(source))
@@ -741,6 +751,7 @@ pub fn run() {
             git_push_with_stored_credentials,
             import_folder,
             possible_duplicates,
+            lookup_subject,
             relation_tree_for,
             relation_path_between,
             quit_app,

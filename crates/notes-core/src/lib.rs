@@ -55,7 +55,8 @@ pub use graph::{
     KnowledgeGraph,
 };
 pub use index::{
-    Backlink, Index, NameHit, NoteSummary, SearchHit, SyncStats, TagCount, UnresolvedLink,
+    Backlink, Index, LookupHit, NameHit, NoteSummary, SearchHit, SyncStats, TagCount,
+    UnresolvedLink,
 };
 pub use markdown::WikiLink;
 pub use note::Note;
