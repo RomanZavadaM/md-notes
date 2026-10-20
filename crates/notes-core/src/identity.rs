@@ -235,7 +235,9 @@ pub fn merge_into(existing: &str, incoming: &str, incoming_path: &str) -> Option
     if !out.ends_with('\n') {
         out.push('\n');
     }
-    out.push_str(&format!("\n## Об'єднано з імпорту (`{incoming_path}`)\n{marker}\n"));
+    out.push_str(&format!(
+        "\n## Об'єднано з імпорту (`{incoming_path}`)\n{marker}\n"
+    ));
     let text = body_without_title(new_body, &new_title).trim_end();
     if !text.is_empty() {
         out.push_str(text);
@@ -244,7 +246,9 @@ pub fn merge_into(existing: &str, incoming: &str, incoming_path: &str) -> Option
     if !conflicts.is_empty() {
         out.push_str("\n### Розбіжності при об'єднанні\n");
         for (name, old, new) in &conflicts {
-            out.push_str(&format!("- `{name}`: у сховищі «{old}»; в імпорті «{new}»\n"));
+            out.push_str(&format!(
+                "- `{name}`: у сховищі «{old}»; в імпорті «{new}»\n"
+            ));
         }
     }
     Some(MergeOutcome {
