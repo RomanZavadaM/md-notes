@@ -126,7 +126,7 @@ Der Reiter **„Beziehungsbaum“** zeigt die Kette typisierter Beziehungen ab d
 
 ### Subjekt nach Code oder Name suchen
 
-Im Reiter **„Suche“** wird eine Zahl mit 8 Ziffern als EDRPOU-Code, mit 10 Ziffern als Steuernummer gesucht (ein Code mit verlorenen führenden Nullen, 6–7 Ziffern, wird ergänzt). Die Ergebnisse stehen getrennt:
+Im Reiter **„Suche“** wird eine Zahl mit 8 Ziffern als EDRPOU-Code, mit 10 Ziffern als Steuernummer gesucht (ein Code mit verlorenen führenden Nullen, 6–7 Ziffern, wird ergänzt). Die Ergebnisse stehen getrennt: Bei einem 8-stelligen Code erscheint darunter der Block **„Datenbank „З-під Ляди“ nach Code“**: Wählen Sie den Ordner mit den offenen Daten der Seite (lokale Kopie des Zweigs data); er zeigt die Fakten zum genauen Code — Registrierungsdatum, Status und ausländische Länder der Gründer und wirtschaftlich Berechtigten (Register), Entscheidungen der Wettbewerbsbehörde, Prozorro-Vergaben als Auftraggeber und Gewinner. Nur lesend, nichts wird über das Netzwerk gesendet; es sind Fakten, keine Bewertungen.
 
 - **„Exakter Treffer“**: eine Notiz mit demselben Code in der Eigenschaft `edrpou` oder `ipn` (oder demselben Namen nach Normalisierung);
 - **„Kandidaten nach Name“**: ähnliche Namen; ein Namenstreffer ist **kein Beweis**, bestätigen Sie ihn mit Code oder Dokument;

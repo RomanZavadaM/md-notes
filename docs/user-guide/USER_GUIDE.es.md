@@ -126,7 +126,7 @@ La pestaña **«Árbol de relaciones»** muestra la cadena de relaciones tipadas
 
 ### Buscar un sujeto por código o nombre
 
-En la pestaña **«Búsqueda»**, un número de 8 dígitos se busca como código EDRPOU y uno de 10 como número fiscal (un código que perdió ceros iniciales, de 6–7 dígitos, se restituye). Los resultados se muestran por separado:
+En la pestaña **«Búsqueda»**, un número de 8 dígitos se busca como código EDRPOU y uno de 10 como número fiscal (un código que perdió ceros iniciales, de 6–7 dígitos, se restituye). Los resultados se muestran por separado: Para un código de 8 dígitos aparece debajo el bloque **«Base «З-під Ляди» por código»**: elija la carpeta con los datos abiertos del sitio (copia local de la rama data) y muestra los hechos del código exacto — fecha de registro, estado y países extranjeros de fundadores y beneficiarios (registro), decisiones de la autoridad de competencia, contrataciones de Prozorro como comprador y ganador. Solo lectura, no se envía nada por la red; son hechos, no valoraciones.
 
 - **«Coincidencia exacta»**: una nota con el mismo código en la propiedad `edrpou` o `ipn` (o el mismo nombre tras la normalización);
 - **«Candidatos por nombre»**: nombres parecidos; una coincidencia de nombre **no es una prueba**, confírmela con un código o un documento;

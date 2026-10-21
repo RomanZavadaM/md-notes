@@ -991,3 +991,25 @@ mark {
   font-size: 0.72rem;
   font-weight: 700;
 }
+
+.registry-facts h5 {
+  margin: 0.5rem 0 0.2rem;
+  font-size: 0.8rem;
+}
+
+.registry-name {
+  margin: 0.2rem 0;
+  font-weight: 700;
+}
+
+.registry-list {
+  margin: 0.15rem 0;
+  padding-left: 1.1rem;
+  font-size: 0.82rem;
+}
+
+.registry-dir small,
+.registry-latest {
+  color: var(--muted);
+  font-size: 0.78rem;
+}

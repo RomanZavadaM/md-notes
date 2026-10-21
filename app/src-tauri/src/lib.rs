@@ -694,6 +694,21 @@ fn search(query: String, limit: u32, state: State<'_, AppState>) -> CmdResult<Ve
     with_session(&state, |s| s.index.search(&query, limit))
 }
 
+/// Facts about a legal entity (8-digit code) from a local copy of the open-data folder of
+/// the "З-під Ляди" site; read-only, nothing leaves the computer.
+#[tauri::command]
+async fn registry_facts(
+    code: String,
+    data_dir: String,
+) -> CmdResult<notes_core::RegistryFacts> {
+    tauri::async_runtime::spawn_blocking(move || {
+        notes_core::registry_facts(std::path::Path::new(&data_dir), &code)
+    })
+    .await
+    .map_err(|e| e.to_string())?
+    .map_err(|e| e.to_string())
+}
+
 /// Exact lookup by code (8 or 10 digits) or by name (candidates), for the search panel.
 #[tauri::command]
 fn lookup_subject(
@@ -752,6 +767,7 @@ pub fn run() {
             import_folder,
             possible_duplicates,
             lookup_subject,
+            registry_facts,
             relation_tree_for,
             relation_path_between,
             quit_app,

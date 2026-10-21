@@ -126,7 +126,7 @@ L’onglet **« Arbre des relations »** montre la chaîne de relations typées 
 
 ### Rechercher un sujet par code ou par nom
 
-Dans l’onglet **« Recherche »**, un nombre de 8 chiffres est cherché comme code EDRPOU, de 10 chiffres comme numéro fiscal (un code ayant perdu ses zéros initiaux, 6–7 chiffres, est restitué). Les résultats sont séparés :
+Dans l’onglet **« Recherche »**, un nombre de 8 chiffres est cherché comme code EDRPOU, de 10 chiffres comme numéro fiscal (un code ayant perdu ses zéros initiaux, 6–7 chiffres, est restitué). Les résultats sont séparés : Pour un code à 8 chiffres, un bloc **« Base « З-під Ляди » par code »** apparaît en dessous : choisissez le dossier des données ouvertes du site (copie locale de la branche data) et il affiche les faits pour le code exact — date d’enregistrement, état et pays étrangers des fondateurs et bénéficiaires (registre), décisions de l’autorité de la concurrence, marchés Prozorro comme acheteur et gagnant. Lecture seule, rien n’est envoyé sur le réseau ; ce sont des faits, pas des évaluations.
 
 - **« Correspondance exacte »** : une note avec le même code dans la propriété `edrpou` ou `ipn` (ou le même nom après normalisation) ;
 - **« Candidats par nom »** : noms proches ; une correspondance de nom **ne prouve rien**, confirmez par un code ou un document ;

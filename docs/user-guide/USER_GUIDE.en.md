@@ -126,7 +126,7 @@ The **“Relation tree”** tab shows the chain of typed relations from the sele
 
 ### Looking up a subject by code or name
 
-In the **“Search”** tab a number of 8 digits is looked up as an EDRPOU code, of 10 digits as a tax number (a code that lost its leading zeros, 6–7 digits, is restored). Results are shown separately:
+In the **“Search”** tab a number of 8 digits is looked up as an EDRPOU code, of 10 digits as a tax number (a code that lost its leading zeros, 6–7 digits, is restored). Results are shown separately: For an 8-digit code, a **““З-під Ляди” database by code”** block appears below: choose the folder with the site’s open data (a local copy of the data branch) and it shows the facts for the exact code — registration date, state and foreign countries of founders and beneficiaries (state register), competition authority decisions, Prozorro procurements as buyer and winner. Read-only, nothing is sent over the network; these are facts, not assessments.
 
 - **“Exact match”**: a note with the same code in the `edrpou` or `ipn` property (or the same name after normalisation);
 - **“Candidates by name”**: similar names; a name match is **not proof**, confirm it with a code or a document;
