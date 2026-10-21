@@ -697,10 +697,7 @@ fn search(query: String, limit: u32, state: State<'_, AppState>) -> CmdResult<Ve
 /// Facts about a legal entity (8-digit code) from a local copy of the open-data folder of
 /// the "З-під Ляди" site; read-only, nothing leaves the computer.
 #[tauri::command]
-async fn registry_facts(
-    code: String,
-    data_dir: String,
-) -> CmdResult<notes_core::RegistryFacts> {
+async fn registry_facts(code: String, data_dir: String) -> CmdResult<notes_core::RegistryFacts> {
     tauri::async_runtime::spawn_blocking(move || {
         notes_core::registry_facts(std::path::Path::new(&data_dir), &code)
     })

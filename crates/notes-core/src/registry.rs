@@ -186,7 +186,9 @@ fn tender_facts(root: &Path, code: &str) -> Result<(TenderFacts, Option<String>)
                 }
                 let newer = match found.get(&id) {
                     None => true,
-                    Some(old) => text(record.get("date_modified")) >= text(old.get("date_modified")),
+                    Some(old) => {
+                        text(record.get("date_modified")) >= text(old.get("date_modified"))
+                    }
                 };
                 if newer {
                     found.insert(id, record);
