@@ -306,7 +306,8 @@ export const api = {
   lookupSubject: (query: string, limit = 20) => invoke<LookupHit[]>("lookup_subject", { query, limit }),
   relationTree: (root: string, direction: "up" | "down", maxDepth: number) =>
     invoke<RelationTreeResult | null>("relation_tree_for", { root, direction, maxDepth }),
-  relationPath: (from: string, to: string) => invoke<RelationPathResult | null>("relation_path_between", { from, to }),
+  relationPath: (from: string, to: string, mostReliable = false) =>
+    invoke<RelationPathResult | null>("relation_path_between", { from, to, mostReliable }),
   gitStatus: (remoteName: string | null = null) => invoke<GitStatus>("git_status_cmd", { remoteName }),
   gitInit: () => invoke<void>("git_init_repo"),
   gitSetRemote: (url: string, remoteName: string | null = null) =>

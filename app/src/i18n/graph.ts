@@ -46,6 +46,11 @@ export interface GraphStrings {
   legendState: string;
   legendLines: string;
   legendRumour: string;
+  gradeFilter: string;
+  gradeFilterHint: string;
+  gradeAny: string;
+  gradeStrong: string;
+  gradeMedium: string;
 }
 
 export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
@@ -95,6 +100,11 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     legendState: "Надійність (колір у режимі «Форми»): ",
     legendLines: "Лінії за оцінкою: ",
     legendRumour: "Пунктир рамки й значок «Ч» означають чутку (оцінка 5–6); колір ніколи не єдина ознака.",
+    gradeFilter: "Показувати зв’язки:",
+    gradeFilterHint: "показувати лише зв’язки з оцінкою, не гіршою за вказану; зв’язки без оцінки й прості посилання ховаються",
+    gradeAny: "усі",
+    gradeStrong: "надійні (1–2)",
+    gradeMedium: "надійні й середні (1–4)",
   },
   en: {
     linksMode: "Links",
@@ -142,6 +152,11 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     legendState: "Reliability (colour in “Shapes” mode): ",
     legendLines: "Lines by grade: ",
     legendRumour: "A dashed outline and the “Ч” badge mean a rumour (grade 5–6); colour is never the only signal.",
+    gradeFilter: "Show relations:",
+    gradeFilterHint: "show only relations graded at least as well as chosen; ungraded relations and plain links are hidden",
+    gradeAny: "all",
+    gradeStrong: "reliable (1–2)",
+    gradeMedium: "reliable and medium (1–4)",
   },
   fr: {
     linksMode: "Liens",
@@ -189,6 +204,11 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     legendState: "Fiabilité (couleur en mode « Formes ») : ",
     legendLines: "Traits selon la note : ",
     legendRumour: "Un contour en pointillés et le badge « Ч » signalent une rumeur (note 5–6) ; la couleur n’est jamais le seul signal.",
+    gradeFilter: "Afficher les relations :",
+    gradeFilterHint: "n’afficher que les relations notées au moins aussi bien ; les relations sans note et les simples liens sont masqués",
+    gradeAny: "tous",
+    gradeStrong: "fiables (1–2)",
+    gradeMedium: "fiables et moyens (1–4)",
   },
   de: {
     linksMode: "Verknüpfungen",
@@ -236,6 +256,11 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     legendState: "Verlässlichkeit (Farbe im Modus „Formen“): ",
     legendLines: "Linien nach Bewertung: ",
     legendRumour: "Ein gestrichelter Rand und das Zeichen „Ч“ bedeuten ein Gerücht (Bewertung 5–6); Farbe ist nie das einzige Signal.",
+    gradeFilter: "Beziehungen zeigen:",
+    gradeFilterHint: "nur Beziehungen mit mindestens dieser Bewertung zeigen; unbewertete Beziehungen und einfache Links werden ausgeblendet",
+    gradeAny: "alle",
+    gradeStrong: "verlässlich (1–2)",
+    gradeMedium: "verlässlich und mittel (1–4)",
   },
   es: {
     linksMode: "Enlaces",
@@ -283,6 +308,11 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     legendState: "Fiabilidad (color en modo «Formas»): ",
     legendLines: "Líneas por valoración: ",
     legendRumour: "Un borde discontinuo y la insignia «Ч» indican un rumor (valoración 5–6); el color nunca es la única señal.",
+    gradeFilter: "Mostrar relaciones:",
+    gradeFilterHint: "mostrar solo relaciones con al menos esa valoración; las relaciones sin valoración y los enlaces simples se ocultan",
+    gradeAny: "todas",
+    gradeStrong: "fiables (1–2)",
+    gradeMedium: "fiables y medias (1–4)",
   },
   ko: {
     linksMode: "링크",
@@ -330,6 +360,11 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     legendState: "신뢰도(“도형” 모드의 색): ",
     legendLines: "등급별 선: ",
     legendRumour: "점선 윤곽과 “Ч” 표시는 소문(5–6등급)을 뜻합니다. 색만으로 구분하지 않습니다.",
+    gradeFilter: "관계 표시:",
+    gradeFilterHint: "선택한 등급 이상의 관계만 표시합니다. 등급 없는 관계와 단순 링크는 숨겨집니다",
+    gradeAny: "모두",
+    gradeStrong: "신뢰 (1–2)",
+    gradeMedium: "신뢰와 보통 (1–4)",
   },
   ja: {
     linksMode: "リンク",
@@ -377,5 +412,10 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     legendState: "信頼度（「図形」モードの色）：",
     legendLines: "評価別の線：",
     legendRumour: "破線の輪郭と「Ч」の印は噂（評価 5〜6）を表します。色だけで区別することはありません。",
+    gradeFilter: "表示する関係：",
+    gradeFilterHint: "選んだ評価以上の関係だけを表示します。評価なしの関係と単純なリンクは非表示になります",
+    gradeAny: "すべて",
+    gradeStrong: "信頼できる (1–2)",
+    gradeMedium: "信頼できる・中程度 (1–4)",
   },
 };

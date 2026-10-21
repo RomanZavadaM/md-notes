@@ -68,8 +68,8 @@ pub use registry::{
     TenderFacts, TenderLine,
 };
 pub use relation_tree::{
-    relation_path, relation_tree, weakest_grade, PathStep, RelationPath, RelationTree,
-    TreeDirection, TreeNode,
+    relation_path, relation_path_by, relation_tree, weakest_grade, PathStep, RelationPath,
+    RelationTree, TreeDirection, TreeNode,
 };
 pub use schema::{FieldKind, FieldSpec, NoteTypeSpec, SchemaDocument};
 pub use storage::{LocalFsProvider, StorageEntry, StorageEntryKind, StorageProvider};

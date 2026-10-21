@@ -20,6 +20,7 @@ export interface RelationTreeStrings {
   pathTitle: string;
   pathTo: string;
   pathFind: string;
+  pathReliable: string;
   pathNone: string;
   pathWeakest: string;
   pathSame: string;
@@ -47,6 +48,7 @@ export const RELATION_TREE_STRINGS: Record<LanguageCode, RelationTreeStrings> = 
     pathTitle: "Шлях між двома нотатками",
     pathTo: "Нотатка, до якої шукати шлях…",
     pathFind: "Знайти шлях",
+    pathReliable: "Найнадійніший, а не найкоротший",
     pathNone: "Ланцюга типізованих зв’язків між цими нотатками не знайдено.",
     pathWeakest: "Найслабша ланка",
     pathSame: "Це та сама нотатка.",
@@ -72,6 +74,7 @@ export const RELATION_TREE_STRINGS: Record<LanguageCode, RelationTreeStrings> = 
     pathTitle: "Path between two notes",
     pathTo: "Note to find a path to…",
     pathFind: "Find path",
+    pathReliable: "Most reliable, not shortest",
     pathNone: "No chain of typed relations between these notes.",
     pathWeakest: "Weakest link",
     pathSame: "This is the same note.",
@@ -97,6 +100,7 @@ export const RELATION_TREE_STRINGS: Record<LanguageCode, RelationTreeStrings> = 
     pathTitle: "Chemin entre deux notes",
     pathTo: "Note vers laquelle chercher…",
     pathFind: "Trouver le chemin",
+    pathReliable: "Le plus fiable, pas le plus court",
     pathNone: "Aucune chaîne de relations typées entre ces notes.",
     pathWeakest: "Maillon le plus faible",
     pathSame: "C’est la même note.",
@@ -122,6 +126,7 @@ export const RELATION_TREE_STRINGS: Record<LanguageCode, RelationTreeStrings> = 
     pathTitle: "Pfad zwischen zwei Notizen",
     pathTo: "Notiz, zu der ein Pfad gesucht wird…",
     pathFind: "Pfad finden",
+    pathReliable: "Verlässlichster statt kürzester",
     pathNone: "Keine Kette typisierter Beziehungen zwischen diesen Notizen.",
     pathWeakest: "Schwächstes Glied",
     pathSame: "Das ist dieselbe Notiz.",
@@ -147,6 +152,7 @@ export const RELATION_TREE_STRINGS: Record<LanguageCode, RelationTreeStrings> = 
     pathTitle: "Camino entre dos notas",
     pathTo: "Nota hacia la que buscar…",
     pathFind: "Buscar camino",
+    pathReliable: "El más fiable, no el más corto",
     pathNone: "No hay una cadena de relaciones tipadas entre estas notas.",
     pathWeakest: "Eslabón más débil",
     pathSame: "Es la misma nota.",
@@ -172,6 +178,7 @@ export const RELATION_TREE_STRINGS: Record<LanguageCode, RelationTreeStrings> = 
     pathTitle: "두 노트 사이의 경로",
     pathTo: "경로를 찾을 노트…",
     pathFind: "경로 찾기",
+    pathReliable: "가장 짧은 경로 대신 가장 신뢰할 수 있는 경로",
     pathNone: "이 노트들 사이에 유형 관계 체인이 없습니다.",
     pathWeakest: "가장 약한 고리",
     pathSame: "같은 노트입니다.",
@@ -197,6 +204,7 @@ export const RELATION_TREE_STRINGS: Record<LanguageCode, RelationTreeStrings> = 
     pathTitle: "2つのノート間の経路",
     pathTo: "経路を探すノート…",
     pathFind: "経路を探す",
+    pathReliable: "最短ではなく最も信頼できる経路",
     pathNone: "これらのノート間に型付き関係のチェーンはありません。",
     pathWeakest: "最も弱いリンク",
     pathSame: "同じノートです。",

@@ -111,6 +111,7 @@ The **“Links”** panel has the tabs “Links”, “Local graph” and “Glo
 
 - **Live physics (a “floating” graph).** Drag a node: its neighbours follow and flow around it, and the graph settles smoothly after you let go. The **“Float”** button adds a gentle drift (on by default for graphs up to 400 nodes), **“Pause”** stops the motion. **“Forces”** has sliders for centre, repulsion, link strength and link length; your choice is remembered.
 - **“Shapes” and “Legend”.** The **“Shapes”** button switches to a mode where a **shape** shows the note type (person — head and shoulders, company — square, institution — hexagon, case — diamond, material — triangle, group — three dots) and the **node colour** shows the **reliability** of the best grade among its relations (green 1–2, amber 3–4, red 5–6, grey — no grade). Open **“Legend”** to see every shape, colour and line style; a dashed outline and the “Ч” badge mean a rumour, and colour is never the only signal.
+- **“Show relations” filter.** The list in the graph panel keeps only relations graded at least as well as chosen (“reliable” — 1–2, “reliable and medium” — 1–4); ungraded relations and plain links are hidden, the nodes stay.
 - **Typed relations** are written in the `relations` property (`to`, plus `type`, `grade`, `origin`, `status`, `evidence`, and `dir: in` for the reverse direction). A `grade` is a letter plus a digit (A1 most reliable, F6 weakest): the letter rates the source, the digit the claim. Line and node outline follow the grade; grades 5–6 carry the word **“RUMOUR”**. Colour is never the only signal.
 - **“Where it came from”** highlights the chain of owners above the selected node and the materials around it.
 - **Separate window.** The **↗** button in the graph tabs, or “File → Graph in a separate window” (desktop only), opens the graph in its own window with more room, for example on a second monitor. It follows the active note, refreshes after changes, and a click on a node opens the note in the main window.
@@ -121,7 +122,7 @@ The **“Relation tree”** tab shows the chain of typed relations from the sele
 
 - Each node shows the relation kind and the line grade; next to it is the **“chain”** grade: the weakest link on the way from the root (B2 together with C1 gives C2). A chain is only as reliable as its weakest link.
 - **“−/+”** folds a branch, **◎** rebuilds the tree from another node, **“Expand all” / “Collapse all”** control every branch. A repeated node is marked and not unfolded twice; the tree is limited to 400 nodes.
-- **“Path between two notes”** finds the shortest chain of typed relations (line direction ignored) and shows its weakest link.
+- **“Path between two notes”** finds the shortest chain of typed relations (line direction ignored) and shows its weakest link. The **“Most reliable, not shortest”** checkbox looks for the chain whose weakest link is the best (fewest steps among equally reliable ones).
 - The tree uses explicit typed relations only, not plain links. The chain grade is an aid, not a legal conclusion.
 
 ### Looking up a subject by code or name

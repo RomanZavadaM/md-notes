@@ -81,6 +81,7 @@ interface ViewState {
   hidden: Set<string>;
   trace: { nodes: Set<string>; edges: Set<string> } | null;
   shapes: boolean;
+  maxDigit: number | null;
 }
 
 interface TraceNode {
@@ -143,7 +144,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
   const strings = GRAPH_STRINGS[language];
   const containerRef = useRef<HTMLDivElement | null>(null);
   const rendererRef = useRef<Sigma | null>(null);
-  const viewRef = useRef<ViewState>({ hovered: null, neighbours: new Set(), search: "", hidden: new Set(), trace: null, shapes: false });
+  const viewRef = useRef<ViewState>({ hovered: null, neighbours: new Set(), search: "", hidden: new Set(), trace: null, shapes: false, maxDigit: null });
   const graphRef = useRef<Graph | null>(null);
   const traceModeRef = useRef(false);
   const simRef = useRef<LiveLayout | null>(null);
@@ -153,6 +154,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
   const [floating, setFloating] = useState<boolean | null>(readFloat);
   const [paused, setPaused] = useState(false);
   const [shapes, setShapes] = useState<boolean>(readShapes);
+  const [maxDigit, setMaxDigit] = useState<number | null>(null);
   const forcesRef = useRef(forces);
   const floatRef = useRef(false);
   const pausedRef = useRef(false);
@@ -323,6 +325,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
       graph.addDirectedEdgeWithKey(`pair:${key}`, edge.source, edge.target, {
         size: 1,
         grade: edge.grade,
+        digit: edge.digit,
         arrow: edge.items.length > 0,
         hasItems: edge.items.length > 0,
         items: edge.items,
@@ -537,6 +540,12 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
     }
   }, [shapes, snapshot]);
 
+  // The reliability filter only changes which lines the overlay draws.
+  useEffect(() => {
+    viewRef.current.maxDigit = maxDigit;
+    rendererRef.current?.refresh();
+  }, [maxDigit, snapshot]);
+
   // Search and type filters only change what the reducers return.
   useEffect(() => {
     viewRef.current.search = search.trim().toLowerCase();
@@ -623,6 +632,17 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
             <button type="button" aria-pressed={shapes} className={shapes ? "on" : ""} title={strings.shapesHint} onClick={() => setShapes((value) => !value)}>
               {strings.shapes}
             </button>
+            <label className="knowledge-graph-grade-filter" title={strings.gradeFilterHint}>
+              {strings.gradeFilter}{" "}
+              <select
+                value={maxDigit === null ? "" : String(maxDigit)}
+                onChange={(event) => setMaxDigit(event.target.value === "" ? null : Number(event.target.value))}
+              >
+                <option value="">{strings.gradeAny}</option>
+                <option value="2">{strings.gradeStrong}</option>
+                <option value="4">{strings.gradeMedium}</option>
+              </select>
+            </label>
             <button type="button" aria-pressed={paused} className={paused ? "on" : ""} onClick={() => setPaused((value) => !value)}>
               {paused ? strings.resume : strings.pause}
             </button>

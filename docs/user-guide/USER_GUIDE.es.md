@@ -111,6 +111,7 @@ El panel **«Enlaces»** tiene las pestañas «Enlaces», «Grafo local» y «Gr
 
 - **Física viva (grafo «flotante»).** Arrastre un nodo: sus vecinos lo siguen y lo rodean, y al soltarlo el grafo se calma suavemente. El botón **«Flotar»** añade una ligera deriva (activado por defecto hasta 400 nodos), **«Pausa»** detiene el movimiento. **«Fuerzas»** ofrece controles de centro, repulsión, fuerza y longitud de los enlaces; su elección se recuerda.
 - **«Formas» y «Leyenda».** El botón **«Formas»** activa un modo en el que una **forma** indica el tipo de nota (persona — cabeza y hombros, empresa — cuadrado, institución — hexágono, caso — rombo, material — triángulo, grupo — tres puntos) y el **color del nodo** indica la **fiabilidad** de la mejor valoración de sus relaciones (verde 1–2, ámbar 3–4, rojo 5–6, gris — sin valoración). Abra **«Leyenda»** para ver todas las formas, colores y estilos de línea; un borde discontinuo y la insignia «Ч» indican un rumor, y el color nunca es la única señal.
+- **Filtro «Mostrar relaciones».** La lista del panel del grafo conserva solo las relaciones con al menos la valoración elegida («fiables» — 1–2, «fiables y medias» — 1–4); las relaciones sin valoración y los enlaces simples se ocultan, los nodos permanecen.
 - **Relaciones tipadas** en la propiedad `relations` (`to`, además de `type`, `grade`, `origin`, `status`, `evidence` y `dir: in` para el sentido inverso). Un `grade` es una letra y un dígito (A1 el más fiable, F6 el más débil): la letra valora la fuente, el dígito la afirmación. La línea y el borde del nodo siguen la valoración; las valoraciones 5–6 llevan la palabra **«RUMOR»**. El color nunca es la única señal.
 - **«De dónde viene»** resalta la cadena de propietarios por encima del nodo elegido y los materiales a su alrededor.
 - **Ventana aparte.** El botón **↗** de las pestañas del grafo, o «Archivo → Grafo en otra ventana» (solo escritorio), abre el grafo en su propia ventana con más espacio, por ejemplo en un segundo monitor. Sigue la nota activa, se actualiza tras los cambios y un clic en un nodo abre la nota en la ventana principal.
@@ -121,7 +122,7 @@ La pestaña **«Árbol de relaciones»** muestra la cadena de relaciones tipadas
 
 - Cada nodo muestra el tipo de relación y la valoración de la línea; al lado, la valoración de **«cadena»**: el eslabón más débil desde la raíz (B2 junto con C1 da C2). Una cadena es tan fiable como su eslabón más débil.
 - **«−/+»** pliega una rama, **◎** reconstruye el árbol desde otro nodo, **«Desplegar todo» / «Plegar todo»** controlan todas las ramas. Un nodo repetido se marca y no se despliega dos veces; el árbol se limita a 400 nodos.
-- **«Camino entre dos notas»** encuentra la cadena más corta de relaciones tipadas (se ignora el sentido de las líneas) y muestra su eslabón más débil.
+- **«Camino entre dos notas»** encuentra la cadena más corta de relaciones tipadas (se ignora el sentido de las líneas) y muestra su eslabón más débil. La casilla **«El más fiable, no el más corto»** busca la cadena cuyo eslabón más débil sea el mejor (con menos pasos a igual fiabilidad).
 - El árbol usa solo relaciones tipadas explícitas, no enlaces simples. La valoración de la cadena es una ayuda, no una conclusión jurídica.
 
 ### Buscar un sujeto por código o nombre
