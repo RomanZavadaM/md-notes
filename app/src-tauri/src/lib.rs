@@ -665,17 +665,25 @@ fn relation_tree_for(
     })
 }
 
-/// Shortest chain of typed relations between two notes (direction ignored).
+/// Chain of typed relations between two notes (direction ignored): the shortest one,
+/// or with `most_reliable` the one whose weakest line is the best.
 #[tauri::command]
 fn relation_path_between(
     from: String,
     to: String,
+    most_reliable: Option<bool>,
     state: State<'_, AppState>,
 ) -> CmdResult<Option<notes_core::RelationPath>> {
     with_session(&state, |s| {
         let graph = knowledge_graph(&s.index, None)?;
         let graph = notes_core::with_indexed_relations(&s.index, graph)?;
-        Ok(notes_core::relation_path(&graph, &from, &to, 8))
+        Ok(notes_core::relation_path_by(
+            &graph,
+            &from,
+            &to,
+            8,
+            most_reliable.unwrap_or(false),
+        ))
     })
 }
 
@@ -692,6 +700,18 @@ fn list_tags(state: State<'_, AppState>) -> CmdResult<Vec<TagCount>> {
 #[tauri::command]
 fn search(query: String, limit: u32, state: State<'_, AppState>) -> CmdResult<Vec<SearchHit>> {
     with_session(&state, |s| s.index.search(&query, limit))
+}
+
+/// Facts about a legal entity (8-digit code) from a local copy of the open-data folder of
+/// the "З-під Ляди" site; read-only, nothing leaves the computer.
+#[tauri::command]
+async fn registry_facts(code: String, data_dir: String) -> CmdResult<notes_core::RegistryFacts> {
+    tauri::async_runtime::spawn_blocking(move || {
+        notes_core::registry_facts(std::path::Path::new(&data_dir), &code)
+    })
+    .await
+    .map_err(|e| e.to_string())?
+    .map_err(|e| e.to_string())
 }
 
 /// Exact lookup by code (8 or 10 digits) or by name (candidates), for the search panel.
@@ -752,6 +772,7 @@ pub fn run() {
             import_folder,
             possible_duplicates,
             lookup_subject,
+            registry_facts,
             relation_tree_for,
             relation_path_between,
             quit_app,

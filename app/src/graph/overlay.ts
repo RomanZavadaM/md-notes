@@ -12,6 +12,8 @@ export interface OverlayView {
   trace: { nodes: Set<string>; edges: Set<string> } | null;
   /** Draw a glyph for the note type inside every node (node colour then shows reliability). */
   shapes: boolean;
+  /** Show only lines whose best credibility digit is at most this (1-6); `null` shows every line. */
+  maxDigit: number | null;
 }
 
 /** A line under the pointer (graph edge key and pointer position in the container). */
@@ -98,6 +100,10 @@ export function attachOverlay(
       const sourceData = graph.getNodeAttributes(source);
       const targetData = graph.getNodeAttributes(target);
       if (view.hidden.has(String(sourceData.typeKey)) || view.hidden.has(String(targetData.typeKey))) return;
+      if (view.maxDigit !== null) {
+        const digit = attributes.digit as number | undefined;
+        if (digit === undefined || digit > view.maxDigit) return;
+      }
       const style = edgeStyle(attributes.grade as string | undefined, dark);
       const from = renderer.graphToViewport({ x: sourceData.x, y: sourceData.y });
       const to = renderer.graphToViewport({ x: targetData.x, y: targetData.y });

@@ -63,6 +63,20 @@ export interface DuplicateGroup {
   sameCode: boolean;
 }
 
+export interface RegistryFacts {
+  code: string;
+  name: string | null;
+  edr: { registered: string; state: string; form: string; founderCountries: string[]; beneficiaryCountries: string[] } | null;
+  amcu: { name: string; appealed: boolean; decisions: Array<{ date: string; body: string; no: string }> } | null;
+  tenders: {
+    asBuyer: number;
+    asWinner: number;
+    buyerAmount: number;
+    winnerAmount: number;
+    latest: Array<{ id: string; title: string; url: string; date: string; role: string; amount: number }>;
+  };
+}
+
 export interface LookupHit {
   path: string;
   title: string;
@@ -288,10 +302,12 @@ export const api = {
   quitApp: () => invoke<void>("quit_app"),
   importFolder: (source: string, overwrite = false) => invoke<ImportReport>("import_folder", { source, overwrite }),
   possibleDuplicates: () => invoke<DuplicateGroup[]>("possible_duplicates"),
+  registryFacts: (code: string, dataDir: string) => invoke<RegistryFacts>("registry_facts", { code, dataDir }),
   lookupSubject: (query: string, limit = 20) => invoke<LookupHit[]>("lookup_subject", { query, limit }),
   relationTree: (root: string, direction: "up" | "down", maxDepth: number) =>
     invoke<RelationTreeResult | null>("relation_tree_for", { root, direction, maxDepth }),
-  relationPath: (from: string, to: string) => invoke<RelationPathResult | null>("relation_path_between", { from, to }),
+  relationPath: (from: string, to: string, mostReliable = false) =>
+    invoke<RelationPathResult | null>("relation_path_between", { from, to, mostReliable }),
   gitStatus: (remoteName: string | null = null) => invoke<GitStatus>("git_status_cmd", { remoteName }),
   gitInit: () => invoke<void>("git_init_repo"),
   gitSetRemote: (url: string, remoteName: string | null = null) =>
