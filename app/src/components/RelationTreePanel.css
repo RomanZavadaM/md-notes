@@ -154,3 +154,10 @@
   color: var(--muted);
   font-size: 0.78rem;
 }
+
+.relation-tree-reliable {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}

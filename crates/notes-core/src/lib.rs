@@ -63,8 +63,8 @@ pub use note::Note;
 pub use presets::{create_vault_with_preset, VaultPreset};
 pub use refactor::{rename_with_links, RenameOutcome};
 pub use relation_tree::{
-    relation_path, relation_tree, weakest_grade, PathStep, RelationPath, RelationTree,
-    TreeDirection, TreeNode,
+    relation_path, relation_path_by, relation_tree, weakest_grade, PathStep, RelationPath,
+    RelationTree, TreeDirection, TreeNode,
 };
 pub use schema::{FieldKind, FieldSpec, NoteTypeSpec, SchemaDocument};
 pub use storage::{LocalFsProvider, StorageEntry, StorageEntryKind, StorageProvider};

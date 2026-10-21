@@ -292,6 +292,59 @@ pub fn relation_path(
     to: &str,
     max_hops: usize,
 ) -> Option<RelationPath> {
+    relation_path_by(graph, from, to, max_hops, false)
+}
+
+/// Badness of a line for the "most reliable" search: credibility digit first, then
+/// the reliability letter; a line without a grade is the worst (`99`).
+fn line_score(grade: Option<&str>) -> u32 {
+    let (digit, letter) = grade_key(grade);
+    if digit == 9 && letter == 9 {
+        return 99;
+    }
+    u32::from(digit.min(9)) * 10 + u32::from(letter.min(9))
+}
+
+/// Breadth-first walk over the lines whose score is at most `max_score`; returns the
+/// step each reached note was entered by, or `None` when `to` is out of reach.
+fn walk<'a>(
+    adjacent: &HashMap<&'a str, Vec<(&'a str, usize, bool)>>,
+    scores: &[u32],
+    from: &'a str,
+    to: &'a str,
+    max_hops: usize,
+    max_score: u32,
+) -> Option<HashMap<&'a str, (&'a str, usize, bool)>> {
+    let mut previous: HashMap<&str, (&str, usize, bool)> = HashMap::new();
+    let mut seen: HashSet<&str> = HashSet::from([from]);
+    let mut queue: VecDeque<(&str, usize)> = VecDeque::from([(from, 0)]);
+    while let Some((current, hops)) = queue.pop_front() {
+        if current == to {
+            return Some(previous);
+        }
+        if hops >= max_hops {
+            continue;
+        }
+        for &(next, index, forward) in adjacent.get(current).into_iter().flatten() {
+            if scores[index] <= max_score && seen.insert(next) {
+                previous.insert(next, (current, index, forward));
+                queue.push_back((next, hops + 1));
+            }
+        }
+    }
+    None
+}
+
+/// Chain of typed relations between two notes. With `most_reliable` the chain whose
+/// weakest line is as good as possible wins (fewest steps among equally reliable ones);
+/// otherwise the shortest chain. The direction of the lines is ignored.
+pub fn relation_path_by(
+    graph: &KnowledgeGraph,
+    from: &str,
+    to: &str,
+    max_hops: usize,
+    most_reliable: bool,
+) -> Option<RelationPath> {
     let info: HashMap<&str, &GraphNode> =
         graph.nodes.iter().map(|n| (n.path.as_str(), n)).collect();
     if !info.contains_key(from) || !info.contains_key(to) {
@@ -331,28 +384,21 @@ pub fn relation_path(
             false,
         ));
     }
-    let mut previous: HashMap<&str, (&str, usize, bool)> = HashMap::new();
-    let mut seen: HashSet<&str> = HashSet::from([from]);
-    let mut queue: VecDeque<(&str, usize)> = VecDeque::from([(from, 0)]);
-    let mut found = false;
-    while let Some((current, hops)) = queue.pop_front() {
-        if current == to {
-            found = true;
-            break;
-        }
-        if hops >= max_hops {
-            continue;
-        }
-        for &(next, index, forward) in adjacent.get(current).into_iter().flatten() {
-            if seen.insert(next) {
-                previous.insert(next, (current, index, forward));
-                queue.push_back((next, hops + 1));
-            }
-        }
-    }
-    if !found {
-        return None;
-    }
+    let scores: Vec<u32> = graph
+        .relations
+        .iter()
+        .map(|r| line_score(r.grade.as_deref()))
+        .collect();
+    let previous = if most_reliable {
+        let mut limits: Vec<u32> = scores.clone();
+        limits.sort_unstable();
+        limits.dedup();
+        limits
+            .into_iter()
+            .find_map(|limit| walk(&adjacent, &scores, from, to, max_hops, limit))
+    } else {
+        walk(&adjacent, &scores, from, to, max_hops, u32::MAX)
+    }?;
     let mut steps = Vec::new();
     let mut weakest: Option<String> = None;
     let mut cursor = to;
@@ -529,6 +575,54 @@ mod tests {
         assert_eq!(path.steps[1].kind.as_deref(), Some("власник"));
         assert!(!path.steps[1].forward); // Бета -> Альфа points against the walking direction
         assert!(path.steps[0].kind.is_none());
+    }
+
+    #[test]
+    fn the_most_reliable_path_prefers_a_longer_chain_with_a_better_weakest_link() {
+        let nodes = vec![
+            node("A.md", "Альфа", "company"),
+            node("B.md", "Бета", "company"),
+            node("C.md", "Гамма", "company"),
+            node("D.md", "Дельта", "company"),
+        ];
+        let relations = vec![
+            rel("A.md", "D.md", "власник", Some("E5")),
+            rel("A.md", "B.md", "власник", Some("A1")),
+            rel("B.md", "C.md", "власник", Some("B2")),
+            rel("C.md", "D.md", "власник", Some("B2")),
+        ];
+        let graph = KnowledgeGraph {
+            nodes,
+            edges: Vec::new(),
+            relations,
+        };
+        let short = relation_path(&graph, "A.md", "D.md", 6).unwrap();
+        assert_eq!(short.steps.len(), 2);
+        assert_eq!(short.weakest.as_deref(), Some("E5"));
+        let best = relation_path_by(&graph, "A.md", "D.md", 6, true).unwrap();
+        let titles: Vec<&str> = best.steps.iter().map(|s| s.title.as_str()).collect();
+        assert_eq!(titles, vec!["Альфа", "Бета", "Гамма", "Дельта"]);
+        assert_eq!(best.weakest.as_deref(), Some("B2"));
+        // the hop limit still applies: the reliable chain needs three steps
+        let limited = relation_path_by(&graph, "A.md", "D.md", 2, true).unwrap();
+        assert_eq!(limited.steps.len(), 2);
+    }
+
+    #[test]
+    fn ungraded_lines_are_the_last_resort_of_the_reliable_search() {
+        let nodes = vec![
+            node("A.md", "Альфа", "company"),
+            node("B.md", "Бета", "company"),
+        ];
+        let relations = vec![rel("A.md", "B.md", "власник", None)];
+        let graph = KnowledgeGraph {
+            nodes,
+            edges: Vec::new(),
+            relations,
+        };
+        let path = relation_path_by(&graph, "A.md", "B.md", 4, true).unwrap();
+        assert_eq!(path.steps.len(), 2);
+        assert!(path.weakest.is_none());
     }
 
     #[test]

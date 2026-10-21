@@ -367,3 +367,11 @@
   height: 0.7rem;
   border-radius: 50%;
 }
+
+.knowledge-graph-grade-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}

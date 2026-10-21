@@ -39,6 +39,7 @@ export function RelationTreePanel({ notePath, refreshKey, onOpen }: Props) {
   const [names, setNames] = useState<NoteName[]>([]);
   const [target, setTarget] = useState("");
   const [pathResult, setPathResult] = useState<RelationPathResult | null | undefined>(undefined);
+  const [reliable, setReliable] = useState(false);
   const dark = useMemo(() => isDarkBackground(), []);
 
   useEffect(() => {
@@ -109,7 +110,7 @@ export function RelationTreePanel({ notePath, refreshKey, onOpen }: Props) {
       return;
     }
     api
-      .relationPath(root, match.path)
+      .relationPath(root, match.path, reliable)
       .then((value) => setPathResult(value))
       .catch(() => setPathResult(null));
   };
@@ -321,6 +322,17 @@ export function RelationTreePanel({ notePath, refreshKey, onOpen }: Props) {
             {strings.pathFind}
           </button>
         </div>
+        <label className="relation-tree-reliable">
+          <input
+            type="checkbox"
+            checked={reliable}
+            onChange={(event) => {
+              setReliable(event.target.checked);
+              setPathResult(undefined);
+            }}
+          />{" "}
+          {strings.pathReliable}
+        </label>
         {pathResult === null && <p className="panel-note">{strings.pathNone}</p>}
         {pathResult && pathResult.steps.length === 1 && <p className="panel-note">{strings.pathSame}</p>}
         {pathResult && pathResult.steps.length > 1 && (

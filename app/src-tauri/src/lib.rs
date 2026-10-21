@@ -665,17 +665,25 @@ fn relation_tree_for(
     })
 }
 
-/// Shortest chain of typed relations between two notes (direction ignored).
+/// Chain of typed relations between two notes (direction ignored): the shortest one,
+/// or with `most_reliable` the one whose weakest line is the best.
 #[tauri::command]
 fn relation_path_between(
     from: String,
     to: String,
+    most_reliable: Option<bool>,
     state: State<'_, AppState>,
 ) -> CmdResult<Option<notes_core::RelationPath>> {
     with_session(&state, |s| {
         let graph = knowledge_graph(&s.index, None)?;
         let graph = notes_core::with_indexed_relations(&s.index, graph)?;
-        Ok(notes_core::relation_path(&graph, &from, &to, 8))
+        Ok(notes_core::relation_path_by(
+            &graph,
+            &from,
+            &to,
+            8,
+            most_reliable.unwrap_or(false),
+        ))
     })
 }
 
