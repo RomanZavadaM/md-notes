@@ -34,6 +34,15 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.18](https://github.com/RomanZavadaM/md-notes/compare/v0.3.17...v0.3.18) (2026-10-21)
+
+
+### Нові можливості
+
+* найнадійніший шлях між нотатками і фільтр ліній за оцінкою; документація сімома мовами ([d09669a](https://github.com/RomanZavadaM/md-notes/commit/d09669a79e3621405815c1d7a22764a9d0e54a20))
+* факти з бази «З-під Ляди» за кодом у пошуку ([c31dbc6](https://github.com/RomanZavadaM/md-notes/commit/c31dbc6724c1bc54bcc1848cf87d5b36cff6b572))
+* факти з локальної копії даних «З-під Ляди» за точним кодом у пошуку (ЄДР, АМКУ, Prozorro); документація сімома мовами ([9eca478](https://github.com/RomanZavadaM/md-notes/commit/9eca478d1afe1855202c175262390537244877cb))
+
 ## [0.3.17](https://github.com/RomanZavadaM/md-notes/compare/v0.3.16...v0.3.17) (2026-10-20)
 
 
