@@ -3,19 +3,19 @@
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · **🇩🇪 Deutsch** · [🇪🇸 Español](README.es.md) · [🇰🇷 한국어](README.ko.md) · [🇯🇵 日本語](README.ja.md)
 
 <!-- x-release-please-start-version -->
-> **Release-Checkpoint: MD Notes v0.3.17**
+> **Release-Checkpoint: MD Notes v0.3.18**
 >
 > **Entwicklungsstatus: ACTIVE — Roadmap-Stufe v0.3 „mobile Plattformen und Synchronisierung“.**
 
-## MD Notes v0.3.17 herunterladen
+## MD Notes v0.3.18 herunterladen
 
 **Schnellinstallation:**
 
-- **Windows 64-bit:** [.exe-Installer](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.17/MD.Notes_0.3.17_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.17/MD.Notes_0.3.17_x64_en-US.msi) · [Portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.17/MD-Notes-0.3.17-Windows-x64-portable.zip)
-- **macOS Universal:** [DMG herunterladen](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.17/MD.Notes_0.3.17_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.17/MD.Notes_0.3.17_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.17/MD.Notes_0.3.17_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.17/MD.Notes-0.3.17-1.x86_64.rpm)
+- **Windows 64-bit:** [.exe-Installer](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.18/MD.Notes_0.3.18_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.18/MD.Notes_0.3.18_x64_en-US.msi) · [Portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.18/MD-Notes-0.3.18-Windows-x64-portable.zip)
+- **macOS Universal:** [DMG herunterladen](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.18/MD.Notes_0.3.18_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.18/MD.Notes_0.3.18_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.18/MD.Notes_0.3.18_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.18/MD.Notes-0.3.18-1.x86_64.rpm)
 
-[**Alle Dateien von v0.3.17 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.17)
+[**Alle Dateien von v0.3.18 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.18)
 <!-- x-release-please-end -->
 
 > Die Builds sind derzeit nicht signiert/notarisiert; das Betriebssystem kann eine normale Sicherheitswarnung anzeigen.
