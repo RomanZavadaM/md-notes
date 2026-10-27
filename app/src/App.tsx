@@ -178,6 +178,10 @@ export default function App() {
     async (path: string) => {
       try {
         await save();
+        if (external && external.path !== path && externalDraft !== externalSaved) {
+          const replace = await ask(t.unsavedChanges, { kind: "warning" });
+          if (!replace) return;
+        }
         const document = await api.openMarkdownFile(path);
         if (vault) {
           setExternal(document);
@@ -196,7 +200,7 @@ export default function App() {
         report(e);
       }
     },
-    [save, showNote, report, vault],
+    [save, showNote, report, vault, external, externalDraft, externalSaved, t.unsavedChanges],
   );
 
   const saveExternal = useCallback(async () => {
@@ -932,10 +936,7 @@ export default function App() {
           <nav className="external-tabs" aria-label={t.openMarkdownFile}>
             <button type="button" className={activeDocument === "vault" ? "on" : ""} onClick={() => setActiveDocument("vault")}>{vault.name}</button>
             <button type="button" className={activeDocument === "external" ? "on" : ""} onClick={() => setActiveDocument("external")} title={external.path}>{external.name}{externalDraft !== externalSaved ? " •" : ""}</button>
-            <button type="button" title={t.backToVault} onClick={() => {
-              if (externalDraft !== externalSaved) { void saveExternal().then(() => setActiveDocument("vault")); }
-              else setActiveDocument("vault");
-            }}>×</button>
+            <button type="button" title={t.backToVault} onClick={() => setActiveDocument("vault")}>←</button>
           </nav>
         )}
         <main className={`workspace mode-${mode}`}>
