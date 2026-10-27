@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](USER_GUIDE.uk.md) · [🇬🇧 English](USER_GUIDE.en.md) · [🇫🇷 Français](USER_GUIDE.fr.md) · **🇩🇪 Deutsch** · [🇪🇸 Español](USER_GUIDE.es.md) · [🇰🇷 한국어](USER_GUIDE.ko.md) · [🇯🇵 日本語](USER_GUIDE.ja.md)
 
-Gilt für **v0.3.15**. Maßgeblich ist die ukrainische Fassung.
+Gilt für **v0.3.19**. Maßgeblich ist die ukrainische Fassung.
 
 ## 1. Erster Start
 
@@ -103,6 +103,10 @@ Auf schmalen Bildschirmen öffnen sich Seitenleiste und Verknüpfungsleiste übe
 - Auf einem anderen Computer kopieren Sie den Tresorordner und öffnen ihn: Die App fragt nach dem Schlüssel. Fügen Sie den privaten Schlüssel ein; er wird dann im System-Geheimnisspeicher dieses Computers abgelegt.
 - Bisher zeigt ein verschlüsselter Tresor keine Bilder und Anhänge an, und der Index `.mdnotes/cache` ist nicht verschlüsselt.
 
+### Git (nur Desktop)
+
+Die Schaltfläche **Git** (oder „Git…“ im Menü) öffnet ein Panel: Repository anlegen, Remote-Adresse festlegen, Zugang speichern (das Token liegt nur im System-Geheimnisspeicher) sowie **Fetch**, **Pull**, **Commit** und **Push**. Pull läuft nur, wenn es keine ungespeicherten Änderungen gibt und das Remote einfach Neues hat; bei auseinandergelaufenen Verläufen ist eine manuelle Entscheidung nötig. Für Push muss Git auf dem Computer installiert sein. In einem verschlüsselten Tresor prüft Push zuvor, dass alle Dateien verschlüsselt sind, und wird sonst blockiert.
+
 ## 12. Graph, Beziehungsbaum und Subjektsuche
 
 ### Graph
@@ -115,6 +119,7 @@ Das Panel **„Verknüpfungen“** hat die Reiter „Verknüpfungen“, „Lokal
 - **Typisierte Beziehungen** stehen in der Eigenschaft `relations` (`to`, dazu `type`, `grade`, `origin`, `status`, `evidence` und `dir: in` für die Gegenrichtung). Ein `grade` besteht aus Buchstabe und Ziffer (A1 am verlässlichsten, F6 am schwächsten): Der Buchstabe bewertet die Quelle, die Ziffer die Aussage. Linie und Knotenrand folgen der Bewertung; Bewertungen 5–6 tragen das Wort **„GERÜCHT“**. Farbe ist nie das einzige Signal.
 - **„Woher das kommt“** hebt die Eigentümerkette oberhalb des gewählten Knotens und die Materialien darum hervor.
 - **Eigenes Fenster.** Die Schaltfläche **↗** in den Graph-Reitern oder „Datei → Graph in eigenem Fenster“ (nur Desktop) öffnet den Graphen in einem eigenen Fenster mit mehr Platz, etwa auf einem zweiten Monitor. Es folgt der aktiven Notiz, aktualisiert sich nach Änderungen, und ein Klick auf einen Knoten öffnet die Notiz im Hauptfenster.
+- **Schaltfläche „Zurück“.** Im Graphfenster führt sie zur vorherigen Notiz zurück.
 
 ### Beziehungsbaum
 

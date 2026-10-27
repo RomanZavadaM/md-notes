@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](USER_GUIDE.uk.md) · **🇬🇧 English** · [🇫🇷 Français](USER_GUIDE.fr.md) · [🇩🇪 Deutsch](USER_GUIDE.de.md) · [🇪🇸 Español](USER_GUIDE.es.md) · [🇰🇷 한국어](USER_GUIDE.ko.md) · [🇯🇵 日本語](USER_GUIDE.ja.md)
 
-Applies to **v0.3.15**. The Ukrainian version is the reference text.
+Applies to **v0.3.19**. The Ukrainian version is the reference text.
 
 ## 1. First launch
 
@@ -103,6 +103,10 @@ On narrow screens the sidebar and the links panel open over the content.
 - On another computer, copy the vault folder and open it: the app asks for the key. Paste the private key and it is then kept in that computer's system secret store.
 - For now an encrypted vault does not display images and attachments, and the `.mdnotes/cache` index is not encrypted.
 
+### Git (desktop only)
+
+The **Git** button (or “Git…” in the menu) opens a panel: create a repository, set the remote address, save access (the token is kept only in the system secret store), and **fetch**, **pull**, **commit** and **push**. Pull runs only when there are no unsaved changes and the remote simply has something new; if histories have diverged, a manual decision is needed. Pushing requires Git to be installed on the computer. In an encrypted vault, push first checks that every file is encrypted and is blocked otherwise.
+
 ## 12. Graph, relation tree and subject lookup
 
 ### Graph
@@ -115,6 +119,7 @@ The **“Links”** panel has the tabs “Links”, “Local graph” and “Glo
 - **Typed relations** are written in the `relations` property (`to`, plus `type`, `grade`, `origin`, `status`, `evidence`, and `dir: in` for the reverse direction). A `grade` is a letter plus a digit (A1 most reliable, F6 weakest): the letter rates the source, the digit the claim. Line and node outline follow the grade; grades 5–6 carry the word **“RUMOUR”**. Colour is never the only signal.
 - **“Where it came from”** highlights the chain of owners above the selected node and the materials around it.
 - **Separate window.** The **↗** button in the graph tabs, or “File → Graph in a separate window” (desktop only), opens the graph in its own window with more room, for example on a second monitor. It follows the active note, refreshes after changes, and a click on a node opens the note in the main window.
+- **Back button.** In the graph window it returns to the previous note.
 
 ### Relation tree
 

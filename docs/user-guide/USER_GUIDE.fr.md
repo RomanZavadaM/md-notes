@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](USER_GUIDE.uk.md) · [🇬🇧 English](USER_GUIDE.en.md) · **🇫🇷 Français** · [🇩🇪 Deutsch](USER_GUIDE.de.md) · [🇪🇸 Español](USER_GUIDE.es.md) · [🇰🇷 한국어](USER_GUIDE.ko.md) · [🇯🇵 日本語](USER_GUIDE.ja.md)
 
-S'applique à la **v0.3.15**. La version ukrainienne fait foi.
+S'applique à la **v0.3.19**. La version ukrainienne fait foi.
 
 ## 1. Premier lancement
 
@@ -103,6 +103,10 @@ Sur les écrans étroits, le panneau latéral et le panneau des liens s'ouvrent 
 - Sur un autre ordinateur, copiez le dossier du coffre et ouvrez-le : l’application demande la clé. Collez la clé privée ; elle est ensuite conservée dans le magasin de secrets de cet ordinateur.
 - Pour l’instant, un coffre chiffré n’affiche pas les images ni les pièces jointes, et l’index `.mdnotes/cache` n’est pas chiffré.
 
+### Git (ordinateurs uniquement)
+
+Le bouton **Git** (ou « Git… » dans le menu) ouvre un panneau : créer un dépôt, définir l’adresse distante, enregistrer l’accès (le jeton reste uniquement dans le coffre de secrets du système), puis **fetch**, **pull**, **commit** et **push**. Le pull ne s’exécute que sans modifications non enregistrées et lorsque le distant a simplement du nouveau ; si les historiques ont divergé, une décision manuelle est nécessaire. Le push exige que Git soit installé. Dans un coffre chiffré, le push vérifie d’abord que tous les fichiers sont chiffrés et se bloque sinon.
+
 ## 12. Graphe, arbre des relations et recherche d’un sujet
 
 ### Graphe
@@ -115,6 +119,7 @@ Le panneau **« Liens »** propose les onglets « Liens », « Graphe local » e
 - **Relations typées** : propriété `relations` (`to`, plus `type`, `grade`, `origin`, `status`, `evidence`, et `dir: in` pour le sens inverse). Un `grade` est une lettre et un chiffre (A1 le plus fiable, F6 le plus faible) : la lettre note la source, le chiffre l’affirmation. Le trait et le contour du nœud suivent la note ; les notes 5–6 portent le mot **« RUMEUR »**. La couleur n’est jamais le seul signal.
 - **« D’où cela vient »** met en évidence la chaîne des propriétaires au-dessus du nœud choisi et les documents autour.
 - **Fenêtre séparée.** Le bouton **↗** des onglets du graphe, ou « Fichier → Graphe dans une fenêtre séparée » (bureau uniquement), ouvre le graphe dans sa propre fenêtre, par exemple sur un second écran. Elle suit la note active, se met à jour après les modifications, et un clic sur un nœud ouvre la note dans la fenêtre principale.
+- **Bouton « Retour ».** Dans la fenêtre du graphe, il revient à la note précédente.
 
 ### Arbre des relations
 
