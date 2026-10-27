@@ -4,11 +4,11 @@
 
 ## STATUS
 
-**ACTIVE. Останній реліз v0.3.19 (27.10.2026). Зашифроване сховище, Git push, панель Git, імпорт, граф і дерево зв’язків — у main. PR #122 інтегрований. PR #128 інтегровано — тільки docs.**
+**ACTIVE. Останній реліз v0.3.20 (27.10.2026). Зашифроване сховище, Git push, панель Git, імпорт, граф і дерево зв’язків — у main. PR #122 інтегрований. PR #128 інтегровано — тільки docs.**
 
 Оновлено: 27.10.2026. Нижче розділи за 18-19.10 — історія (запис стану на ті дати); поточний стан — у `PROJECT_STATE.md`.
 
-Release baseline (актуально 27.10.2026): tag/prerelease `v0.3.19`; активи Windows/macOS/Linux, START/source, legal, `SHA256SUMS.txt` опубліковані.
+Release baseline (актуально 27.10.2026): tag/prerelease `v0.3.20`; активи Windows/macOS/Linux, START/source, legal, `SHA256SUMS.txt` опубліковані.
 
 ## Runtime / build evidence
 
@@ -202,3 +202,13 @@ Safety requirements для Git push мають зберігати існуючі
 - Опубліковано prerelease `v0.3.20`, 13 assets: Windows portable ZIP `MD-Notes-0.3.20-Windows-x64-portable.zip`, EXE/MSI, macOS DMG, Linux AppImage/DEB/RPM, START, legal та `SHA256SUMS.txt`.
 - Ця версія включає PR #132 preview всередині графа та PR #133 зовнішні Markdown-вкладки. **Ручна Windows runtime-перевірка ще не підтверджена.**
 - Завантаження: https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.20/MD-Notes-0.3.20-Windows-x64-portable.zip
+
+## Завершення сесії 27.10.2026 — актуальний checkpoint
+
+- **main (перед фінальним docs PR):** `51e8f2487d09ad32a2dd8c076127d595228d43a2`. На час перевірки **відкритих PR немає**.
+- **Останній опублікований prerelease:** [v0.3.20](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.20), 13 assets, у тому числі Windows Portable [ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.20/MD-Notes-0.3.20-Windows-x64-portable.zip) і SHA256SUMS; Release #112 — успішно (Windows, macOS, Linux, публікація, README links).
+- PR #132: перегляд нотатки у відокремленому графі; PR #133: зовнішній Markdown у окремій вкладці при відкритому vault, без автоматичного імпорту. Входять до v0.3.20. **Windows runtime acceptance цих змін ще не підтверджено**.
+- PR #134 release-please merged, PR #137 синхронізація документації merged, PR #138 ADR-0010 (багатовіконний режим) merged. **ADR-0010 — тільки проєктне рішення, функція ще не реалізована**.
+- ADR-0009 backup/restore — запропоновано, **немає реалізації**. Підготовчої гілки може вистачати без коду: звірити перед роботою; не плутати з інтегрованою функцією.
+- Вимога власника на завтра: **кілька вкладок і незалежних вікон редактора нотаток**; обрати маленький безпечний зріз M1 (модель документів/вкладок), з тестами та конфліктним захистом, потім M2 (незалежні вікна). Врахувати graph, зовнішні файли, спільний vault і незбережені зміни в усіх вікнах. Backup/restore не загубити (ADR-0009) і узгодити зі станом вкладок.
+- Наступний старт: перевірити фактичні `main`/open PR/releases/actions, `PROJECT_RULES.md`, `PROJECT_STATE.md`, `WORKLOG.md`, ADR-0009 та ADR-0010, Issue #8. Жодних тверджень про runtime PASS до тесту власником. Для релізів обов'язкові PR checks, tag, Portable, SHA256SUMS, документація та 7 мов.
