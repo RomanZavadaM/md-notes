@@ -44,7 +44,7 @@
 - 正確なコード（EDRPOU/納税者番号）または名前による対象検索、コードで統合するフォルダーインポート、重複の可能性；
 - 7 言語 UI とライト/ダーク/システムテーマ。
 
-### v0.3 — v0.3.4 checkpoint まで統合済み
+### v0.3 — v0.3.18 checkpoint まで統合済み
 
 - provider-neutral `StorageProvider` / `VaultStorage`;
 - Android/iOS 用 mobile sandbox vault;
@@ -60,19 +60,22 @@
 - Git pull planner: `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
 - dirty worktree をブロックする pull safety preflight;
 - clean `FastForward` のみを適用する安全な fast-forward。blind `hard reset`、merge commit、silent overwrite は行いません;
-- オプションの暗号化保管庫（age）: ノートは `.age` ファイルとしてディスクに保存され、秘密鍵は端末のシステムのシークレットストア（Windows Credential Manager、macOS Keychain、Linux Secret Service）にのみ保管されます。ダイアログで、作成時の鍵の一度きりのバックアップ、別端末への鍵のインポート、任意の復旧鍵に対応します.
+- オプションの暗号化保管庫（age）: ノートは `.age` ファイルとしてディスクに保存され、秘密鍵は端末のシステムのシークレットストア（Windows Credential Manager、macOS Keychain、Linux Secret Service）にのみ保管されます。ダイアログで、作成時の鍵の一度きりのバックアップ、別端末への鍵のインポート、任意の復旧鍵に対応します;
+- システムの `git` 経由の Git push（Git のインストールが必要）と暗号化保管庫用ガード（平文は送信されません）、アプリ内 Git パネル（状態、fetch、pull、commit、push）。
 
-まだ **未完了**: Git push、`SyncManifest` / ADR-0005 との完全な Git state 統合、WebDAV、物理 Android/iOS 端末での runtime 検証、optional Android SAF / iOS security-scoped 外部フォルダー。
+まだ **未完了**: `SyncManifest` / ADR-0005 との完全な Git state 統合、WebDAV、物理 Android/iOS 端末での runtime 検証、optional Android SAF / iOS security-scoped 外部フォルダー。
 
-**暗号化保管庫**は必須ではなくオプションです。通常の保管庫は従来どおり動作し、`encrypted-vault` feature なしのビルドには暗号化コードが含まれません。現時点では、暗号化保管庫では画像と添付ファイルが表示されず、既存の保管庫に復旧鍵を追加する UI がなく、`.mdnotes/cache` インデックスは暗号化されません。この保管庫からの Git push は、平文を送信しないガード付きで追加される予定です。
+**暗号化保管庫**は必須ではなくオプションです。通常の保管庫は従来どおり動作し、`encrypted-vault` feature なしのビルドには暗号化コードが含まれません。現時点では、暗号化保管庫では画像と添付ファイルが表示されず、既存の保管庫に復旧鍵を追加する UI がなく、`.mdnotes/cache` インデックスは暗号化されません。この保管庫からの Git push は、平文を送信しないガードを通ります。
 
 全体計画: [roadmap](../roadmap.md)（ウクライナ語、正本）。
+
+> この README、ユーザーガイド、UI 文字列の FR / DE / ES / KO / JA 翻訳は自動生成であり、ネイティブによる校閲を受けていません。基準はウクライナ語の文面です。上記は自動テストと GitHub ビルドで確認済みで、実際のアプリと物理 Android/iOS 端末での手動確認はオーナーがまだ確認していません。
 
 ## インストール
 
 [リリースページ](https://github.com/RomanZavadaM/md-notes/releases) から Windows (`.exe`, `.msi`, portable ZIP)、macOS (`.dmg`, `.app.tar.gz`)、Linux (`.AppImage`, `.deb`, `.rpm`) のパッケージを取得できます。
 
-**v0.3.4** checkpoint には standalone Markdown と安全な Git fast-forward pipeline が含まれます。個別リリースで別途明記されない限り、ビルドは未署名/未公証です。
+**v0.3.18** checkpoint には standalone Markdown と安全な Git fast-forward pipeline が含まれます。個別リリースで別途明記されない限り、ビルドは未署名/未公証です。
 
 詳しい手順: **[ユーザーガイド](../user-guide/USER_GUIDE.ja.md)**。
 

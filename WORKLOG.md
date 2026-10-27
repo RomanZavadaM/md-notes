@@ -4,14 +4,11 @@
 
 ## STATUS
 
-**ACTIVE. Повний test-release checkpoint v0.3.1 завершено. Наступний активний slice — зашифроване сховище (ADR-0007), далі Git push.**
+**ACTIVE. Останній реліз v0.3.18 (21.10.2026). Зашифроване сховище (зрізи 1-3), git push через системний `git`, панель Git, імпорт з об’єднанням, граф і дерево зв’язків — у main. Відкритий PR #122.**
 
-Release baseline:
-- tag/prerelease: `v0.3.1`;
-- release commit: `95d95264edf6382c7eb812a0d2559f4c21455b76`;
-- Release workflow #57: **SUCCESS**;
-- main CI #310: **SUCCESS**;
-- Windows/macOS/Linux packages + portable + START/source + legal + checksums: **published**.
+Оновлено: 27.10.2026. Нижче розділи за 18-19.10 — історія (запис стану на ті дати); поточний стан — у `PROJECT_STATE.md`.
+
+Release baseline (на момент запису): tag/prerelease `v0.3.18`; активи Windows/macOS/Linux, START/source, legal, `SHA256SUMS.txt` опубліковані.
 
 ## Runtime / build evidence
 
@@ -83,7 +80,11 @@ Release baseline:
 - Stale release-please PR #63 `chore(main): release 0.3.2`, generated only from documentation commits, was closed unmerged.
 - Future docs/ci/chore-only work must not create a product version; the next release PR should appear only after release-driving product changes.
 
-## Поточна наступна дія
+## Наступна дія (оновлено 27.10.2026)
+
+Злити PR #122, за потреби випустити наступну версію через release-please; далі за `PROJECT_STATE.md` — Git state ↔ `SyncManifest`. Нижче — історичний запис від 19.10 (зрізи 0-3 і push уже виконано).
+
+## Поточна наступна дія (історичний запис 19.10.2026)
 
 **ADR-0007 (зашифроване сховище, age): docs-PR з ADR і змінами правил, далі зріз 0 (дослідження), 1 (`EncryptedProvider`), 2 (індексатор і вкладення), 3 (інтерфейс і ключі в системному сховищі секретів). Кожен зріз - окрема гілка й PR від актуального `main`; перевірки - CI на GitHub. Git push - одразу після зрізу 3.**
 
@@ -106,11 +107,11 @@ Safety requirements для Git push мають зберігати існуючі
 3. Physical Android/iOS runtime validation.
 4. Optional Android SAF / iOS security-scoped external folders.
 
-## Відомі обмеження
+## Відомі обмеження (актуально на 27.10.2026)
 
 - Android/iOS physical-device runtime untested;
-- encrypted vault (ADR-0007) not implemented;
-- Git push not implemented;
+- encrypted vault: немає вкладень/зображень, немає інтерфейсу ключа відновлення для готового сховища, кеш-індекс відкритий;
+- Git push працює через системний `git` (desktop), у живому застосунку не перевірений;
 - complete conflict workflow not implemented;
 - WebDAV not implemented;
 - SAF/bookmark external-folder adapters not implemented;
@@ -154,3 +155,14 @@ Safety requirements для Git push мають зберігати існуючі
 <вміст>`. Провайдер тримає в пам'яті відповідність «шлях - файл», яку відновлює за заголовками нових і змінених файлів (розмір і час зміни), тому зміни з іншого пристрою (Git pull, синхронізована папка) підхоплюються.
 - Порожні папки зберігаються маркерним файлом `.mdnotes-dir` усередині папки; для цього в `StorageProvider` додано `create_dir`. Перейменування файла лише переписує конверт у тому самому файлі.
 - Обмеження: перейменування папки перешифровує всі її файли; два пристрої, що одночасно створили файл з однаковим шляхом, дадуть два файли (видимий буде один).
+
+## Гілки репозиторію (знімок 27.10.2026; нічого не видалено)
+
+Видаляти гілки можна лише за прямим «так» власника.
+
+- **Злитий PR (57 гілок, безпечні до видалення за рішенням власника):**
+  `build/windows-portable-release`, `chore/actions-cost-optimization`, `chore/actions-path-routing`, `chore/release-please-ignore-docs`, `chore/release-v0.3-line`, `ci/mobile-build-smoke-v0.3`, `docs/actions-optimization-checkpoint`, `docs/actions-release-policy-final`, `docs/actions-routing-policy`, `docs/graph-guide`, `docs/post-presets-sync`, `docs/post-schema-sync`, `docs/post-v0.3.0-checkpoint`, `docs/release-v0.2.2`, `docs/standalone-markdown-checkpoint`, `docs/standalone-markdown-reader-checkpoint`, `docs/v0.2-functional-complete`, `docs/v0.2.1-checkpoint`, `docs/v0.3-checkpoint`, `docs/v0.3.1-checkpoint`, `docs/v0.3.1-download-links`, `feat/graph-window`, `feat/identity-merge`, `feat/live-graph`, `feat/node-glyphs`, `feat/possible-duplicates`, `feat/registry-facts`, `feat/relation-tree`, `feat/relations-index`, `feat/reliable-path-and-grade-filter`, `feat/unified-search`, `feature/attachments-v0.2`, `feature/git-fast-forward-apply-v0.3`, `feature/git-fetch-v0.3`, `feature/git-local-commit-pipeline-v0.3`, `feature/git-local-commit-v0.3`, `feature/git-pull-plan-v0.3`, `feature/git-pull-preflight-v0.3-r2`, `feature/git-pull-repository-plan-v0.3-r3`, `feature/git-sync-gix-v0.3`, `feature/git-token-auth-v0.3`, `feature/knowledge-graph-v0.2`, `feature/macos-markdown-association-v0.3`, `feature/mobile-sandbox-v0.3`, `feature/note-types-schema-v0.2`, `feature/standalone-markdown-reader-v0.3`, `feature/storage-provider-v0.3`, `feature/sync-foundation-v0.3`, `feature/sync-state-store-v0.3`, `feature/system-secret-store-v0.3`, `feature/vault-presets-v0.2`, `feature/vault-storage-provider-v0.3`, `fix/graph-declutter`, `fix/release-please-post-v0.3.0`, `fix/release-version-policy-v0.2`, `fix/runtime-startup-freeze`, `security/csp-v0.2`
+- **PR закрито без злиття (4):** `docs/standalone-markdown-complete`, `feature/git-pull-preflight-v0.3`, `feature/git-pull-repository-plan-v0.3`, `feature/git-pull-repository-plan-v0.3-r2` (схоже, роботу згодом злито іншими PR #59-#61, але це не перевірялось; перед видаленням перевірити).
+- **Без PR (2):** `test/publish-windows-runtime`, `test/windows-runtime-v0.2` (тестові гілки Windows).
+- **Службова гілка release-please** (`release-please--branches--main--components--md-notes`): потрібна автоматиці релізів, не видаляти.
+- **Відкритий PR (1):** `feat/tree-back-step` (PR #122).

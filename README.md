@@ -46,7 +46,7 @@
 - пошук суб’єкта за точним кодом (ЄДРПОУ/ІПН) чи назвою, імпорт папки з об’єднанням за кодом, можливі дублікати;
 - UI сімома мовами, світла/темна/системна теми.
 
-### v0.3 — інтегрований стан до checkpoint v0.3.4
+### v0.3 — інтегрований стан до checkpoint v0.3.18
 
 - provider-neutral `StorageProvider` / `VaultStorage`;
 - mobile sandbox vault для Android/iOS;
@@ -62,13 +62,16 @@
 - Git pull planner: `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
 - pull safety preflight: dirty worktree блокує apply;
 - safe fast-forward apply лише для clean `FastForward`, без blind `hard reset`, merge commit чи silent overwrite;
-- опціональне зашифроване сховище (age): нотатки лежать на диску як `.age`, приватний ключ зберігається лише в системному сховищі секретів пристрою (Windows Credential Manager, macOS Keychain, Linux Secret Service), у діалогах — створення з показом ключа один раз, імпорт ключа на іншому пристрої, необов’язковий ключ відновлення.
+- опціональне зашифроване сховище (age): нотатки лежать на диску як `.age`, приватний ключ зберігається лише в системному сховищі секретів пристрою (Windows Credential Manager, macOS Keychain, Linux Secret Service), у діалогах — створення з показом ключа один раз, імпорт ключа на іншому пристрої, необов’язковий ключ відновлення;
+- Git push через системний `git` (на комп’ютері має бути встановлений Git) із запобіжником для зашифрованих сховищ: відкритий текст не відправляється; панель Git у застосунку (стан, fetch, pull, commit, push).
 
-Ще **не завершено**: Git push, повна інтеграція Git state з `SyncManifest` / ADR-0005 conflict policy, WebDAV, runtime-перевірка на фізичних Android/iOS пристроях та optional Android SAF / iOS security-scoped external folders.
+Ще **не завершено**: повна інтеграція Git state з `SyncManifest` / ADR-0005 conflict policy, WebDAV, runtime-перевірка на фізичних Android/iOS пристроях та optional Android SAF / iOS security-scoped external folders.
 
-**Зашифроване сховище** — опція, а не вимога: звичайні vault працюють без змін, а збірка без feature `encrypted-vault` не містить коду шифрування. Поки що в зашифрованому vault не відображаються зображення й вкладення, немає інтерфейсу додавання ключа відновлення до вже створеного vault, а кеш-індекс `.mdnotes/cache` лишається незашифрованим; Git push із такого vault буде додано із запобіжником, що не відправляє відкритий текст.
+**Зашифроване сховище** — опція, а не вимога: звичайні vault працюють без змін, а збірка без feature `encrypted-vault` не містить коду шифрування. Поки що в зашифрованому vault не відображаються зображення й вкладення, немає інтерфейсу додавання ключа відновлення до вже створеного vault, а кеш-індекс `.mdnotes/cache` лишається незашифрованим; Git push із такого vault проходить через запобіжник, що не відправляє відкритий текст.
 
 Повний план — [docs/roadmap.md](docs/roadmap.md).
+
+> Переклади README, керівництва користувача та рядків інтерфейсу для FR / DE / ES / KO / JA створені автоматично й не вичитані носіями мов; еталон змісту — українська. Усе в цьому розділі перевірено автоматичними тестами та збіркою на GitHub; ручну перевірку в живому застосунку та на фізичних Android/iOS пристроях власник ще не підтвердив.
 
 ## Встановлення
 
@@ -78,7 +81,7 @@
 - **macOS** — `.dmg` / `.app.tar.gz`;
 - **Linux** — `.AppImage`, `.deb` або `.rpm`.
 
-Checkpoint **v0.3.4** включає standalone Markdown і безпечний Git fast-forward pipeline. Release builds поки не підписані/не нотаризовані, якщо сторінка конкретного релізу прямо не вказує інше.
+Checkpoint **v0.3.18** включає standalone Markdown і безпечний Git fast-forward pipeline. Release builds поки не підписані/не нотаризовані, якщо сторінка конкретного релізу прямо не вказує інше.
 
 ## Для розробника
 

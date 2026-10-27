@@ -44,7 +44,7 @@ Plataformas: **Windows, macOS, Linux**. Android e iOS son objetivos activos de v
 - búsqueda de un sujeto por código exacto (EDRPOU/número fiscal) o nombre, importación de carpeta con fusión por código, posibles duplicados;
 - interfaz en siete idiomas y temas claro/oscuro/sistema.
 
-### v0.3 — integrado hasta el checkpoint v0.3.4
+### v0.3 — integrado hasta el checkpoint v0.3.18
 
 - `StorageProvider` / `VaultStorage` neutrales respecto al backend;
 - bóveda sandbox móvil para Android/iOS;
@@ -60,19 +60,22 @@ Plataformas: **Windows, macOS, Linux**. Android e iOS son objetivos activos de v
 - planner Git pull: `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
 - preflight que bloquea un worktree modificado;
 - fast-forward seguro solo para `FastForward` limpio, sin `hard reset` ciego, commit de merge ni sobrescritura silenciosa;
-- bóveda cifrada opcional (age): las notas se guardan en disco como archivos `.age` y la clave privada vive solo en el almacén de secretos del sistema del dispositivo (Windows Credential Manager, macOS Keychain, Linux Secret Service); hay diálogos para crearla con copia única de la clave, importar la clave en otro dispositivo y una clave de recuperación opcional.
+- bóveda cifrada opcional (age): las notas se guardan en disco como archivos `.age` y la clave privada vive solo en el almacén de secretos del sistema del dispositivo (Windows Credential Manager, macOS Keychain, Linux Secret Service); hay diálogos para crearla con copia única de la clave, importar la clave en otro dispositivo y una clave de recuperación opcional;
+- Git push mediante el `git` del sistema (Git debe estar instalado) con una protección para bóvedas cifradas: nunca se envía texto en claro; panel Git en la aplicación (estado, fetch, pull, commit, push).
 
-Aún **no está terminado**: Git push, integración completa con `SyncManifest` / ADR-0005, WebDAV, validación runtime en dispositivos Android/iOS físicos y carpetas externas opcionales Android SAF / iOS security-scoped.
+Aún **no está terminado**: integración completa con `SyncManifest` / ADR-0005, WebDAV, validación runtime en dispositivos Android/iOS físicos y carpetas externas opcionales Android SAF / iOS security-scoped.
 
-La **bóveda cifrada** es una opción, no un requisito: las bóvedas normales funcionan sin cambios y una build sin la feature `encrypted-vault` no contiene código de cifrado. Por ahora una bóveda cifrada no muestra imágenes ni adjuntos, no hay interfaz para añadir una clave de recuperación a una bóveda existente y el índice `.mdnotes/cache` sigue sin cifrar; el Git push desde una bóveda así llegará con una protección que impide enviar texto en claro.
+La **bóveda cifrada** es una opción, no un requisito: las bóvedas normales funcionan sin cambios y una build sin la feature `encrypted-vault` no contiene código de cifrado. Por ahora una bóveda cifrada no muestra imágenes ni adjuntos, no hay interfaz para añadir una clave de recuperación a una bóveda existente y el índice `.mdnotes/cache` sigue sin cifrar; el Git push desde una bóveda así pasa por una protección que impide enviar texto en claro.
 
 Plan completo: [roadmap](../roadmap.md) (ucraniano, canónico).
+
+> Las traducciones FR / DE / ES / KO / JA de este README, de la guía y de la interfaz son automáticas y no están revisadas por hablantes nativos; el texto ucraniano es el de referencia. Todo lo anterior está cubierto por pruebas automáticas y la build de GitHub; las comprobaciones manuales en la aplicación y en dispositivos Android/iOS reales aún no están confirmadas por el propietario.
 
 ## Instalación
 
 Descarga los paquetes desde la [página de versiones](https://github.com/RomanZavadaM/md-notes/releases): Windows (`.exe`, `.msi`, ZIP portable), macOS (`.dmg`, `.app.tar.gz`) y Linux (`.AppImage`, `.deb`, `.rpm`).
 
-El checkpoint **v0.3.4** incluye Markdown standalone y el pipeline Git fast-forward seguro. Las builds siguen sin firma/notarización salvo que una versión concreta indique lo contrario.
+El checkpoint **v0.3.18** incluye Markdown standalone y el pipeline Git fast-forward seguro. Las builds siguen sin firma/notarización salvo que una versión concreta indique lo contrario.
 
 Guía completa: **[Guía del usuario](../user-guide/USER_GUIDE.es.md)**.
 
