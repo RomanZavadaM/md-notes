@@ -145,6 +145,10 @@ export default function App() {
   const openVaultAt = useCallback(
     async (path: string) => {
       try {
+        if (external && externalDraft !== externalSaved) {
+          const discard = await ask(t.unsavedChanges, { kind: "warning" });
+          if (!discard) return;
+        }
         await save();
         const info = await api.openVault(path);
         setKeyPrompt(null);
@@ -166,7 +170,7 @@ export default function App() {
         else report(e);
       }
     },
-    [save, showNote, report, bump],
+    [save, showNote, report, bump, external, externalDraft, externalSaved, t.unsavedChanges],
   );
 
   const pickVault = async () => {
