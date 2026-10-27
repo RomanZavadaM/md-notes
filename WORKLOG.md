@@ -195,3 +195,10 @@ Safety requirements для Git push мають зберігати існуючі
 - PR #132 (`fix/graph-window-note-preview-r1`) **злитий у main**, merge SHA `5a21ce426b279e41aff4010ef8505c285643aa1a`, frontend CI #401 SUCCESS. При натисканні вузла графа нотатка відкривається в панелі того самого вікна (read-only), явна кнопка відкриває її в головному редакторі. Перегляд вкладень/wikilinks і Windows runtime ще не перевірено.
 - PR #133 (`fix/external-markdown-tab-r1`) **злитий**, merge SHA `ed3de2333e356b0d0927d9e45a34286f5ee677b0`, CI #405 SUCCESS. Зовнішній `.md` відкривається в окремій вкладці при активному vault, без імпорту, з окремим чернетковим вмістом і збереженням у вихідний файл. Windows Explorer runtime та перевірка на відсутність побічних файлів у vault — незавершені.
 - Після цих merge відкритих PR немає. Останній перевірений GitHub prerelease — v0.3.19; нові merged зміни не позначати перевіреним релізом до фактичного випуску. GitHub release workflow #110 SUCCESS, але новий тег у Releases поки не підтверджений. Потрібний runtime acceptance та release checkpoint окремо.
+
+## Release checkpoint 27.10.2026 — v0.3.20
+
+- PR #134 release-please злитий: `7b50d7d92646b13aec62b8aed74e293413ad9a91`; GitHub Release #112 (`40569474410`) — **SUCCESS** для Windows/macOS/Linux + assets/readme-links.
+- Опубліковано prerelease `v0.3.20`, 13 assets: Windows portable ZIP `MD-Notes-0.3.20-Windows-x64-portable.zip`, EXE/MSI, macOS DMG, Linux AppImage/DEB/RPM, START, legal та `SHA256SUMS.txt`.
+- Ця версія включає PR #132 preview всередині графа та PR #133 зовнішні Markdown-вкладки. **Ручна Windows runtime-перевірка ще не підтверджена.**
+- Завантаження: https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.20/MD-Notes-0.3.20-Windows-x64-portable.zip
