@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { emit, listen } from "@tauri-apps/api/event";
-import { VAULT_CHANGED } from "./api";
+import { api, VAULT_CHANGED, type Note } from "./api";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { KnowledgeGraphPanel } from "./components/KnowledgeGraphPanel";
 import { RelationTreePanel } from "./components/RelationTreePanel";
 import { useI18n } from "./i18n";
@@ -17,7 +19,7 @@ function initialMode(value: string | null, hasNote: boolean): GraphWindowMode {
 /**
  * The knowledge graph in its own window: more room, can sit on a second monitor.
  * It reads the same open vault as the main window (one session in the core) and
- * follows the note the user is working on; a click on a node opens it in the main window.
+ * follows the note the user is working on; node selection previews it here.
  */
 export function GraphWindow() {
   const { language } = useI18n();
@@ -27,6 +29,9 @@ export function GraphWindow() {
   const [notePath, setNotePath] = useState(params.get("note") ?? "");
   const [mode, setMode] = useState<GraphWindowMode>(() => initialMode(params.get("mode"), (params.get("note") ?? "") !== ""));
   const [refreshKey, setRefreshKey] = useState(0);
+  const [previewPath, setPreviewPath] = useState<string | null>(null);
+  const [previewNote, setPreviewNote] = useState<Note | null>(null);
+  const [previewError, setPreviewError] = useState<string | null>(null);
   // Історія активних нотаток цього вікна: дозволяє повернутися назад після переходу по вузлах.
   const historyRef = useRef<string[]>([]);
   const lastPathRef = useRef(params.get("note") ?? "");
@@ -49,7 +54,7 @@ export function GraphWindow() {
     setCanBack(historyRef.current.length > 0);
     lastPathRef.current = prev;
     setNotePath(prev);
-    void emit(GRAPH_OPEN_NOTE, prev);
+    setPreviewPath(prev);
   }, []);
 
   useEffect(() => {
@@ -77,8 +82,22 @@ export function GraphWindow() {
   }, [followNote]);
 
   const onOpen = useCallback((path: string) => {
-    void emit(GRAPH_OPEN_NOTE, path);
-  }, []);
+    followNote(path);
+    setPreviewPath(path);
+  }, [followNote]);
+
+  useEffect(() => {
+    if (!previewPath) { setPreviewNote(null); setPreviewError(null); return; }
+    let cancelled = false;
+    setPreviewNote(null);
+    setPreviewError(null);
+    void api.readNote(previewPath).then((note) => {
+      if (!cancelled) setPreviewNote(note);
+    }).catch((error: unknown) => {
+      if (!cancelled) setPreviewError(String(error));
+    });
+    return () => { cancelled = true; };
+  }, [previewPath, refreshKey]);
 
   const needsNote = (mode === "local" || mode === "tree") && notePath === "";
 
@@ -110,6 +129,7 @@ export function GraphWindow() {
         )}
         {notePath !== "" && <span className="graph-window-note">{notePath}</span>}
       </div>
+      <div className="graph-window-content">
       <div className="graph-window-body">
         {needsNote ? (
           <p className="panel-note">{graphStrings.windowNoNote}</p>
@@ -118,6 +138,19 @@ export function GraphWindow() {
         ) : (
           <KnowledgeGraphPanel mode={mode} notePath={notePath} refreshKey={refreshKey} onOpen={onOpen} />
         )}
+      </div>
+      {previewPath && (
+        <aside className="graph-window-preview" aria-label={graphStrings.previewTitle}>
+          <div className="graph-window-preview-header">
+            <strong>{previewNote?.title ?? previewPath}</strong>
+            <button type="button" onClick={() => void emit(GRAPH_OPEN_NOTE, previewPath)}>{graphStrings.previewEdit}</button>
+            <button type="button" onClick={() => setPreviewPath(null)} aria-label={graphStrings.previewClose}>×</button>
+          </div>
+          {previewError ? <p role="alert">{previewError}</p> :
+            previewNote ? <div className="graph-window-preview-body"><Markdown remarkPlugins={[remarkGfm]}>{previewNote.content}</Markdown></div> :
+            <p>{graphStrings.loading}</p>}
+        </aside>
+      )}
       </div>
     </div>
   );

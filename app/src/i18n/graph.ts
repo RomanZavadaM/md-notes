@@ -36,6 +36,9 @@ export interface GraphStrings {
   windowTitle: string;
   windowNoNote: string;
   windowBack: string;
+  previewTitle: string;
+  previewEdit: string;
+  previewClose: string;
   shapes: string;
   shapesHint: string;
   stateStrong: string;
@@ -91,6 +94,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "Граф знань",
     windowNoNote: "Відкрийте нотатку в головному вікні, щоб побачити її зв’язки.",
     windowBack: "Назад до попередньої нотатки",
+    previewTitle: "Перегляд нотатки",
+    previewEdit: "Відкрити в редакторі",
+    previewClose: "Закрити перегляд",
     shapes: "Форми",
     shapesHint: "Форма вузла показує тип, колір - надійність найкращої оцінки його зв’язків",
     stateStrong: "надійно (1–2)",
@@ -144,6 +150,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "Knowledge graph",
     windowNoNote: "Open a note in the main window to see its connections.",
     windowBack: "Back to the previous note",
+    previewTitle: "Note preview",
+    previewEdit: "Open in editor",
+    previewClose: "Close preview",
     shapes: "Shapes",
     shapesHint: "The glyph shows the type, the colour the reliability of the best grade among its relations",
     stateStrong: "reliable (1–2)",
@@ -197,6 +206,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "Graphe de connaissances",
     windowNoNote: "Ouvrez une note dans la fenêtre principale pour voir ses liens.",
     windowBack: "Retour à la note précédente",
+    previewTitle: "Aperçu de la note",
+    previewEdit: "Ouvrir dans l’éditeur",
+    previewClose: "Fermer l’aperçu",
     shapes: "Formes",
     shapesHint: "Le symbole indique le type, la couleur la fiabilité de la meilleure note de ses relations",
     stateStrong: "fiable (1–2)",
@@ -250,6 +262,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "Wissensgraph",
     windowNoNote: "Öffnen Sie eine Notiz im Hauptfenster, um ihre Verbindungen zu sehen.",
     windowBack: "Zurück zur vorherigen Notiz",
+    previewTitle: "Notizvorschau",
+    previewEdit: "Im Editor öffnen",
+    previewClose: "Vorschau schließen",
     shapes: "Formen",
     shapesHint: "Das Symbol zeigt den Typ, die Farbe die Verlässlichkeit der besten Bewertung seiner Beziehungen",
     stateStrong: "verlässlich (1–2)",
@@ -303,6 +318,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "Grafo de conocimiento",
     windowNoNote: "Abra una nota en la ventana principal para ver sus conexiones.",
     windowBack: "Volver a la nota anterior",
+    previewTitle: "Vista previa de la nota",
+    previewEdit: "Abrir en editor",
+    previewClose: "Cerrar vista previa",
     shapes: "Formas",
     shapesHint: "El símbolo muestra el tipo y el color la fiabilidad de la mejor valoración de sus relaciones",
     stateStrong: "fiable (1–2)",
@@ -356,6 +374,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "지식 그래프",
     windowNoNote: "연결을 보려면 기본 창에서 노트를 여세요.",
     windowBack: "이전 노트로 돌아가기",
+    previewTitle: "노트 미리보기",
+    previewEdit: "편집기에서 열기",
+    previewClose: "미리보기 닫기",
     shapes: "도형",
     shapesHint: "도형은 유형을, 색은 관계의 최고 등급이 나타내는 신뢰도를 보여 줍니다",
     stateStrong: "신뢰 (1–2)",
@@ -409,6 +430,9 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "ナレッジグラフ",
     windowNoNote: "接続を表示するには、メインウィンドウでノートを開いてください。",
     windowBack: "前のノートに戻る",
+    previewTitle: "ノートのプレビュー",
+    previewEdit: "エディターで開く",
+    previewClose: "プレビューを閉じる",
     shapes: "図形",
     shapesHint: "図形は種類を、色は関係の最良の評価による信頼度を表します",
     stateStrong: "信頼できる (1–2)",
