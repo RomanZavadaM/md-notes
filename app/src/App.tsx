@@ -936,6 +936,7 @@ export default function App() {
           </aside>
         )}
 
+        <div className="document-area">
         {external && (
           <nav className="external-tabs" aria-label={t.openMarkdownFile}>
             <button type="button" className={activeDocument === "vault" ? "on" : ""} onClick={() => setActiveDocument("vault")}>{vault.name}</button>
@@ -978,6 +979,8 @@ export default function App() {
             <div className="empty">{t.workspaceEmpty}</div>
           )}
         </main>
+
+        </div>
 
         {linksPanel === "on" && note && (
           <LinksPanel
