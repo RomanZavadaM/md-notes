@@ -34,6 +34,14 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.19](https://github.com/RomanZavadaM/md-notes/compare/v0.3.18...v0.3.19) (2026-10-27)
+
+
+### Нові можливості
+
+* **graph:** кнопка «Назад» у вікні графа ([058c27a](https://github.com/RomanZavadaM/md-notes/commit/058c27a370730b36437ef8494fed8fd6a13f307f))
+* **graph:** кнопка «Назад» у вікні графа повертає до попередньої нотатки ([a5d49b9](https://github.com/RomanZavadaM/md-notes/commit/a5d49b998c93e7c2a7b892db920a47ee3d50ece5))
+
 ## [0.3.18](https://github.com/RomanZavadaM/md-notes/compare/v0.3.17...v0.3.18) (2026-10-21)
 
 
