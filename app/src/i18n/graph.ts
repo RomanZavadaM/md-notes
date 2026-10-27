@@ -36,6 +36,9 @@ export interface GraphStrings {
   windowTitle: string;
   windowNoNote: string;
   windowBack: string;
+  previewTitle: string;
+  previewEdit: string;
+  previewClose: string;
   shapes: string;
   shapesHint: string;
   stateStrong: string;
