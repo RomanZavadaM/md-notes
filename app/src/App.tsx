@@ -63,6 +63,10 @@ export default function App() {
   const [platform, setPlatform] = useState<RuntimePlatform>("unknown");
   const [vault, setVault] = useState<VaultInfo | null>(null);
   const [standalone, setStandalone] = useState<StandaloneMarkdown | null>(null);
+  const [external, setExternal] = useState<StandaloneMarkdown | null>(null);
+  const [externalDraft, setExternalDraft] = useState("");
+  const [externalSaved, setExternalSaved] = useState("");
+  const [activeDocument, setActiveDocument] = useState<"vault" | "external">("vault");
   const [tree, setTree] = useState<TreeEntry[]>([]);
   const [note, setNote] = useState<Note | null>(null);
   const [draft, setDraft] = useState("");
@@ -146,6 +150,8 @@ export default function App() {
         setKeyPrompt(null);
         setEncrypted(await api.encryptionStatus(info.root).then((status) => status.encrypted, () => false));
         setStandalone(null);
+        setExternal(null);
+        setActiveDocument("vault");
         setVault(info);
         setSelected(null);
         showNote(null);
@@ -173,6 +179,13 @@ export default function App() {
       try {
         await save();
         const document = await api.openMarkdownFile(path);
+        if (vault) {
+          setExternal(document);
+          setExternalDraft(document.note.content);
+          setExternalSaved(document.note.content);
+          setActiveDocument("external");
+          return;
+        }
         setVault(null);
         setTree([]);
         setSelected(null);
@@ -183,8 +196,17 @@ export default function App() {
         report(e);
       }
     },
-    [save, showNote, report],
+    [save, showNote, report, vault],
   );
+
+  const saveExternal = useCallback(async () => {
+    if (!external || externalDraft === externalSaved) return;
+    try {
+      const updated = await api.saveMarkdownFile(external.path, externalDraft);
+      setExternal(updated);
+      setExternalSaved(externalDraft);
+    } catch (error) { report(error); }
+  }, [external, externalDraft, externalSaved, report]);
 
   const openStandaloneAtRef = useRef(openStandaloneAt);
   const openVaultAtRef = useRef(openVaultAt);
@@ -339,6 +361,7 @@ export default function App() {
       await save();
       try {
         showNote(await api.readNote(path));
+        setActiveDocument("vault");
         setEditorVersion((v) => v + 1);
         if (isNarrow()) setSidebarOpen(false);
       } catch (e) {
@@ -905,8 +928,23 @@ export default function App() {
           </aside>
         )}
 
+        {external && (
+          <nav className="external-tabs" aria-label={t.openMarkdownFile}>
+            <button type="button" className={activeDocument === "vault" ? "on" : ""} onClick={() => setActiveDocument("vault")}>{vault.name}</button>
+            <button type="button" className={activeDocument === "external" ? "on" : ""} onClick={() => setActiveDocument("external")} title={external.path}>{external.name}{externalDraft !== externalSaved ? " •" : ""}</button>
+            <button type="button" title={t.backToVault} onClick={() => {
+              if (externalDraft !== externalSaved) { void saveExternal().then(() => setActiveDocument("vault")); }
+              else setActiveDocument("vault");
+            }}>×</button>
+          </nav>
+        )}
         <main className={`workspace mode-${mode}`}>
-          {note ? (
+          {external && activeDocument === "external" ? (
+            <>
+              {mode !== "preview" && <section className="pane pane-editor"><Editor docKey={`${external.path}#external`} value={external.note.content} onChange={setExternalDraft} onSave={() => void saveExternal()} /></section>}
+              {mode !== "edit" && <section className="pane pane-preview"><Preview content={externalDraft} notePath={external.name} vaultRoot={external.directory} files={[]} onOpenLink={() => {}} onOpenPath={() => {}} /></section>}
+            </>
+          ) : note ? (
             <>
               {mode !== "preview" && (
                 <section className="pane pane-editor">
@@ -946,7 +984,7 @@ export default function App() {
         )}
       </div>
 
-      {note && (
+      {(note || external) && (
         <footer className="statusbar">
           <span>{note.path}</span>
           {note.tags.length > 0 && <span>{note.tags.map((tag) => `#${tag}`).join(" ")}</span>}
