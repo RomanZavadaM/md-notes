@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](USER_GUIDE.uk.md) · [🇬🇧 English](USER_GUIDE.en.md) · [🇫🇷 Français](USER_GUIDE.fr.md) · [🇩🇪 Deutsch](USER_GUIDE.de.md) · **🇪🇸 Español** · [🇰🇷 한국어](USER_GUIDE.ko.md) · [🇯🇵 日本語](USER_GUIDE.ja.md)
 
-Aplicable a la **v0.3.15**. La versión ucraniana es el texto de referencia.
+Aplicable a la **v0.3.19**. La versión ucraniana es el texto de referencia.
 
 ## 1. Primer inicio
 
@@ -103,6 +103,10 @@ En pantallas estrechas, el panel lateral y el panel de enlaces se abren sobre el
 - En otro ordenador, copie la carpeta de la bóveda y ábrala: la aplicación pedirá la clave. Pegue la clave privada y se guardará en el almacén de secretos de ese ordenador.
 - Por ahora una bóveda cifrada no muestra imágenes ni adjuntos, y el índice `.mdnotes/cache` no está cifrado.
 
+### Git (solo escritorio)
+
+El botón **Git** (o «Git…» en el menú) abre un panel: crear un repositorio, indicar la dirección remota, guardar el acceso (el token se guarda solo en el almacén de secretos del sistema) y **fetch**, **pull**, **commit** y **push**. El pull solo se ejecuta si no hay cambios sin guardar y el remoto simplemente tiene novedades; si los historiales divergen, hace falta una decisión manual. Para el push debe estar instalado Git. En una bóveda cifrada, el push comprueba antes que todos los archivos estén cifrados y, si no, se bloquea.
+
 ## 12. Grafo, árbol de relaciones y búsqueda de un sujeto
 
 ### Grafo
@@ -115,6 +119,7 @@ El panel **«Enlaces»** tiene las pestañas «Enlaces», «Grafo local» y «Gr
 - **Relaciones tipadas** en la propiedad `relations` (`to`, además de `type`, `grade`, `origin`, `status`, `evidence` y `dir: in` para el sentido inverso). Un `grade` es una letra y un dígito (A1 el más fiable, F6 el más débil): la letra valora la fuente, el dígito la afirmación. La línea y el borde del nodo siguen la valoración; las valoraciones 5–6 llevan la palabra **«RUMOR»**. El color nunca es la única señal.
 - **«De dónde viene»** resalta la cadena de propietarios por encima del nodo elegido y los materiales a su alrededor.
 - **Ventana aparte.** El botón **↗** de las pestañas del grafo, o «Archivo → Grafo en otra ventana» (solo escritorio), abre el grafo en su propia ventana con más espacio, por ejemplo en un segundo monitor. Sigue la nota activa, se actualiza tras los cambios y un clic en un nodo abre la nota en la ventana principal.
+- **Botón «Atrás».** En la ventana del grafo vuelve a la nota anterior.
 
 ### Árbol de relaciones
 
