@@ -991,11 +991,22 @@ export default function App() {
 
       {(note || external) && (
         <footer className="statusbar">
-          <span>{note.path}</span>
-          {note.tags.length > 0 && <span>{note.tags.map((tag) => `#${tag}`).join(" ")}</span>}
-          <span>{t.statusLinks(note.links.length)}</span>
-          {note.frontMatterError && <span className="warn">{t.statusPropertyError(note.frontMatterError)}</span>}
-          <span className="save-state">{dirty ? t.statusUnsaved : t.statusSaved}</span>
+          {external && activeDocument === "external" ? (
+            <>
+              <span>{external.path}</span>
+              <button type="button" onClick={() => void saveExternal()}>
+                {externalDraft !== externalSaved ? t.statusUnsaved : t.statusSaved} · Ctrl+S
+              </button>
+            </>
+          ) : note ? (
+            <>
+              <span>{note.path}</span>
+              {note.tags.length > 0 && <span>{note.tags.map((tag) => `#${tag}`).join(" ")}</span>}
+              <span>{t.statusLinks(note.links.length)}</span>
+              {note.frontMatterError && <span className="warn">{t.statusPropertyError(note.frontMatterError)}</span>}
+              <span className="save-state">{dirty ? t.statusUnsaved : t.statusSaved}</span>
+            </>
+          ) : null}
         </footer>
       )}
 
