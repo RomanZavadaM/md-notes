@@ -166,3 +166,5 @@ Safety requirements для Git push мають зберігати існуючі
 - **Без PR (2):** `test/publish-windows-runtime`, `test/windows-runtime-v0.2` (тестові гілки Windows).
 - **Службова гілка release-please** (`release-please--branches--main--components--md-notes`): потрібна автоматиці релізів, не видаляти.
 - **Відкритий PR (1):** `feat/tree-back-step` (PR #122).
+
+**Оновлення 27.10.2026:** гілки зі злитими PR (усього 59, разом із гілками PR #122-#125) видалено за прямим «так» власника. Лишилися: `main`, службова `release-please--...`, 4 гілки із закритим без злиття PR (`docs/standalone-markdown-complete`, `feature/git-pull-preflight-v0.3`, `feature/git-pull-repository-plan-v0.3`, `-r2`) і 2 тестові (`test/publish-windows-runtime`, `test/windows-runtime-v0.2`). Список вище - історичний знімок.
