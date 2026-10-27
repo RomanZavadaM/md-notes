@@ -44,7 +44,7 @@
 - 정확한 코드(EDRPOU/납세 번호) 또는 이름으로 대상 찾기, 코드로 병합하는 폴더 가져오기, 중복 가능성;
 - 7개 언어 UI와 라이트/다크/시스템 테마.
 
-### v0.3 — v0.3.4 체크포인트까지 통합됨
+### v0.3 — v0.3.18 체크포인트까지 통합됨
 
 - provider-neutral `StorageProvider` / `VaultStorage`;
 - Android/iOS용 mobile sandbox vault;
@@ -60,19 +60,22 @@
 - Git pull planner: `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
 - dirty worktree를 차단하는 pull safety preflight;
 - clean `FastForward`에만 적용되는 안전한 fast-forward, blind `hard reset`, merge commit, silent overwrite 없음;
-- 선택형 암호화 보관함(age): 노트는 디스크에 `.age` 파일로 저장되고, 개인 키는 기기의 시스템 비밀 저장소(Windows Credential Manager, macOS Keychain, Linux Secret Service)에만 보관됩니다. 대화상자로 생성 시 키 1회 백업, 다른 기기에서 키 가져오기, 선택적 복구 키를 지원합니다.
+- 선택형 암호화 보관함(age): 노트는 디스크에 `.age` 파일로 저장되고, 개인 키는 기기의 시스템 비밀 저장소(Windows Credential Manager, macOS Keychain, Linux Secret Service)에만 보관됩니다. 대화상자로 생성 시 키 1회 백업, 다른 기기에서 키 가져오기, 선택적 복구 키를 지원합니다;
+- 시스템 `git`을 통한 Git push(Git 설치 필요), 암호화 보관함용 안전장치(평문은 전송되지 않음), 앱 내 Git 패널(상태, fetch, pull, commit, push).
 
-아직 **완료되지 않음**: Git push, `SyncManifest` / ADR-0005와의 완전한 Git state 통합, WebDAV, 실제 Android/iOS 기기 runtime 검증, optional Android SAF / iOS security-scoped 외부 폴더.
+아직 **완료되지 않음**: `SyncManifest` / ADR-0005와의 완전한 Git state 통합, WebDAV, 실제 Android/iOS 기기 runtime 검증, optional Android SAF / iOS security-scoped 외부 폴더.
 
-**암호화 보관함**은 필수가 아닌 선택 기능입니다. 일반 보관함은 그대로 동작하며, `encrypted-vault` feature 없이 빌드하면 암호화 코드가 포함되지 않습니다. 현재 암호화 보관함에서는 이미지와 첨부 파일이 표시되지 않고, 이미 만든 보관함에 복구 키를 추가하는 UI가 없으며, `.mdnotes/cache` 인덱스는 암호화되지 않습니다. 이런 보관함의 Git push는 평문 전송을 막는 안전장치와 함께 추가될 예정입니다.
+**암호화 보관함**은 필수가 아닌 선택 기능입니다. 일반 보관함은 그대로 동작하며, `encrypted-vault` feature 없이 빌드하면 암호화 코드가 포함되지 않습니다. 현재 암호화 보관함에서는 이미지와 첨부 파일이 표시되지 않고, 이미 만든 보관함에 복구 키를 추가하는 UI가 없으며, `.mdnotes/cache` 인덱스는 암호화되지 않습니다. 이런 보관함의 Git push는 평문 전송을 막는 안전장치를 거칩니다.
 
 전체 계획: [roadmap](../roadmap.md) (우크라이나어, 기준 문서).
+
+> 이 README, 사용자 가이드, UI 문자열의 FR / DE / ES / KO / JA 번역은 자동 생성되었으며 원어민 검수를 거치지 않았습니다. 기준 텍스트는 우크라이나어입니다. 위 내용은 자동 테스트와 GitHub 빌드로 확인되었고, 실행 중인 앱과 실제 Android/iOS 기기에서의 수동 확인은 아직 소유자가 확인하지 않았습니다.
 
 ## 설치
 
 [릴리스 페이지](https://github.com/RomanZavadaM/md-notes/releases)에서 Windows (`.exe`, `.msi`, portable ZIP), macOS (`.dmg`, `.app.tar.gz`), Linux (`.AppImage`, `.deb`, `.rpm`) 패키지를 받을 수 있습니다.
 
-**v0.3.4** 체크포인트에는 standalone Markdown과 안전한 Git fast-forward pipeline이 포함됩니다. 특정 릴리스에서 달리 명시하지 않는 한 빌드는 아직 서명/공증되지 않았습니다.
+**v0.3.18** 체크포인트에는 standalone Markdown과 안전한 Git fast-forward pipeline이 포함됩니다. 특정 릴리스에서 달리 명시하지 않는 한 빌드는 아직 서명/공증되지 않았습니다.
 
 전체 안내: **[사용자 가이드](../user-guide/USER_GUIDE.ko.md)**.
 

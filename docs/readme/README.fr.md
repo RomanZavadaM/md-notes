@@ -44,7 +44,7 @@ Plateformes : **Windows, macOS, Linux**. Android et iOS sont des cibles actives 
 - recherche d’un sujet par code exact (EDRPOU/numéro fiscal) ou par nom, import de dossier avec fusion par code, doublons possibles ;
 - interface en sept langues et thèmes clair/sombre/système.
 
-### v0.3 — intégré jusqu’au checkpoint v0.3.4
+### v0.3 — intégré jusqu’au checkpoint v0.3.18
 
 - `StorageProvider` / `VaultStorage` indépendants du backend ;
 - coffre sandbox mobile Android/iOS ;
@@ -60,19 +60,22 @@ Plateformes : **Windows, macOS, Linux**. Android et iOS sont des cibles actives 
 - planner Git pull : `UpToDate / FastForward / LocalAhead / Diverged / Unrelated` ;
 - preflight bloquant tout worktree modifié ;
 - fast-forward sûr uniquement pour un `FastForward` propre, sans `hard reset` aveugle, commit de merge ni écrasement silencieux;
-- coffre chiffré optionnel (age) : les notes sont stockées sur le disque en fichiers `.age`, la clé privée reste uniquement dans le magasin de secrets du système de l’appareil (Windows Credential Manager, macOS Keychain, Linux Secret Service) ; des dialogues gèrent la création avec sauvegarde unique de la clé, l’import de la clé sur un autre appareil et une clé de récupération facultative .
+- coffre chiffré optionnel (age) : les notes sont stockées sur le disque en fichiers `.age`, la clé privée reste uniquement dans le magasin de secrets du système de l’appareil (Windows Credential Manager, macOS Keychain, Linux Secret Service) ; des dialogues gèrent la création avec sauvegarde unique de la clé, l’import de la clé sur un autre appareil et une clé de récupération facultative ;
+- Git push via le `git` du système (Git doit être installé) avec une garde pour les coffres chiffrés : aucun texte en clair n’est envoyé ; panneau Git dans l’application (état, fetch, pull, commit, push) .
 
-Encore **non terminé** : Git push, intégration complète avec `SyncManifest` / ADR-0005, WebDAV, validation sur appareils Android/iOS physiques et dossiers externes optionnels Android SAF / iOS security-scoped.
+Encore **non terminé** : intégration complète avec `SyncManifest` / ADR-0005, WebDAV, validation sur appareils Android/iOS physiques et dossiers externes optionnels Android SAF / iOS security-scoped.
 
-Le **coffre chiffré** est une option, pas une obligation : les coffres ordinaires fonctionnent sans changement, et une build sans la feature `encrypted-vault` ne contient aucun code de chiffrement. Pour l’instant, un coffre chiffré n’affiche pas les images ni les pièces jointes, il n’existe pas d’interface pour ajouter une clé de récupération à un coffre existant, et l’index `.mdnotes/cache` reste non chiffré ; le Git push depuis un tel coffre arrivera avec une garde qui refuse d’envoyer du texte en clair.
+Le **coffre chiffré** est une option, pas une obligation : les coffres ordinaires fonctionnent sans changement, et une build sans la feature `encrypted-vault` ne contient aucun code de chiffrement. Pour l’instant, un coffre chiffré n’affiche pas les images ni les pièces jointes, il n’existe pas d’interface pour ajouter une clé de récupération à un coffre existant, et l’index `.mdnotes/cache` reste non chiffré ; le Git push depuis un tel coffre passe par une garde qui refuse d’envoyer du texte en clair.
 
 Plan complet : [roadmap](../roadmap.md) (ukrainien, référence).
+
+> Les traductions FR / DE / ES / KO / JA de ce README, du guide et de l’interface sont automatiques et non relues par des locuteurs natifs ; le texte ukrainien fait foi. Tout ce qui précède est couvert par les tests automatiques et la build GitHub ; les vérifications manuelles dans l’application et sur de vrais appareils Android/iOS ne sont pas encore confirmées par le propriétaire.
 
 ## Installation
 
 Téléchargez les paquets depuis la [page des versions](https://github.com/RomanZavadaM/md-notes/releases) : Windows (`.exe`, `.msi`, ZIP portable), macOS (`.dmg`, `.app.tar.gz`) et Linux (`.AppImage`, `.deb`, `.rpm`).
 
-Le checkpoint **v0.3.4** inclut le Markdown autonome et le pipeline Git fast-forward sûr. Les builds restent non signés/non notarisés sauf indication contraire dans une version précise.
+Le checkpoint **v0.3.18** inclut le Markdown autonome et le pipeline Git fast-forward sûr. Les builds restent non signés/non notarisés sauf indication contraire dans une version précise.
 
 Guide complet : **[Guide de l’utilisateur](../user-guide/USER_GUIDE.fr.md)**.
 

@@ -44,7 +44,7 @@ Plattformen: **Windows, macOS, Linux**. Android und iOS sind aktive v0.3-Ziele; 
 - Subjektsuche nach exaktem Code (EDRPOU/Steuernummer) oder Name, Ordnerimport mit Zusammenführen nach Code, mögliche Duplikate;
 - Oberfläche in sieben Sprachen und Hell/Dunkel/System-Theme.
 
-### v0.3 — integriert bis zum Checkpoint v0.3.4
+### v0.3 — integriert bis zum Checkpoint v0.3.18
 
 - provider-neutrales `StorageProvider` / `VaultStorage`;
 - Mobile-Sandbox-Vault für Android/iOS;
@@ -60,19 +60,22 @@ Plattformen: **Windows, macOS, Linux**. Android und iOS sind aktive v0.3-Ziele; 
 - Git-Pull-Planer: `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
 - Preflight blockiert einen schmutzigen Worktree;
 - sicherer Fast-Forward nur bei sauberem `FastForward`, ohne blinden `hard reset`, Merge-Commit oder stilles Überschreiben;
-- optionaler verschlüsselter Tresor (age): Notizen liegen als `.age`-Dateien auf der Festplatte, der private Schlüssel liegt nur im System-Geheimnisspeicher des Geräts (Windows Credential Manager, macOS Keychain, Linux Secret Service); Dialoge für das Anlegen mit einmaliger Schlüsselsicherung, den Schlüsselimport auf einem anderen Gerät und einen optionalen Wiederherstellungsschlüssel.
+- optionaler verschlüsselter Tresor (age): Notizen liegen als `.age`-Dateien auf der Festplatte, der private Schlüssel liegt nur im System-Geheimnisspeicher des Geräts (Windows Credential Manager, macOS Keychain, Linux Secret Service); Dialoge für das Anlegen mit einmaliger Schlüsselsicherung, den Schlüsselimport auf einem anderen Gerät und einen optionalen Wiederherstellungsschlüssel;
+- Git Push über das System-`git` (Git muss installiert sein) mit einer Sperre für verschlüsselte Tresore: Klartext wird nie gesendet; Git-Panel in der App (Status, Fetch, Pull, Commit, Push).
 
-Noch **nicht abgeschlossen**: Git Push, vollständige Git-State-Integration mit `SyncManifest` / ADR-0005, WebDAV, Runtime-Validierung auf physischen Android/iOS-Geräten und optionale externe Ordner über Android SAF / iOS security-scoped access.
+Noch **nicht abgeschlossen**: vollständige Git-State-Integration mit `SyncManifest` / ADR-0005, WebDAV, Runtime-Validierung auf physischen Android/iOS-Geräten und optionale externe Ordner über Android SAF / iOS security-scoped access.
 
-Der **verschlüsselte Tresor** ist eine Option, keine Pflicht: normale Tresore funktionieren unverändert, und ein Build ohne das Feature `encrypted-vault` enthält keinen Verschlüsselungscode. Bisher zeigt ein verschlüsselter Tresor keine Bilder und Anhänge an, es gibt keine Oberfläche zum Hinzufügen eines Wiederherstellungsschlüssels zu einem bestehenden Tresor, und der Index `.mdnotes/cache` bleibt unverschlüsselt; Git Push aus einem solchen Tresor kommt mit einer Sperre, die keinen Klartext sendet.
+Der **verschlüsselte Tresor** ist eine Option, keine Pflicht: normale Tresore funktionieren unverändert, und ein Build ohne das Feature `encrypted-vault` enthält keinen Verschlüsselungscode. Bisher zeigt ein verschlüsselter Tresor keine Bilder und Anhänge an, es gibt keine Oberfläche zum Hinzufügen eines Wiederherstellungsschlüssels zu einem bestehenden Tresor, und der Index `.mdnotes/cache` bleibt unverschlüsselt; Git Push aus einem solchen Tresor läuft über eine Sperre, die keinen Klartext sendet.
 
 Vollständiger Plan: [Roadmap](../roadmap.md) (Ukrainisch, maßgeblich).
+
+> Die Übersetzungen FR / DE / ES / KO / JA dieses README, der Anleitung und der Oberfläche sind maschinell erstellt und nicht von Muttersprachlern geprüft; maßgeblich ist der ukrainische Text. Alles oben ist durch automatische Tests und den GitHub-Build abgedeckt; manuelle Prüfungen in der laufenden App und auf echten Android/iOS-Geräten sind vom Eigentümer noch nicht bestätigt.
 
 ## Installation
 
 Pakete gibt es auf der [Release-Seite](https://github.com/RomanZavadaM/md-notes/releases): Windows (`.exe`, `.msi`, portable ZIP), macOS (`.dmg`, `.app.tar.gz`) und Linux (`.AppImage`, `.deb`, `.rpm`).
 
-Der Checkpoint **v0.3.4** enthält Standalone-Markdown und die sichere Git-Fast-Forward-Pipeline. Builds bleiben unsigniert/nicht notarisiert, sofern ein konkretes Release nichts anderes angibt.
+Der Checkpoint **v0.3.18** enthält Standalone-Markdown und die sichere Git-Fast-Forward-Pipeline. Builds bleiben unsigniert/nicht notarisiert, sofern ein konkretes Release nichts anderes angibt.
 
 Vollständige Anleitung: **[Benutzerhandbuch](../user-guide/USER_GUIDE.de.md)**.
 

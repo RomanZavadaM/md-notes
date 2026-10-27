@@ -44,7 +44,7 @@ Platforms: **Windows, macOS, Linux**. Android and iOS are active v0.3 targets; C
 - subject lookup by exact code (EDRPOU/tax number) or name, folder import with merging by code, possible duplicates;
 - seven-language UI and light/dark/system themes.
 
-### v0.3 — integrated through the v0.3.4 checkpoint
+### v0.3 — integrated through the v0.3.18 checkpoint
 
 - provider-neutral `StorageProvider` / `VaultStorage`;
 - mobile sandbox vault for Android/iOS;
@@ -60,19 +60,22 @@ Platforms: **Windows, macOS, Linux**. Android and iOS are active v0.3 targets; C
 - Git pull planner for `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
 - pull safety preflight that blocks dirty worktrees;
 - safe fast-forward apply only for a clean `FastForward`, without blind `hard reset`, merge commits or silent overwrite;
-- optional encrypted vault (age): notes are stored on disk as `.age` files, the private key lives only in the device's system secret store (Windows Credential Manager, macOS Keychain, Linux Secret Service); dialogs cover creation with a one-time key backup, importing the key on another device, and an optional recovery key.
+- optional encrypted vault (age): notes are stored on disk as `.age` files, the private key lives only in the device's system secret store (Windows Credential Manager, macOS Keychain, Linux Secret Service); dialogs cover creation with a one-time key backup, importing the key on another device, and an optional recovery key;
+- Git push through the system `git` (Git must be installed) with a guard for encrypted vaults: plaintext is never sent; a Git panel in the app (status, fetch, pull, commit, push).
 
-Still **not complete**: Git push, full Git-state integration with `SyncManifest` / ADR-0005 conflict policy, WebDAV, physical Android/iOS runtime validation, and optional Android SAF / iOS security-scoped external folders.
+Still **not complete**: full Git-state integration with `SyncManifest` / ADR-0005 conflict policy, WebDAV, physical Android/iOS runtime validation, and optional Android SAF / iOS security-scoped external folders.
 
-**Encrypted vault** is an option, not a requirement: ordinary vaults work unchanged, and a build without the `encrypted-vault` feature contains no encryption code. For now an encrypted vault does not display images and attachments, has no interface for adding a recovery key to an existing vault, and the `.mdnotes/cache` index stays unencrypted; Git push from such a vault will arrive with a guard that refuses to send plaintext.
+**Encrypted vault** is an option, not a requirement: ordinary vaults work unchanged, and a build without the `encrypted-vault` feature contains no encryption code. For now an encrypted vault does not display images and attachments, has no interface for adding a recovery key to an existing vault, and the `.mdnotes/cache` index stays unencrypted; Git push from such a vault goes through a guard that refuses to send plaintext.
 
 Full plan: [roadmap](../roadmap.md) (Ukrainian, canonical).
+
+> The FR / DE / ES / KO / JA translations of this README, the user guide and the UI strings are machine-generated and have not been reviewed by native speakers; Ukrainian is the authoritative text. Everything in this section is covered by automated tests and the GitHub build; manual checks in the running app and on physical Android/iOS devices are not yet confirmed by the owner.
 
 ## Install
 
 Download packages from the [releases page](https://github.com/RomanZavadaM/md-notes/releases): Windows (`.exe`, `.msi`, portable ZIP), macOS (`.dmg`, `.app.tar.gz`) and Linux (`.AppImage`, `.deb`, `.rpm`).
 
-The **v0.3.4** checkpoint includes standalone Markdown support and the safe Git fast-forward pipeline. Release builds remain unsigned/not notarized unless a specific release explicitly says otherwise.
+The **v0.3.18** checkpoint includes standalone Markdown support and the safe Git fast-forward pipeline. Release builds remain unsigned/not notarized unless a specific release explicitly says otherwise.
 
 Full guide: **[English User Guide](../user-guide/USER_GUIDE.en.md)**.
 

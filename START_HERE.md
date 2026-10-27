@@ -4,61 +4,39 @@
 
 ## Статус
 
-**ACTIVE — v0.3.1 опублікований як prerelease; roadmap stage v0.3 продовжується.**
+**ACTIVE — останній реліз v0.3.18 (prerelease, 21.10.2026); roadmap stage v0.3 продовжується.**
 
-Останній повний test-release checkpoint: **v0.3.1**, 18.10.2026.
+Оновлено: 27.10.2026. Версія береться з GitHub (`gh release list`), а не з цього файла.
 
-- release commit: `95d95264edf6382c7eb812a0d2559f4c21455b76`;
-- Release workflow #57 — **SUCCESS**;
-- main CI #310 — **SUCCESS**;
-- release assets: Windows installer/MSI + portable ZIP, macOS DMG/app archive, Linux AppImage/deb/rpm, START/source, legal notices, `SHA256SUMS.txt`;
-- release status: **prerelease**;
-- README синхронізовані мовами UK / EN / FR / DE / ES / KO / JA.
+- останній реліз: [v0.3.18](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.18), prerelease; файл для Windows: `MD.Notes_0.3.18_x64-setup.exe`;
+- у релізі: Windows installer/MSI + portable ZIP, macOS DMG/app archive, Linux AppImage/deb/rpm, START/source, legal notices, `SHA256SUMS.txt`;
+- збірки не підписані й не нотаризовані;
+- README синхронізовані мовами UK / EN / FR / DE / ES / KO / JA; переклади FR/DE/ES/KO/JA машинні, не вичитані носіями (еталон — українська);
+- відкритий PR: #122 «Назад» у вікні графа (перевірки зелені; у main на момент запису ще не злитий).
 
-## Що інтегровано у v0.3.1
+## Що реалізовано (станом на v0.3.18)
 
-### Standalone Markdown
+Усе нижче покрито автоматичними тестами й збіркою на GitHub. Ручної перевірки у живому застосунку, крім Windows v0.2.2, власник не підтверджував.
 
-- PR #54 — standalone `.md/.markdown` open/edit/save без vault;
-- PR #56 — macOS Finder/open-event + explicit Markdown handler action;
-- Windows/Linux/macOS можуть працювати з одиночним Markdown-файлом;
-- системна асоціація виконується лише після явної команди користувача;
-- portable та installer не перехоплюють `.md` автоматично.
+- **Основа v0.1-v0.2:** сховище з Markdown-файлів, редактор, пошук (FTS5), посилання/зворотні посилання, теги, Mermaid/KaTeX, вкладення, шаблони, схеми властивостей, пресети, граф, 7 мов інтерфейсу.
+- **Storage / mobile:** `StorageProvider`, sandbox-сховище Android/iOS (лише збірка в CI), стан синхронізації.
+- **Git:** клон, статус, commit, fetch, безпечний pull (лише чистий fast-forward), **push через системний `git`** із запобіжником для зашифрованих сховищ (PR #82), панель Git у застосунку (PR #86).
+- **Standalone Markdown:** одиночний файл без сховища, явна асоціація файлів.
+- **Зашифроване сховище (ADR-0007, age), зрізи 1-3:** ядро, ключ у системному сховищі секретів, діалоги створення/імпорту ключа, випадкові імена файлів, запобіжник push.
+- **Імпорт папки** у сховище з об’єднанням за кодом ЄДРПОУ/ІПН (ADR-0008), список можливих дублікатів.
+- **Граф:** жива фізика, окреме вікно, форми вузлів і легенда, лінії й колір за оцінкою надійності, режим «звідки це прийшло», дерево зв’язків, найнадійніший шлях, фільтр за оцінкою.
+- **Факти з локальної копії даних «З-під Ляди»** за точним кодом у пошуку (ЄДР, АМКУ, Prozorro).
 
-### Git pull safety
+## Що не реалізовано
 
-- PR #59 — repository pull planner;
-- PR #60 — safety preflight;
-- PR #61 — safe fast-forward apply;
-- planner класифікує `UpToDate / FastForward / LocalAhead / Diverged / Unrelated`;
-- dirty worktree блокує apply;
-- автоматичний apply дозволений тільки для clean `FastForward`;
-- немає blind `hard reset`, shell git, merge commit або silent overwrite;
-- branch ref оновлюється з optimistic old-HEAD constraint;
-- при race виконується спроба відновлення попереднього tree у worktree/index.
+1. Інтеграція Git state ↔ `SyncManifest` / ADR-0005 (повна політика конфліктів).
+2. WebDAV.
+3. Перевірка Android/iOS на фізичних пристроях (є лише збірка в CI); Android SAF / iOS security-scoped папки.
+4. У зашифрованому сховищі: зображення й вкладення не показуються; немає інтерфейсу «додати ключ відновлення» до вже створеного сховища (є лише команда); кеш-індекс `.mdnotes/cache` не зашифрований; push не має власного інтерфейсу для ключів.
+5. Таблиці / мова запитів (продовження), мобільні картки замість таблиць.
+6. Підписування збірок.
 
-PR #61:
-- final head: `8bac0f284dfbe2fab21ad8077b3b9d40868f6403`;
-- CI #303 — **SUCCESS**;
-- Mobile smoke #99 — **SUCCESS**;
-- merge commit: `ed924059fa68bc31014c5b484fb78daaeba675b0`.
-
-Release PR #52:
-- final head: `909ce415e06d13a7e3556223aaf659d9ba2be88f`;
-- CI #309 — **SUCCESS**;
-- Mobile smoke #104 — **SUCCESS**;
-- merge/release commit: `95d95264edf6382c7eb812a0d2559f4c21455b76`.
-
-## Що ще не завершено
-
-1. **Зашифроване сховище (age, ADR-0007)** — наступний головний slice (зрізи 0-3; рішення власника 19.10.2026).
-1a. **Git push** — одразу після зрізу 3, із запобіжником для зашифрованих сховищ.
-2. Git state ↔ `SyncManifest` / ADR-0005 conflict policy.
-3. WebDAV.
-4. Physical Android/iOS runtime validation.
-5. Optional Android SAF / iOS security-scoped external folders.
-
-Не заявляти, що зашифроване сховище/push/WebDAV/physical-device runtime вже готові.
+Не заявляти, що пункти вище готові.
 
 ## Startup protocol
 
