@@ -35,6 +35,7 @@ export interface GraphStrings {
   detach: string;
   windowTitle: string;
   windowNoNote: string;
+  windowBack: string;
   shapes: string;
   shapesHint: string;
   stateStrong: string;
@@ -89,6 +90,7 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "Граф в окремому вікні",
     windowTitle: "Граф знань",
     windowNoNote: "Відкрийте нотатку в головному вікні, щоб побачити її зв’язки.",
+    windowBack: "Назад до попередньої нотатки",
     shapes: "Форми",
     shapesHint: "Форма вузла показує тип, колір - надійність найкращої оцінки його зв’язків",
     stateStrong: "надійно (1–2)",
@@ -141,6 +143,7 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "Graph in a separate window",
     windowTitle: "Knowledge graph",
     windowNoNote: "Open a note in the main window to see its connections.",
+    windowBack: "Back to the previous note",
     shapes: "Shapes",
     shapesHint: "The glyph shows the type, the colour the reliability of the best grade among its relations",
     stateStrong: "reliable (1–2)",
@@ -193,6 +196,7 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "Graphe dans une fenêtre séparée",
     windowTitle: "Graphe de connaissances",
     windowNoNote: "Ouvrez une note dans la fenêtre principale pour voir ses liens.",
+    windowBack: "Retour à la note précédente",
     shapes: "Formes",
     shapesHint: "Le symbole indique le type, la couleur la fiabilité de la meilleure note de ses relations",
     stateStrong: "fiable (1–2)",
@@ -245,6 +249,7 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "Graph in eigenem Fenster",
     windowTitle: "Wissensgraph",
     windowNoNote: "Öffnen Sie eine Notiz im Hauptfenster, um ihre Verbindungen zu sehen.",
+    windowBack: "Zurück zur vorherigen Notiz",
     shapes: "Formen",
     shapesHint: "Das Symbol zeigt den Typ, die Farbe die Verlässlichkeit der besten Bewertung seiner Beziehungen",
     stateStrong: "verlässlich (1–2)",
@@ -297,6 +302,7 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "Grafo en otra ventana",
     windowTitle: "Grafo de conocimiento",
     windowNoNote: "Abra una nota en la ventana principal para ver sus conexiones.",
+    windowBack: "Volver a la nota anterior",
     shapes: "Formas",
     shapesHint: "El símbolo muestra el tipo y el color la fiabilidad de la mejor valoración de sus relaciones",
     stateStrong: "fiable (1–2)",
@@ -349,6 +355,7 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "별도 창에서 그래프 보기",
     windowTitle: "지식 그래프",
     windowNoNote: "연결을 보려면 기본 창에서 노트를 여세요.",
+    windowBack: "이전 노트로 돌아가기",
     shapes: "도형",
     shapesHint: "도형은 유형을, 색은 관계의 최고 등급이 나타내는 신뢰도를 보여 줍니다",
     stateStrong: "신뢰 (1–2)",
@@ -401,6 +408,7 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     detach: "別ウィンドウでグラフを開く",
     windowTitle: "ナレッジグラフ",
     windowNoNote: "接続を表示するには、メインウィンドウでノートを開いてください。",
+    windowBack: "前のノートに戻る",
     shapes: "図形",
     shapesHint: "図形は種類を、色は関係の最良の評価による信頼度を表します",
     stateStrong: "信頼できる (1–2)",
