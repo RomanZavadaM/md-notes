@@ -3,19 +3,19 @@
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · [🇩🇪 Deutsch](README.de.md) · [🇪🇸 Español](README.es.md) · **🇰🇷 한국어** · [🇯🇵 日本語](README.ja.md)
 
 <!-- x-release-please-start-version -->
-> **릴리스 체크포인트: MD Notes v0.3.19**
+> **릴리스 체크포인트: MD Notes v0.3.20**
 >
 > **개발 상태: ACTIVE — roadmap 단계 v0.3 「모바일 플랫폼과 동기화」.**
 
-## MD Notes v0.3.19 다운로드
+## MD Notes v0.3.20 다운로드
 
 **빠른 설치:**
 
-- **Windows 64-bit:** [.exe 설치 파일](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.19/MD.Notes_0.3.19_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.19/MD.Notes_0.3.19_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.19/MD-Notes-0.3.19-Windows-x64-portable.zip)
-- **macOS Universal:** [DMG 다운로드](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.19/MD.Notes_0.3.19_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.19/MD.Notes_0.3.19_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.19/MD.Notes_0.3.19_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.19/MD.Notes-0.3.19-1.x86_64.rpm)
+- **Windows 64-bit:** [.exe 설치 파일](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.20/MD.Notes_0.3.20_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.20/MD.Notes_0.3.20_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.20/MD-Notes-0.3.20-Windows-x64-portable.zip)
+- **macOS Universal:** [DMG 다운로드](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.20/MD.Notes_0.3.20_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.20/MD.Notes_0.3.20_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.20/MD.Notes_0.3.20_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v0.3.20/MD.Notes-0.3.20-1.x86_64.rpm)
 
-[**v0.3.19의 모든 릴리스 파일 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.19)
+[**v0.3.20의 모든 릴리스 파일 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.20)
 <!-- x-release-please-end -->
 
 > 현재 빌드는 서명/공증되지 않았으므로 운영체제가 일반적인 보안 경고를 표시할 수 있습니다.
