@@ -1018,3 +1018,6 @@ mark {
 .external-tabs { display: flex; align-items: center; gap: .35rem; padding: .3rem .7rem; border-bottom: 1px solid var(--border); overflow-x: auto; }
 .external-tabs button { max-width: min(40vw, 340px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .external-tabs button.on { font-weight: 700; border-color: var(--accent); }
+
+.document-area { display: flex; flex: 1; flex-direction: column; min-width: 0; min-height: 0; }
+.document-area > .workspace { min-height: 0; }
