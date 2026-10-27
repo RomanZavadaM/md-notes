@@ -4,17 +4,17 @@
 
 ## Статус
 
-**ACTIVE — останній реліз v0.3.19 (prerelease, 27.10.2026); roadmap stage v0.3 продовжується.**
+**ACTIVE — останній реліз v0.3.20 (prerelease, 27.10.2026); roadmap stage v0.3 продовжується.**
 
 Оновлено: 27.10.2026. Версія береться з GitHub (`gh release list`), а не з цього файла.
 
-- останній реліз: [v0.3.19](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.19), prerelease; файл для Windows: `MD.Notes_0.3.19_x64-setup.exe`;
+- останній реліз: [v0.3.20](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.20), prerelease; файл для Windows: `MD.Notes_0.3.20_x64-setup.exe`;
 - у релізі: Windows installer/MSI + portable ZIP, macOS DMG/app archive, Linux AppImage/deb/rpm, START/source, legal notices, `SHA256SUMS.txt`;
 - збірки не підписані й не нотаризовані;
 - README синхронізовані мовами UK / EN / FR / DE / ES / KO / JA; переклади FR/DE/ES/KO/JA машинні, не вичитані носіями (еталон — українська);
 - PR #122 «Назад» у вікні графа інтегрований (`058c27a370730b36437ef8494fed8fd6a13f307f`). PR #128 інтегровано (`2da9e7ffb01355008de782df6326d98587923dff`): документаційний запис майбутніх групових операцій і вкладок; не реалізація.
 
-## Що реалізовано (станом на v0.3.19)
+## Що реалізовано (станом на v0.3.20)
 
 Усе нижче покрито автоматичними тестами й збіркою на GitHub. Ручної перевірки у живому застосунку, крім Windows v0.2.2, власник не підтверджував.
 
