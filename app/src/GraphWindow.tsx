@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { emit, listen } from "@tauri-apps/api/event";
 import { VAULT_CHANGED } from "./api";
 import { KnowledgeGraphPanel } from "./components/KnowledgeGraphPanel";
@@ -27,6 +27,30 @@ export function GraphWindow() {
   const [notePath, setNotePath] = useState(params.get("note") ?? "");
   const [mode, setMode] = useState<GraphWindowMode>(() => initialMode(params.get("mode"), (params.get("note") ?? "") !== ""));
   const [refreshKey, setRefreshKey] = useState(0);
+  // Історія активних нотаток цього вікна: дозволяє повернутися назад після переходу по вузлах.
+  const historyRef = useRef<string[]>([]);
+  const lastPathRef = useRef(params.get("note") ?? "");
+  const [canBack, setCanBack] = useState(false);
+
+  const followNote = useCallback((path: string) => {
+    if (path === "" || path === lastPathRef.current) return;
+    if (lastPathRef.current !== "") {
+      historyRef.current = [...historyRef.current.slice(-49), lastPathRef.current];
+      setCanBack(true);
+    }
+    lastPathRef.current = path;
+    setNotePath(path);
+  }, []);
+
+  const goBack = useCallback(() => {
+    const prev = historyRef.current[historyRef.current.length - 1];
+    if (prev === undefined) return;
+    historyRef.current = historyRef.current.slice(0, -1);
+    setCanBack(historyRef.current.length > 0);
+    lastPathRef.current = prev;
+    setNotePath(prev);
+    void emit(GRAPH_OPEN_NOTE, prev);
+  }, []);
 
   useEffect(() => {
     document.title = graphStrings.windowTitle;
@@ -40,7 +64,7 @@ export function GraphWindow() {
       else unlisteners.push(fn);
     });
     void listen<GraphActiveNote>(GRAPH_ACTIVE_NOTE, (event) => {
-      if (event.payload.path) setNotePath(event.payload.path);
+      if (event.payload.path) followNote(event.payload.path);
       if (event.payload.mode) setMode(event.payload.mode);
     }).then((fn) => {
       if (cancelled) fn();
@@ -50,7 +74,7 @@ export function GraphWindow() {
       cancelled = true;
       unlisteners.forEach((fn) => fn());
     };
-  }, []);
+  }, [followNote]);
 
   const onOpen = useCallback((path: string) => {
     void emit(GRAPH_OPEN_NOTE, path);
@@ -79,6 +103,11 @@ export function GraphWindow() {
             {label}
           </button>
         ))}
+        {canBack && (
+          <button type="button" className="graph-window-back" onClick={goBack} title={graphStrings.windowBack} aria-label={graphStrings.windowBack}>
+            ←
+          </button>
+        )}
         {notePath !== "" && <span className="graph-window-note">{notePath}</span>}
       </div>
       <div className="graph-window-body">
