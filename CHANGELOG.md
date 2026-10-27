@@ -34,6 +34,23 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.20](https://github.com/RomanZavadaM/md-notes/compare/v0.3.19...v0.3.20) (2026-10-27)
+
+
+### Виправлення
+
+* contain external tabs above editor workspace ([b162da1](https://github.com/RomanZavadaM/md-notes/commit/b162da17b3c46e85a164bb1349ac962f9cbd002c))
+* **graph:** preview selected note in detached graph window ([c72a49f](https://github.com/RomanZavadaM/md-notes/commit/c72a49f8f35c1f37c3ebdf0695021256908cce19))
+* **graph:** preview selected note in detached graph window ([66fda1e](https://github.com/RomanZavadaM/md-notes/commit/66fda1ea100e0067a3cce8337ba6413fd9e1c3fe))
+* **graph:** preview selected note in detached graph window ([5dec90c](https://github.com/RomanZavadaM/md-notes/commit/5dec90c3a1cbb3d1a53321169eaca9d91fad7a57))
+* **graph:** show selected notes in detached graph window ([5a21ce4](https://github.com/RomanZavadaM/md-notes/commit/5a21ce426b279e41aff4010ef8505c285643aa1a))
+* guard external unsaved changes on vault switch ([3cff221](https://github.com/RomanZavadaM/md-notes/commit/3cff221414704f80ba769225527aefcdb9b3302b))
+* handle nullable vault note in external tab status bar ([e4dd28a](https://github.com/RomanZavadaM/md-notes/commit/e4dd28a52cffaca5ec6b1775a24223c8b4fabb09))
+* **i18n:** add graph preview labels in seven languages ([254561a](https://github.com/RomanZavadaM/md-notes/commit/254561aaf84c109def159926c2016d109c4fe22f))
+* keep vault open when viewing external Markdown in separate tab ([95267bd](https://github.com/RomanZavadaM/md-notes/commit/95267bd63dff5aae8ed6f74880871fc0029def21))
+* open external Markdown alongside vault without importing ([ed3de23](https://github.com/RomanZavadaM/md-notes/commit/ed3de2333e356b0d0927d9e45a34286f5ee677b0))
+* protect unsaved external draft when opening another file ([fa28212](https://github.com/RomanZavadaM/md-notes/commit/fa28212bff239c4ba062a4fb917a2c096d86e626))
+
 ## [0.3.19](https://github.com/RomanZavadaM/md-notes/compare/v0.3.18...v0.3.19) (2026-10-27)
 
 
