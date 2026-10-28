@@ -52,18 +52,20 @@ export function EditorWindow() {
     }
   }, []);
 
-  const save = useCallback(async () => {
+  const save = useCallback(async (): Promise<boolean> => {
     const current = noteRef.current;
     const content = draftRef.current;
-    if (!current || content === savedRef.current) return;
+    if (!current || content === savedRef.current) return true;
     try {
       const saved = await api.saveNote(current.path, content);
       noteRef.current = saved;
       setNote(saved);
       savedRef.current = content;
       setSavedContent(content);
+      return true;
     } catch (err) {
       setError(String(err));
+      return false;
     }
   }, []);
 
@@ -98,7 +100,7 @@ export function EditorWindow() {
     if (!name) return;
     try {
       const resolved = await api.resolveLink(name);
-      if (resolved) await save().then(() => loadNote(resolved));
+      if (resolved && (await save())) await loadNote(resolved);
     } catch (err) {
       setError(String(err));
     }
@@ -146,7 +148,11 @@ export function EditorWindow() {
               vaultRoot={vaultRoot}
               files={files}
               onOpenLink={(target) => void openLink(target)}
-              onOpenPath={(nextPath) => void save().then(() => loadNote(nextPath))}
+              onOpenPath={(nextPath) => {
+                void (async () => {
+                  if (await save()) await loadNote(nextPath);
+                })();
+              }}
             />
           </section>
         )}
