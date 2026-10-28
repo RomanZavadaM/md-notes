@@ -177,6 +177,11 @@ export default function App() {
       if (!document || document.draft === document.savedContent) return true;
       const content = document.draft;
       try {
+        const disk = await api.readNote(path);
+        if (disk.content !== document.savedContent) {
+          setError(t.externalChange);
+          return false;
+        }
         const saved = await api.saveNote(path, content);
         const current = openDocumentsRef.current.find((item) => item.note.path === path);
         if (!current) return true;
@@ -199,7 +204,7 @@ export default function App() {
         return false;
       }
     },
-    [bump, report, updateDocument],
+    [bump, report, t.externalChange, updateDocument],
   );
 
   const save = useCallback(async () => {
