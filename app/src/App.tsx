@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { emit, listen } from "@tauri-apps/api/event";
-import { getCurrentWindow } from "@tauri-apps/api/window";
+import { getAllWindows, getCurrentWindow } from "@tauri-apps/api/window";
 import { ask, message, open } from "@tauri-apps/plugin-dialog";
 import {
   api,
@@ -95,6 +95,7 @@ export default function App() {
   const noteRef = useRef<Note | null>(null);
   const draftRef = useRef("");
   const savedRef = useRef("");
+  const closingRef = useRef(false);
   const [savedContent, setSavedContent] = useState("");
   const dirty = note !== null && draft !== savedContent;
 
@@ -207,13 +208,12 @@ export default function App() {
     [bump, report, t.externalChange, updateDocument],
   );
 
-  const save = useCallback(async () => {
+  const save = useCallback(async (): Promise<boolean> => {
     const current = noteRef.current;
     const content = draftRef.current;
-    if (!current || content === savedRef.current) return;
+    if (!current || content === savedRef.current) return true;
     if (!standalone) {
-      await saveVaultDocument(current.path);
-      return;
+      return saveVaultDocument(current.path);
     }
     try {
       const saved = (await api.saveMarkdownFile(standalone.path, content)).note;
@@ -222,8 +222,10 @@ export default function App() {
       noteRef.current = saved;
       setNote(saved);
       bump();
+      return true;
     } catch (e) {
       report(e);
+      return false;
     }
   }, [standalone, saveVaultDocument, report, bump]);
 
@@ -234,7 +236,14 @@ export default function App() {
           const discard = await ask(t.unsavedChanges, { kind: "warning" });
           if (!discard) return;
         }
-        await save();
+        if (standalone) {
+          if (!(await save())) return;
+        } else {
+          const paths = openDocumentsRef.current.map((document) => document.note.path);
+          for (const openPath of paths) {
+            if (!(await saveVaultDocument(openPath))) return;
+          }
+        }
         const info = await api.openVault(path);
         setKeyPrompt(null);
         setEncrypted(await api.encryptionStatus(info.root).then((status) => status.encrypted, () => false));
@@ -256,7 +265,19 @@ export default function App() {
         else report(e);
       }
     },
-    [save, showNote, report, bump, external, externalDraft, externalSaved, t.unsavedChanges, setDocuments],
+    [
+      save,
+      saveVaultDocument,
+      showNote,
+      report,
+      bump,
+      external,
+      externalDraft,
+      externalSaved,
+      standalone,
+      t.unsavedChanges,
+      setDocuments,
+    ],
   );
 
   const pickVault = async () => {
@@ -267,7 +288,7 @@ export default function App() {
   const openStandaloneAt = useCallback(
     async (path: string) => {
       try {
-        await save();
+        if (!(await save())) return;
         if (external && external.path !== path && externalDraft !== externalSaved) {
           const replace = await ask(t.unsavedChanges, { kind: "warning" });
           if (!replace) return;
@@ -293,14 +314,23 @@ export default function App() {
     [save, showNote, report, vault, external, externalDraft, externalSaved, t.unsavedChanges],
   );
 
-  const saveExternal = useCallback(async () => {
-    if (!external || externalDraft === externalSaved) return;
+  const saveExternal = useCallback(async (): Promise<boolean> => {
+    if (!external || externalDraft === externalSaved) return true;
     try {
+      const disk = await api.openMarkdownFile(external.path);
+      if (disk.note.content !== externalSaved) {
+        setError(t.externalChange);
+        return false;
+      }
       const updated = await api.saveMarkdownFile(external.path, externalDraft);
       setExternal(updated);
       setExternalSaved(externalDraft);
-    } catch (error) { report(error); }
-  }, [external, externalDraft, externalSaved, report]);
+      return true;
+    } catch (error) {
+      report(error);
+      return false;
+    }
+  }, [external, externalDraft, externalSaved, report, t.externalChange]);
 
   const openStandaloneAtRef = useRef(openStandaloneAt);
   const openVaultAtRef = useRef(openVaultAt);
@@ -312,14 +342,39 @@ export default function App() {
   }, [openVaultAt]);
 
   const isDesktop = platform === "windows" || platform === "linux" || platform === "macos";
-  const quitApp = useCallback(async () => {
-    try {
-      await save();
-    } catch {
-      // Leave even if the last save failed; autosave already ran.
+
+  const saveAllOpenDocuments = useCallback(async (): Promise<boolean> => {
+    if (standalone) return save();
+    const paths = openDocumentsRef.current.map((document) => document.note.path);
+    for (const path of paths) {
+      if (!(await saveVaultDocument(path))) return false;
     }
+    if (!(await saveExternal())) return false;
+    return true;
+  }, [save, saveExternal, saveVaultDocument, standalone]);
+
+  const closeDetachedEditors = useCallback(async (): Promise<boolean> => {
+    const detached = (await getAllWindows()).filter((window) => window.label.startsWith("editor-"));
+    for (const window of detached) {
+      await window.close();
+    }
+    if (detached.length === 0) return true;
+
+    for (let attempt = 0; attempt < 50; attempt += 1) {
+      await new Promise((resolve) => window.setTimeout(resolve, 100));
+      const remaining = (await getAllWindows()).some((window) => window.label.startsWith("editor-"));
+      if (!remaining) return true;
+    }
+
+    setError(t.unsavedChanges);
+    return false;
+  }, [t.unsavedChanges]);
+
+  const quitApp = useCallback(async () => {
+    if (!(await saveAllOpenDocuments())) return;
+    if (!(await closeDetachedEditors())) return;
     await api.quitApp();
-  }, [save]);
+  }, [closeDetachedEditors, saveAllOpenDocuments]);
 
   useEffect(() => {
     if (!isDesktop) return;
@@ -332,6 +387,34 @@ export default function App() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [isDesktop, quitApp]);
+
+  useEffect(() => {
+    if (!isDesktop) return;
+    const appWindow = getCurrentWindow();
+    let disposed = false;
+    let unlisten: (() => void) | undefined;
+    void appWindow.onCloseRequested(async (event) => {
+      if (closingRef.current) return;
+      const hasUnsaved =
+        standalone
+          ? draftRef.current !== savedRef.current
+          : openDocumentsRef.current.some((document) => document.draft !== document.savedContent) ||
+            Boolean(external && externalDraft !== externalSaved);
+      if (!hasUnsaved) return;
+      event.preventDefault();
+      if (!(await saveAllOpenDocuments())) return;
+      closingRef.current = true;
+      await appWindow.destroy();
+    }).then((fn) => {
+      if (disposed) fn();
+      else unlisten = fn;
+    });
+    return () => {
+      disposed = true;
+      unlisten?.();
+    };
+  }, [external, externalDraft, externalSaved, isDesktop, saveAllOpenDocuments, standalone]);
+
 
   // Toasts disappear on their own (a click still closes them at once).
   useEffect(() => {
