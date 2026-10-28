@@ -90,6 +90,6 @@ Copyright © 2026 Roman Zavada (Роман Завада). Alle Rechte vorbehalte
 
 ## Mehrfenster-Editor (aktueller `main`)
 
-Nach v0.3.20 sind die ersten beiden Stufen von ADR-0010 in `main` umgesetzt. Mehrere Vault-Notizen können gleichzeitig in Tabs geöffnet bleiben; jeder Tab hat einen eigenen Entwurf. Auf dem Desktop kann die aktive Notiz mit **In separatem Fenster öffnen** in ein unabhängiges Editorfenster verschoben werden. Änderungen werden vor dem Verschieben gespeichert; das Hauptfenster wechselt danach zum vorherigen Tab oder zeigt einen leeren Arbeitsbereich.
+Mit **v0.3.21** sind ADR-0010 M1–M3 veröffentlicht. Mehrere Vault-Notizen können gleichzeitig in Tabs geöffnet bleiben; jeder Tab hat einen eigenen Entwurf. Auf dem Desktop kann die aktive Notiz mit **In separatem Fenster öffnen** in ein unabhängiges Editorfenster verschoben werden. Änderungen werden vor dem Verschieben gespeichert; das Hauptfenster wechselt danach zum vorherigen Tab oder zeigt einen leeren Arbeitsbereich.
 
-M1–M3 sind jetzt in `main` integriert: Konfliktschutz, sicheres Schließen abgetrennter Editoren sowie Save-all/Safe-Quit sind umgesetzt. Windows/macOS/Linux CI und Android/iOS Build-Smoke-Tests sind erfolgreich, aber **die manuelle Runtime-Abnahme steht noch aus**; diese Änderungen gehören nicht zum veröffentlichten v0.3.20. Als Nächstes folgt M4: Test-Prerelease und manuelle Abnahme.
+M1–M3 sind Bestandteil der veröffentlichten **v0.3.21**: Konfliktschutz, sicheres Schließen abgetrennter Editoren sowie Save-all/Safe-Quit sind umgesetzt. Windows/macOS/Linux CI und Android/iOS Build-Smoke-Tests sind erfolgreich. **M4 bedeutet jetzt die manuelle Runtime-Abnahme**; das Test-Prerelease ist bereits veröffentlicht.
