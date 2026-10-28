@@ -86,3 +86,10 @@ Rust stable、Node.js 20+、Tauri のシステム要件が必要です。統合 
 MD Notes は local-first です。同期 secret は vault、Markdown ファイル、remote URL、Git config、ログ、`localStorage` に保存してはいけません。同期競合は黙って上書きせず、自動 Git apply は clean fast-forward 状態にのみ許可されます。
 
 Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved. MD Notes はプロプライエタリソフトウェアであり、公開リポジトリはオープンソースライセンスを付与しません。ノートはユーザーのものです。[LICENSE.md](../../LICENSE.md) と [法的情報](../LEGAL_AND_COPYRIGHT.md) を参照してください。
+
+
+## マルチウィンドウエディター（現在の `main`）
+
+v0.3.20 以降、ADR-0010 の最初の 2 段階が `main` に実装されています。複数の保管庫ノートをタブで同時に開き、それぞれ独立した下書きを保持できます。デスクトップでは、アクティブなノートを **別ウィンドウで開く** で独立したエディターウィンドウへ移動できます。移動前に変更内容を保存し、メインウィンドウは前のタブまたは空の作業領域に戻ります。
+
+このコードは Windows/macOS/Linux の CI と Android/iOS の build smoke を通過していますが、**手動の実行時受け入れ確認はまだ完了しておらず**、公開済み v0.3.20 には含まれません。次は M3（ウィンドウ間の競合と安全な終了）です。
