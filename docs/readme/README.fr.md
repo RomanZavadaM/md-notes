@@ -86,3 +86,10 @@ Rust stable, Node.js 20+ et les prérequis Tauri sont nécessaires. Les gates in
 MD Notes est local-first. Les secrets de synchronisation ne doivent jamais être stockés dans le vault, les fichiers Markdown, les URL distantes, Git config, les logs ou `localStorage`. Les conflits ne doivent jamais être écrasés silencieusement et l’application Git automatique n’est autorisée que pour un fast-forward propre.
 
 Copyright © 2026 Roman Zavada (Роман Завада). Tous droits réservés. MD Notes est un logiciel propriétaire ; le dépôt public n’accorde aucune licence open source. Vos notes vous appartiennent. Voir [LICENSE.md](../../LICENSE.md) et les [mentions légales](../LEGAL_AND_COPYRIGHT.md).
+
+
+## Éditeur multi-fenêtres (`main` actuel)
+
+Après v0.3.20, les deux premières étapes d’ADR-0010 sont implémentées sur `main`. Plusieurs notes du coffre peuvent rester ouvertes dans des onglets, chacune avec son propre brouillon. Sur ordinateur, la note active peut être déplacée avec **Ouvrir dans une fenêtre séparée** vers une fenêtre d’édition indépendante. Les modifications sont enregistrées avant le déplacement, puis la fenêtre principale revient à l’onglet précédent ou à un espace vide.
+
+Le code passe la CI Windows/macOS/Linux et les builds de contrôle Android/iOS, mais il **n’a pas encore reçu de validation manuelle en exécution** et ne fait pas partie de la version publiée v0.3.20. L’étape suivante est M3 : conflits entre fenêtres et fermeture sûre.

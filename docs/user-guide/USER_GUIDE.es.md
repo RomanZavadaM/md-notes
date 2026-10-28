@@ -166,3 +166,12 @@ Los nombres se comparan sin distinguir mayúsculas, comillas, guiones ni formas 
 ## 15. Derechos de autor
 
 Copyright © 2026 Roman Zavada (Роман Завада). Todos los derechos reservados. MD Notes es software propietario. Tus notas te pertenecen. Consulta [LICENSE.md](../../LICENSE.md) y [LEGAL_AND_COPYRIGHT.md](../LEGAL_AND_COPYRIGHT.md).
+
+
+## Pestañas y ventanas de editor separadas
+
+En el `main` actual después de v0.3.20 se pueden mantener varias notas del almacén abiertas en pestañas. Cada pestaña conserva su propio borrador, por lo que cambiar de nota no debe descartar texto sin guardar.
+
+En escritorio, la nota activa del almacén ofrece **Abrir en una ventana separada**. MD Notes guarda el borrador actual antes de separarlo. Tras crear correctamente la ventana independiente, la nota se elimina de las pestañas del editor principal y la ventana principal vuelve a la pestaña anterior; si no queda ninguna, muestra un editor vacío manteniendo disponible el árbol del almacén. La ventana separada admite Editor / lado a lado / vista previa y guardado automático.
+
+Un archivo externo `.md/.markdown` sigue siendo un documento independiente y no se importa automáticamente al almacén. El modo multiventana todavía necesita pruebas manuales en tiempo de ejecución; la protección frente a conflictos de edición simultánea entre ventanas se completará en M3.

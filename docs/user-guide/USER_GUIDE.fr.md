@@ -166,3 +166,12 @@ Les noms sont comparés sans tenir compte de la casse, des guillemets, des trait
 ## 15. Droits d'auteur
 
 Copyright © 2026 Roman Zavada (Роман Завада). Tous droits réservés. MD Notes est un logiciel propriétaire. Vos notes vous appartiennent. Voir [LICENSE.md](../../LICENSE.md) et [LEGAL_AND_COPYRIGHT.md](../LEGAL_AND_COPYRIGHT.md).
+
+
+## Onglets et fenêtres d’édition séparées
+
+Dans le `main` actuel après v0.3.20, plusieurs notes du coffre peuvent rester ouvertes dans des onglets. Chaque onglet conserve son propre brouillon afin qu’un changement d’onglet ne supprime pas le texte non enregistré.
+
+Sur ordinateur, la note active du coffre propose **Ouvrir dans une fenêtre séparée**. MD Notes enregistre le brouillon avant de le détacher. Une fois la fenêtre indépendante créée, la note est retirée des onglets de l’éditeur principal et la fenêtre principale revient à l’onglet précédent ; s’il n’en reste aucun, l’éditeur devient vide tout en gardant l’arbre du coffre disponible. La fenêtre séparée prend en charge Éditeur / côte à côte / aperçu et l’enregistrement automatique.
+
+Un fichier externe `.md/.markdown` reste un document séparé et n’est pas importé automatiquement dans le coffre. Le mode multi-fenêtres doit encore être validé manuellement en exécution ; la protection contre les conflits d’édition simultanée entre fenêtres est prévue pour M3.
