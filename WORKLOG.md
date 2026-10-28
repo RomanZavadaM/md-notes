@@ -1,14 +1,14 @@
 # WORKLOG — MD Notes
 
-Оновлено: **27.10.2026**
+Оновлено: **28.10.2026**
 
 ## STATUS
 
-**ACTIVE. Останній реліз v0.3.20 (27.10.2026). Зашифроване сховище, Git push, панель Git, імпорт, граф і дерево зв’язків — у main. PR #122 інтегрований. PR #128 інтегровано — тільки docs.**
+**ACTIVE. Останній реліз v0.3.21 (28.10.2026). ADR-0010 M1–M3 інтегровано й опубліковано; M4 — ручне runtime-приймання.**
 
 Оновлено: 27.10.2026. Нижче розділи за 18-19.10 — історія (запис стану на ті дати); поточний стан — у `PROJECT_STATE.md`.
 
-Release baseline (актуально 27.10.2026): tag/prerelease `v0.3.20`; активи Windows/macOS/Linux, START/source, legal, `SHA256SUMS.txt` опубліковані.
+Release baseline (актуально 28.10.2026): tag/prerelease `v0.3.21`; активи Windows/macOS/Linux, START/source, legal, `SHA256SUMS.txt` опубліковані.
 
 ## Runtime / build evidence
 
@@ -234,3 +234,12 @@ Safety requirements для Git push мають зберігати існуючі
 - PR #148 merged → `1b33390b9bb70f18b60bea1c7c9492c5a89a5098`: save-all main tabs/external Markdown, safe main close, graceful app Quit через close detached editors.
 - PR #148 verification: CI #417 SUCCESS; Mobile smoke #185 SUCCESS.
 - **Не вважати M4/runtime виконаним.** Наступна дія — release-please/checkpoint, тестовий prerelease та Windows Portable для ручної перевірки: вкладки → detach → робота main паралельно → conflict guard → close/quit.
+
+
+## 28.10.2026 — v0.3.21 publication/finalization
+
+- v0.3.21 prerelease опублікований з Windows Portable/installer/MSI, macOS universal, Linux AppImage/deb/rpm та контрольними файлами.
+- M1–M3 multiwindow входять у release; ручне runtime-приймання власником ще не закрите.
+- Перевірено UI localization parity: UK/EN/FR/DE/ES/KO/JA, 98 основних ключів у кожній, розбіжностей немає.
+- README + user guides синхронізовано з фактом публікації v0.3.21.
+- Наступна дія після runtime acceptance: ADR-0009 backup/restore; не втратити решту backlog.

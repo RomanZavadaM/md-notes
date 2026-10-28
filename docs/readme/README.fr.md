@@ -90,6 +90,6 @@ Copyright © 2026 Roman Zavada (Роман Завада). Tous droits réservés
 
 ## Éditeur multi-fenêtres (`main` actuel)
 
-Après v0.3.20, les deux premières étapes d’ADR-0010 sont implémentées sur `main`. Plusieurs notes du coffre peuvent rester ouvertes dans des onglets, chacune avec son propre brouillon. Sur ordinateur, la note active peut être déplacée avec **Ouvrir dans une fenêtre séparée** vers une fenêtre d’édition indépendante. Les modifications sont enregistrées avant le déplacement, puis la fenêtre principale revient à l’onglet précédent ou à un espace vide.
+**v0.3.21** publie les étapes M1–M3 d’ADR-0010. Plusieurs notes du coffre peuvent rester ouvertes dans des onglets, chacune avec son propre brouillon. Sur ordinateur, la note active peut être déplacée avec **Ouvrir dans une fenêtre séparée** vers une fenêtre d’édition indépendante. Les modifications sont enregistrées avant le déplacement, puis la fenêtre principale revient à l’onglet précédent ou à un espace vide.
 
-M1–M3 sont maintenant intégrés dans `main` : protection contre les conflits, fermeture sûre des éditeurs détachés et sauvegarde globale/arrêt sûr. La CI Windows/macOS/Linux et les builds de contrôle Android/iOS passent, mais **la validation manuelle en exécution reste à faire**, et ces changements ne font pas partie de v0.3.20. L’étape suivante est M4 : prerelease de test et validation manuelle.
+M1–M3 font partie de la version publiée **v0.3.21** : protection contre les conflits, fermeture sûre des éditeurs détachés et sauvegarde globale/arrêt sûr. La CI Windows/macOS/Linux et les builds de contrôle Android/iOS passent. **M4 désigne désormais la validation manuelle en exécution** ; la prerelease de test est déjà publiée.

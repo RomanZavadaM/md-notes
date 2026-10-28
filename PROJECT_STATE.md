@@ -5,10 +5,10 @@
 ## Поточний стан
 
 - Статус розвитку: **ACTIVE**. Оновлено: **28.10.2026**.
-- Останній опублікований реліз: **v0.3.20 prerelease**, 27.10.2026 (версія — з GitHub Releases; машинні джерела: `Cargo.toml`, `app/package.json`, `app/src-tauri/tauri.conf.json`).
+- Останній опублікований реліз: **v0.3.21 prerelease**, 28.10.2026 (версія — з GitHub Releases; машинні джерела: `Cargo.toml`, `app/package.json`, `app/src-tauri/tauri.conf.json`).
 - PR #122 (кнопка «Назад» у вікні графа) інтегровано 27.10.2026. PR #128 зафіксував вимоги до групових операцій/вкладок. Вкладки вже реалізовано в ADR-0010 M1 через PR #142; групові операції ще не реалізовано. M2 незалежних editor-вікон інтегровано PR #144.
-- README: UK / EN / FR / DE / ES / KO / JA; керівництво користувача — ті самі 7 мов (останнє оновлення керівництва: v0.3.15).
-- UI: ті самі 7 мов; усі ключі присутні в усіх мовах (перевірено скриптом 27.10.2026: основний словник 97 ключів, допоміжні словники git/graph/encryption/importer/lookup/relationTree/relations/startup — без розбіжностей). FR/DE/ES/KO/JA — машинні переклади, не вичитані носіями.
+- README: UK / EN / FR / DE / ES / KO / JA; керівництво користувача — ті самі 7 мов, синхронізовано з v0.3.21.
+- UI: ті самі 7 мов; усі ключі присутні в усіх мовах (перевірено скриптом 27.10.2026: основний словник 98 ключів, допоміжні словники git/graph/encryption/importer/lookup/relationTree/relations/startup — без розбіжностей). FR/DE/ES/KO/JA — машинні переклади, не вичитані носіями.
 - Ліцензійна модель: proprietary / All Rights Reserved, Roman Zavada / Роман Завада.
 
 ## Релізи після v0.3.1
@@ -30,6 +30,7 @@
 | 0.3.18 | найнадійніший шлях, фільтр за оцінкою, факти «З-під Ляди» за кодом у пошуку |
 | 0.3.19 | кнопка «Назад» у вікні графа (PR #122); релізний checkpoint 27.10.2026 |
 | 0.3.20 | graph preview + зовнішній Markdown поруч із vault; prerelease 27.10.2026 |
+| 0.3.21 | ADR-0010 M1–M3: вкладки, незалежні editor-вікна, conflict guard, safe close/save-all; prerelease 28.10.2026 |
 
 Детально — `CHANGELOG.md` і GitHub Releases. Для v0.3.1 див. `docs/releases/RELEASE_NOTES_v0_3_1.md`.
 
@@ -127,3 +128,11 @@ Builds не вважаються підписаними/нотаризовани
 - Main перед switch vault / Quit зберігає всі відкриті документи; app Quit спочатку проходить safe-close усіх detached editor-вікон.
 - PR #146 → `9089fa146f6ab443d18b09a0eed662cd2336ab9b`; PR #147 → `c2cc7c955a80325306ae98b3a21cef34b2ebf72e`; PR #148 → `1b33390b9bb70f18b60bea1c7c9492c5a89a5098`.
 - Автоматичні перевірки зелені; ручна runtime-перевірка M4 ще попереду.
+
+
+## Checkpoint v0.3.21 — 28.10.2026
+
+- GitHub prerelease v0.3.21 опублікований і містить desktop-пакети Windows/macOS/Linux та контрольні файли релізу.
+- ADR-0010 M1–M3 є частиною опублікованого v0.3.21; M4 — ручне runtime-приймання, а не ще одна реалізаційна фаза.
+- UI localization parity: 7/7 мов, 98/98 основних ключів у кожній.
+- Відомі незавершені можливості не маскуються: backup/restore (ADR-0009), Git↔SyncManifest, WebDAV, physical Android/iOS runtime, encrypted-vault gaps, signing/notarization.

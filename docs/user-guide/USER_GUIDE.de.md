@@ -170,8 +170,8 @@ Copyright © 2026 Roman Zavada (Роман Завада). Alle Rechte vorbehalte
 
 ## Tabs und separate Editorfenster
 
-Im aktuellen `main` nach v0.3.20 können mehrere Vault-Notizen gleichzeitig in Tabs geöffnet bleiben. Jeder Tab behält seinen eigenen Entwurf, sodass beim Wechseln kein ungespeicherter Text verloren gehen soll.
+In **v0.3.21** können mehrere Vault-Notizen gleichzeitig in Tabs geöffnet bleiben. Jeder Tab behält seinen eigenen Entwurf, sodass beim Wechseln kein ungespeicherter Text verloren gehen soll.
 
 Auf dem Desktop bietet die aktive Vault-Notiz **In separatem Fenster öffnen**. MD Notes speichert den aktuellen Entwurf vor dem Abtrennen. Nach erfolgreichem Erstellen des unabhängigen Fensters wird die Notiz aus den Tabs des Haupteditors entfernt; das Hauptfenster kehrt zum vorherigen Tab zurück oder zeigt, wenn keiner vorhanden ist, einen leeren Editor bei weiterhin verfügbarem Vault-Baum. Im separaten Fenster funktionieren Editor / Nebeneinander / Vorschau sowie Autosave.
 
-Eine externe `.md/.markdown`-Datei bleibt ein separates Dokument und wird nicht automatisch in den Vault importiert. M3 ist jetzt integriert: Ändert ein anderes Fenster oder ein anderer Prozess die Datei nach dem Öffnen, blockiert MD Notes stilles Überschreiben; ein geändertes separates Fenster bleibt bis zu einem erfolgreichen geschützten Speichern geöffnet; vollständiges Beenden verarbeitet zuerst alle offenen Dokumente sicher. Der Mehrfensterbetrieb benötigt weiterhin den manuellen M4-Runtime-Test.
+Eine externe `.md/.markdown`-Datei bleibt ein separates Dokument und wird nicht automatisch in den Vault importiert. M3 ist jetzt integriert: Ändert ein anderes Fenster oder ein anderer Prozess die Datei nach dem Öffnen, blockiert MD Notes stilles Überschreiben; ein geändertes separates Fenster bleibt bis zu einem erfolgreichen geschützten Speichern geöffnet; vollständiges Beenden verarbeitet zuerst alle offenen Dokumente sicher. Die Funktion ist in der veröffentlichten **v0.3.21** enthalten; M4 ist die manuelle Runtime-Abnahme auf realen Desktop-Systemen.
