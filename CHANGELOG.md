@@ -34,6 +34,17 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.21](https://github.com/RomanZavadaM/md-notes/compare/v0.3.20...v0.3.21) (2026-10-28)
+
+
+### Нові можливості
+
+* **editor:** add independent vault note tabs ([#142](https://github.com/RomanZavadaM/md-notes/issues/142)) ([6861292](https://github.com/RomanZavadaM/md-notes/commit/686129279bd7cffca648d7f3b7fe3447f5b08a93))
+* **editor:** detach active note into editor window ([#144](https://github.com/RomanZavadaM/md-notes/issues/144)) ([34723be](https://github.com/RomanZavadaM/md-notes/commit/34723be6d85654f4b4561c7318abf79d93893cee))
+* **editor:** guard cross-window note conflicts ([#146](https://github.com/RomanZavadaM/md-notes/issues/146)) ([9089fa1](https://github.com/RomanZavadaM/md-notes/commit/9089fa146f6ab443d18b09a0eed662cd2336ab9b))
+* **editor:** save all documents before app quit ([#148](https://github.com/RomanZavadaM/md-notes/issues/148)) ([1b33390](https://github.com/RomanZavadaM/md-notes/commit/1b33390b9bb70f18b60bea1c7c9492c5a89a5098))
+* **editor:** save detached note before native close ([#147](https://github.com/RomanZavadaM/md-notes/issues/147)) ([c2cc7c9](https://github.com/RomanZavadaM/md-notes/commit/c2cc7c955a80325306ae98b3a21cef34b2ebf72e))
+
 ## [0.3.20](https://github.com/RomanZavadaM/md-notes/compare/v0.3.19...v0.3.20) (2026-10-27)
 
 
