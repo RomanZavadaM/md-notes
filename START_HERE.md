@@ -4,11 +4,11 @@
 
 ## Статус
 
-**ACTIVE — останній реліз v0.3.20 (prerelease, 27.10.2026); roadmap stage v0.3 продовжується.**
+**ACTIVE — останній реліз v0.3.21 (prerelease, 28.10.2026); ADR-0010 M1–M3 інтегровано, M4 runtime acceptance триває.**
 
 Оновлено: 28.10.2026. Версія береться з GitHub (`gh release list`), а не з цього файла.
 
-- останній реліз: [v0.3.20](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.20), prerelease; файл для Windows: `MD.Notes_0.3.20_x64-setup.exe`;
+- останній реліз: [v0.3.21](https://github.com/RomanZavadaM/md-notes/releases/tag/v0.3.21), prerelease; Windows Portable: `MD-Notes-0.3.21-Windows-x64-portable.zip`; installer: `MD.Notes_0.3.21_x64-setup.exe`;
 - у релізі: Windows installer/MSI + portable ZIP, macOS DMG/app archive, Linux AppImage/deb/rpm, START/source, legal notices, `SHA256SUMS.txt`;
 - збірки не підписані й не нотаризовані;
 - README синхронізовані мовами UK / EN / FR / DE / ES / KO / JA; переклади FR/DE/ES/KO/JA машинні, не вичитані носіями (еталон — українська);
@@ -37,7 +37,7 @@
 4. У зашифрованому сховищі: зображення й вкладення не показуються; немає інтерфейсу «додати ключ відновлення» до вже створеного сховища (є лише команда); кеш-індекс `.mdnotes/cache` не зашифрований; push не має власного інтерфейсу для ключів.
 5. Таблиці / мова запитів (продовження), мобільні картки замість таблиць.
 6. Підписування збірок.
-7. ADR-0010 M3: координація одночасного редагування/конфліктів між editor-вікнами та повний safe-close для незбережених змін.
+7. ADR-0010 M4: ручне runtime-приймання багатовіконного UX на Windows; потім spot-check macOS/Linux. M1–M3 вже інтегровані.
 
 Не заявляти, що пункти вище готові.
 
@@ -100,3 +100,12 @@
 - Фінальний `main`: `1b33390b9bb70f18b60bea1c7c9492c5a89a5098`.
 - CI #417 — SUCCESS; Mobile smoke #185 — SUCCESS.
 - **Runtime PASS ще не заявляти. Наступна дія: M4 — сформувати тестовий prerelease/Portable та провести ручне Windows-приймання багатовіконного UX.**
+
+
+## Фінальний checkpoint 28.10.2026 — v0.3.21
+
+- Опублікований prerelease **v0.3.21** з Windows Portable/EXE/MSI, macOS universal DMG/app archive, Linux AppImage/deb/rpm, START/source, legal files і `SHA256SUMS.txt`.
+- Release target commit: `297a6b356075afb4fb31ab9779c3c8a3e4fd548c`; `main` перед цим docs-checkpoint: `a420a9610ae4e726baefb5870e04692119fa316b`.
+- ADR-0010 M1–M3 входять до v0.3.21. Автоматичні перевірки зелені; **ручний runtime PASS власником ще не заявлений**.
+- UI i18n parity перевірено 28.10.2026: UK/EN/FR/DE/ES/KO/JA — по 98 основних ключів, missing/extra = 0.
+- Після runtime-приймання наступний функціональний блок: ADR-0009 backup/restore; далі Git state ↔ SyncManifest, WebDAV, physical mobile validation та інший backlog.
