@@ -30,7 +30,7 @@
 | 0.3.18 | найнадійніший шлях, фільтр за оцінкою, факти «З-під Ляди» за кодом у пошуку |
 | 0.3.19 | кнопка «Назад» у вікні графа (PR #122); релізний checkpoint 27.10.2026 |
 | 0.3.20 | graph preview + зовнішній Markdown поруч із vault; prerelease 27.10.2026 |
-| 0.3.21 | ADR-0010 M1–M3: вкладки, незалежні editor-вікна, conflict guard, safe close/save-all; prerelease 28.10.2026 |
+| 0.3.21 | вкладки + технічна основа detached editor/conflict guard; runtime-тест показав, що цільовий multiwindow UX не реалізований; prerelease 28.10.2026 |
 
 Детально — `CHANGELOG.md` і GitHub Releases. Для v0.3.1 див. `docs/releases/RELEASE_NOTES_v0_3_1.md`.
 
@@ -89,7 +89,7 @@ Builds не вважаються підписаними/нотаризовани
 
 ## Наступний напрям
 
-1. **ADR-0010 M4:** тестовий prerelease + ручна перевірка багатовіконного UX на Windows; далі підтвердження macOS/Linux.
+1. **ADR-0010 — виправлення multiwindow UX після runtime FAIL v0.3.21:** graph-node click не повинен накопичувати вкладки; потрібні справжні незалежні editor-вікна за явною командою.
 2. M3 уже інтегровано: conflict guard, detached safe close та app-wide save-all/safe Quit.
 3. Backup/restore за ADR-0009.
 4. Git state ↔ `SyncManifest` / ADR-0005.
@@ -133,6 +133,13 @@ Builds не вважаються підписаними/нотаризовани
 ## Checkpoint v0.3.21 — 28.10.2026
 
 - GitHub prerelease v0.3.21 опублікований і містить desktop-пакети Windows/macOS/Linux та контрольні файли релізу.
-- ADR-0010 M1–M3 є частиною опублікованого v0.3.21; M4 — ручне runtime-приймання, а не ще одна реалізаційна фаза.
+- Технічна основа ADR-0010 M1–M3 є у v0.3.21, але ручний Windows runtime 28.10.2026 показав **FAIL цільового UX**. Не вважати багатовіконний режим завершеним.
 - UI localization parity: 7/7 мов, 98/98 основних ключів у кожній.
 - Відомі незавершені можливості не маскуються: backup/restore (ADR-0009), Git↔SyncManifest, WebDAV, physical Android/iOS runtime, encrypted-vault gaps, signing/notarization.
+
+
+## Runtime correction — 28.10.2026
+
+Фактичний тест власника спростував попереднє оптимістичне формулювання документації. При роботі з окремим графом клік по вузлах лише відкриває/накопичує вкладки в головному вікні. Отже v0.3.21 не змінив базовий робочий сценарій настільки, як було погоджено.
+
+Статус ADR-0010: **частково реалізована інфраструктура, цільовий multiwindow UX — NOT DONE / runtime FAIL**.
