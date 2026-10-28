@@ -21,6 +21,7 @@ import { Editor } from "./components/Editor";
 import { ImportKeyDialog } from "./components/EncryptionDialogs";
 import { AppMenu } from "./components/AppMenu";
 import { GitPanel } from "./components/GitPanel";
+import { openEditorWindow } from "./editorWindowApi";
 import { GRAPH_ACTIVE_NOTE, GRAPH_OPEN_NOTE, openGraphWindow, type GraphActiveNote } from "./graphWindowApi";
 import { GRAPH_STRINGS } from "./i18n/graph";
 import { IMPORTER_STRINGS } from "./i18n/importer";
@@ -485,6 +486,25 @@ export default function App() {
     [activateDocument, saveVaultDocument, setDocuments],
   );
 
+  const detachActiveDocument = useCallback(async () => {
+    const current = noteRef.current;
+    if (!current || !vault || !isDesktop) return;
+    const documents = openDocumentsRef.current;
+    const index = documents.findIndex((document) => document.note.path === current.path);
+    if (index < 0) return;
+    if (!(await saveVaultDocument(current.path))) return;
+    try {
+      await openEditorWindow(current.path, vault.root, current.title);
+      const next = openDocumentsRef.current.filter((document) => document.note.path !== current.path);
+      setDocuments(next);
+      const fallback = next[Math.min(index - 1, next.length - 1)] ?? next[0] ?? null;
+      activateDocument(fallback);
+      setActiveDocument("vault");
+    } catch (e) {
+      report(e);
+    }
+  }, [activateDocument, isDesktop, report, saveVaultDocument, setDocuments, vault]);
+
   const createAndOpen = useCallback(
     async (dir: string, title: string, template?: string) => {
       try {
@@ -906,6 +926,11 @@ export default function App() {
             {dirty && <span className="dirty" title={t.unsavedChanges} />}
           </span>
         </button>
+        {isDesktop && note && activeDocument === "vault" && (
+          <button type="button" title={t.openSeparateWindow} onClick={() => void detachActiveDocument()}>
+            ↗ {t.openSeparateWindow}
+          </button>
+        )}
         <div className="segmented" role="group" aria-label={t.modeGroup}>
           {(
             [
