@@ -86,3 +86,10 @@ Rust stable, Node.js 20+, Tauri 시스템 요구 사항이 필요합니다. 통�
 MD Notes는 local-first입니다. 동기화 secret은 vault, Markdown 파일, remote URL, Git config, 로그, `localStorage`에 저장해서는 안 됩니다. 동기화 충돌은 조용히 덮어쓰면 안 되며 자동 Git apply는 clean fast-forward 상태에서만 허용됩니다.
 
 Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved. MD Notes는 독점 소프트웨어이며 공개 저장소는 오픈 소스 라이선스를 부여하지 않습니다. 노트는 사용자의 것입니다. [LICENSE.md](../../LICENSE.md)와 [법적 고지](../LEGAL_AND_COPYRIGHT.md)를 참고하세요.
+
+
+## 다중 창 편집기 (현재 `main`)
+
+v0.3.20 이후 `main`에는 ADR-0010의 첫 두 단계가 구현되어 있습니다. 여러 보관함 노트를 탭으로 동시에 열 수 있고 각 탭은 독립적인 초안을 유지합니다. 데스크톱에서는 활성 노트를 **별도 창에서 열기**로 독립 편집기 창으로 이동할 수 있습니다. 이동 전에 변경 사항을 저장하고, 기본 창은 이전 탭 또는 빈 작업 영역으로 돌아갑니다.
+
+이 코드는 Windows/macOS/Linux CI와 Android/iOS build smoke를 통과했지만 **아직 수동 런타임 검증을 받지 않았으며** 공개된 v0.3.20에는 포함되지 않습니다. 다음 단계는 M3: 창 간 충돌 처리와 안전한 닫기입니다.
