@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { emit, listen } from "@tauri-apps/api/event";
-import { getCurrentWindow } from "@tauri-apps/api/window";
+import { getAllWindows, getCurrentWindow } from "@tauri-apps/api/window";
 import { ask, message, open } from "@tauri-apps/plugin-dialog";
 import {
   api,
@@ -236,7 +236,14 @@ export default function App() {
           const discard = await ask(t.unsavedChanges, { kind: "warning" });
           if (!discard) return;
         }
-        if (!(await save())) return;
+        if (standalone) {
+          if (!(await save())) return;
+        } else {
+          const paths = openDocumentsRef.current.map((document) => document.note.path);
+          for (const openPath of paths) {
+            if (!(await saveVaultDocument(openPath))) return;
+          }
+        }
         const info = await api.openVault(path);
         setKeyPrompt(null);
         setEncrypted(await api.encryptionStatus(info.root).then((status) => status.encrypted, () => false));
@@ -258,7 +265,19 @@ export default function App() {
         else report(e);
       }
     },
-    [save, showNote, report, bump, external, externalDraft, externalSaved, t.unsavedChanges, setDocuments],
+    [
+      save,
+      saveVaultDocument,
+      showNote,
+      report,
+      bump,
+      external,
+      externalDraft,
+      externalSaved,
+      standalone,
+      t.unsavedChanges,
+      setDocuments,
+    ],
   );
 
   const pickVault = async () => {
@@ -334,10 +353,28 @@ export default function App() {
     return true;
   }, [save, saveExternal, saveVaultDocument, standalone]);
 
+  const closeDetachedEditors = useCallback(async (): Promise<boolean> => {
+    const detached = (await getAllWindows()).filter((window) => window.label.startsWith("editor-"));
+    for (const window of detached) {
+      await window.close();
+    }
+    if (detached.length === 0) return true;
+
+    for (let attempt = 0; attempt < 50; attempt += 1) {
+      await new Promise((resolve) => window.setTimeout(resolve, 100));
+      const remaining = (await getAllWindows()).some((window) => window.label.startsWith("editor-"));
+      if (!remaining) return true;
+    }
+
+    setError(t.unsavedChanges);
+    return false;
+  }, [t.unsavedChanges]);
+
   const quitApp = useCallback(async () => {
     if (!(await saveAllOpenDocuments())) return;
+    if (!(await closeDetachedEditors())) return;
     await api.quitApp();
-  }, [saveAllOpenDocuments]);
+  }, [closeDetachedEditors, saveAllOpenDocuments]);
 
   useEffect(() => {
     if (!isDesktop) return;
