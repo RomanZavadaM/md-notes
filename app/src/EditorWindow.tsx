@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, type Note, type TreeEntry } from "./api";
 import { Editor } from "./components/Editor";
 import { Preview } from "./components/Preview";
+import { openEditorWindow } from "./editorWindowApi";
 import { useI18n } from "./i18n";
 import { useStoredState } from "./storage";
 
@@ -57,6 +58,11 @@ export function EditorWindow() {
     const content = draftRef.current;
     if (!current || content === savedRef.current) return true;
     try {
+      const disk = await api.readNote(current.path);
+      if (disk.content !== savedRef.current) {
+        setError(t.externalChange);
+        return false;
+      }
       const saved = await api.saveNote(current.path, content);
       noteRef.current = saved;
       setNote(saved);
@@ -67,7 +73,7 @@ export function EditorWindow() {
       setError(String(err));
       return false;
     }
-  }, []);
+  }, [t.externalChange]);
 
   useEffect(() => {
     if (!initialPath) {
@@ -95,16 +101,26 @@ export function EditorWindow() {
     setDraft(value);
   }, []);
 
+  const openPathInWindow = useCallback(async (nextPath: string) => {
+    if (!(await save())) return;
+    try {
+      const target = await api.readNote(nextPath);
+      await openEditorWindow(nextPath, vaultRoot, target.title);
+    } catch (err) {
+      setError(String(err));
+    }
+  }, [save, vaultRoot]);
+
   const openLink = useCallback(async (target: string) => {
     const name = target.split("#")[0].trim();
     if (!name) return;
     try {
       const resolved = await api.resolveLink(name);
-      if (resolved && (await save())) await loadNote(resolved);
+      if (resolved) await openPathInWindow(resolved);
     } catch (err) {
       setError(String(err));
     }
-  }, [loadNote, save]);
+  }, [openPathInWindow]);
 
   if (!note) {
     return <div className="empty">{error ?? t.workspaceEmpty}</div>;
@@ -148,11 +164,7 @@ export function EditorWindow() {
               vaultRoot={vaultRoot}
               files={files}
               onOpenLink={(target) => void openLink(target)}
-              onOpenPath={(nextPath) => {
-                void (async () => {
-                  if (await save()) await loadNote(nextPath);
-                })();
-              }}
+              onOpenPath={(nextPath) => void openPathInWindow(nextPath)}
             />
           </section>
         )}
