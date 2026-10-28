@@ -46,6 +46,13 @@ type DialogState =
   | { kind: "folder"; dir: string }
   | { kind: "rename"; entry: TreeEntry };
 
+type OpenVaultDocument = {
+  note: Note;
+  draft: string;
+  savedContent: string;
+  editorVersion: number;
+};
+
 const AUTOSAVE_MS = 800;
 const LAST_VAULT_KEY = "mdnotes.lastVault";
 const IMAGE_ATTACHMENT = /\.(png|jpe?g|gif|webp|svg|bmp|avif)$/i;
@@ -68,6 +75,8 @@ export default function App() {
   const [externalSaved, setExternalSaved] = useState("");
   const [activeDocument, setActiveDocument] = useState<"vault" | "external">("vault");
   const [tree, setTree] = useState<TreeEntry[]>([]);
+  const [openDocuments, setOpenDocuments] = useState<OpenVaultDocument[]>([]);
+  const openDocumentsRef = useRef<OpenVaultDocument[]>([]);
   const [note, setNote] = useState<Note | null>(null);
   const [draft, setDraft] = useState("");
   const [selected, setSelected] = useState<TreeEntry | null>(null);
@@ -107,14 +116,51 @@ export default function App() {
     document.documentElement.dataset.theme = theme === "system" ? "" : theme;
   }, [theme]);
 
-  const showNote = useCallback((n: Note | null) => {
-    noteRef.current = n;
-    draftRef.current = n?.content ?? "";
-    savedRef.current = n?.content ?? "";
-    setNote(n);
-    setDraft(n?.content ?? "");
-    setSavedContent(n?.content ?? "");
+  const setDocuments = useCallback((documents: OpenVaultDocument[]) => {
+    openDocumentsRef.current = documents;
+    setOpenDocuments(documents);
   }, []);
+
+  const updateDocument = useCallback(
+    (path: string, updater: (document: OpenVaultDocument) => OpenVaultDocument) => {
+      setDocuments(openDocumentsRef.current.map((document) => (document.note.path === path ? updater(document) : document)));
+    },
+    [setDocuments],
+  );
+
+  const activateDocument = useCallback((document: OpenVaultDocument | null) => {
+    const n = document?.note ?? null;
+    noteRef.current = n;
+    draftRef.current = document?.draft ?? "";
+    savedRef.current = document?.savedContent ?? "";
+    setNote(n);
+    setDraft(document?.draft ?? "");
+    setSavedContent(document?.savedContent ?? "");
+    if (document) setEditorVersion(document.editorVersion);
+  }, []);
+
+  const showNote = useCallback(
+    (n: Note | null) => {
+      if (!n) {
+        activateDocument(null);
+        return;
+      }
+      const document: OpenVaultDocument = {
+        note: n,
+        draft: n.content,
+        savedContent: n.content,
+        editorVersion: 0,
+      };
+      const existing = openDocumentsRef.current.findIndex((item) => item.note.path === n.path);
+      const documents =
+        existing >= 0
+          ? openDocumentsRef.current.map((item, index) => (index === existing ? document : item))
+          : [...openDocumentsRef.current, document];
+      setDocuments(documents);
+      activateDocument(document);
+    },
+    [activateDocument, setDocuments],
+  );
 
   const refreshTree = useCallback(async () => {
     try {
@@ -124,14 +170,47 @@ export default function App() {
     }
   }, [report]);
 
+  const saveVaultDocument = useCallback(
+    async (path: string) => {
+      const document = openDocumentsRef.current.find((item) => item.note.path === path);
+      if (!document || document.draft === document.savedContent) return true;
+      const content = document.draft;
+      try {
+        const saved = await api.saveNote(path, content);
+        const current = openDocumentsRef.current.find((item) => item.note.path === path);
+        if (!current) return true;
+        const next: OpenVaultDocument = {
+          ...current,
+          note: saved,
+          savedContent: content,
+        };
+        updateDocument(path, () => next);
+        if (noteRef.current?.path === path) {
+          noteRef.current = saved;
+          savedRef.current = content;
+          setNote(saved);
+          setSavedContent(content);
+        }
+        bump();
+        return true;
+      } catch (e) {
+        report(e);
+        return false;
+      }
+    },
+    [bump, report, updateDocument],
+  );
+
   const save = useCallback(async () => {
     const current = noteRef.current;
     const content = draftRef.current;
     if (!current || content === savedRef.current) return;
+    if (!standalone) {
+      await saveVaultDocument(current.path);
+      return;
+    }
     try {
-      const saved = standalone
-        ? (await api.saveMarkdownFile(standalone.path, content)).note
-        : await api.saveNote(current.path, content);
+      const saved = (await api.saveMarkdownFile(standalone.path, content)).note;
       savedRef.current = content;
       setSavedContent(content);
       noteRef.current = saved;
@@ -140,7 +219,7 @@ export default function App() {
     } catch (e) {
       report(e);
     }
-  }, [standalone, report, bump]);
+  }, [standalone, saveVaultDocument, report, bump]);
 
   const openVaultAt = useCallback(
     async (path: string) => {
@@ -158,6 +237,7 @@ export default function App() {
         setActiveDocument("vault");
         setVault(info);
         setSelected(null);
+        setDocuments([]);
         showNote(null);
         storage.set(LAST_VAULT_KEY, path);
         lastVaultRef.current = path;
@@ -170,7 +250,7 @@ export default function App() {
         else report(e);
       }
     },
-    [save, showNote, report, bump, external, externalDraft, externalSaved, t.unsavedChanges],
+    [save, showNote, report, bump, external, externalDraft, externalSaved, t.unsavedChanges, setDocuments],
   );
 
   const pickVault = async () => {
@@ -366,17 +446,43 @@ export default function App() {
 
   const openNote = useCallback(
     async (path: string) => {
-      await save();
       try {
-        showNote(await api.readNote(path));
+        const existing = openDocumentsRef.current.find((document) => document.note.path === path);
+        if (existing) {
+          activateDocument(existing);
+        } else {
+          const opened = await api.readNote(path);
+          const document: OpenVaultDocument = {
+            note: opened,
+            draft: opened.content,
+            savedContent: opened.content,
+            editorVersion: 0,
+          };
+          setDocuments([...openDocumentsRef.current, document]);
+          activateDocument(document);
+        }
         setActiveDocument("vault");
-        setEditorVersion((v) => v + 1);
         if (isNarrow()) setSidebarOpen(false);
       } catch (e) {
         report(e);
       }
     },
-    [save, showNote, report],
+    [activateDocument, report, setDocuments],
+  );
+
+  const closeDocument = useCallback(
+    async (path: string) => {
+      const documents = openDocumentsRef.current;
+      const index = documents.findIndex((document) => document.note.path === path);
+      if (index < 0) return;
+      if (!(await saveVaultDocument(path))) return;
+      const next = openDocumentsRef.current.filter((document) => document.note.path !== path);
+      setDocuments(next);
+      if (noteRef.current?.path !== path) return;
+      const fallback = next[Math.min(index - 1, next.length - 1)] ?? next[0] ?? null;
+      activateDocument(fallback);
+    },
+    [activateDocument, saveVaultDocument, setDocuments],
   );
 
   const createAndOpen = useCallback(
@@ -524,10 +630,17 @@ export default function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, [vault]);
 
-  const onChange = useCallback((value: string) => {
-    draftRef.current = value;
-    setDraft(value);
-  }, []);
+  const onChange = useCallback(
+    (value: string) => {
+      draftRef.current = value;
+      setDraft(value);
+      const path = noteRef.current?.path;
+      if (path && !standalone) {
+        updateDocument(path, (document) => ({ ...document, draft: value }));
+      }
+    },
+    [standalone, updateDocument],
+  );
 
   const insertAttachment = useCallback(
     (attachment: AttachmentInfo) => {
@@ -731,7 +844,7 @@ export default function App() {
             <section className="pane pane-editor">
               <Editor
                 docKey={`${standalone.path}#${editorVersion}`}
-                value={note.content}
+                value={draft}
                 onChange={onChange}
                 onSave={() => void save()}
               />
@@ -937,17 +1050,44 @@ export default function App() {
         )}
 
         <div className="document-area">
-        {external && (
-          <nav className="external-tabs" aria-label={t.openMarkdownFile}>
-            <button type="button" className={activeDocument === "vault" ? "on" : ""} onClick={() => setActiveDocument("vault")}>{vault.name}</button>
-            <button type="button" className={activeDocument === "external" ? "on" : ""} onClick={() => setActiveDocument("external")} title={external.path}>{external.name}{externalDraft !== externalSaved ? " •" : ""}</button>
-            <button type="button" title={t.backToVault} onClick={() => setActiveDocument("vault")}>←</button>
+        {(openDocuments.length > 0 || external) && (
+          <nav className="external-tabs" aria-label={t.goToNote}>
+            {openDocuments.map((document) => (
+              <span className="document-tab" key={document.note.path}>
+                <button
+                  type="button"
+                  className={activeDocument === "vault" && note?.path === document.note.path ? "on" : ""}
+                  onClick={() => {
+                    activateDocument(document);
+                    setActiveDocument("vault");
+                  }}
+                  title={document.note.path}
+                >
+                  {document.note.title}
+                  {document.draft !== document.savedContent ? " •" : ""}
+                </button>
+                <button type="button" className="document-tab-close" onClick={() => void closeDocument(document.note.path)}>
+                  ×
+                </button>
+              </span>
+            ))}
+            {external && (
+              <button
+                type="button"
+                className={activeDocument === "external" ? "on" : ""}
+                onClick={() => setActiveDocument("external")}
+                title={external.path}
+              >
+                {external.name}
+                {externalDraft !== externalSaved ? " •" : ""}
+              </button>
+            )}
           </nav>
         )}
         <main className={`workspace mode-${mode}`}>
           {external && activeDocument === "external" ? (
             <>
-              {mode !== "preview" && <section className="pane pane-editor"><Editor docKey={`${external.path}#external`} value={external.note.content} onChange={setExternalDraft} onSave={() => void saveExternal()} /></section>}
+              {mode !== "preview" && <section className="pane pane-editor"><Editor docKey={`${external.path}#external`} value={externalDraft} onChange={setExternalDraft} onSave={() => void saveExternal()} /></section>}
               {mode !== "edit" && <section className="pane pane-preview"><Preview content={externalDraft} notePath={external.name} vaultRoot={external.directory} files={[]} onOpenLink={() => {}} onOpenPath={() => {}} /></section>}
             </>
           ) : note ? (
@@ -956,7 +1096,7 @@ export default function App() {
                 <section className="pane pane-editor">
                   <Editor
                     docKey={`${note.path}#${editorVersion}`}
-                    value={note.content}
+                    value={draft}
                     onChange={onChange}
                     onSave={() => void save()}
                   />
