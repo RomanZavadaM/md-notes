@@ -86,3 +86,10 @@ Requires Rust stable, Node.js 20+ and Tauri system prerequisites. Integration ga
 MD Notes is local-first. Sync secrets must never be stored in the vault, Markdown files, remote URLs, Git config, logs or `localStorage`; they belong in the operating-system credential store. Sync conflicts must never be overwritten silently, and automatic Git apply is allowed only for a clean fast-forward state.
 
 Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved. MD Notes is proprietary software; the public repository grants no open-source license. Your notes belong to you. See [LICENSE.md](../../LICENSE.md) and [legal notices](../LEGAL_AND_COPYRIGHT.md).
+
+
+## Multi-window editor (current `main`)
+
+After v0.3.20, the first two ADR-0010 stages are implemented on `main`. Multiple vault notes can stay open in tabs, each with its own draft. On desktop, the active note can be moved with **Open in separate window** into an independent editor window. Changes are saved before the move, and the main window returns to the previous tab or an empty workspace.
+
+This code passes Windows/macOS/Linux CI and Android/iOS build smoke, but it has **not received manual runtime acceptance yet** and is not part of the published v0.3.20 release. The next stage is M3: cross-window conflicts and safe closing.
