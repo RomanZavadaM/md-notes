@@ -223,5 +223,14 @@ Safety requirements для Git push мають зберігати існуючі
 - Локалізація нового action: UK/EN/FR/DE/ES/KO/JA.
 - Перевірки фінального M2 head `e5a3bd6801e504148f51b1a5e8eba35ead3d7290`: CI #411 SUCCESS; Mobile smoke #180 SUCCESS (Android debug + iOS simulator).
 - **Runtime acceptance ще немає.** Не позначати Windows/macOS/Linux UX як PASS лише на підставі CI.
-- **Наступна точна дія:** M3 — зробити єдину політику ownership/conflict для документа між main та detached windows, заборонити тихий overwrite, відпрацювати close/window navigation із незбереженими змінами; після цього M4 і тестовий prerelease.
+- **M3 завершено:** conflict guard + detached safe close + main save-all/safe Quit інтегровані через PR #146/#147/#148. **Наступна точна дія:** M4 — release checkpoint і ручне Windows-приймання багатовіконності.
 - Не загубити ADR-0009 backup/restore, групові операції, Git ↔ SyncManifest, WebDAV, physical Android/iOS, encrypted-vault gaps, signing.
+
+
+## Активний зріз 28.10.2026 — ADR-0010 M3 завершено
+
+- PR #146 merged → `9089fa146f6ab443d18b09a0eed662cd2336ab9b`: optimistic conflict guard main/detached.
+- PR #147 merged → `c2cc7c955a80325306ae98b3a21cef34b2ebf72e`: guarded native close detached editor.
+- PR #148 merged → `1b33390b9bb70f18b60bea1c7c9492c5a89a5098`: save-all main tabs/external Markdown, safe main close, graceful app Quit через close detached editors.
+- PR #148 verification: CI #417 SUCCESS; Mobile smoke #185 SUCCESS.
+- **Не вважати M4/runtime виконаним.** Наступна дія — release-please/checkpoint, тестовий prerelease та Windows Portable для ручної перевірки: вкладки → detach → робота main паралельно → conflict guard → close/quit.

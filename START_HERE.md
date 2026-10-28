@@ -88,5 +88,15 @@
 - Фінальний M2 CI #411 — SUCCESS; Mobile smoke #180 — SUCCESS (Android + iOS simulator).
 - Логіку графа не змінено: клік вершини й надалі змінює активну нотатку в головному редакторі без примусового focus/minimize.
 - **Не заявляти runtime PASS:** багатовіконний UX ще треба перевірити вручну на Windows.
-- Наступний кодовий етап: **M3 — конфлікти між вікнами, захист від подвійного редагування та безпечне закриття**. Після цього M4 — platform/runtime acceptance, документація/README і тестовий prerelease.
+- **M3 завершено в коді:** PR #146/#147/#148; фінальний `main` `1b33390b9bb70f18b60bea1c7c9492c5a89a5098`. Наступний етап — **M4: platform/runtime acceptance та тестовий prerelease**.
 - ADR-0009 backup/restore лишається незавершеним і не повинен загубитися.
+
+
+## Checkpoint 28.10.2026 — ADR-0010 M3
+
+- PR #146: conflict guard — save відхиляється, якщо файл на диску вже змінився відносно завантаженої версії.
+- PR #147: detached editor не закривається з dirty draft, доки guarded save не завершився успішно.
+- PR #148: main зберігає всі відкриті вкладки перед switch/quit; Quit спочатку безпечно закриває всі `editor-*` і не викликає примусовий exit, якщо editor лишився через conflict/error.
+- Фінальний `main`: `1b33390b9bb70f18b60bea1c7c9492c5a89a5098`.
+- CI #417 — SUCCESS; Mobile smoke #185 — SUCCESS.
+- **Runtime PASS ще не заявляти. Наступна дія: M4 — сформувати тестовий prerelease/Portable та провести ручне Windows-приймання багатовіконного UX.**

@@ -92,4 +92,4 @@ Copyright © 2026 Roman Zavada (Роман Завада). Todos los derechos res
 
 Después de v0.3.20, las dos primeras etapas de ADR-0010 están implementadas en `main`. Se pueden mantener varias notas del almacén abiertas en pestañas, cada una con su propio borrador. En escritorio, la nota activa se puede mover con **Abrir en una ventana separada** a una ventana de editor independiente. Los cambios se guardan antes de moverla y la ventana principal vuelve a la pestaña anterior o a un área vacía.
 
-El código supera CI en Windows/macOS/Linux y las compilaciones smoke de Android/iOS, pero **todavía no tiene aceptación manual en tiempo de ejecución** y no forma parte de la versión publicada v0.3.20. La siguiente etapa es M3: conflictos entre ventanas y cierre seguro.
+M1–M3 ya están integrados en `main`: protección de conflictos, cierre seguro de editores separados y guardado global/salida segura. CI de Windows/macOS/Linux y los build smoke de Android/iOS pasan, pero **la aceptación manual en tiempo de ejecución sigue pendiente**; estos cambios no forman parte de v0.3.20. La siguiente etapa es M4: prerelease de prueba y aceptación manual.

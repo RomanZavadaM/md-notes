@@ -88,8 +88,8 @@ Builds не вважаються підписаними/нотаризовани
 
 ## Наступний напрям
 
-1. **ADR-0010 M3:** конфлікти/координація editor-вікон, захист від одночасного редагування одного документа, safe close.
-2. **ADR-0010 M4:** ручна перевірка Windows/macOS/Linux, 7 мов, документація та тестовий prerelease.
+1. **ADR-0010 M4:** тестовий prerelease + ручна перевірка багатовіконного UX на Windows; далі підтвердження macOS/Linux.
+2. M3 уже інтегровано: conflict guard, detached safe close та app-wide save-all/safe Quit.
 3. Backup/restore за ADR-0009.
 4. Git state ↔ `SyncManifest` / ADR-0005.
 5. WebDAV.
@@ -117,4 +117,13 @@ Builds не вважаються підписаними/нотаризовани
 - **M2 / PR #144:** явне перенесення активної нотатки у власне Tauri editor-вікно; перед перенесенням збереження; після успішного відкриття — попередня вкладка або порожній main; edit/split/preview + autosave у відокремленому вікні.
 - M2 має CI #411 SUCCESS та Mobile smoke #180 SUCCESS. Це **build/CI proof, не runtime acceptance**.
 - Кнопка M2 локалізована всіма 7 мовами. Поведінка відокремленого графа не змінювалась.
-- Наступне: M3, потім M4. ADR-0009 backup/restore не реалізований.
+- M3 інтегровано PR #146/#147/#148; фінальний `main` `1b33390b9bb70f18b60bea1c7c9492c5a89a5098`, CI #417 і Mobile smoke #185 SUCCESS. Наступне: M4. ADR-0009 backup/restore не реалізований.
+
+
+## Checkpoint 28.10.2026 — M3 завершено
+
+- Conflict guard не дозволяє main-tab або detached editor мовчки перезаписати новішу дискову версію.
+- Detached editor перехоплює native close для dirty draft і закривається лише після успішного guarded save.
+- Main перед switch vault / Quit зберігає всі відкриті документи; app Quit спочатку проходить safe-close усіх detached editor-вікон.
+- PR #146 → `9089fa146f6ab443d18b09a0eed662cd2336ab9b`; PR #147 → `c2cc7c955a80325306ae98b3a21cef34b2ebf72e`; PR #148 → `1b33390b9bb70f18b60bea1c7c9492c5a89a5098`.
+- Автоматичні перевірки зелені; ручна runtime-перевірка M4 ще попереду.

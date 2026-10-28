@@ -174,4 +174,4 @@ On the current `main` after v0.3.20, several vault notes can remain open in tabs
 
 On desktop, the active vault note has an **Open in separate window** action. MD Notes saves the current draft before detaching it. After the independent window is created successfully, the note is removed from the main editor tabs and the main window returns to the previous tab; if none remains, it shows an empty editor while the vault tree stays available. The detached window supports Editor / Side by side / Preview modes and autosave.
 
-An external `.md/.markdown` remains a separate document and is not imported into the vault automatically. Multi-window behavior still needs manual runtime testing; cross-window simultaneous-edit conflict protection is the M3 follow-up.
+An external `.md/.markdown` remains a separate document and is not imported into the vault automatically. M3 is now integrated: if another window or process changes the file after it was opened, MD Notes blocks a silent overwrite; a dirty detached window stays open until a guarded save succeeds; full Quit safely processes all open documents first. Multi-window behavior still requires M4 manual runtime testing.
