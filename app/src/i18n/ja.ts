@@ -16,6 +16,7 @@ export const ja: Strings = {
   goToNote: "ノートへ移動 (Ctrl+O)",
   goToNotePlaceholder: "ノートへ移動…",
   unsavedChanges: "未保存の変更があります",
+  openSeparateWindow: "別ウィンドウで開く",
   modeGroup: "モード",
   modeEdit: "エディター",
   modeSplit: "並列",
