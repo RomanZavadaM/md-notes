@@ -86,3 +86,10 @@ Se necesita Rust stable, Node.js 20+ y los requisitos de Tauri. Los gates incluy
 MD Notes es local-first. Los secretos de sincronización nunca deben guardarse en la bóveda, archivos Markdown, URL remotas, Git config, logs o `localStorage`. Los conflictos nunca deben sobrescribirse en silencio; el apply Git automático solo se permite para un fast-forward limpio.
 
 Copyright © 2026 Roman Zavada (Роман Завада). Todos los derechos reservados. MD Notes es software propietario; el repositorio público no concede una licencia de código abierto. Tus notas te pertenecen. Consulta [LICENSE.md](../../LICENSE.md) y los [avisos legales](../LEGAL_AND_COPYRIGHT.md).
+
+
+## Editor multiventana (`main` actual)
+
+Después de v0.3.20, las dos primeras etapas de ADR-0010 están implementadas en `main`. Se pueden mantener varias notas del almacén abiertas en pestañas, cada una con su propio borrador. En escritorio, la nota activa se puede mover con **Abrir en una ventana separada** a una ventana de editor independiente. Los cambios se guardan antes de moverla y la ventana principal vuelve a la pestaña anterior o a un área vacía.
+
+El código supera CI en Windows/macOS/Linux y las compilaciones smoke de Android/iOS, pero **todavía no tiene aceptación manual en tiempo de ejecución** y no forma parte de la versión publicada v0.3.20. La siguiente etapa es M3: conflictos entre ventanas y cierre seguro.
