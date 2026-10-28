@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import { api, type Note, type TreeEntry } from "./api";
 import { Editor } from "./components/Editor";
 import { Preview } from "./components/Preview";
@@ -36,6 +37,7 @@ export function EditorWindow() {
   const draftRef = useRef("");
   const savedRef = useRef("");
   const noteRef = useRef<Note | null>(null);
+  const closingRef = useRef(false);
 
   const loadNote = useCallback(async (nextPath: string) => {
     try {
@@ -94,6 +96,26 @@ export function EditorWindow() {
     const flush = () => void save();
     window.addEventListener("beforeunload", flush);
     return () => window.removeEventListener("beforeunload", flush);
+  }, [save]);
+
+  useEffect(() => {
+    const appWindow = getCurrentWindow();
+    let disposed = false;
+    let unlisten: (() => void) | undefined;
+    void appWindow.onCloseRequested(async (event) => {
+      if (closingRef.current || draftRef.current === savedRef.current) return;
+      event.preventDefault();
+      if (!(await save())) return;
+      closingRef.current = true;
+      await appWindow.destroy();
+    }).then((fn) => {
+      if (disposed) fn();
+      else unlisten = fn;
+    });
+    return () => {
+      disposed = true;
+      unlisten?.();
+    };
   }, [save]);
 
   const onChange = useCallback((value: string) => {
