@@ -16,6 +16,7 @@ export const uk = {
   goToNote: "Перейти до нотатки (Ctrl+O)",
   goToNotePlaceholder: "Перейти до нотатки…",
   unsavedChanges: "Є незбережені зміни",
+  openSeparateWindow: "Відкрити в окремому вікні",
   modeGroup: "Режим",
   modeEdit: "Редактор",
   modeSplit: "Поруч",
