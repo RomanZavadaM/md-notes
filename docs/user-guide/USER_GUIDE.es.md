@@ -170,8 +170,8 @@ Copyright © 2026 Roman Zavada (Роман Завада). Todos los derechos res
 
 ## Pestañas y ventanas de editor separadas
 
-En el `main` actual después de v0.3.20 se pueden mantener varias notas del almacén abiertas en pestañas. Cada pestaña conserva su propio borrador, por lo que cambiar de nota no debe descartar texto sin guardar.
+En **v0.3.21** se pueden mantener varias notas del almacén abiertas en pestañas. Cada pestaña conserva su propio borrador, por lo que cambiar de nota no debe descartar texto sin guardar.
 
 En escritorio, la nota activa del almacén ofrece **Abrir en una ventana separada**. MD Notes guarda el borrador actual antes de separarlo. Tras crear correctamente la ventana independiente, la nota se elimina de las pestañas del editor principal y la ventana principal vuelve a la pestaña anterior; si no queda ninguna, muestra un editor vacío manteniendo disponible el árbol del almacén. La ventana separada admite Editor / lado a lado / vista previa y guardado automático.
 
-Un archivo externo `.md/.markdown` sigue siendo un documento independiente y no se importa automáticamente al almacén. M3 ya está integrado: si otra ventana o proceso cambia el archivo después de abrirlo, MD Notes bloquea la sobrescritura silenciosa; una ventana separada con cambios permanece abierta hasta que el guardado protegido termine correctamente; Salir procesa primero todos los documentos abiertos de forma segura. El modo multiventana todavía necesita la prueba manual M4.
+Un archivo externo `.md/.markdown` sigue siendo un documento independiente y no se importa automáticamente al almacén. M3 ya está integrado: si otra ventana o proceso cambia el archivo después de abrirlo, MD Notes bloquea la sobrescritura silenciosa; una ventana separada con cambios permanece abierta hasta que el guardado protegido termine correctamente; Salir procesa primero todos los documentos abiertos de forma segura. La función está incluida en **v0.3.21** publicada; M4 es la aceptación manual en tiempo de ejecución en sistemas de escritorio reales.
