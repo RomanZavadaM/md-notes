@@ -16,6 +16,7 @@ export const fr: Strings = {
   goToNote: "Aller à une note (Ctrl+O)",
   goToNotePlaceholder: "Aller à une note…",
   unsavedChanges: "Modifications non enregistrées",
+  openSeparateWindow: "Ouvrir dans une fenêtre séparée",
   modeGroup: "Mode",
   modeEdit: "Éditeur",
   modeSplit: "Côte à côte",
