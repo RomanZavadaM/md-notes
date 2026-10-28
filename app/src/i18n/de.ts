@@ -16,6 +16,7 @@ export const de: Strings = {
   goToNote: "Zur Notiz springen (Ctrl+O)",
   goToNotePlaceholder: "Zur Notiz springen…",
   unsavedChanges: "Ungespeicherte Änderungen",
+  openSeparateWindow: "In separatem Fenster öffnen",
   modeGroup: "Modus",
   modeEdit: "Editor",
   modeSplit: "Nebeneinander",
