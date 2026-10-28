@@ -16,6 +16,7 @@ export const ko: Strings = {
   goToNote: "노트로 이동 (Ctrl+O)",
   goToNotePlaceholder: "노트로 이동…",
   unsavedChanges: "저장되지 않은 변경 사항",
+  openSeparateWindow: "별도 창에서 열기",
   modeGroup: "모드",
   modeEdit: "편집기",
   modeSplit: "나란히",
