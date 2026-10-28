@@ -166,3 +166,12 @@ Namen werden ohne Rücksicht auf Groß-/Kleinschreibung, Anführungszeichen, Bin
 ## 15. Urheberrecht
 
 Copyright © 2026 Roman Zavada (Роман Завада). Alle Rechte vorbehalten. MD Notes ist proprietäre Software. Ihre Notizen gehören Ihnen. Siehe [LICENSE.md](../../LICENSE.md) und [LEGAL_AND_COPYRIGHT.md](../LEGAL_AND_COPYRIGHT.md).
+
+
+## Tabs und separate Editorfenster
+
+Im aktuellen `main` nach v0.3.20 können mehrere Vault-Notizen gleichzeitig in Tabs geöffnet bleiben. Jeder Tab behält seinen eigenen Entwurf, sodass beim Wechseln kein ungespeicherter Text verloren gehen soll.
+
+Auf dem Desktop bietet die aktive Vault-Notiz **In separatem Fenster öffnen**. MD Notes speichert den aktuellen Entwurf vor dem Abtrennen. Nach erfolgreichem Erstellen des unabhängigen Fensters wird die Notiz aus den Tabs des Haupteditors entfernt; das Hauptfenster kehrt zum vorherigen Tab zurück oder zeigt, wenn keiner vorhanden ist, einen leeren Editor bei weiterhin verfügbarem Vault-Baum. Im separaten Fenster funktionieren Editor / Nebeneinander / Vorschau sowie Autosave.
+
+Eine externe `.md/.markdown`-Datei bleibt ein separates Dokument und wird nicht automatisch in den Vault importiert. Der Mehrfensterbetrieb benötigt noch einen manuellen Runtime-Test; Schutz vor Konflikten bei gleichzeitiger Bearbeitung zwischen Fenstern folgt in M3.
