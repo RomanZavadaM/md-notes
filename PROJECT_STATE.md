@@ -153,3 +153,12 @@ Builds не вважаються підписаними/нотаризовани
 - `GraphWindow` зберігає follow/preview/history та надсилає `GRAPH_OPEN_NOTE` зі звичайного node click. Explicit detached editor залишається лише явною дією користувача.
 - Автоматична перевірка PR #153: CI `40841554655` — SUCCESS. **Ручний Windows runtime acceptance ще не виконаний; статус повного ADR-0010 multiwindow = NOT DONE до тесту власником.**
 - Останній опублікований prerelease лишається `v0.3.21`; новий реліз цим checkpoint не публікувався.
+
+
+## Runtime-test checkpoint 29.10.2026 — ADR-0010 r1
+
+- Для інтегрованого graph-routing r1 зібрано окремий Windows Portable TEST artifact без публікації нового релізу.
+- Source/main checkpoint: `c6d5d398ab0db0b3272dc966c7e45bd2016d3887`; Actions run `40843601078` = SUCCESS; artifact `12884352283`.
+- Portable SHA256: `3d261922637fb29db3eb5a57ed42637095966a265f3e6f8c13a6d4fb4e69de1f`.
+- PR #156 був лише тимчасовою build-гілкою і закритий без merge. Останній published prerelease лишається `v0.3.21`; PR #154 для `0.3.22` лишається відкритим і незлитим.
+- ADR-0010 все ще **NOT DONE** до ручного Windows acceptance власником.
