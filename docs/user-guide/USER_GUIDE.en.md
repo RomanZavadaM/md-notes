@@ -175,3 +175,12 @@ In **v0.3.21**, several vault notes can remain open in tabs. Each tab keeps its 
 On desktop, the active vault note has an **Open in separate window** action. MD Notes saves the current draft before detaching it. After the independent window is created successfully, the note is removed from the main editor tabs and the main window returns to the previous tab; if none remains, it shows an empty editor while the vault tree stays available. The detached window supports Editor / Side by side / Preview modes and autosave.
 
 An external `.md/.markdown` remains a separate document and is not imported into the vault automatically. M3 is now integrated: if another window or process changes the file after it was opened, MD Notes blocks a silent overwrite; a dirty detached window stays open until a guarded save succeeds; full Quit safely processes all open documents first. The feature is included in published **v0.3.21**; M4 is the manual runtime acceptance step on real desktop systems.
+
+
+## Vault backup
+
+The **File** menu includes **Create backup…**. Before creating the backup, MD Notes tries to save every open tab. The result is a portable ZIP with `manifest.json`; each file is recorded with its path, size and SHA-256.
+
+The archive contains notes, attachments, service configuration, templates and `.mdnotes/trash`. It excludes `.git`, `.mdnotes/cache` and temporary OS files. For an encrypted vault, the on-disk encrypted files are copied directly; private/recovery keys are never added to the ZIP.
+
+**Restore backup…** validates the manifest, paths, sizes and SHA-256 values for all files before writing anything. Only after complete validation are files extracted to a temporary directory and atomically renamed into a new vault. Existing folders are never overwritten; names such as `Vault-restored`, `Vault-restored-2` are chosen automatically.
