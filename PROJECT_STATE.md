@@ -173,3 +173,15 @@ Builds не вважаються підписаними/нотаризовани
 - Windows test artifact r2 зібраний run `40854135789` = SUCCESS; SHA256 Portable ZIP `3d8cf4ad903e99c25cf9002ba7d4accd45645917a0a1b9e4536eb7ba1fd6280a`.
 - **Runtime acceptance власником ще не виконано; ADR-0010 не закрито.** Останній опублікований prerelease залишається v0.3.21.
 - Наступний підтверджений функціональний блок після owner PASS: ADR-0009 — ручне резервне копіювання/відновлення поточного робочого vault. Воно спроєктоване, але коду функції ще немає.
+
+
+## Інтегрований checkpoint 29.10.2026 — ADR-0010 r3
+
+- Product code integrated in `main`: `b0f7813c6820cfd5eefb92f0c414d723aab93147` (PR #162).
+- Detached graph initial layout is side-by-side with main when monitor work area allows; small screens retain safe centered fallback.
+- Graph node navigation targets main; no normal focus/Z-order ping-pong.
+- Every vault tab has explicit `↗` detach into an independent editor window; background-tab detach preserves the currently visible surface.
+- CI `40859261723` = SUCCESS; Mobile smoke `40859261721` = SUCCESS.
+- Windows TEST r3 workflow `40860534312` = SUCCESS; SHA256 Portable ZIP `26fa666bc316d360b9bb2f8de5f950c2eeb548b4b523bb9b4511e67543766fe4`.
+- **Owner runtime acceptance is still pending; ADR-0010 is NOT DONE yet.**
+- Next after PASS: ADR-0009 backup/restore current working vault.
