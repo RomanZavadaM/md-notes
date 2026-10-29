@@ -331,3 +331,13 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - Позначення `ADR0010-r1/r2-<SHA>` у Windows Portable — це **runtime-test revision**, а не нова продуктова версія.
 - Щоб надалі це не виглядало як альтернативна схема SemVer, у PROJECT_RULES зафіксовано: офіційні release assets = `MD-Notes-X.Y.Z-...`; одноразові тести = `MD-Notes-TEST-<scope>-rN-<shortSHA>-...`.
 - Вже видані r1/r2 не перейменовувати заднім числом: їхні байти/SHA та записи Issue #8 незмінні. Наступний тестовий кандидат має отримати наступну унікальну ревізію.
+
+
+## Активний зріз 29.10.2026 — ADR-0010 r3 side-by-side graph/main
+
+- Owner runtime/UX correction: r2 лікує Z-order, але базова проблема інша — detached graph за замовчуванням відкривається великим центральним вікном поверх main, тому graph-node navigation змінює main, який фізично не видно.
+- Нова ціль r3: дія «відкрити/розгорнути граф окремо» має не накривати main, а автоматично розкладати `main + graph` поруч на робочій області поточного монітора. Main лишається видимим редактором; graph — видимою навігацією.
+- Звичайний graph click продовжує replace-active routing у main без створення нового detached editor. Detached `editor-*` не змінюються.
+- Не боротися з ручним maximize користувача: side-by-side є стартовим layout при detach/open graph; далі нативні вікна лишаються вільно переміщуваними/масштабованими.
+- При r3 прибрати focus/Z-order ping-pong r2 як нормальний navigation mechanism; він більше не потрібен, коли main видимий поруч.
+- Runtime PASS тільки після нового Windows TEST r3; r1/r2 не перевикористовувати.
