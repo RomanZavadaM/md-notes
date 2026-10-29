@@ -412,3 +412,21 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
   - graph window shows native layout diagnostics (`main + graph / monitor`) or an explicit error string;
   - all 7 graph locales include the re-tile action label.
 - Next: PR + full CI/mobile smoke; only after green checks issue unique Windows TEST r5.
+
+
+## 29.10.2026 — ADR-0010 r5 integrated + Windows TEST ready
+
+- Owner clarification after r4: graph→main routing works; graph-node click changes the active note in main. The defect is that detached graph covers main, hiding the changed note.
+- r5 PR #169 merged → product-code main `fd1db060f853965f5830d6ec4d2bc4fbea668653`.
+- CI `40871542186` = SUCCESS; Mobile smoke `40871542173` = SUCCESS.
+- r5 does **not** redesign tabs/navigation. It moves graph workspace layout to native Rust/Tauri.
+- Native `tile_graph_workspace` uses physical monitor work-area pixels, places main left and compact graph right, and is independent of Windows logical DPI scaling.
+- Layout runs after graph native creation and again after GraphWindow mount; visible `⇆ Розмістити поруч` action can reapply it manually.
+- Graph window shows native layout diagnostics (`main + graph / monitor`) or an explicit error string.
+- Temporary TEST PR #171 closed WITHOUT MERGE; Windows runtime workflow `40878443536` = SUCCESS.
+- Artifact ID `12898759586`: `MD-Notes-TEST-ADR0010-r5-fd1db060-Windows-x64-portable`.
+- Inner ZIP SHA256 `c83cd9fef593dcca61e82c9e442b731138349dfe86949bf1d62645410e637e88`.
+- `MD Notes.exe` SHA256 `83b1aad02e82329efd8cbfde2c73e74118f7b5d3faf7812fe5f5a105cb7f5954`; size `29545984`; build timestamp `2026-10-29 13:14:40 UTC`.
+- ZIP downloaded and verified: checksum matches; archive integrity test passed.
+- **ADR-0010 remains NOT DONE until owner runtime verdict for r5.** Primary acceptance: detach graph → main visible left + graph compact right; `⇆` re-tile works; status reports dimensions/error; graph clicks update visible main.
+- Release Please PR #154 remains separate; do not merge/release 0.3.22 before runtime verdict.
