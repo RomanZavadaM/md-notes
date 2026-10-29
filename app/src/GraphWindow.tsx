@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { emit, listen } from "@tauri-apps/api/event";
+import { listen } from "@tauri-apps/api/event";
 import { api, VAULT_CHANGED, type Note } from "./api";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -8,7 +8,7 @@ import { RelationTreePanel } from "./components/RelationTreePanel";
 import { useI18n } from "./i18n";
 import { GRAPH_STRINGS } from "./i18n/graph";
 import { RELATION_TREE_STRINGS } from "./i18n/relationTree";
-import { GRAPH_ACTIVE_NOTE, GRAPH_OPEN_NOTE, type GraphActiveNote, type GraphWindowMode } from "./graphWindowApi";
+import { GRAPH_ACTIVE_NOTE, openGraphNoteInMain, type GraphActiveNote, type GraphWindowMode } from "./graphWindowApi";
 import "./GraphWindow.css";
 
 function initialMode(value: string | null, hasNote: boolean): GraphWindowMode {
@@ -84,7 +84,7 @@ export function GraphWindow() {
   const onOpen = useCallback((path: string) => {
     followNote(path);
     setPreviewPath(path);
-    void emit(GRAPH_OPEN_NOTE, path);
+    void openGraphNoteInMain(path);
   }, [followNote]);
 
   useEffect(() => {
@@ -144,7 +144,7 @@ export function GraphWindow() {
         <aside className="graph-window-preview" aria-label={graphStrings.previewTitle}>
           <div className="graph-window-preview-header">
             <strong>{previewNote?.title ?? previewPath}</strong>
-            <button type="button" onClick={() => void emit(GRAPH_OPEN_NOTE, previewPath)}>{graphStrings.previewEdit}</button>
+            <button type="button" onClick={() => void openGraphNoteInMain(previewPath)}>{graphStrings.previewEdit}</button>
             <button type="button" onClick={() => setPreviewPath(null)} aria-label={graphStrings.previewClose}>×</button>
           </div>
           {previewError ? <p role="alert">{previewError}</p> :
