@@ -1,0 +1,99 @@
+name: Windows runtime test
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/windows-runtime-test.yml"
+      - "app/**"
+      - "crates/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-runtime-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  portable:
+    name: Windows x64 portable test
+    runs-on: windows-latest
+    env:
+      PRODUCT_CANDIDATE_SHA: 572f4b01d9710b7527c09024fa4f27ffb6a8dfa7
+      ARTIFACT_BASENAME: MD-Notes-TEST-ADR0010-r4-572f4b01-Windows-x64-portable
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install npm packages
+        working-directory: app
+        run: npm ci
+
+      - name: Build Windows executable
+        working-directory: app
+        run: npm run tauri -- build --no-bundle
+
+      - name: Assemble portable test package
+        shell: pwsh
+        run: |
+          $dir = Join-Path $PWD "dist/$env:ARTIFACT_BASENAME"
+          New-Item -ItemType Directory -Force -Path $dir | Out-Null
+
+          $candidates = @(
+            (Join-Path $PWD "target/release/md-notes.exe"),
+            (Join-Path $PWD "app/src-tauri/target/release/md-notes.exe")
+          )
+          $exe = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $exe) {
+            throw "Portable executable not found. Checked: $($candidates -join ', ')"
+          }
+
+          Copy-Item $exe (Join-Path $dir "MD Notes.exe")
+          Copy-Item "LICENSE.md" $dir
+          Copy-Item "COPYRIGHT.md" $dir
+          Copy-Item "THIRD_PARTY_NOTICES.md" $dir
+
+          @"
+          MD Notes — ADR-0010 r4 Windows runtime test
+
+          TEST BUILD — not a published release.
+          Source integrated main: $env:PRODUCT_CANDIDATE_SHA
+          Purpose: manual acceptance of graph + main + explicit detached editor windows.
+          The executable still reports the repository product version; this ZIP is identified
+          by the checkpoint SHA and must not be treated as v0.3.22.
+
+          Test:
+          1. Open a vault and detach the graph.
+          2. Verify that opening the graph separately visibly tiles main + graph side-by-side; then click several graph nodes and confirm they update the visible main without hidden-tab accumulation.
+          3. Use "Open in separate window" explicitly for a note.
+          4. Keep main usable and open/detach additional notes.
+          5. Use ↗ on several vault tabs and verify detached editor windows coexist with the tiled main + graph workspace.
+
+          Runtime PASS must be reported by the owner; green CI alone is not acceptance.
+          "@ | Set-Content -Encoding UTF8 (Join-Path $dir "README-TEST.txt")
+
+          $zip = Join-Path $PWD "dist/$env:ARTIFACT_BASENAME.zip"
+          Compress-Archive -Path "$dir/*" -DestinationPath $zip -Force
+
+          $hash = (Get-FileHash -Algorithm SHA256 $zip).Hash.ToLowerInvariant()
+          "$hash  $env:ARTIFACT_BASENAME.zip" | Set-Content -Encoding ASCII (Join-Path $PWD "dist/SHA256SUMS-ADR0010-r4.txt")
+
+      - name: Upload Windows runtime test artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_BASENAME }}
+          path: |
+            dist/${{ env.ARTIFACT_BASENAME }}.zip
+            dist/SHA256SUMS-ADR0010-r4.txt
+          if-no-files-found: error
+          retention-days: 14
