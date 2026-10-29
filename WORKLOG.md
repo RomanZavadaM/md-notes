@@ -378,3 +378,17 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - New graph creation no longer tries to trust constructor `x/y/size`. It creates centered safely, subscribes to `tauri://created`, recomputes current monitor work area, then explicitly calls native `Window.setPosition/setSize` for both `main` and `graph`.
 - Existing graph reopen still re-applies tiling immediately.
 - Next: PR + CI; then issue unique Windows TEST r4 only after green checks.
+
+
+## 29.10.2026 — ADR-0010 r4 integrated + Windows TEST ready
+
+- Owner runtime verdict r3: **FAIL** — detached graph did not appear side-by-side with main.
+- r4 PR #166 merged → product-code main `572f4b01d9710b7527c09024fa4f27ffb6a8dfa7`; CI `40864278512` = SUCCESS.
+- r4 correction: DPI-friendly logical minimums (`main 520`, `graph 360`); new graph waits for native `tauri://created`, then both native windows are explicitly unmaximized/resized/repositioned.
+- Temporary TEST PR #167 closed WITHOUT MERGE; Windows runtime workflow `40865268396` = SUCCESS.
+- Artifact ID `12894111712`: `MD-Notes-TEST-ADR0010-r4-572f4b01-Windows-x64-portable`.
+- Inner ZIP: `MD-Notes-TEST-ADR0010-r4-572f4b01-Windows-x64-portable.zip`; SHA256 `6206a01e639feb0b86b2b3bab20c5e1128404de34f83168d96be51082570a155`.
+- ZIP downloaded and independently verified: checksum matches; `unzip -t` reports no errors.
+- Product SemVer remains 0.3.21; TEST r4 is not v0.3.22.
+- **ADR-0010 remains NOT DONE until owner runtime verdict for r4.** Single next action: test whether opening detached graph visibly tiles `main + graph` side-by-side on Windows; also verify graph clicks update visible main and per-tab `↗` detach still works.
+- Do not start ADR-0009 backup/restore until this verdict is recorded.
