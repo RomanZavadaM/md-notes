@@ -341,3 +341,9 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - Не боротися з ручним maximize користувача: side-by-side є стартовим layout при detach/open graph; далі нативні вікна лишаються вільно переміщуваними/масштабованими.
 - При r3 прибрати focus/Z-order ping-pong r2 як нормальний navigation mechanism; він більше не потрібен, коли main видимий поруч.
 - Runtime PASS тільки після нового Windows TEST r3; r1/r2 не перевикористовувати.
+
+- r3 code checkpoint: `graphWindowApi.ts` більше не створює graph як 1280×860 centered overlay. При достатній робочій області поточного монітора main і graph автоматично tile side-by-side (~58/42) з невеликим gap; використовуються monitor workArea + DPI conversion.
+- Якщо graph уже існує і користувач знову викликає «відкрити граф окремо», layout повторно розкладає обидва native windows поруч. Якщо екран замалий для мінімальних ширин, лишається безпечний centered fallback graph.
+- r2 focus/Z-order ping-pong прибрано з graph navigation: `openGraphNoteInMain()` тепер лише адресно надсилає note у main і відновлює його, якщо він був мінімізований. Ручний move/resize/maximize після detach поважається.
+- Capability доповнено тільки необхідними window permissions: unmaximize, set-position, set-size.
+- Далі: PR + CI; runtime verdict тільки після Windows TEST r3.
