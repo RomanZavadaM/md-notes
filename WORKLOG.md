@@ -294,3 +294,18 @@ Safety requirements для Git push мають зберігати існуючі
 - Внутрішній ZIP: `MD-Notes-ADR0010-r1-c6d5d398-Windows-x64-portable.zip`; SHA256 `3d261922637fb29db3eb5a57ed42637095966a265f3e6f8c13a6d4fb4e69de1f`.
 - Тестова збірка не змінює version/tag/release; PR #154 `0.3.22` не зливати до runtime verdict.
 - Наступна **єдина активна дія**: owner Windows test. PASS/FAIL зафіксувати в Issue #8 + START/STATE/WORKLOG. Якщо FAIL — виправляти ADR-0010; якщо PASS — лише тоді закривати ADR-0010 і вирішувати release checkpoint / перехід до ADR-0009.
+
+
+## Активний зріз 29.10.2026 — ADR-0010 graph routing r2 після owner runtime
+
+- База: `main` `85d046a038f2bb5e88c8b4cd68c054d80e98cfc1`; гілка `fix/adr0010-graph-routing-r2`.
+- Owner runtime r1: **частковий успіх** — graph + main + кілька detached editor windows одночасно працюють. **FAIL лишається**: вибір вершин графа у цьому режимі відкриває/маршрутизує нотатки у невидиме/фонове вікно з вкладками замість видимого робочого редактора.
+- ADR-0010 не закривати і runtime PASS не ставити.
+- Кодова причина для r2-аудиту: `GRAPH_OPEN_NOTE` лишається безадресною global event; `App.tsx` є єдиним handler і маршрутизує graph selection у модель `openDocuments` main-вікна. Це суперечить ADR-0010 п.6 про адресні події та пояснює попадання в фоновий main/tab state.
+- Ціль r2: зробити destination graph navigation явним/адресним і не створювати прихованих вкладок; не ламати вже підтверджені detached editor windows, conflict guard, safe close, graph preview/history.
+- Перед кодом повторно звірено backlog: ADR-0009 backup/restore **лише спроєктовано, не реалізовано**; Git↔SyncManifest conflict policy, WebDAV, physical Android/iOS, SAF/security-scoped folders, encrypted-vault gaps, signing, групові операції з файлами/папками лишаються незавершеними. Git push реалізований, але окремо не прийнятий живим runtime-тестом.
+- Поки r2 не прийнято власником, ADR-0009 не починати. Після r2 PASS наступний функціональний блок — ручний backup/restore slice за ADR-0009.
+
+- r2 code checkpoint: `graphWindowApi.ts` тепер використовує адресний `emitTo("main", GRAPH_OPEN_NOTE, path)` замість global broadcast. Після маршрутизації main примусово `unminimize()+show()`, коротко піднімається у Z-order і фокус одразу повертається в graph; це має прибрати ефект «нотатка відкрилася у невидимому вікні» без втрати можливості послідовно клікати граф. Detached `editor-*` навмисно не отримують graph navigation і зберігають власну note identity.
+- `GraphWindow.tsx` і звичайний node click, і явна кнопка preview «відкрити/редагувати» використовують один `openGraphNoteInMain()`. Наявний main-side `openGraphNote()` replace-active routing, conflict guard і latest-request guard не змінено.
+- Автоматична перевірка ще попереду; runtime PASS не заявляти до нового Windows Portable test.

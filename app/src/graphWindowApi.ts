@@ -1,6 +1,8 @@
-import { emit } from "@tauri-apps/api/event";
+import { emit, emitTo } from "@tauri-apps/api/event";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 
+/** Label of the main editor window from tauri.conf.json. */
+export const MAIN_LABEL = "main";
 /** Label of the detached graph window (see capabilities/default.json). */
 export const GRAPH_LABEL = "graph";
 /** Main window -> graph window: the note the user is working with changed. */
@@ -39,4 +41,27 @@ export async function openGraphWindow(mode: GraphWindowMode, notePath: string, t
     minHeight: 480,
     center: true,
   });
+}
+
+
+/**
+ * Route a graph selection to the main editor only.
+ *
+ * Detached editor windows intentionally keep their own note identity; graph
+ * navigation must not broadcast into them. When the main window is minimized
+ * or covered by detached editors, briefly raising it and then restoring graph
+ * focus keeps the graph usable while making the updated main editor visible.
+ */
+export async function openGraphNoteInMain(path: string): Promise<void> {
+  await emitTo(MAIN_LABEL, GRAPH_OPEN_NOTE, path);
+
+  const main = await WebviewWindow.getByLabel(MAIN_LABEL);
+  if (!main) return;
+
+  await main.unminimize();
+  await main.show();
+  await main.setFocus();
+
+  const graph = await WebviewWindow.getByLabel(GRAPH_LABEL);
+  if (graph) await graph.setFocus();
 }
