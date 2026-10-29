@@ -124,7 +124,17 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
       ) : mode === "tree" ? (
         <RelationTreePanel notePath={note.path} refreshKey={refreshKey} onOpen={onOpen} />
       ) : (
-        <KnowledgeGraphPanel mode={mode} notePath={note.path} refreshKey={refreshKey} onOpen={onOpen} />
+        <KnowledgeGraphPanel
+          mode={mode}
+          notePath={note.path}
+          refreshKey={refreshKey}
+          onOpen={onOpen}
+          onExpand={
+            desktop
+              ? () => void openGraphWindow(mode, note.path, graphStrings.windowTitle)
+              : undefined
+          }
+        />
       )}
     </aside>
   );
