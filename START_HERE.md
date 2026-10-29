@@ -204,8 +204,8 @@
 
 - Owner runtime r4: **FAIL**. Graph still covers main; detached editor windows do not change this. Clicking graph nodes accumulates vault tabs in hidden main; they become visible only after manually shrinking graph.
 - r4 is immutable issued test revision. Next Windows candidate is r5.
-- Root cause in main routing: `openGraphNote()` explicitly appends when it cannot resolve active vault tab (`currentIndex < 0`). This append path is invalid for graph navigation.
-- r5 target: graph navigation must never increase vault-tab count when any vault tab already exists; if main has zero vault tabs, create exactly one graph workspace slot and replace it thereafter.
-- r5 window target: graph starts compact on the right, main on the left; automatic layout is applied both at constructor coordinates and after native graph creation using the direct graph handle. Add an explicit graph-window re-tile action so layout can be reapplied after both native windows definitely exist.
+- Owner уточнив runtime: graph click **успішно змінює активну нотатку/вкладку в main**. Результат просто не видно, доки graph не згорнути/перемістити. Тому routing не переробляти у r5.
+- r5 target звужено до native window layout/visibility: `main` має лишатися видимим поруч із graph; існуючу graph→main navigation зберегти без функціональних змін.
+- r5 window target: graph starts compact on the right, main on the left. Для надійності layout треба виконувати на native-рівні, а не покладатися лише на JS window positioning. Додати explicit re-tile action як ручний fallback/діагностику.
 - Detached `editor-*` windows stay independent and are not part of graph destination routing.
 - Owner runtime PASS remains mandatory.
