@@ -347,3 +347,7 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - r2 focus/Z-order ping-pong прибрано з graph navigation: `openGraphNoteInMain()` тепер лише адресно надсилає note у main і відновлює його, якщо він був мінімізований. Ручний move/resize/maximize після detach поважається.
 - Capability доповнено тільки необхідними window permissions: unmaximize, set-position, set-size.
 - Далі: PR + CI; runtime verdict тільки після Windows TEST r3.
+
+- Owner extension: від’єднання вкладок підсилює side-by-side модель. Реалізовано explicit per-tab detach: кожна vault-вкладка має власний `↗`; можна винести саме її в окреме editor-вікно без попередньої активації.
+- Спільна `detachDocument(path)` зберігає/перевіряє конкретний документ, відкриває його через existing `openEditorWindow`, прибирає лише цю вкладку з main; якщо від’єднувалась неактивна вкладка, активна main-вкладка не змінюється.
+- Верхня кнопка «Відкрити в окремому вікні» тепер використовує ту саму `detachDocument()` для активної вкладки. Drag-and-drop detach не додавався в r3; explicit `↗` є простішим і перевірюваним UX.
