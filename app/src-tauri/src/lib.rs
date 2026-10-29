@@ -102,7 +102,9 @@ fn tile_graph_workspace(app: AppHandle) -> CmdResult<GraphWorkspaceLayout> {
 
         // Keep graph compact. Physical pixels avoid DPI/logical-size ambiguity on Windows.
         let desired_graph = ((available_width as f64) * 0.36).round() as u32;
-        let graph_width = desired_graph.clamp(360, 680).min(available_width.saturating_sub(400));
+        let graph_width = desired_graph
+            .clamp(360, 680)
+            .min(available_width.saturating_sub(400));
         let main_width = available_width.saturating_sub(graph_width);
         if main_width < 400 || graph_width < 320 {
             return Err(format!(
@@ -112,7 +114,9 @@ fn tile_graph_workspace(app: AppHandle) -> CmdResult<GraphWorkspaceLayout> {
 
         let x = area.position.x.saturating_add(margin as i32);
         let y = area.position.y.saturating_add(margin as i32);
-        let graph_x = x.saturating_add(main_width as i32).saturating_add(gap as i32);
+        let graph_x = x
+            .saturating_add(main_width as i32)
+            .saturating_add(gap as i32);
 
         for window in [&main, &graph] {
             if window.is_minimized().map_err(|error| error.to_string())? {
@@ -122,15 +126,15 @@ fn tile_graph_workspace(app: AppHandle) -> CmdResult<GraphWorkspaceLayout> {
                 window.unmaximize().map_err(|error| error.to_string())?;
             }
             if window.is_fullscreen().map_err(|error| error.to_string())? {
-                window.set_fullscreen(false).map_err(|error| error.to_string())?;
+                window
+                    .set_fullscreen(false)
+                    .map_err(|error| error.to_string())?;
             }
         }
 
-        main
-            .set_size(PhysicalSize::new(main_width, available_height))
+        main.set_size(PhysicalSize::new(main_width, available_height))
             .map_err(|error| error.to_string())?;
-        main
-            .set_position(PhysicalPosition::new(x, y))
+        main.set_position(PhysicalPosition::new(x, y))
             .map_err(|error| error.to_string())?;
         main.show().map_err(|error| error.to_string())?;
 
