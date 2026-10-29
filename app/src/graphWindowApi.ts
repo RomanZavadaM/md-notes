@@ -27,9 +27,9 @@ type SideBySideLayout = {
 const TILE_GAP = 10;
 const TILE_MARGIN = 8;
 const WINDOW_CHROME_RESERVE = 40;
-const MIN_MAIN_WIDTH = 680;
-const MIN_GRAPH_WIDTH = 520;
-const MIN_TILE_HEIGHT = 560;
+const MIN_MAIN_WIDTH = 520;
+const MIN_GRAPH_WIDTH = 360;
+const MIN_TILE_HEIGHT = 500;
 const MAIN_SHARE = 0.58;
 
 /** True when this webview is the detached graph window (opened with `?view=graph`). */
@@ -100,32 +100,30 @@ export async function openGraphWindow(mode: GraphWindowMode, notePath: string, t
     return;
   }
 
-  const main = await Window.getByLabel(MAIN_LABEL);
-  if (layout && main) await placeWindow(main, layout.main);
-
   const query = new URLSearchParams({ view: "graph", mode, note: notePath });
-  const options = layout
-    ? {
-        url: `index.html?${query.toString()}`,
-        title,
-        x: layout.graph.x,
-        y: layout.graph.y,
-        width: layout.graph.width,
-        height: layout.graph.height,
-        minWidth: MIN_GRAPH_WIDTH,
-        minHeight: 480,
-      }
-    : {
-        url: `index.html?${query.toString()}`,
-        title,
-        width: 1000,
-        height: 760,
-        minWidth: MIN_GRAPH_WIDTH,
-        minHeight: 480,
-        center: true,
-      };
+  const graph = new WebviewWindow(GRAPH_LABEL, {
+    url: `index.html?${query.toString()}`,
+    title,
+    width: 1000,
+    height: 760,
+    minWidth: MIN_GRAPH_WIDTH,
+    minHeight: 480,
+    center: true,
+  });
 
-  new WebviewWindow(GRAPH_LABEL, options);
+  await graph.once("tauri://created", () => {
+    void (async () => {
+      const createdLayout = await sideBySideLayout();
+      if (createdLayout) {
+        await arrangeMainAndExistingGraph(createdLayout);
+      }
+      await graph.setFocus();
+    })();
+  });
+
+  await graph.once("tauri://error", (event) => {
+    console.error("Failed to create detached graph window", event.payload);
+  });
 }
 
 /**

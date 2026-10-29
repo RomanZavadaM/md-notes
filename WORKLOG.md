@@ -364,3 +364,17 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - Artifact `MD-Notes-TEST-ADR0010-r3-b0f7813c-Windows-x64-portable`; inner ZIP same basename + `.zip`; SHA256 `26fa666bc316d360b9bb2f8de5f950c2eeb548b4b523bb9b4511e67543766fe4`.
 - Status: code integrated + automated checks PASS; owner runtime verdict PENDING.
 - Next single action: owner tests r3 on Windows. Do not start ADR-0009 implementation until this verdict is recorded.
+
+
+## 29.10.2026 — ADR-0010 r3 owner FAIL → r4
+
+- Owner Windows runtime verdict for r3: **FAIL**. Opening detached graph did not produce visible side-by-side `main + graph`.
+- r3 remains immutable issued test revision; do not reuse or relabel it.
+- Root-cause audit: r3 relied on constructor-time graph `x/y/size`, and its logical-width gate (`680 + 520`) was too strict for common Windows DPI scaling, silently selecting centered fallback.
+- r4 target: reduce adaptive logical minimums and, after creating graph, wait for native `tauri://created`; only then explicitly unmaximize/resize/reposition both native windows via `Window.getByLabel`.
+- Runtime PASS remains owner-only. Next issued Windows candidate must be r4.
+
+- r4 code checkpoint: side-by-side gate lowered from `680/520` to `520/360` logical px; min logical height `500`.
+- New graph creation no longer tries to trust constructor `x/y/size`. It creates centered safely, subscribes to `tauri://created`, recomputes current monitor work area, then explicitly calls native `Window.setPosition/setSize` for both `main` and `graph`.
+- Existing graph reopen still re-applies tiling immediately.
+- Next: PR + CI; then issue unique Windows TEST r4 only after green checks.
