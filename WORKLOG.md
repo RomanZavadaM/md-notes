@@ -269,3 +269,7 @@ Safety requirements для Git push мають зберігати існуючі
 - У `GraphWindow` звичайний node click має відправляти `GRAPH_OPEN_NOTE` після локального follow/preview, щоб main реально змінював активну нотатку.
 - Критерії готовності: frontend build/CI green; routing не додає вкладку на кожен graph click; graph preview/history не ламаються; runtime PASS **не** заявляти до тесту власником.
 - ADR-0009 backup/restore, Git↔SyncManifest, WebDAV, physical mobile tests, encrypted-vault gaps і signing залишаються backlog і в цьому slice не починаються.
+
+- Реалізовано в коді: `App.tsx` отримав окремий `openGraphNote()`; для нового graph-target він safe-save поточний active document і **замінює його на тому самому індексі**, замість append вкладки. Якщо target уже відкритий — лише активується. Примусовий `setFocus()` видалено.
+- `GraphWindow.tsx`: звичайний `onOpen` вузла зберігає попередні `followNote + preview` і додатково надсилає `GRAPH_OPEN_NOTE` у main.
+- Код-коміти: `2155d73cccb1cb5fbac48b493087eb0d218d2d7a`, `43072e5c1b8db1defa00dcc4196a739f57e6b794`. Локальна runtime-перевірка через реальний Windows app тут не виконувалась; наступне — PR + CI, потім ручний тест власником.
