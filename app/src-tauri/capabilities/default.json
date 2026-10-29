@@ -16,9 +16,6 @@
     "core:window:allow-unminimize",
     "core:window:allow-show",
     "core:window:allow-destroy",
-    "core:window:allow-close",
-    "core:window:allow-unmaximize",
-    "core:window:allow-set-position",
-    "core:window:allow-set-size"
+    "core:window:allow-close"
   ]
 }
