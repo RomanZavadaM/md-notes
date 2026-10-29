@@ -96,7 +96,6 @@ export default function App() {
   const draftRef = useRef("");
   const savedRef = useRef("");
   const closingRef = useRef(false);
-  const graphOpenRequestRef = useRef(0);
   const [savedContent, setSavedContent] = useState("");
   const dirty = note !== null && draft !== savedContent;
 
@@ -562,47 +561,11 @@ export default function App() {
 
   const openGraphNote = useCallback(
     async (path: string) => {
-      const requestId = ++graphOpenRequestRef.current;
-      try {
-        const existing = openDocumentsRef.current.find((document) => document.note.path === path);
-        if (existing) {
-          activateDocument(existing);
-          setActiveDocument("vault");
-          if (isNarrow()) setSidebarOpen(false);
-          return;
-        }
-
-        const current = noteRef.current;
-        if (current && !(await saveVaultDocument(current.path))) return;
-        if (requestId !== graphOpenRequestRef.current) return;
-
-        const opened = await api.readNote(path);
-        if (requestId !== graphOpenRequestRef.current) return;
-        const document: OpenVaultDocument = {
-          note: opened,
-          draft: opened.content,
-          savedContent: opened.content,
-          editorVersion: 0,
-        };
-        const documents = openDocumentsRef.current;
-        const currentIndex = current
-          ? documents.findIndex((item) => item.note.path === current.path)
-          : -1;
-        if (currentIndex >= 0) {
-          const next = [...documents];
-          next[currentIndex] = document;
-          setDocuments(next);
-        } else {
-          setDocuments([...documents, document]);
-        }
-        activateDocument(document);
-        setActiveDocument("vault");
-        if (isNarrow()) setSidebarOpen(false);
-      } catch (e) {
-        report(e);
-      }
+      // Detached graph navigation must behave exactly like ordinary note
+      // opening in main: reuse an existing tab or append a new one.
+      await openNote(path);
     },
-    [activateDocument, report, saveVaultDocument, setDocuments],
+    [openNote],
   );
 
   const closeDocument = useCallback(
