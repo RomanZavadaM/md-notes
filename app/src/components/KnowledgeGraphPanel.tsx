@@ -15,6 +15,8 @@ interface Props {
   notePath: string;
   refreshKey: number;
   onOpen: (path: string) => void;
+  /** Desktop main-window expansion: route to the native detached graph instead of an in-main overlay. */
+  onExpand?: () => void;
 }
 
 // v2: the defaults changed (more room between nodes), so older saved values are not reused.
@@ -139,7 +141,7 @@ function buildTrace(graph: Graph, root: string) {
   return { tree, nodes, edges, materials: [...materials] };
 }
 
-export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Props) {
+export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen, onExpand }: Props) {
   const { language } = useI18n();
   const strings = GRAPH_STRINGS[language];
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -589,8 +591,15 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen }: Prop
         <div className="knowledge-graph-title">
           <strong>{mode === "local" ? strings.localTitle : strings.globalTitle}</strong>
           {hasGraph && (
-            <button type="button" className="knowledge-graph-expand" onClick={() => setExpanded((value) => !value)}>
-              {expanded ? strings.collapse : strings.expand}
+            <button
+              type="button"
+              className="knowledge-graph-expand"
+              onClick={() => {
+                if (onExpand) onExpand();
+                else setExpanded((value) => !value);
+              }}
+            >
+              {onExpand ? strings.expand : expanded ? strings.collapse : strings.expand}
             </button>
           )}
         </div>
