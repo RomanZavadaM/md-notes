@@ -541,3 +541,11 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
   - main remains central and unchanged; graph remains independent.
 - Root cause in current `openGraphNote`: it replaces the active tab instead of reusing normal `openNote` semantics.
 - r8 target is narrow: make graph→main navigation delegate to ordinary tab opening; do not change graph window behavior.
+
+- r8 implementation checkpoint:
+  - removed the special graph-only tab replacement path;
+  - graph selection now delegates to the existing ordinary `openNote` behavior;
+  - existing target tab is activated; missing target tab is appended; all other tabs are preserved;
+  - removed obsolete graph request/replacement state;
+  - detached graph window behavior from r7 is unchanged.
+- Next: full CI/mobile checks, merge only if green, then issue unique Windows TEST r8.
