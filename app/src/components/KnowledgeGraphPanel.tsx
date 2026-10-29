@@ -599,7 +599,7 @@ export function KnowledgeGraphPanel({ mode, notePath, refreshKey, onOpen, onExpa
                 else setExpanded((value) => !value);
               }}
             >
-              {onExpand ? strings.expand : expanded ? strings.collapse : strings.expand}
+              {onExpand ? strings.detach : expanded ? strings.collapse : strings.expand}
             </button>
           )}
         </div>
