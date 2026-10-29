@@ -480,3 +480,12 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
   - keep explicit detached note/editor windows independent;
   - retain `Розмістити поруч` as a user action, but remove technical size diagnostics from normal UI.
 - r3–r6 are not accepted as the intended multiwindow UX. Next issued Windows candidate is r7.
+
+- r7 implementation checkpoint:
+  - detaching graph now turns the main right-side links/graph panel off, freeing the main note workspace;
+  - detached graph is navigation-only: no embedded note preview, no second reading surface;
+  - graph node/back navigation continues sending the selected note to main;
+  - detached graph width changed from ~36% capped at 680px to ~38% capped at 1400px, with main minimum 720px;
+  - initial detached graph width increased to 900px before final placement;
+  - technical pixel diagnostics removed from normal graph UI; `Розмістити поруч` remains available.
+- Next: full CI/mobile checks, then Windows TEST r7 only if green.
