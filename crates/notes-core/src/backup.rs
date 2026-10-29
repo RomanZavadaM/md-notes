@@ -69,6 +69,7 @@ fn backup_error(message: impl Into<String>) -> Error {
     Error::Backup(message.into())
 }
 
+#[cfg(test)]
 fn sha256_hex(bytes: impl AsRef<[u8]>) -> String {
     let digest = Sha256::digest(bytes.as_ref());
     digest.iter().map(|byte| format!("{byte:02x}")).collect()
@@ -92,7 +93,7 @@ fn valid_relative_path(text: &str) -> Result<PathBuf> {
 
 fn should_exclude(rel: &str, file_name: &str) -> bool {
     let parts = rel.split('/').collect::<Vec<_>>();
-    if parts.iter().any(|part| *part == ".git") {
+    if parts.contains(&".git") {
         return true;
     }
     if parts.len() >= 2 && parts[0] == SERVICE_DIR && parts[1] == "cache" {
