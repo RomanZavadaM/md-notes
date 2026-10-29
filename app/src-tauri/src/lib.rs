@@ -8,10 +8,9 @@ use std::sync::{Arc, Mutex};
 
 use notes_core::{
     create_vault_backup, create_vault_with_preset, fetch_git_remote_authenticated, knowledge_graph,
-    restore_vault_backup, AttachmentInfo, BackupSummary,
-    Backlink, Index, KnowledgeGraph, LocalFsProvider, Note, NoteSummary, RenameOutcome,
-    RestoreSummary, SchemaDocument, SearchHit, TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault,
-    VaultPreset, VaultStorage,
+    restore_vault_backup, AttachmentInfo, Backlink, BackupSummary, Index, KnowledgeGraph,
+    LocalFsProvider, Note, NoteSummary, RenameOutcome, RestoreSummary, SchemaDocument, SearchHit,
+    TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault, VaultPreset, VaultStorage,
 };
 use serde::Serialize;
 use serde_json::Value;
