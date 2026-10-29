@@ -96,6 +96,7 @@ export default function App() {
   const draftRef = useRef("");
   const savedRef = useRef("");
   const closingRef = useRef(false);
+  const graphOpenRequestRef = useRef(0);
   const [savedContent, setSavedContent] = useState("");
   const dirty = note !== null && draft !== savedContent;
 
@@ -559,6 +560,51 @@ export default function App() {
     [activateDocument, report, setDocuments],
   );
 
+  const openGraphNote = useCallback(
+    async (path: string) => {
+      const requestId = ++graphOpenRequestRef.current;
+      try {
+        const existing = openDocumentsRef.current.find((document) => document.note.path === path);
+        if (existing) {
+          activateDocument(existing);
+          setActiveDocument("vault");
+          if (isNarrow()) setSidebarOpen(false);
+          return;
+        }
+
+        const current = noteRef.current;
+        if (current && !(await saveVaultDocument(current.path))) return;
+        if (requestId !== graphOpenRequestRef.current) return;
+
+        const opened = await api.readNote(path);
+        if (requestId !== graphOpenRequestRef.current) return;
+        const document: OpenVaultDocument = {
+          note: opened,
+          draft: opened.content,
+          savedContent: opened.content,
+          editorVersion: 0,
+        };
+        const documents = openDocumentsRef.current;
+        const currentIndex = current
+          ? documents.findIndex((item) => item.note.path === current.path)
+          : -1;
+        if (currentIndex >= 0) {
+          const next = [...documents];
+          next[currentIndex] = document;
+          setDocuments(next);
+        } else {
+          setDocuments([...documents, document]);
+        }
+        activateDocument(document);
+        setActiveDocument("vault");
+        if (isNarrow()) setSidebarOpen(false);
+      } catch (e) {
+        report(e);
+      }
+    },
+    [activateDocument, report, saveVaultDocument, setDocuments],
+  );
+
   const closeDocument = useCallback(
     async (path: string) => {
       const documents = openDocumentsRef.current;
@@ -681,8 +727,7 @@ export default function App() {
     let cancelled = false;
     let unlisten: (() => void) | undefined;
     void listen<string>(GRAPH_OPEN_NOTE, (event) => {
-      void openNote(event.payload);
-      void getCurrentWindow().setFocus();
+      void openGraphNote(event.payload);
     }).then((fn) => {
       if (cancelled) fn();
       else unlisten = fn;
@@ -691,7 +736,7 @@ export default function App() {
       cancelled = true;
       unlisten?.();
     };
-  }, [isDesktop, openNote]);
+  }, [isDesktop, openGraphNote]);
 
   useEffect(() => {
     if (!vault) return;

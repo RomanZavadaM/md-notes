@@ -84,6 +84,7 @@ export function GraphWindow() {
   const onOpen = useCallback((path: string) => {
     followNote(path);
     setPreviewPath(path);
+    void emit(GRAPH_OPEN_NOTE, path);
   }, [followNote]);
 
   useEffect(() => {
