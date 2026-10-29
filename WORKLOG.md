@@ -283,3 +283,5 @@ Safety requirements для Git push мають зберігати існуючі
 - Наступна **єдина активна дія**: дати власнику тестову збірку/checkpoint і прийняти реальний сценарій: node click змінює active main note без накопичення tabs → explicit detach → main лишається доступним → відкрити кілька independent editor windows → перевірити conflict/safe close.
 - До runtime verdict не починати ADR-0009 backup/restore. Не загубити Git↔SyncManifest, WebDAV, physical Android/iOS, encrypted-vault gaps, signing.
 - Окремо зафіксовано технічний борг CI: frontend-зміна PR #153 запустила Rust/Tauri matrix всупереч очікуваній path-aware policy; не виправляти в цьому slice, розглянути після ADR-0010 acceptance.
+
+- Release Please автоматично відкрив PR #154 `chore(main): release 0.3.22`; **не зливати і не публікувати 0.3.22 без окремого release checkpoint/команди власника**. Для runtime-приймання r1 спочатку потрібна тестова Windows-збірка й фактичний verdict власника.
