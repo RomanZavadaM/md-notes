@@ -199,3 +199,20 @@ Builds не вважаються підписаними/нотаризовани
 - Product SemVer remains 0.3.21; TEST r4 is not v0.3.22.
 - **ADR-0010 remains NOT DONE until owner runtime verdict for r4.** Single next action: test whether opening detached graph visibly tiles `main + graph` side-by-side on Windows; also verify graph clicks update visible main and per-tab `↗` detach still works.
 - Do not start ADR-0009 backup/restore until this verdict is recorded.
+
+
+## 29.10.2026 — ADR-0010 r5 integrated + Windows TEST ready
+
+- Owner clarification: graph clicks already change the active note/tab in `main` correctly; the unresolved defect is that detached graph hides main. r5 does **not** change graph→main routing.
+- PR #169 merged → product-code main `fd1db060f853965f5830d6ec4d2bc4fbea668653`.
+- CI `40871542186` = SUCCESS; Mobile smoke `40871542173` = SUCCESS.
+- r5 native workspace layout: Rust/Tauri command uses physical monitor work-area pixels; main is placed left, graph compact right. Layout is attempted after graph native creation and after GraphWindow mount.
+- Graph window has visible `⇆` re-tile action (localized in all 7 UI languages) and shows numeric native layout diagnostic (`main + graph / monitor`) or an explicit error.
+- Temporary TEST PR #170 closed WITHOUT MERGE; Windows runtime workflow `40872847286` = SUCCESS.
+- Artifact ID `12896978541`: `MD-Notes-TEST-ADR0010-r5-fd1db060-Windows-x64-portable`.
+- Inner ZIP: `MD-Notes-TEST-ADR0010-r5-fd1db060-Windows-x64-portable.zip`; SHA256 `d5789a02e1cdc3bdcac6e04a02e90438c9ad687529cffe976d6c96445cc3e757`.
+- r5 EXE SHA256 `609af1493c8d0f72c467d6cff639d70b56c56a7953fac928f956caa6440ec9d8`, size `29,545,984` bytes; it is physically different from r4 EXE.
+- ZIP downloaded and independently verified: checksum matches; archive integrity test passed.
+- Product SemVer remains 0.3.21; TEST r5 is not v0.3.22.
+- **ADR-0010 remains NOT DONE until owner runtime verdict for r5.** Primary test: open detached graph; main must remain visible left and graph right. If not, press `⇆` and report the exact numeric diagnostic/error shown.
+- Do not start ADR-0009 backup/restore until this verdict is recorded.
