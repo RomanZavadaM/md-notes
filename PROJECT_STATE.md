@@ -291,3 +291,15 @@ Builds не вважаються підписаними/нотаризовани
 - ZIP завантажено локально й перевірено: checksum збігається; archive integrity test passed.
 - **ADR-0010 лишається NOT DONE до owner runtime verdict r8.** Перевірити: main з 1+ вкладками; кілька різних вузлів graph повинні додавати/активувати вкладки в main без втрати вже відкритих.
 - Release Please #154 не зливати до owner verdict.
+
+
+## 29.10.2026 — функціональний checkpoint перед v0.3.22
+
+- ADR-0010 multi-window: **прийнято власником** на r8. Main — центральне вікно; graph від’єднується незалежно; graph-вузли відкривають/активують звичайні вкладки main.
+- ADR-0009 backup/restore: **реалізовано та інтегровано** PR #182 → `71ba9604c30b8399137d79011f2bd97432b9505a`.
+- Backup/restore: portable ZIP + manifest/SHA-256; encrypted vault без plaintext/secret key; restore тільки в нове сховище після повної валідації.
+- PR #182 CI: Linux/macOS/Windows SUCCESS; Android/iOS smoke SUCCESS; frontend/Tauri/license checks SUCCESS.
+- README та user guides синхронізовано всіма 7 мовами.
+- Важлива межа доказу: owner вручну перевірив multi-window r8, але **не проводив окремого ручного backup/restore runtime-тесту**; backup покривається автоматичними тестами трьох desktop OS.
+- Поточний product-code main: `71ba9604c30b8399137d79011f2bd97432b9505a`.
+- Наступна єдина дія: завершити Release Please PR #154 → v0.3.22 prerelease, перевірити release workflow та 13 assets, після цього синхронізувати цей checkpoint із фактичним release SHA/tag.

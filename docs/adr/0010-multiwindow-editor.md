@@ -284,3 +284,8 @@ Automated checks and Windows build are green, but **ADR-0010 remains NOT DONE un
 - ADR-0010 is accepted for release with a pragmatic, not exhaustive, runtime verdict.
 - Accepted model: main is central; graph detaches independently; graph selections open/activate normal tabs in main; detached editor windows may coexist.
 - Further UX polishing is backlog, not a blocker for the next release.
+
+
+## Фінальний verdict 29.10.2026
+
+Owner після r8: «вроді працює» та попросив припинити подальше шліфування, оформити й випустити. Це зафіксовано як **практичне приймання для релізу**, не як твердження про абсолютну досконалість. Подальші UX-полірування можливі лише за новим фактичним дефектом.
