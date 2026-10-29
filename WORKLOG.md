@@ -392,3 +392,14 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - Product SemVer remains 0.3.21; TEST r4 is not v0.3.22.
 - **ADR-0010 remains NOT DONE until owner runtime verdict for r4.** Single next action: test whether opening detached graph visibly tiles `main + graph` side-by-side on Windows; also verify graph clicks update visible main and per-tab `↗` detach still works.
 - Do not start ADR-0009 backup/restore until this verdict is recorded.
+
+
+## 29.10.2026 — ADR-0010 r4 runtime FAIL → r5 workspace model
+
+- Owner runtime r4: **FAIL**. Graph still covers main; detached editor windows do not change this. Clicking graph nodes accumulates vault tabs in hidden main; they become visible only after manually shrinking graph.
+- r4 is immutable issued test revision. Next Windows candidate is r5.
+- Root cause in main routing: `openGraphNote()` explicitly appends when it cannot resolve active vault tab (`currentIndex < 0`). This append path is invalid for graph navigation.
+- r5 target: graph navigation must never increase vault-tab count when any vault tab already exists; if main has zero vault tabs, create exactly one graph workspace slot and replace it thereafter.
+- r5 window target: graph starts compact on the right, main on the left; automatic layout is applied both at constructor coordinates and after native graph creation using the direct graph handle. Add an explicit graph-window re-tile action so layout can be reapplied after both native windows definitely exist.
+- Detached `editor-*` windows stay independent and are not part of graph destination routing.
+- Owner runtime PASS remains mandatory.
