@@ -93,3 +93,14 @@ Copyright © 2026 Roman Zavada (Роман Завада). Alle Rechte vorbehalte
 Mit **v0.3.21** sind ADR-0010 M1–M3 veröffentlicht. Mehrere Vault-Notizen können gleichzeitig in Tabs geöffnet bleiben; jeder Tab hat einen eigenen Entwurf. Auf dem Desktop kann die aktive Notiz mit **In separatem Fenster öffnen** in ein unabhängiges Editorfenster verschoben werden. Änderungen werden vor dem Verschieben gespeichert; das Hauptfenster wechselt danach zum vorherigen Tab oder zeigt einen leeren Arbeitsbereich.
 
 M1–M3 sind Bestandteil der veröffentlichten **v0.3.21**: Konfliktschutz, sicheres Schließen abgetrennter Editoren sowie Save-all/Safe-Quit sind umgesetzt. Windows/macOS/Linux CI und Android/iOS Build-Smoke-Tests sind erfolgreich. **M4 bedeutet jetzt die manuelle Runtime-Abnahme**; das Test-Prerelease ist bereits veröffentlicht.
+
+
+## Sicherung und Wiederherstellung
+
+Im Menü **Datei** gibt es **Sicherung erstellen…** und **Sicherung wiederherstellen…**.
+
+- die Sicherung ist ein portables ZIP mit `manifest.json` und SHA-256 für jede Datei;
+- MD Notes speichert offene Notizen vor der Sicherung;
+- Notizen, Anhänge, Konfiguration, Vorlagen und Papierkorb werden gesichert; `.git`, `.mdnotes/cache` und temporäre Systemdateien werden ausgeschlossen;
+- verschlüsselte Tresore werden **ohne Entschlüsselung** kopiert; private/Wiederherstellungsschlüssel werden nie ins Archiv gelegt;
+- die Wiederherstellung prüft zuerst Pfade, Größen und Prüfsummen und erstellt danach einen **neuen** Tresorordner, ohne den bestehenden zu überschreiben.
