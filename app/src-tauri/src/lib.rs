@@ -101,12 +101,12 @@ fn tile_graph_workspace(app: AppHandle) -> CmdResult<GraphWorkspaceLayout> {
         }
 
         // Keep graph compact. Physical pixels avoid DPI/logical-size ambiguity on Windows.
-        let desired_graph = ((available_width as f64) * 0.36).round() as u32;
+        let desired_graph = ((available_width as f64) * 0.38).round() as u32;
         let graph_width = desired_graph
-            .clamp(360, 680)
-            .min(available_width.saturating_sub(400));
+            .clamp(520, 1400)
+            .min(available_width.saturating_sub(720));
         let main_width = available_width.saturating_sub(graph_width);
-        if main_width < 400 || graph_width < 320 {
+        if main_width < 720 || graph_width < 420 {
             return Err(format!(
                 "not enough width to tile main + graph: available={available_width}, main={main_width}, graph={graph_width}"
             ));
