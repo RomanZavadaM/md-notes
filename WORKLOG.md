@@ -257,3 +257,15 @@ Safety requirements для Git push мають зберігати існуючі
 3. Явна «Відкрити в окремому вікні» повинна реально створювати незалежне editor-вікно; main після цього використовується для іншої нотатки.
 4. Перевірити одночасно graph + main + кілька detached editor windows.
 5. Лише після реального тесту власником міняти статус на PASS.
+
+
+## Активний зріз 29.10.2026 — ADR-0010 graph routing r1
+
+- База: `main` `e4e759e50e48042701cb495b0d806746ca4c7d36`; гілка `fix/adr0010-graph-routing-r1`.
+- Факт перед змінами: open PR немає; останній prerelease — `v0.3.21`; ручний Windows runtime = **FAIL** для погодженого multiwindow UX.
+- Причина в коді: `GRAPH_OPEN_NOTE` у `App.tsx` маршрутизується через загальний `openNote()`, який додає новий `OpenVaultDocument` до масиву вкладок; handler також примусово фокусує main.
+- Ціль r1: graph-node navigation має міняти/замінювати активну vault-нотататку main без накопичення нових вкладок; якщо ціль уже відкрита — активувати її; dirty активну нотатку спершу безпечно зберегти через наявний conflict guard; не примушувати focus main.
+- `openNote()` для дерева/звичайного відкриття вкладок не змінювати. Явний detach editor лишається єдиним шляхом створення окремого editor-вікна.
+- У `GraphWindow` звичайний node click має відправляти `GRAPH_OPEN_NOTE` після локального follow/preview, щоб main реально змінював активну нотатку.
+- Критерії готовності: frontend build/CI green; routing не додає вкладку на кожен graph click; graph preview/history не ламаються; runtime PASS **не** заявляти до тесту власником.
+- ADR-0009 backup/restore, Git↔SyncManifest, WebDAV, physical mobile tests, encrypted-vault gaps і signing залишаються backlog і в цьому slice не починаються.
