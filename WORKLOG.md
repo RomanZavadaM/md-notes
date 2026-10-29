@@ -439,3 +439,12 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - r5 is therefore not accepted for the real owner workflow. Next issued revision is r6.
 - r6 target: on desktop, `KnowledgeGraphPanel` expand action must call the same native `openGraphWindow()` path as `↗`; local overlay expansion remains only as fallback where no native callback is supplied (mobile/non-desktop).
 - Preserve graph→main routing and native r5 tiling logic; do not redesign tabs.
+
+- r6 implementation checkpoint:
+  - `KnowledgeGraphPanel` now accepts optional `onExpand`;
+  - desktop `LinksPanel` passes `openGraphWindow(mode, note.path, graphStrings.windowTitle)` as `onExpand`;
+  - large `Розгорнути` button uses native detached graph path on desktop instead of toggling the in-main overlay;
+  - local `expanded` overlay remains only when `onExpand` is absent (mobile/non-desktop fallback);
+  - existing small `↗` button remains available and uses the same native path;
+  - graph→main routing and r5 native tiling logic are unchanged.
+- Next: full CI + mobile smoke, merge only if green, then issue unique Windows TEST r6.
