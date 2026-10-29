@@ -175,3 +175,12 @@ In **v0.3.21** können mehrere Vault-Notizen gleichzeitig in Tabs geöffnet blei
 Auf dem Desktop bietet die aktive Vault-Notiz **In separatem Fenster öffnen**. MD Notes speichert den aktuellen Entwurf vor dem Abtrennen. Nach erfolgreichem Erstellen des unabhängigen Fensters wird die Notiz aus den Tabs des Haupteditors entfernt; das Hauptfenster kehrt zum vorherigen Tab zurück oder zeigt, wenn keiner vorhanden ist, einen leeren Editor bei weiterhin verfügbarem Vault-Baum. Im separaten Fenster funktionieren Editor / Nebeneinander / Vorschau sowie Autosave.
 
 Eine externe `.md/.markdown`-Datei bleibt ein separates Dokument und wird nicht automatisch in den Vault importiert. M3 ist jetzt integriert: Ändert ein anderes Fenster oder ein anderer Prozess die Datei nach dem Öffnen, blockiert MD Notes stilles Überschreiben; ein geändertes separates Fenster bleibt bis zu einem erfolgreichen geschützten Speichern geöffnet; vollständiges Beenden verarbeitet zuerst alle offenen Dokumente sicher. Die Funktion ist in der veröffentlichten **v0.3.21** enthalten; M4 ist die manuelle Runtime-Abnahme auf realen Desktop-Systemen.
+
+
+## Tresor-Sicherung
+
+Im Menü **Datei** gibt es **Sicherung erstellen…**. Vor der Sicherung versucht MD Notes, alle geöffneten Tabs zu speichern. Das Ergebnis ist ein portables ZIP mit `manifest.json`; für jede Datei werden Pfad, Größe und SHA-256 festgehalten.
+
+Die Sicherung enthält Notizen, Anhänge, Dienstkonfiguration, Vorlagen und `.mdnotes/trash`. `.git`, `.mdnotes/cache` und temporäre Systemdateien werden ausgeschlossen. Bei einem verschlüsselten Tresor werden die verschlüsselten Dateien direkt vom Datenträger kopiert; private/Wiederherstellungsschlüssel werden nie in das ZIP aufgenommen.
+
+**Sicherung wiederherstellen…** prüft Manifest, Pfade, Größen und SHA-256 aller Dateien, bevor etwas geschrieben wird. Erst nach vollständiger Prüfung wird in einen temporären Ordner entpackt und danach ein neuer Tresorordner erstellt. Bestehende Ordner werden niemals überschrieben.
