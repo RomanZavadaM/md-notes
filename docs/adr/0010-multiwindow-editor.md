@@ -121,3 +121,12 @@ r3 replaces the r2 Z-order workaround with the intended workspace model:
 - manual move/resize/maximize remains available after the initial layout.
 
 Automated checks and Windows build are green, but **ADR-0010 remains NOT DONE until owner runtime PASS**.
+
+
+## 29.10.2026 — ADR-0010 r3 owner FAIL → r4
+
+- Owner Windows runtime verdict for r3: **FAIL**. Opening detached graph did not produce visible side-by-side `main + graph`.
+- r3 remains immutable issued test revision; do not reuse or relabel it.
+- Root-cause audit: r3 relied on constructor-time graph `x/y/size`, and its logical-width gate (`680 + 520`) was too strict for common Windows DPI scaling, silently selecting centered fallback.
+- r4 target: reduce adaptive logical minimums and, after creating graph, wait for native `tauri://created`; only then explicitly unmaximize/resize/reposition both native windows via `Window.getByLabel`.
+- Runtime PASS remains owner-only. Next issued Windows candidate must be r4.
