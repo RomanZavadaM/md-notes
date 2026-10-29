@@ -430,3 +430,12 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - ZIP downloaded and verified: checksum matches; archive integrity test passed.
 - **ADR-0010 remains NOT DONE until owner runtime verdict for r5.** Primary acceptance: detach graph → main visible left + graph compact right; `⇆` re-tile works; status reports dimensions/error; graph clicks update visible main.
 - Release Please PR #154 remains separate; do not merge/release 0.3.22 before runtime verdict.
+
+
+## 29.10.2026 — ADR-0010 r5 owner screenshot diagnosis → r6
+
+- Owner screenshots reveal the repeatedly tested action was the large `Розгорнути` button inside `KnowledgeGraphPanel`, not the small detached-window `↗` action in the panel tabs.
+- `Розгорнути` currently only toggles local React `expanded` state, creating an in-main overlay that covers the editor. This bypasses `openGraphWindow()` entirely, so r3–r5 native tiling could not affect the user's actual path.
+- r5 is therefore not accepted for the real owner workflow. Next issued revision is r6.
+- r6 target: on desktop, `KnowledgeGraphPanel` expand action must call the same native `openGraphWindow()` path as `↗`; local overlay expansion remains only as fallback where no native callback is supplied (mobile/non-desktop).
+- Preserve graph→main routing and native r5 tiling logic; do not redesign tabs.
