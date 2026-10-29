@@ -7,10 +7,10 @@ use std::process::Command;
 use std::sync::{Arc, Mutex};
 
 use notes_core::{
-    create_vault_with_preset, fetch_git_remote_authenticated, knowledge_graph, AttachmentInfo,
-    Backlink, Index, KnowledgeGraph, LocalFsProvider, Note, NoteSummary, RenameOutcome,
-    SchemaDocument, SearchHit, TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault,
-    VaultPreset, VaultStorage,
+    create_vault_backup, create_vault_with_preset, fetch_git_remote_authenticated, knowledge_graph,
+    restore_vault_backup, AttachmentInfo, Backlink, BackupSummary, Index, KnowledgeGraph,
+    LocalFsProvider, Note, NoteSummary, RenameOutcome, RestoreSummary, SchemaDocument, SearchHit,
+    TagCount, TemplateInfo, TreeEntry, UnresolvedLink, Vault, VaultPreset, VaultStorage,
 };
 use serde::Serialize;
 use serde_json::Value;
@@ -725,6 +725,19 @@ fn lookup_subject(
 }
 
 #[tauri::command]
+fn create_backup(destination: String, state: State<'_, AppState>) -> CmdResult<BackupSummary> {
+    with_session(&state, |session| {
+        create_vault_backup(session.vault.root(), Path::new(&destination))
+    })
+}
+
+#[tauri::command]
+fn restore_backup(archive: String, destination_parent: String) -> CmdResult<RestoreSummary> {
+    restore_vault_backup(Path::new(&archive), Path::new(&destination_parent))
+        .map_err(|error| error.to_string())
+}
+
+#[tauri::command]
 fn import_attachment(source: String, state: State<'_, AppState>) -> CmdResult<AttachmentInfo> {
     with_session(&state, |s| s.vault.import_attachment(source))
 }
@@ -801,6 +814,8 @@ pub fn run() {
             unresolved_links,
             list_tags,
             search,
+            create_backup,
+            restore_backup,
             import_attachment,
             list_attachments,
             attachment_used_by,

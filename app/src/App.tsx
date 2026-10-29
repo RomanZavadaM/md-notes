@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { emit, listen } from "@tauri-apps/api/event";
 import { getAllWindows, getCurrentWindow } from "@tauri-apps/api/window";
-import { ask, message, open } from "@tauri-apps/plugin-dialog";
+import { ask, message, open, save as saveDialog } from "@tauri-apps/plugin-dialog";
 import {
   api,
   joinPath,
@@ -37,6 +37,7 @@ import { AttachmentsPanel } from "./components/AttachmentsPanel";
 import { AboutDialog, COPYRIGHT } from "./components/AboutDialog";
 import { LANGUAGES, useI18n, type LanguageCode } from "./i18n";
 import { ENCRYPTION_STRINGS } from "./i18n/encryption";
+import { BACKUP_STRINGS } from "./i18n/backup";
 import { getRememberedVault, storage, useStoredState } from "./storage";
 
 type ViewMode = "edit" | "split" | "preview";
@@ -369,6 +370,58 @@ export default function App() {
     setError(t.unsavedChanges);
     return false;
   }, [t.unsavedChanges]);
+
+  const createVaultBackup = useCallback(async () => {
+    if (!vault || !isDesktop) return;
+    if (!(await saveAllOpenDocuments())) return;
+    const strings = BACKUP_STRINGS[language];
+    const safeName = vault.name.replace(/[<>:"/\\|?*\u0000-\u001f]/g, "_").trim() || "MD-Notes";
+    const date = new Date().toISOString().slice(0, 10);
+    const picked = await saveDialog({
+      title: strings.createTitle,
+      defaultPath: `MD-Notes-${safeName}-${date}.zip`,
+      filters: [{ name: strings.archiveFilter, extensions: ["zip"] }],
+    });
+    if (typeof picked !== "string") return;
+    const destination = picked.toLowerCase().endsWith(".zip") ? picked : `${picked}.zip`;
+    try {
+      const summary = await api.createBackup(destination);
+      const detail = summary.encrypted
+        ? `${strings.created(summary.files, summary.archive)}\n\n${strings.createdEncrypted}`
+        : strings.created(summary.files, summary.archive);
+      await message(detail, { title: strings.createTitle, kind: "info" });
+    } catch (error) {
+      report(error);
+    }
+  }, [isDesktop, language, report, saveAllOpenDocuments, vault]);
+
+  const restoreVaultBackup = useCallback(async () => {
+    if (!isDesktop) return;
+    const strings = BACKUP_STRINGS[language];
+    const archive = await open({
+      directory: false,
+      multiple: false,
+      title: strings.restoreArchiveTitle,
+      filters: [{ name: strings.archiveFilter, extensions: ["zip"] }],
+    });
+    if (typeof archive !== "string") return;
+    const destinationParent = await open({
+      directory: true,
+      multiple: false,
+      title: strings.restoreFolderTitle,
+    });
+    if (typeof destinationParent !== "string") return;
+    try {
+      const summary = await api.restoreBackup(archive, destinationParent);
+      const openNow = await ask(
+        `${strings.restored(summary.files, summary.path)}\n\n${strings.openRestored}`,
+        { title: strings.openRestoredTitle, kind: "info" },
+      );
+      if (openNow) await openVaultAt(summary.path);
+    } catch (error) {
+      report(error);
+    }
+  }, [isDesktop, language, openVaultAt, report]);
 
   const quitApp = useCallback(async () => {
     if (!(await saveAllOpenDocuments())) return;
@@ -852,6 +905,12 @@ export default function App() {
         { label: t.openMarkdownFile, onSelect: () => void pickMarkdownFile() },
         ...(vault ? [{ label: IMPORTER_STRINGS[language].button, onSelect: () => void importFolder() }] : []),
         ...(vault ? [{ label: IMPORTER_STRINGS[language].duplicatesButton, onSelect: () => void showDuplicates() }] : []),
+        ...(vault && isDesktop
+          ? [{ label: BACKUP_STRINGS[language].create, onSelect: () => void createVaultBackup(), separatorBefore: true }]
+          : []),
+        ...(isDesktop
+          ? [{ label: BACKUP_STRINGS[language].restore, onSelect: () => void restoreVaultBackup() }]
+          : []),
         ...(vault && isDesktop
           ? [
               {

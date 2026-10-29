@@ -175,3 +175,12 @@ En **v0.3.21** se pueden mantener varias notas del almacén abiertas en pestaña
 En escritorio, la nota activa del almacén ofrece **Abrir en una ventana separada**. MD Notes guarda el borrador actual antes de separarlo. Tras crear correctamente la ventana independiente, la nota se elimina de las pestañas del editor principal y la ventana principal vuelve a la pestaña anterior; si no queda ninguna, muestra un editor vacío manteniendo disponible el árbol del almacén. La ventana separada admite Editor / lado a lado / vista previa y guardado automático.
 
 Un archivo externo `.md/.markdown` sigue siendo un documento independiente y no se importa automáticamente al almacén. M3 ya está integrado: si otra ventana o proceso cambia el archivo después de abrirlo, MD Notes bloquea la sobrescritura silenciosa; una ventana separada con cambios permanece abierta hasta que el guardado protegido termine correctamente; Salir procesa primero todos los documentos abiertos de forma segura. La función está incluida en **v0.3.21** publicada; M4 es la aceptación manual en tiempo de ejecución en sistemas de escritorio reales.
+
+
+## Copia de seguridad de la bóveda
+
+El menú **Archivo** contiene **Crear copia de seguridad…**. Antes de crearla, MD Notes intenta guardar todas las pestañas abiertas. El resultado es un ZIP portátil con `manifest.json`; cada archivo incluye su ruta, tamaño y SHA-256.
+
+La copia incluye notas, adjuntos, configuración de servicio, plantillas y `.mdnotes/trash`. Se excluyen `.git`, `.mdnotes/cache` y archivos temporales del sistema. En una bóveda cifrada se copian directamente los archivos cifrados del disco; las claves privadas/de recuperación nunca se añaden al ZIP.
+
+**Restaurar copia de seguridad…** verifica primero manifiesto, rutas, tamaños y SHA-256. Solo después de una validación completa extrae en una carpeta temporal y crea una nueva bóveda. Nunca sobrescribe carpetas existentes.

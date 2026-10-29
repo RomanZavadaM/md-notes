@@ -5,6 +5,7 @@
 //! Tauri application and any future tools are thin layers on top of it.
 
 pub mod attachments;
+pub mod backup;
 pub mod duplicates;
 #[cfg(feature = "encrypted-vault")]
 pub mod encrypted;
@@ -36,6 +37,7 @@ pub mod vault;
 pub mod vault_storage;
 
 pub use attachments::AttachmentInfo;
+pub use backup::{create_vault_backup, restore_vault_backup, BackupSummary, RestoreSummary};
 pub use duplicates::{DuplicateGroup, DuplicateNote};
 #[cfg(feature = "encrypted-vault")]
 pub use encrypted::{EncryptedProvider, NameLayout, ENCRYPTED_SUFFIX};

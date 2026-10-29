@@ -347,3 +347,12 @@
 - ZIP завантажено локально й перевірено: checksum збігається; archive integrity test passed.
 - **ADR-0010 лишається NOT DONE до owner runtime verdict r8.** Перевірити: main з 1+ вкладками; кілька різних вузлів graph повинні додавати/активувати вкладки в main без втрати вже відкритих.
 - Release Please #154 не зливати до owner verdict.
+
+
+## 29.10.2026 — ADR-0010 прийнято; активний ADR-0009 backup/restore r1
+
+- Owner прийняв ADR-0010 r8 як достатньо робочий для релізу; не продовжувати шліфування без нового фактичного дефекту.
+- Активний функціональний блок: ADR-0009 ручний backup/restore сховища.
+- Backup: ZIP + manifest/checksums, без `.git`, `.mdnotes/cache`, temp/OS state; encrypted vault копіюється у файловому вигляді без plaintext/secret key.
+- Restore: повна перевірка до запису, тільки в нову папку, без перезапису наявного сховища.
+- Після реалізації: 7 мов, CI, Windows runtime, docs/README, Drive, Release Please 0.3.22.

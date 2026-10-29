@@ -237,6 +237,20 @@ export interface AttachmentInfo {
   size: number;
 }
 
+export interface BackupSummary {
+  archive: string;
+  files: number;
+  bytes: number;
+  encrypted: boolean;
+}
+
+export interface RestoreSummary {
+  path: string;
+  files: number;
+  bytes: number;
+  encrypted: boolean;
+}
+
 export type FieldKind =
   | "text"
   | "string"
@@ -345,6 +359,9 @@ export const api = {
   unresolvedLinks: () => invoke<UnresolvedLink[]>("unresolved_links"),
   listTags: () => invoke<TagCount[]>("list_tags"),
   search: (query: string, limit = 50) => invoke<SearchHit[]>("search", { query, limit }),
+  createBackup: (destination: string) => invoke<BackupSummary>("create_backup", { destination }),
+  restoreBackup: (archive: string, destinationParent: string) =>
+    invoke<RestoreSummary>("restore_backup", { archive, destinationParent }),
   importAttachment: (source: string) => invoke<AttachmentInfo>("import_attachment", { source }),
   listAttachments: () => invoke<AttachmentInfo[]>("list_attachments"),
   attachmentUsedBy: (path: string) => invoke<string[]>("attachment_used_by", { path }),
