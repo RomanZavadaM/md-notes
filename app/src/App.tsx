@@ -633,8 +633,9 @@ export default function App() {
       setDocuments(next);
       if (noteRef.current?.path === path) {
         const fallback = next[Math.min(index - 1, next.length - 1)] ?? next[0] ?? null;
+        // Keep the currently visible document surface unchanged. If an external
+        // Markdown file is active, only update the vault's background fallback.
         activateDocument(fallback);
-        setActiveDocument("vault");
       }
     } catch (e) {
       report(e);
