@@ -12,12 +12,13 @@ interface Props {
   refreshKey: number;
   onOpen: (path: string) => void;
   onOpenLink: (target: string) => void;
+  onDetachGraph?: () => void;
 }
 
 type PanelMode = "links" | "local" | "global" | "tree";
 
 /** Right-hand panel: textual links plus local/global knowledge graph views. */
-export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
+export function LinksPanel({ note, refreshKey, onOpen, onOpenLink, onDetachGraph }: Props) {
   const { t, language } = useI18n();
   const graphStrings = GRAPH_STRINGS[language];
   const [backlinks, setBacklinks] = useState<Backlink[]>([]);
@@ -48,6 +49,14 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
 
   const outgoing = [...new Set(note.links.filter((l) => l.target).map((l) => l.target))];
 
+  const detachGraph = (graphMode: "local" | "global" | "tree") => {
+    void (async () => {
+      await openGraphWindow(graphMode, note.path, graphStrings.windowTitle);
+      setMode("links");
+      onDetachGraph?.();
+    })();
+  };
+
   return (
     <aside className="links-panel" aria-label={t.linksPanel}>
       <div className="tabs graph-tabs" role="tablist">
@@ -75,7 +84,7 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
             type="button"
             className="graph-detach"
             title={graphStrings.detach}
-            onClick={() => void openGraphWindow(mode, note.path, graphStrings.windowTitle)}
+            onClick={() => detachGraph(mode)}
           >
             ↗
           </button>
@@ -131,7 +140,7 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
           onOpen={onOpen}
           onExpand={
             desktop
-              ? () => void openGraphWindow(mode, note.path, graphStrings.windowTitle)
+              ? () => detachGraph(mode)
               : undefined
           }
         />
