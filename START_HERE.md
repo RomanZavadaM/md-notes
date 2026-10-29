@@ -162,3 +162,16 @@
 - Позначення `ADR0010-r1/r2-<SHA>` у Windows Portable — це **runtime-test revision**, а не нова продуктова версія.
 - Щоб надалі це не виглядало як альтернативна схема SemVer, у PROJECT_RULES зафіксовано: офіційні release assets = `MD-Notes-X.Y.Z-...`; одноразові тести = `MD-Notes-TEST-<scope>-rN-<shortSHA>-...`.
 - Вже видані r1/r2 не перейменовувати заднім числом: їхні байти/SHA та записи Issue #8 незмінні. Наступний тестовий кандидат має отримати наступну унікальну ревізію.
+
+
+## 29.10.2026 — ADR-0010 r3: side-by-side + per-tab detach, Windows TEST ready
+
+- PR #162 merged → product-code main `b0f7813c6820cfd5eefb92f0c414d723aab93147`.
+- CI `40859261723` = SUCCESS; Mobile smoke `40859261721` = SUCCESS (Android + iOS simulator).
+- Root UX correction: detached graph no longer opens as a large centered overlay when space allows. `main + graph` are tiled side-by-side in current monitor work area (~58/42); graph node clicks route to visible main without r2 focus/Z-order ping-pong.
+- Any vault tab now has explicit `↗` detach. `detachDocument(path)` saves/conflict-checks exactly that tab, opens its independent editor and removes only that tab from main. Non-active tab detach does not disturb the visible main/external document.
+- Temporary PR #163 closed WITHOUT MERGE after Windows runtime workflow `40860534312` = SUCCESS.
+- TEST artifact ID `12891562599`: `MD-Notes-TEST-ADR0010-r3-b0f7813c-Windows-x64-portable`; ZIP `MD-Notes-TEST-ADR0010-r3-b0f7813c-Windows-x64-portable.zip`; SHA256 `26fa666bc316d360b9bb2f8de5f950c2eeb548b4b523bb9b4511e67543766fe4`.
+- Product version is still 0.3.21; TEST r3 is not v0.3.22. Release Please PR #154 remains separate.
+- **ADR-0010 runtime verdict PENDING.** Owner must verify side-by-side layout, graph→visible-main navigation, per-tab detach and coexistence of graph + main + multiple editor windows.
+- Only after owner PASS: finalize ADR-0010/release decision, then start ADR-0009 backup/restore current working vault.

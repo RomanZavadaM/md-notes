@@ -108,3 +108,16 @@ r2 не вважати owner PASS; його addressed routing зберігаєт
 Side-by-side graph/main доповнюється явним per-tab detach: у кожної vault-вкладки є `↗`, який переносить саме цю вкладку в незалежне editor-вікно. Main лишається контейнером решти вкладок. Якщо від’єднано неактивну вкладку, поточний видимий документ main не змінюється.
 
 Це прийнятий explicit workflow для r3. Drag-and-drop вкладки за межі main можна додати пізніше окремим slice, але він не є умовою приймання ADR-0010.
+
+
+## Runtime candidate r3 — 29.10.2026
+
+r3 replaces the r2 Z-order workaround with the intended workspace model:
+- detached graph and main are automatically tiled side-by-side when there is enough monitor work area;
+- graph remains navigation, main remains the visible editor destination;
+- graph clicks route to main without raising/focus-bouncing windows;
+- every vault tab can be explicitly detached via `↗` into its own editor window;
+- detaching a non-active/background tab does not disturb the currently visible document;
+- manual move/resize/maximize remains available after the initial layout.
+
+Automated checks and Windows build are green, but **ADR-0010 remains NOT DONE until owner runtime PASS**.

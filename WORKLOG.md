@@ -353,3 +353,14 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - Верхня кнопка «Відкрити в окремому вікні» тепер використовує ту саму `detachDocument()` для активної вкладки. Drag-and-drop detach не додавався в r3; explicit `↗` є простішим і перевірюваним UX.
 
 - Edge-case correction before issuing r3 test: per-tab detach no longer forces `activeDocument = vault`. If external Markdown is currently visible and the detached vault tab was its background vault fallback, only the vault fallback state changes; the visible external document stays visible.
+
+
+## Checkpoint 29.10.2026 — ADR-0010 r3 integrated + Windows TEST
+
+- PR #162 merged → `b0f7813c6820cfd5eefb92f0c414d723aab93147`.
+- CI `40859261723` SUCCESS; Mobile smoke `40859261721` SUCCESS.
+- r3 scope: side-by-side graph/main initial layout; addressed graph→main navigation without focus ping-pong; per-tab `↗` detach; background-tab/external-visible edge case fixed.
+- Temporary PR #163 CLOSED WITHOUT MERGE; Windows TEST workflow `40860534312` SUCCESS.
+- Artifact `MD-Notes-TEST-ADR0010-r3-b0f7813c-Windows-x64-portable`; inner ZIP same basename + `.zip`; SHA256 `26fa666bc316d360b9bb2f8de5f950c2eeb548b4b523bb9b4511e67543766fe4`.
+- Status: code integrated + automated checks PASS; owner runtime verdict PENDING.
+- Next single action: owner tests r3 on Windows. Do not start ADR-0009 implementation until this verdict is recorded.
