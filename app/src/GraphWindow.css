@@ -48,15 +48,4 @@
 
 .graph-window-back { margin-left: .4rem; padding: 0 .6rem; font-size: 1.1rem; cursor: pointer; }
 
-.graph-window-content { display: flex; flex: 1; min-height: 0; gap: .6rem; }
-.graph-window-content > .graph-window-body { flex: 1; min-width: 0; }
-.graph-window-preview { width: min(38%, 430px); min-width: 250px; border: 1px solid var(--border); border-radius: .5rem; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
-.graph-window-preview-header { display: flex; align-items: center; gap: .4rem; padding: .5rem; border-bottom: 1px solid var(--border); }
-.graph-window-preview-header strong { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.graph-window-preview-header button { cursor: pointer; }
-.graph-window-preview-body { overflow: auto; padding: .7rem; overflow-wrap: anywhere; }
-.graph-window-preview-body img { max-width: 100%; }
-@media (max-width: 760px) { .graph-window-content { flex-direction: column; } .graph-window-preview { width: auto; min-width: 0; max-height: 45%; } }
 
-.graph-window-tile { margin-left: .35rem; cursor: pointer; }
-.graph-window-layout-status { color: var(--muted); font-size: .72rem; white-space: nowrap; }

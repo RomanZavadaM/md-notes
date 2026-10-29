@@ -270,3 +270,27 @@
 - ZIP завантажено локально й перевірено: checksum збігається, archive integrity test passed.
 - **ADR-0010 залишається NOT DONE до owner runtime verdict для r6.** Головна перевірка: натиснути саме велику `Розгорнути` зі скріншота → graph відкривається окремо, main лишається видимим поруч; кліки по вершинах змінюють видиму нотатку в main.
 - Release Please #154 не зливати до цього verdict.
+
+
+## 29.10.2026 — ADR-0010 r6 owner screenshots → r7 split-workspace correction
+
+- Owner screenshots show r6 still expresses the wrong product model even though the large `Розгорнути` now reaches the detached graph path.
+- The intended model is not «duplicate the graph in another window», but «split one workspace across two windows»: main = note work surface; graph = navigation surface.
+- Current wrong behavior visible in screenshots: main keeps an internal graph panel while detached graph is open; detached graph also contains its own note preview; on ultrawide 3440px screen graph is only 680px wide and becomes cramped.
+- r7 target:
+  - when graph detaches, hide/collapse the graph/link side panel in main so main becomes a clean note surface;
+  - detached graph contains graph/tree navigation only, no note preview pane;
+  - graph clicks continue routing the selected note to main;
+  - widen detached graph to about 38% of monitor work area (bounded for normal screens) instead of max 680px;
+  - keep explicit detached note/editor windows independent;
+  - retain `Розмістити поруч` as a user action, but remove technical size diagnostics from normal UI.
+- r3–r6 are not accepted as the intended multiwindow UX. Next issued Windows candidate is r7.
+
+### Уточнення власника до r7
+
+- `main` — центральне основне вікно; навколо нього будується весь інтерфейс.
+- У `main` можуть залишатися вкладки, права панель, граф та інша інформація — це нормально.
+- Коли граф від’єднують, він має поводитися **як від’єднана вкладка**: окреме самостійне вікно, яке можна переміщати/масштабувати незалежно.
+- Від’єднання графа **не повинно автоматично змінювати розмір/позицію main і не повинно ховати його панелі**.
+- Отже попередня частина r7 про автоматичне приховування правої панелі та примусове розкладання main+graph скасовується.
+- Залишається: окреме graph-вікно, незалежне від main; кліки по графу можуть змінювати інформацію/вкладку в main; окремі editor-вікна працюють аналогічно.

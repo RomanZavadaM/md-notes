@@ -1,4 +1,3 @@
-import { invoke } from "@tauri-apps/api/core";
 import { emit, emitTo } from "@tauri-apps/api/event";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { Window } from "@tauri-apps/api/window";
@@ -19,53 +18,18 @@ export interface GraphActiveNote {
   mode?: GraphWindowMode;
 }
 
-export interface GraphWorkspaceLayout {
-  monitorWidth: number;
-  monitorHeight: number;
-  mainWidth: number;
-  graphWidth: number;
-}
-
-/** True when this webview is the detached graph window (opened with `?view=graph`). */
+/** True when this webview is the detached graph window. */
 export function isGraphWindow(): boolean {
   return new URLSearchParams(window.location.search).get("view") === "graph";
 }
 
 /**
- * Ask the Rust/Tauri shell to tile main + graph using the monitor's physical
- * work area. Keeping this in native code avoids Windows DPI/logical-pixel
- * ambiguity that made the earlier JS-only r3/r4 layout unreliable.
- */
-export async function tileGraphWorkspace(): Promise<GraphWorkspaceLayout> {
-  return invoke<GraphWorkspaceLayout>("tile_graph_workspace");
-}
-
-async function tileGraphWorkspaceWithRetry(): Promise<void> {
-  const delays = [0, 80, 240, 500];
-  let lastError: unknown = null;
-  for (const delay of delays) {
-    if (delay > 0) await new Promise((resolve) => window.setTimeout(resolve, delay));
-    try {
-      await tileGraphWorkspace();
-      return;
-    } catch (error) {
-      lastError = error;
-    }
-  }
-  console.error("Failed to tile graph workspace after native window creation", lastError);
-}
-
-/**
- * Opens the graph in its own native window.
- *
- * r5 keeps the initial graph window compact even before native tiling finishes.
- * Once the native window exists, Rust explicitly places main on the left and
- * graph on the right in physical monitor coordinates.
+ * Opens the graph as an independent native window, like a detached note tab.
+ * It must not resize, reposition, hide or otherwise mutate the main window.
  */
 export async function openGraphWindow(mode: GraphWindowMode, notePath: string, title: string): Promise<void> {
   const existing = await WebviewWindow.getByLabel(GRAPH_LABEL);
   if (existing) {
-    await tileGraphWorkspaceWithRetry();
     await existing.setFocus();
     const payload: GraphActiveNote = { path: notePath, mode };
     await emit(GRAPH_ACTIVE_NOTE, payload);
@@ -76,15 +40,11 @@ export async function openGraphWindow(mode: GraphWindowMode, notePath: string, t
   const graph = new WebviewWindow(GRAPH_LABEL, {
     url: `index.html?${query.toString()}`,
     title,
-    width: 520,
-    height: 720,
-    minWidth: 320,
-    minHeight: 420,
+    width: 1100,
+    height: 800,
+    minWidth: 520,
+    minHeight: 480,
     center: true,
-  });
-
-  await graph.once("tauri://created", () => {
-    void tileGraphWorkspaceWithRetry();
   });
 
   await graph.once("tauri://error", (event) => {
@@ -92,13 +52,7 @@ export async function openGraphWindow(mode: GraphWindowMode, notePath: string, t
   });
 }
 
-/**
- * Route graph navigation to the main editor only.
- *
- * Owner runtime confirmed this routing already changes the active note in main;
- * r5 deliberately does not alter tab/document semantics. Its scope is window
- * visibility/layout only.
- */
+/** Route graph navigation back to the central main window. */
 export async function openGraphNoteInMain(path: string): Promise<void> {
   await emitTo(MAIN_LABEL, GRAPH_OPEN_NOTE, path);
 

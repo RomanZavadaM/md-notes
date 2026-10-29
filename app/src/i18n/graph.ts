@@ -36,7 +36,6 @@ export interface GraphStrings {
   windowTitle: string;
   windowNoNote: string;
   windowBack: string;
-  tileWindows: string;
   previewTitle: string;
   previewEdit: string;
   previewClose: string;
@@ -95,7 +94,6 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "Граф знань",
     windowNoNote: "Відкрийте нотатку в головному вікні, щоб побачити її зв’язки.",
     windowBack: "Назад до попередньої нотатки",
-    tileWindows: "Розмістити поруч",
     previewTitle: "Перегляд нотатки",
     previewEdit: "Відкрити в редакторі",
     previewClose: "Закрити перегляд",
@@ -152,7 +150,6 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "Knowledge graph",
     windowNoNote: "Open a note in the main window to see its connections.",
     windowBack: "Back to the previous note",
-    tileWindows: "Tile beside main",
     previewTitle: "Note preview",
     previewEdit: "Open in editor",
     previewClose: "Close preview",
@@ -209,7 +206,6 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "Graphe de connaissances",
     windowNoNote: "Ouvrez une note dans la fenêtre principale pour voir ses liens.",
     windowBack: "Retour à la note précédente",
-    tileWindows: "Placer côte à côte",
     previewTitle: "Aperçu de la note",
     previewEdit: "Ouvrir dans l’éditeur",
     previewClose: "Fermer l’aperçu",
@@ -266,7 +262,6 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "Wissensgraph",
     windowNoNote: "Öffnen Sie eine Notiz im Hauptfenster, um ihre Verbindungen zu sehen.",
     windowBack: "Zurück zur vorherigen Notiz",
-    tileWindows: "Nebeneinander anordnen",
     previewTitle: "Notizvorschau",
     previewEdit: "Im Editor öffnen",
     previewClose: "Vorschau schließen",
@@ -323,7 +318,6 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "Grafo de conocimiento",
     windowNoNote: "Abra una nota en la ventana principal para ver sus conexiones.",
     windowBack: "Volver a la nota anterior",
-    tileWindows: "Colocar lado a lado",
     previewTitle: "Vista previa de la nota",
     previewEdit: "Abrir en editor",
     previewClose: "Cerrar vista previa",
@@ -380,7 +374,6 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "지식 그래프",
     windowNoNote: "연결을 보려면 기본 창에서 노트를 여세요.",
     windowBack: "이전 노트로 돌아가기",
-    tileWindows: "나란히 배치",
     previewTitle: "노트 미리보기",
     previewEdit: "편집기에서 열기",
     previewClose: "미리보기 닫기",
@@ -437,7 +430,6 @@ export const GRAPH_STRINGS: Record<LanguageCode, GraphStrings> = {
     windowTitle: "ナレッジグラフ",
     windowNoNote: "接続を表示するには、メインウィンドウでノートを開いてください。",
     windowBack: "前のノートに戻る",
-    tileWindows: "横に並べる",
     previewTitle: "ノートのプレビュー",
     previewEdit: "エディターで開く",
     previewClose: "プレビューを閉じる",

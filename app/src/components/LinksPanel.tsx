@@ -48,6 +48,10 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
 
   const outgoing = [...new Set(note.links.filter((l) => l.target).map((l) => l.target))];
 
+  const detachGraph = (graphMode: "local" | "global" | "tree") => {
+    void openGraphWindow(graphMode, note.path, graphStrings.windowTitle);
+  };
+
   return (
     <aside className="links-panel" aria-label={t.linksPanel}>
       <div className="tabs graph-tabs" role="tablist">
@@ -75,7 +79,7 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
             type="button"
             className="graph-detach"
             title={graphStrings.detach}
-            onClick={() => void openGraphWindow(mode, note.path, graphStrings.windowTitle)}
+            onClick={() => detachGraph(mode)}
           >
             ↗
           </button>
@@ -131,7 +135,7 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
           onOpen={onOpen}
           onExpand={
             desktop
-              ? () => void openGraphWindow(mode, note.path, graphStrings.windowTitle)
+              ? () => detachGraph(mode)
               : undefined
           }
         />

@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
-import { api, VAULT_CHANGED, type Note } from "./api";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { VAULT_CHANGED } from "./api";
 import { KnowledgeGraphPanel } from "./components/KnowledgeGraphPanel";
 import { RelationTreePanel } from "./components/RelationTreePanel";
 import { useI18n } from "./i18n";
 import { GRAPH_STRINGS } from "./i18n/graph";
 import { RELATION_TREE_STRINGS } from "./i18n/relationTree";
-import { GRAPH_ACTIVE_NOTE, openGraphNoteInMain, tileGraphWorkspace, type GraphActiveNote, type GraphWindowMode } from "./graphWindowApi";
+import { GRAPH_ACTIVE_NOTE, openGraphNoteInMain, type GraphActiveNote, type GraphWindowMode } from "./graphWindowApi";
 import "./GraphWindow.css";
 
 function initialMode(value: string | null, hasNote: boolean): GraphWindowMode {
@@ -17,9 +15,10 @@ function initialMode(value: string | null, hasNote: boolean): GraphWindowMode {
 }
 
 /**
- * The knowledge graph in its own window: more room, can sit on a second monitor.
- * It reads the same open vault as the main window (one session in the core) and
- * follows the note the user is working on; node selection previews it here.
+ * Detached graph navigation surface.
+ *
+ * Main remains the note work surface. This window deliberately does not render
+ * its own note preview: selecting a graph node changes the note in main.
  */
 export function GraphWindow() {
   const { language } = useI18n();
@@ -29,23 +28,10 @@ export function GraphWindow() {
   const [notePath, setNotePath] = useState(params.get("note") ?? "");
   const [mode, setMode] = useState<GraphWindowMode>(() => initialMode(params.get("mode"), (params.get("note") ?? "") !== ""));
   const [refreshKey, setRefreshKey] = useState(0);
-  const [previewPath, setPreviewPath] = useState<string | null>(null);
-  const [previewNote, setPreviewNote] = useState<Note | null>(null);
-  const [previewError, setPreviewError] = useState<string | null>(null);
-  // Історія активних нотаток цього вікна: дозволяє повернутися назад після переходу по вузлах.
   const historyRef = useRef<string[]>([]);
   const lastPathRef = useRef(params.get("note") ?? "");
   const [canBack, setCanBack] = useState(false);
-  const [layoutStatus, setLayoutStatus] = useState<string | null>(null);
 
-  const retileWorkspace = useCallback(async () => {
-    try {
-      const layout = await tileGraphWorkspace();
-      setLayoutStatus(`${layout.mainWidth} + ${layout.graphWidth} / ${layout.monitorWidth}×${layout.monitorHeight}`);
-    } catch (error) {
-      setLayoutStatus(`! ${String(error)}`);
-    }
-  }, []);
 
   const followNote = useCallback((path: string) => {
     if (path === "" || path === lastPathRef.current) return;
@@ -64,19 +50,13 @@ export function GraphWindow() {
     setCanBack(historyRef.current.length > 0);
     lastPathRef.current = prev;
     setNotePath(prev);
-    setPreviewPath(prev);
+    void openGraphNoteInMain(prev);
   }, []);
 
   useEffect(() => {
     document.title = graphStrings.windowTitle;
   }, [graphStrings.windowTitle]);
 
-  // A second native-layout attempt after the graph React tree is mounted. At
-  // this point both native windows definitely exist, so this is independent of
-  // WebviewWindow creation timing.
-  useEffect(() => {
-    void retileWorkspace();
-  }, [retileWorkspace]);
 
   useEffect(() => {
     let cancelled = false;
@@ -100,22 +80,8 @@ export function GraphWindow() {
 
   const onOpen = useCallback((path: string) => {
     followNote(path);
-    setPreviewPath(path);
     void openGraphNoteInMain(path);
   }, [followNote]);
-
-  useEffect(() => {
-    if (!previewPath) { setPreviewNote(null); setPreviewError(null); return; }
-    let cancelled = false;
-    setPreviewNote(null);
-    setPreviewError(null);
-    void api.readNote(previewPath).then((note) => {
-      if (!cancelled) setPreviewNote(note);
-    }).catch((error: unknown) => {
-      if (!cancelled) setPreviewError(String(error));
-    });
-    return () => { cancelled = true; };
-  }, [previewPath, refreshKey]);
 
   const needsNote = (mode === "local" || mode === "tree") && notePath === "";
 
@@ -145,18 +111,8 @@ export function GraphWindow() {
             ←
           </button>
         )}
-        <button
-          type="button"
-          className="graph-window-tile"
-          onClick={() => void retileWorkspace()}
-          title={graphStrings.tileWindows}
-        >
-          ⇆ {graphStrings.tileWindows}
-        </button>
-        {layoutStatus && <span className="graph-window-layout-status" title={layoutStatus}>{layoutStatus}</span>}
         {notePath !== "" && <span className="graph-window-note">{notePath}</span>}
       </div>
-      <div className="graph-window-content">
       <div className="graph-window-body">
         {needsNote ? (
           <p className="panel-note">{graphStrings.windowNoNote}</p>
@@ -165,19 +121,6 @@ export function GraphWindow() {
         ) : (
           <KnowledgeGraphPanel mode={mode} notePath={notePath} refreshKey={refreshKey} onOpen={onOpen} />
         )}
-      </div>
-      {previewPath && (
-        <aside className="graph-window-preview" aria-label={graphStrings.previewTitle}>
-          <div className="graph-window-preview-header">
-            <strong>{previewNote?.title ?? previewPath}</strong>
-            <button type="button" onClick={() => void openGraphNoteInMain(previewPath)}>{graphStrings.previewEdit}</button>
-            <button type="button" onClick={() => setPreviewPath(null)} aria-label={graphStrings.previewClose}>×</button>
-          </div>
-          {previewError ? <p role="alert">{previewError}</p> :
-            previewNote ? <div className="graph-window-preview-body"><Markdown remarkPlugins={[remarkGfm]}>{previewNote.content}</Markdown></div> :
-            <p>{graphStrings.loading}</p>}
-        </aside>
-      )}
       </div>
     </div>
   );
