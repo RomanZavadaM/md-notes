@@ -175,3 +175,12 @@
 - Product version is still 0.3.21; TEST r3 is not v0.3.22. Release Please PR #154 remains separate.
 - **ADR-0010 runtime verdict PENDING.** Owner must verify side-by-side layout, graph→visible-main navigation, per-tab detach and coexistence of graph + main + multiple editor windows.
 - Only after owner PASS: finalize ADR-0010/release decision, then start ADR-0009 backup/restore current working vault.
+
+
+## 29.10.2026 — ADR-0010 r3 owner FAIL → r4
+
+- Owner Windows runtime verdict for r3: **FAIL**. Opening detached graph did not produce visible side-by-side `main + graph`.
+- r3 remains immutable issued test revision; do not reuse or relabel it.
+- Root-cause audit: r3 relied on constructor-time graph `x/y/size`, and its logical-width gate (`680 + 520`) was too strict for common Windows DPI scaling, silently selecting centered fallback.
+- r4 target: reduce adaptive logical minimums and, after creating graph, wait for native `tauri://created`; only then explicitly unmaximize/resize/reposition both native windows via `Window.getByLabel`.
+- Runtime PASS remains owner-only. Next issued Windows candidate must be r4.
