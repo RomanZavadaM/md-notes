@@ -130,3 +130,14 @@
 - Примусовий focus main прибрано. Preview/history графа, звичайні вкладки та explicit «Відкрити в окремому вікні» не змінені.
 - CI PR #153 / run `40841554655` — SUCCESS. **Це не runtime PASS.** Наступна точна дія — ручний Windows тест власником: graph + main + кілька explicit detached editor windows.
 - До приймання r1 не переходити до ADR-0009 backup/restore. Git↔SyncManifest, WebDAV, physical mobile tests, encrypted-vault gaps і signing також залишаються backlog.
+
+
+## 29.10.2026 — Windows runtime test artifact для ADR-0010 r1
+
+- Поточний `main`: `c6d5d398ab0db0b3272dc966c7e45bd2016d3887`.
+- Одноразова тестова збірка виконана без release/tag через PR #156; PR закритий **без merge** після успішного build.
+- Actions run: `40843601078` = SUCCESS; artifact ID: `12884352283`; назва: `MD-Notes-ADR0010-r1-c6d5d398-Windows-x64-portable`.
+- Portable ZIP: `MD-Notes-ADR0010-r1-c6d5d398-Windows-x64-portable.zip`; SHA256: `3d261922637fb29db3eb5a57ed42637095966a265f3e6f8c13a6d4fb4e69de1f`.
+- Це **TEST BUILD**, не новий реліз; executable все ще має продуктову версію 0.3.21. Release Please PR #154 (`0.3.22`) лишається незлитим.
+- Наступна точна дія: ручний Windows runtime verdict власника. Перевірити: graph-node click змінює active main note без накопичення tabs → explicit «Відкрити в окремому вікні» → main доступний для іншої нотатки → кілька editor windows → conflict/safe close.
+- До фактичного PASS не завершувати ADR-0010 і не починати ADR-0009.
