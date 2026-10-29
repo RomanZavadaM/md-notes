@@ -96,6 +96,7 @@ export default function App() {
   const draftRef = useRef("");
   const savedRef = useRef("");
   const closingRef = useRef(false);
+  const graphOpenRequestRef = useRef(0);
   const [savedContent, setSavedContent] = useState("");
   const dirty = note !== null && draft !== savedContent;
 
@@ -561,6 +562,7 @@ export default function App() {
 
   const openGraphNote = useCallback(
     async (path: string) => {
+      const requestId = ++graphOpenRequestRef.current;
       try {
         const existing = openDocumentsRef.current.find((document) => document.note.path === path);
         if (existing) {
@@ -572,8 +574,10 @@ export default function App() {
 
         const current = noteRef.current;
         if (current && !(await saveVaultDocument(current.path))) return;
+        if (requestId !== graphOpenRequestRef.current) return;
 
         const opened = await api.readNote(path);
+        if (requestId !== graphOpenRequestRef.current) return;
         const document: OpenVaultDocument = {
           note: opened,
           draft: opened.content,
