@@ -141,3 +141,16 @@
 - Це **TEST BUILD**, не новий реліз; executable все ще має продуктову версію 0.3.21. Release Please PR #154 (`0.3.22`) лишається незлитим.
 - Наступна точна дія: ручний Windows runtime verdict власника. Перевірити: graph-node click змінює active main note без накопичення tabs → explicit «Відкрити в окремому вікні» → main доступний для іншої нотатки → кілька editor windows → conflict/safe close.
 - До фактичного PASS не завершувати ADR-0010 і не починати ADR-0009.
+
+
+## 29.10.2026 — ADR-0010 graph routing r2 інтегровано, Windows test artifact готовий
+
+- PR #158 merged у `main` → `66eb9728bf9f0dadaf59d75a84ac3dde8ae30d17`.
+- CI run `40853765572`: SUCCESS для всіх запущених jobs (frontend, licenses, notes-core Windows/Linux/macOS, Tauri clippy Linux/macOS).
+- Graph navigation тепер адресна: `emitTo("main", GRAPH_OPEN_NOTE, path)`; detached `editor-*` не отримують graph navigation і зберігають власну note identity.
+- Після graph selection main виконує `unminimize()+show()`, коротко піднімається у Z-order, після чого focus повертається graph-вікну. Existing replace-active/conflict/latest-request routing не змінено.
+- Temporary PR #159 закритий **без merge** після Windows runtime build `40854135789` = SUCCESS.
+- Artifact ID `12889336347`: `MD-Notes-ADR0010-r2-f7b35c9b-Windows-x64-portable`; inner ZIP `MD-Notes-ADR0010-r2-f7b35c9b-Windows-x64-portable.zip`; SHA256 `3d8cf4ad903e99c25cf9002ba7d4accd45645917a0a1b9e4536eb7ba1fd6280a`.
+- Це TEST BUILD, не v0.3.22. Release Please PR #154 лишається відкритим; його не зливати до owner runtime verdict.
+- **ADR-0010 ще NOT DONE.** Єдина наступна дія: owner Windows runtime test r2. Перевірити, що graph-node click змінює main, main стає видимим поверх/перед detached editors, focus повертається graph і повторні кліки працюють; graph + main + кілька editor windows не ламаються.
+- Після фактичного PASS перейти до ADR-0009 — backup/restore **поточного робочого vault**. До PASS не починати його реалізацію.

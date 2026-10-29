@@ -309,3 +309,17 @@ Safety requirements для Git push мають зберігати існуючі
 - r2 code checkpoint: `graphWindowApi.ts` тепер використовує адресний `emitTo("main", GRAPH_OPEN_NOTE, path)` замість global broadcast. Після маршрутизації main примусово `unminimize()+show()`, коротко піднімається у Z-order і фокус одразу повертається в graph; це має прибрати ефект «нотатка відкрилася у невидимому вікні» без втрати можливості послідовно клікати граф. Detached `editor-*` навмисно не отримують graph navigation і зберігають власну note identity.
 - `GraphWindow.tsx` і звичайний node click, і явна кнопка preview «відкрити/редагувати» використовують один `openGraphNoteInMain()`. Наявний main-side `openGraphNote()` replace-active routing, conflict guard і latest-request guard не змінено.
 - Автоматична перевірка ще попереду; runtime PASS не заявляти до нового Windows Portable test.
+
+
+## Checkpoint 29.10.2026 — ADR-0010 r2 integrated + test artifact
+
+- PR #158 merged squash → `main` `66eb9728bf9f0dadaf59d75a84ac3dde8ae30d17`.
+- CI `40853765572` — SUCCESS усіх запущених jobs.
+- Temporary PR #159 — CLOSED WITHOUT MERGE; Windows runtime workflow `40854135789` — SUCCESS.
+- Artifact ID `12889336347`; Portable `MD-Notes-ADR0010-r2-f7b35c9b-Windows-x64-portable.zip`; verified SHA256 `3d8cf4ad903e99c25cf9002ba7d4accd45645917a0a1b9e4536eb7ba1fd6280a`.
+- Release PR #154 (`0.3.22`) auto-refreshed after merge; не зливати до owner runtime verdict.
+- **Статус:** code VERIFIED + integrated; runtime acceptance PENDING, ADR-0010 NOT DONE.
+
+### Єдина наступна активна дія
+
+Owner тестує r2 Windows Portable: graph + main + кілька detached editor windows; серія graph-node clicks має оновлювати main без накопичення вкладок, main не має лишатися невидимим за editor-вікнами, а focus після маршрутизації повертається graph. Зафіксувати PASS/FAIL в Issue #8. Тільки після фактичного PASS переходити до ADR-0009 backup/restore поточного робочого vault.

@@ -162,3 +162,14 @@ Builds не вважаються підписаними/нотаризовани
 - Portable SHA256: `3d261922637fb29db3eb5a57ed42637095966a265f3e6f8c13a6d4fb4e69de1f`.
 - PR #156 був лише тимчасовою build-гілкою і закритий без merge. Останній published prerelease лишається `v0.3.21`; PR #154 для `0.3.22` лишається відкритим і незлитим.
 - ADR-0010 все ще **NOT DONE** до ручного Windows acceptance власником.
+
+
+## Інтегрований checkpoint 29.10.2026 — ADR-0010 r2
+
+- `main`: `66eb9728bf9f0dadaf59d75a84ac3dde8ae30d17` (PR #158).
+- r2 виправляє залишкову проблему видимості destination при graph navigation у multiwindow: подія адресована тільки `main`; main показується/розгортається та піднімається у Z-order, після чого focus повертається graph.
+- Detached editor windows не є destination звичайного graph click; їхній документ не змінюється.
+- Автоматичні checks PR #158: run `40853765572` = SUCCESS.
+- Windows test artifact r2 зібраний run `40854135789` = SUCCESS; SHA256 Portable ZIP `3d8cf4ad903e99c25cf9002ba7d4accd45645917a0a1b9e4536eb7ba1fd6280a`.
+- **Runtime acceptance власником ще не виконано; ADR-0010 не закрито.** Останній опублікований prerelease залишається v0.3.21.
+- Наступний підтверджений функціональний блок після owner PASS: ADR-0009 — ручне резервне копіювання/відновлення поточного робочого vault. Воно спроєктоване, але коду функції ще немає.
