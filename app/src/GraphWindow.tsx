@@ -6,7 +6,7 @@ import { RelationTreePanel } from "./components/RelationTreePanel";
 import { useI18n } from "./i18n";
 import { GRAPH_STRINGS } from "./i18n/graph";
 import { RELATION_TREE_STRINGS } from "./i18n/relationTree";
-import { GRAPH_ACTIVE_NOTE, openGraphNoteInMain, tileGraphWorkspace, type GraphActiveNote, type GraphWindowMode } from "./graphWindowApi";
+import { GRAPH_ACTIVE_NOTE, openGraphNoteInMain, type GraphActiveNote, type GraphWindowMode } from "./graphWindowApi";
 import "./GraphWindow.css";
 
 function initialMode(value: string | null, hasNote: boolean): GraphWindowMode {
@@ -32,13 +32,6 @@ export function GraphWindow() {
   const lastPathRef = useRef(params.get("note") ?? "");
   const [canBack, setCanBack] = useState(false);
 
-  const retileWorkspace = useCallback(async () => {
-    try {
-      await tileGraphWorkspace();
-    } catch (error) {
-      console.error("Failed to place graph beside main", error);
-    }
-  }, []);
 
   const followNote = useCallback((path: string) => {
     if (path === "" || path === lastPathRef.current) return;
@@ -64,9 +57,6 @@ export function GraphWindow() {
     document.title = graphStrings.windowTitle;
   }, [graphStrings.windowTitle]);
 
-  useEffect(() => {
-    void retileWorkspace();
-  }, [retileWorkspace]);
 
   useEffect(() => {
     let cancelled = false;
@@ -121,14 +111,6 @@ export function GraphWindow() {
             ←
           </button>
         )}
-        <button
-          type="button"
-          className="graph-window-tile"
-          onClick={() => void retileWorkspace()}
-          title={graphStrings.tileWindows}
-        >
-          ⇆ {graphStrings.tileWindows}
-        </button>
         {notePath !== "" && <span className="graph-window-note">{notePath}</span>}
       </div>
       <div className="graph-window-body">
