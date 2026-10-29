@@ -12,13 +12,12 @@ interface Props {
   refreshKey: number;
   onOpen: (path: string) => void;
   onOpenLink: (target: string) => void;
-  onDetachGraph?: () => void;
 }
 
 type PanelMode = "links" | "local" | "global" | "tree";
 
 /** Right-hand panel: textual links plus local/global knowledge graph views. */
-export function LinksPanel({ note, refreshKey, onOpen, onOpenLink, onDetachGraph }: Props) {
+export function LinksPanel({ note, refreshKey, onOpen, onOpenLink }: Props) {
   const { t, language } = useI18n();
   const graphStrings = GRAPH_STRINGS[language];
   const [backlinks, setBacklinks] = useState<Backlink[]>([]);
@@ -50,11 +49,7 @@ export function LinksPanel({ note, refreshKey, onOpen, onOpenLink, onDetachGraph
   const outgoing = [...new Set(note.links.filter((l) => l.target).map((l) => l.target))];
 
   const detachGraph = (graphMode: "local" | "global" | "tree") => {
-    void (async () => {
-      await openGraphWindow(graphMode, note.path, graphStrings.windowTitle);
-      setMode("links");
-      onDetachGraph?.();
-    })();
+    void openGraphWindow(graphMode, note.path, graphStrings.windowTitle);
   };
 
   return (
