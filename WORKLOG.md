@@ -285,3 +285,12 @@ Safety requirements для Git push мають зберігати існуючі
 - Окремо зафіксовано технічний борг CI: frontend-зміна PR #153 запустила Rust/Tauri matrix всупереч очікуваній path-aware policy; не виправляти в цьому slice, розглянути після ADR-0010 acceptance.
 
 - Release Please автоматично відкрив PR #154 `chore(main): release 0.3.22`; **не зливати і не публікувати 0.3.22 без окремого release checkpoint/команди власника**. Для runtime-приймання r1 спочатку потрібна тестова Windows-збірка й фактичний verdict власника.
+
+
+## 29.10.2026 — Windows runtime artifact готовий
+
+- Одноразовий PR #156 створив Windows-only test workflow і закритий без merge після успішної збірки.
+- Run `40843601078`: SUCCESS. Artifact `12884352283`: `MD-Notes-ADR0010-r1-c6d5d398-Windows-x64-portable`.
+- Внутрішній ZIP: `MD-Notes-ADR0010-r1-c6d5d398-Windows-x64-portable.zip`; SHA256 `3d261922637fb29db3eb5a57ed42637095966a265f3e6f8c13a6d4fb4e69de1f`.
+- Тестова збірка не змінює version/tag/release; PR #154 `0.3.22` не зливати до runtime verdict.
+- Наступна **єдина активна дія**: owner Windows test. PASS/FAIL зафіксувати в Issue #8 + START/STATE/WORKLOG. Якщо FAIL — виправляти ADR-0010; якщо PASS — лише тоді закривати ADR-0010 і вирішувати release checkpoint / перехід до ADR-0009.
