@@ -93,3 +93,14 @@ Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved. M
 **v0.3.21** publishes ADR-0010 M1–M3. Multiple vault notes can stay open in tabs, each with its own draft. On desktop, the active note can be moved with **Open in separate window** into an independent editor window. Changes are saved before the move, and the main window returns to the previous tab or an empty workspace.
 
 M1–M3 are part of published **v0.3.21**: conflict guards, safe detached-editor close, and save-all/safe Quit are implemented. Windows/macOS/Linux CI and Android/iOS build smoke pass. **M4 now means manual runtime acceptance**; the test prerelease is already published.
+
+
+## Backup and restore
+
+The **File** menu provides manual **Create backup…** and **Restore backup…** actions.
+
+- backups are portable ZIP archives with `manifest.json` and a SHA-256 checksum for every file;
+- MD Notes saves open notes before creating a backup;
+- notes, attachments, configuration, templates and trash are included; `.git`, `.mdnotes/cache` and temporary OS noise are excluded;
+- encrypted vaults are copied **without decryption**; private/recovery keys are never stored in the archive;
+- restore validates paths, sizes and checksums first, then creates a **new** vault folder and never overwrites the current vault.
