@@ -273,3 +273,15 @@ Safety requirements для Git push мають зберігати існуючі
 - Реалізовано в коді: `App.tsx` отримав окремий `openGraphNote()`; для нового graph-target він safe-save поточний active document і **замінює його на тому самому індексі**, замість append вкладки. Якщо target уже відкритий — лише активується. Примусовий `setFocus()` видалено.
 - `GraphWindow.tsx`: звичайний `onOpen` вузла зберігає попередні `followNote + preview` і додатково надсилає `GRAPH_OPEN_NOTE` у main.
 - Код-коміти: `2155d73cccb1cb5fbac48b493087eb0d218d2d7a`, `43072e5c1b8db1defa00dcc4196a739f57e6b794`. Локальна runtime-перевірка через реальний Windows app тут не виконувалась; наступне — PR + CI, потім ручний тест власником.
+
+
+## Checkpoint 29.10.2026 — ADR-0010 graph routing r1 integrated
+
+- PR #153 merged → `9a2db3532b63db2e7c9f52c05902d4f10a87cb24`.
+- Final head: `0f4613f90fbbdcd1bc1eaae6ac826d9fa09f6f52`; CI `40841554655` = SUCCESS.
+- Runtime FAIL v0.3.21 не перекласифіковано: цей code fix ще не перевірений власником у Windows.
+- Наступна **єдина активна дія**: дати власнику тестову збірку/checkpoint і прийняти реальний сценарій: node click змінює active main note без накопичення tabs → explicit detach → main лишається доступним → відкрити кілька independent editor windows → перевірити conflict/safe close.
+- До runtime verdict не починати ADR-0009 backup/restore. Не загубити Git↔SyncManifest, WebDAV, physical Android/iOS, encrypted-vault gaps, signing.
+- Окремо зафіксовано технічний борг CI: frontend-зміна PR #153 запустила Rust/Tauri matrix всупереч очікуваній path-aware policy; не виправляти в цьому slice, розглянути після ADR-0010 acceptance.
+
+- Release Please автоматично відкрив PR #154 `chore(main): release 0.3.22`; **не зливати і не публікувати 0.3.22 без окремого release checkpoint/команди власника**. Для runtime-приймання r1 спочатку потрібна тестова Windows-збірка й фактичний verdict власника.

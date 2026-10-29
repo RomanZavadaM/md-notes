@@ -143,3 +143,13 @@ Builds не вважаються підписаними/нотаризовани
 Фактичний тест власника спростував попереднє оптимістичне формулювання документації. При роботі з окремим графом клік по вузлах лише відкриває/накопичує вкладки в головному вікні. Отже v0.3.21 не змінив базовий робочий сценарій настільки, як було погоджено.
 
 Статус ADR-0010: **частково реалізована інфраструктура, цільовий multiwindow UX — NOT DONE / runtime FAIL**.
+
+
+## Інтегрований checkpoint 29.10.2026 — ADR-0010 graph routing r1
+
+- PR #153 інтегровано в `main`: `9a2db3532b63db2e7c9f52c05902d4f10a87cb24`.
+- Graph-node navigation тепер має окремий routing у main: target замінює активний document slot замість append нової вкладки; already-open target лише активується.
+- Dirty active document перед replacement проходить conflict-guarded save; додано захист від race при швидких кліках. Примусовий focus main прибрано.
+- `GraphWindow` зберігає follow/preview/history та надсилає `GRAPH_OPEN_NOTE` зі звичайного node click. Explicit detached editor залишається лише явною дією користувача.
+- Автоматична перевірка PR #153: CI `40841554655` — SUCCESS. **Ручний Windows runtime acceptance ще не виконаний; статус повного ADR-0010 multiwindow = NOT DONE до тесту власником.**
+- Останній опублікований prerelease лишається `v0.3.21`; новий реліз цим checkpoint не публікувався.
