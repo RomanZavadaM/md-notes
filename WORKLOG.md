@@ -1,14 +1,14 @@
 # WORKLOG — MD Notes
 
-Оновлено: **28.10.2026**
+Оновлено: **29.10.2026**
 
 ## STATUS
 
-**ACTIVE. Останній реліз v0.3.21 (28.10.2026). Runtime-тест власника: multiwindow UX FAIL; виправлення ADR-0010 є наступною задачею.**
+**ACTIVE. Останній реліз v0.3.22 (29.10.2026). ADR-0010 r8 прийнято для релізу; ADR-0009 backup/restore реалізовано; release checkpoint завершено.**
 
 Оновлено: 27.10.2026. Нижче розділи за 18-19.10 — історія (запис стану на ті дати); поточний стан — у `PROJECT_STATE.md`.
 
-Release baseline (актуально 28.10.2026): tag/prerelease `v0.3.21`; активи Windows/macOS/Linux, START/source, legal, `SHA256SUMS.txt` опубліковані.
+Release baseline (актуально 29.10.2026): tag/prerelease `v0.3.22`; release target `eed52893ec4bc3b1d55345b54a193b19c33462c2`; workflow `40939361323` SUCCESS; 13 assets опубліковано.
 
 ## Runtime / build evidence
 
@@ -592,3 +592,18 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - Важлива межа доказу: owner вручну перевірив multi-window r8, але **не проводив окремого ручного backup/restore runtime-тесту**; backup покривається автоматичними тестами трьох desktop OS.
 - Поточний product-code main: `71ba9604c30b8399137d79011f2bd97432b9505a`.
 - Наступна єдина дія: завершити Release Please PR #154 → v0.3.22 prerelease, перевірити release workflow та 13 assets, після цього синхронізувати цей checkpoint із фактичним release SHA/tag.
+
+
+## 29.10.2026 — v0.3.22 release завершено
+
+- Перед фінальною синхронізацією GitHub: release target `eed52893ec4bc3b1d55345b54a193b19c33462c2`; після docs-only README links update актуальний `main` = `a631801e97fd335591bc6da7d4e670d3d21bf2da`.
+- Release Please #154 merged; `v0.3.22` prerelease опублікований.
+- Release workflow `40939361323` = **SUCCESS**.
+- Опубліковано 13 assets, включно з Windows portable ZIP, EXE/MSI, macOS universal, Linux packages, START/source, checksums і legal notices.
+- ADR-0010 r8: practical owner acceptance; не продовжувати полірування без нового фактичного дефекту.
+- ADR-0009 backup/restore: merged у PR #182; автоматичні desktop тести пройдені; окремого owner runtime backup/restore test не було.
+- Продуктовий код після release не змінюється цим docs-only checkpoint.
+
+### Наступна точна дія
+
+Продовжувати з backlog: групові операції в дереві файлів, Git ↔ SyncManifest, WebDAV, physical-device mobile validation, encrypted-vault gaps, signing.
