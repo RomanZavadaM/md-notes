@@ -351,3 +351,5 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - Owner extension: від’єднання вкладок підсилює side-by-side модель. Реалізовано explicit per-tab detach: кожна vault-вкладка має власний `↗`; можна винести саме її в окреме editor-вікно без попередньої активації.
 - Спільна `detachDocument(path)` зберігає/перевіряє конкретний документ, відкриває його через existing `openEditorWindow`, прибирає лише цю вкладку з main; якщо від’єднувалась неактивна вкладка, активна main-вкладка не змінюється.
 - Верхня кнопка «Відкрити в окремому вікні» тепер використовує ту саму `detachDocument()` для активної вкладки. Drag-and-drop detach не додавався в r3; explicit `↗` є простішим і перевірюваним UX.
+
+- Edge-case correction before issuing r3 test: per-tab detach no longer forces `activeDocument = vault`. If external Markdown is currently visible and the detached vault tab was its background vault fallback, only the vault fallback state changes; the visible external document stays visible.
