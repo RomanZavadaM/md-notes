@@ -15,6 +15,8 @@ use notes_core::{
 use serde::Serialize;
 use serde_json::Value;
 use tauri::{AppHandle, Emitter, Manager, State};
+#[cfg(not(any(target_os = "android", target_os = "ios")))]
+use tauri::{PhysicalPosition, PhysicalSize};
 
 mod encryption;
 mod git;
@@ -50,6 +52,109 @@ fn with_session<T>(
 }
 
 const VAULT_CHANGED: &str = "vault-changed";
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct GraphWorkspaceLayout {
+    monitor_width: u32,
+    monitor_height: u32,
+    main_width: u32,
+    graph_width: u32,
+}
+
+#[tauri::command]
+fn tile_graph_workspace(app: AppHandle) -> CmdResult<GraphWorkspaceLayout> {
+    #[cfg(any(target_os = "android", target_os = "ios"))]
+    {
+        let _ = app;
+        return Err("graph workspace layout is desktop-only".into());
+    }
+
+    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    {
+        let main = app
+            .get_webview_window("main")
+            .ok_or_else(|| "main window is not available".to_string())?;
+        let graph = app
+            .get_webview_window("graph")
+            .ok_or_else(|| "graph window is not available".to_string())?;
+
+        let monitor = main
+            .current_monitor()
+            .map_err(|error| error.to_string())?
+            .or_else(|| graph.current_monitor().ok().flatten())
+            .or_else(|| main.primary_monitor().ok().flatten())
+            .ok_or_else(|| "no monitor is available for graph workspace".to_string())?;
+        let area = monitor.work_area();
+        let margin: u32 = 8;
+        let gap: u32 = 10;
+        let available_width = area
+            .size
+            .width
+            .saturating_sub(margin.saturating_mul(2).saturating_add(gap));
+        let available_height = area.size.height.saturating_sub(margin.saturating_mul(2));
+        if available_width < 760 || available_height < 420 {
+            return Err(format!(
+                "monitor work area is too small for graph workspace: {}x{}",
+                area.size.width, area.size.height
+            ));
+        }
+
+        // Keep graph compact. Physical pixels avoid DPI/logical-size ambiguity on Windows.
+        let desired_graph = ((available_width as f64) * 0.36).round() as u32;
+        let graph_width = desired_graph
+            .clamp(360, 680)
+            .min(available_width.saturating_sub(400));
+        let main_width = available_width.saturating_sub(graph_width);
+        if main_width < 400 || graph_width < 320 {
+            return Err(format!(
+                "not enough width to tile main + graph: available={available_width}, main={main_width}, graph={graph_width}"
+            ));
+        }
+
+        let x = area.position.x.saturating_add(margin as i32);
+        let y = area.position.y.saturating_add(margin as i32);
+        let graph_x = x
+            .saturating_add(main_width as i32)
+            .saturating_add(gap as i32);
+
+        for window in [&main, &graph] {
+            if window.is_minimized().map_err(|error| error.to_string())? {
+                window.unminimize().map_err(|error| error.to_string())?;
+            }
+            if window.is_maximized().map_err(|error| error.to_string())? {
+                window.unmaximize().map_err(|error| error.to_string())?;
+            }
+            if window.is_fullscreen().map_err(|error| error.to_string())? {
+                window
+                    .set_fullscreen(false)
+                    .map_err(|error| error.to_string())?;
+            }
+        }
+
+        main.set_size(PhysicalSize::new(main_width, available_height))
+            .map_err(|error| error.to_string())?;
+        main.set_position(PhysicalPosition::new(x, y))
+            .map_err(|error| error.to_string())?;
+        main.show().map_err(|error| error.to_string())?;
+
+        graph
+            .set_size(PhysicalSize::new(graph_width, available_height))
+            .map_err(|error| error.to_string())?;
+        graph
+            .set_position(PhysicalPosition::new(graph_x, y))
+            .map_err(|error| error.to_string())?;
+        graph.show().map_err(|error| error.to_string())?;
+        graph.set_focus().map_err(|error| error.to_string())?;
+
+        Ok(GraphWorkspaceLayout {
+            monitor_width: area.size.width,
+            monitor_height: area.size.height,
+            main_width,
+            graph_width,
+        })
+    }
+}
 
 #[derive(Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -751,6 +856,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .manage(AppState::default())
         .invoke_handler(tauri::generate_handler![
+            tile_graph_workspace,
             runtime_platform,
             open_mobile_sandbox_vault,
             open_markdown_file,
