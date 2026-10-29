@@ -8,7 +8,7 @@ import { RelationTreePanel } from "./components/RelationTreePanel";
 import { useI18n } from "./i18n";
 import { GRAPH_STRINGS } from "./i18n/graph";
 import { RELATION_TREE_STRINGS } from "./i18n/relationTree";
-import { GRAPH_ACTIVE_NOTE, openGraphNoteInMain, type GraphActiveNote, type GraphWindowMode } from "./graphWindowApi";
+import { GRAPH_ACTIVE_NOTE, openGraphNoteInMain, tileGraphWorkspace, type GraphActiveNote, type GraphWindowMode } from "./graphWindowApi";
 import "./GraphWindow.css";
 
 function initialMode(value: string | null, hasNote: boolean): GraphWindowMode {
@@ -36,6 +36,16 @@ export function GraphWindow() {
   const historyRef = useRef<string[]>([]);
   const lastPathRef = useRef(params.get("note") ?? "");
   const [canBack, setCanBack] = useState(false);
+  const [layoutStatus, setLayoutStatus] = useState<string | null>(null);
+
+  const retileWorkspace = useCallback(async () => {
+    try {
+      const layout = await tileGraphWorkspace();
+      setLayoutStatus(`${layout.mainWidth} + ${layout.graphWidth} / ${layout.monitorWidth}×${layout.monitorHeight}`);
+    } catch (error) {
+      setLayoutStatus(`! ${String(error)}`);
+    }
+  }, []);
 
   const followNote = useCallback((path: string) => {
     if (path === "" || path === lastPathRef.current) return;
@@ -60,6 +70,13 @@ export function GraphWindow() {
   useEffect(() => {
     document.title = graphStrings.windowTitle;
   }, [graphStrings.windowTitle]);
+
+  // A second native-layout attempt after the graph React tree is mounted. At
+  // this point both native windows definitely exist, so this is independent of
+  // WebviewWindow creation timing.
+  useEffect(() => {
+    void retileWorkspace();
+  }, [retileWorkspace]);
 
   useEffect(() => {
     let cancelled = false;
@@ -128,6 +145,15 @@ export function GraphWindow() {
             ←
           </button>
         )}
+        <button
+          type="button"
+          className="graph-window-tile"
+          onClick={() => void retileWorkspace()}
+          title={graphStrings.tileWindows}
+        >
+          ⇆ {graphStrings.tileWindows}
+        </button>
+        {layoutStatus && <span className="graph-window-layout-status" title={layoutStatus}>{layoutStatus}</span>}
         {notePath !== "" && <span className="graph-window-note">{notePath}</span>}
       </div>
       <div className="graph-window-content">
