@@ -549,3 +549,24 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
   - removed obsolete graph request/replacement state;
   - detached graph window behavior from r7 is unchanged.
 - Next: full CI/mobile checks, merge only if green, then issue unique Windows TEST r8.
+
+
+## 29.10.2026 — ADR-0010 r8: окремий graph + нормальні вкладки main, Windows TEST готовий
+
+- Owner runtime r7: **модель окремого graph-вікна правильна**. Main лишається центральним; graph від’єднується незалежно.
+- Runtime-дефект r7: коли main уже мав вкладку, кліки по graph не відкривали очікувані нові вкладки; працював переважно випадок порожнього main.
+- Причина: `openGraphNote` мав окрему логіку заміни активної вкладки замість звичайного відкриття нотатки.
+- r8 PR #179 merged → product-code main `654b9d17f8f022ef5223e6c350055fbd0d0eb3ef`.
+- r8 змінює лише graph→main routing:
+  - якщо цільова нотатка вже відкрита → активувати її вкладку;
+  - якщо не відкрита → додати нову вкладку;
+  - усі інші вкладки зберігати;
+  - detached graph із r7 не змінювати.
+- Повний CI для PR #179 = SUCCESS.
+- Тимчасовий TEST PR #180 закрито WITHOUT MERGE; Windows runtime workflow `40927473259` = SUCCESS.
+- Artifact ID `12921486986`: `MD-Notes-TEST-ADR0010-r8-654b9d17-Windows-x64-portable`.
+- Inner ZIP SHA256 `fb76e95cfaac1b201566582f1f4c5bf52c002d77086121fb46df3162378b4236`.
+- `MD Notes.exe` SHA256 `01935160b37089122a9196dde4cab666f09fc309b9923d826145a42618a8bc0a`; size `29401088`; build timestamp `2026-10-29 18:12:56 UTC`.
+- ZIP завантажено локально й перевірено: checksum збігається; archive integrity test passed.
+- **ADR-0010 лишається NOT DONE до owner runtime verdict r8.** Перевірити: main з 1+ вкладками; кілька різних вузлів graph повинні додавати/активувати вкладки в main без втрати вже відкритих.
+- Release Please #154 не зливати до owner verdict.
