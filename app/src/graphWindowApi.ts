@@ -19,11 +19,8 @@ export interface GraphActiveNote {
 }
 
 /**
- * Opens the graph in its own native window.
- *
- * r5 keeps the initial graph window compact even before native tiling finishes.
- * Once the native window exists, Rust explicitly places main on the left and
- * graph on the right in physical monitor coordinates.
+ * Opens the graph as an independent native window, like a detached note tab.
+ * It must not resize, reposition, hide or otherwise mutate the main window.
  */
 export async function openGraphWindow(mode: GraphWindowMode, notePath: string, title: string): Promise<void> {
   const existing = await WebviewWindow.getByLabel(GRAPH_LABEL);
@@ -50,13 +47,7 @@ export async function openGraphWindow(mode: GraphWindowMode, notePath: string, t
   });
 }
 
-/**
- * Route graph navigation to the main editor only.
- *
- * Owner runtime confirmed this routing already changes the active note in main;
- * r5 deliberately does not alter tab/document semantics. Its scope is window
- * visibility/layout only.
- */
+/** Route graph navigation back to the central main window. */
 export async function openGraphNoteInMain(path: string): Promise<void> {
   await emitTo(MAIN_LABEL, GRAPH_OPEN_NOTE, path);
 
