@@ -528,3 +528,24 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - **ADR-0010 лишається NOT DONE до owner runtime verdict для r7.** Перевірка: від’єднати graph → main не змінюється; graph можна вручну перемістити/розтягнути; клік по graph відкриває/перемикає нотатку в main; від’єднані нотатки можуть існувати паралельно.
 - Попередні r3–r6 та ранні r7-описи про автоматичне розкладання вікон вважати історією невдалого трактування; цей розділ є актуальною моделлю.
 - Release Please #154 не зливати до owner verdict.
+
+
+## 29.10.2026 — ADR-0010 r7 owner runtime: independent graph PASS, graph→main tabs FAIL → r8
+
+- Owner confirms the core window model is now right: graph is an independent detached window; this part is accepted as the correct direction.
+- Runtime defect: graph node selection only opens a note when main has no active vault tab. With an existing tab, graph navigation no longer creates/selects the expected tab consistently.
+- Owner expectation is explicit: graph node selection must behave like ordinary note opening in main.
+  - if target note already has a tab → activate it;
+  - if target note has no tab → create a new tab;
+  - preserve other existing tabs;
+  - main remains central and unchanged; graph remains independent.
+- Root cause in current `openGraphNote`: it replaces the active tab instead of reusing normal `openNote` semantics.
+- r8 target is narrow: make graph→main navigation delegate to ordinary tab opening; do not change graph window behavior.
+
+- r8 implementation checkpoint:
+  - removed the special graph-only tab replacement path;
+  - graph selection now delegates to the existing ordinary `openNote` behavior;
+  - existing target tab is activated; missing target tab is appended; all other tabs are preserved;
+  - removed obsolete graph request/replacement state;
+  - detached graph window behavior from r7 is unchanged.
+- Next: full CI/mobile checks, merge only if green, then issue unique Windows TEST r8.
