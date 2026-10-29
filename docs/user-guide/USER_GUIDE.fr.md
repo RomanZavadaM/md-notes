@@ -175,3 +175,12 @@ Dans **v0.3.21**, plusieurs notes du coffre peuvent rester ouvertes dans des ong
 Sur ordinateur, la note active du coffre propose **Ouvrir dans une fenêtre séparée**. MD Notes enregistre le brouillon avant de le détacher. Une fois la fenêtre indépendante créée, la note est retirée des onglets de l’éditeur principal et la fenêtre principale revient à l’onglet précédent ; s’il n’en reste aucun, l’éditeur devient vide tout en gardant l’arbre du coffre disponible. La fenêtre séparée prend en charge Éditeur / côte à côte / aperçu et l’enregistrement automatique.
 
 Un fichier externe `.md/.markdown` reste un document séparé et n’est pas importé automatiquement dans le coffre. M3 est maintenant intégré : si une autre fenêtre ou un autre processus modifie le fichier après son ouverture, MD Notes bloque l’écrasement silencieux ; une fenêtre détachée modifiée reste ouverte jusqu’à la réussite d’un enregistrement protégé ; Quitter traite d’abord tous les documents ouverts en sécurité. La fonction est incluse dans **v0.3.21** publiée ; M4 correspond à la validation manuelle en exécution sur un vrai système de bureau.
+
+
+## Sauvegarde du coffre
+
+Le menu **Fichier** contient **Créer une sauvegarde…**. Avant la sauvegarde, MD Notes tente d’enregistrer tous les onglets ouverts. Le résultat est un ZIP portable avec `manifest.json` ; chaque fichier y possède son chemin, sa taille et son SHA-256.
+
+L’archive contient les notes, pièces jointes, configuration de service, modèles et `.mdnotes/trash`. Elle exclut `.git`, `.mdnotes/cache` et les fichiers temporaires du système. Pour un coffre chiffré, les fichiers chiffrés présents sur le disque sont copiés directement ; les clés privées/de récupération ne sont jamais ajoutées au ZIP.
+
+**Restaurer une sauvegarde…** vérifie le manifeste, les chemins, tailles et SHA-256 avant toute écriture. Après validation complète, les fichiers sont extraits dans un dossier temporaire puis renommés vers un nouveau coffre. Un dossier existant n’est jamais écrasé.
