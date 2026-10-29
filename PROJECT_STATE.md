@@ -1,13 +1,13 @@
 # PROJECT_STATE — MD Notes
 
-Оновлено: **28.10.2026**
+Оновлено: **29.10.2026**
 
 ## Поточний стан
 
-- Статус розвитку: **ACTIVE**. Оновлено: **28.10.2026**.
-- Останній опублікований реліз: **v0.3.21 prerelease**, 28.10.2026 (версія — з GitHub Releases; машинні джерела: `Cargo.toml`, `app/package.json`, `app/src-tauri/tauri.conf.json`).
+- Статус розвитку: **ACTIVE**. Оновлено: **29.10.2026**.
+- Останній опублікований реліз: **v0.3.22 prerelease**, 29.10.2026 (версія — з GitHub Releases; машинні джерела: `Cargo.toml`, `app/package.json`, `app/src-tauri/tauri.conf.json`).
 - PR #122 (кнопка «Назад» у вікні графа) інтегровано 27.10.2026. PR #128 зафіксував вимоги до групових операцій/вкладок. Вкладки вже реалізовано в ADR-0010 M1 через PR #142; групові операції ще не реалізовано. M2 незалежних editor-вікон інтегровано PR #144.
-- README: UK / EN / FR / DE / ES / KO / JA; керівництво користувача — ті самі 7 мов, синхронізовано з v0.3.21.
+- README: UK / EN / FR / DE / ES / KO / JA; керівництво користувача — ті самі 7 мов, синхронізовано з v0.3.22.
 - UI: ті самі 7 мов; усі ключі присутні в усіх мовах (перевірено скриптом 27.10.2026: основний словник 98 ключів, допоміжні словники git/graph/encryption/importer/lookup/relationTree/relations/startup — без розбіжностей). FR/DE/ES/KO/JA — машинні переклади, не вичитані носіями.
 - Ліцензійна модель: proprietary / All Rights Reserved, Roman Zavada / Роман Завада.
 
@@ -31,6 +31,7 @@
 | 0.3.19 | кнопка «Назад» у вікні графа (PR #122); релізний checkpoint 27.10.2026 |
 | 0.3.20 | graph preview + зовнішній Markdown поруч із vault; prerelease 27.10.2026 |
 | 0.3.21 | вкладки + технічна основа detached editor/conflict guard; runtime-тест показав, що цільовий multiwindow UX не реалізований; prerelease 28.10.2026 |
+| 0.3.22 | accepted ADR-0010 r8 (independent graph + normal main tabs) + ADR-0009 portable backup/restore; prerelease 29.10.2026 |
 
 Детально — `CHANGELOG.md` і GitHub Releases. Для v0.3.1 див. `docs/releases/RELEASE_NOTES_v0_3_1.md`.
 
@@ -89,9 +90,9 @@ Builds не вважаються підписаними/нотаризовани
 
 ## Наступний напрям
 
-1. **ADR-0010 — виправлення multiwindow UX після runtime FAIL v0.3.21:** graph-node click не повинен накопичувати вкладки; потрібні справжні незалежні editor-вікна за явною командою.
+1. **ADR-0010 r8 — accepted-for-release у v0.3.22.** Не шліфувати без нового фактичного runtime-дефекту.
 2. M3 уже інтегровано: conflict guard, detached safe close та app-wide save-all/safe Quit.
-3. Backup/restore за ADR-0009.
+3. **ADR-0009 backup/restore — реалізовано у v0.3.22.** Окремий ручний Windows runtime-тест лишається бажаною приймальною перевіркою.
 4. Git state ↔ `SyncManifest` / ADR-0005.
 5. WebDAV.
 6. Physical-device Android/iOS runtime validation.
@@ -303,3 +304,12 @@ Builds не вважаються підписаними/нотаризовани
 - Важлива межа доказу: owner вручну перевірив multi-window r8, але **не проводив окремого ручного backup/restore runtime-тесту**; backup покривається автоматичними тестами трьох desktop OS.
 - Поточний product-code main: `71ba9604c30b8399137d79011f2bd97432b9505a`.
 - Наступна єдина дія: завершити Release Please PR #154 → v0.3.22 prerelease, перевірити release workflow та 13 assets, після цього синхронізувати цей checkpoint із фактичним release SHA/tag.
+
+
+## Release checkpoint v0.3.22
+
+- Release target: `eed52893ec4bc3b1d55345b54a193b19c33462c2`.
+- Після release docs-only README links update: `main` = `a631801e97fd335591bc6da7d4e670d3d21bf2da`.
+- Release workflow `40939361323` — **SUCCESS**.
+- Опубліковано 13 assets; Windows Portable: `MD-Notes-0.3.22-Windows-x64-portable.zip`.
+- Open PR перед фінальною docs-синхронізацією: 0.
