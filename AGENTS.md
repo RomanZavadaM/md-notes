@@ -15,3 +15,14 @@
 - Third-party software and materials retain their own licenses, terms, attribution and rights; never claim them as original MD Notes property. User notes belong to the user.
 
 - Product language rule: Ukrainian is canonical/default. Design user-visible strings for localization to English, French, German, Spanish, Korean and Japanese; every new string goes into all language packs in `app/src/i18n/`. Translations must preserve meaning, legal notices and data semantics. README and user guides are maintained in all seven languages.
+
+## Методологія (спільна для проєктів власника)
+
+Загальна стратегія розробки лежить у приватному репозиторії `RomanZavadaM/dev-strategy` (читати `STRATEGY.md`, шаблони в `templates/`, скрипти в `scripts/`). Для цього проєкту діє:
+
+- Кожна гілка має PR (чернетка від першого пушу); без PR гілки не лишаємо. Закриття без злиття — лише з архівною міткою (`scripts/archive_branch.py`).
+- Спільну теку проєкту не редагуємо: своя сесія = своє робоче дерево; `git stash` не використовуємо (WIP-коміт на своїй гілці).
+- Початок і кінець сесії — за `templates/SESSION_START.md` і `SESSION_END.md`; перевірка `scripts/repo_health.py --local` має бути без червоного.
+- `STATE` замінюється, а не доповнюється; ліміти: START ≤60, STATE ≤150 рядків.
+- Огляд раз на 2 тижні: `docs/audit/AUDIT_<дата>.md` цього проєкту порівнюється з новим знімком; пункти закриваються з посиланням на коміт/PR.
+- Питання про методологію → спершу `dev-strategy`; нова порада → PR туди.
