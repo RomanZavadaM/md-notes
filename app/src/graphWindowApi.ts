@@ -76,9 +76,9 @@ export async function openGraphWindow(mode: GraphWindowMode, notePath: string, t
   const graph = new WebviewWindow(GRAPH_LABEL, {
     url: `index.html?${query.toString()}`,
     title,
-    width: 520,
-    height: 720,
-    minWidth: 320,
+    width: 900,
+    height: 760,
+    minWidth: 420,
     minHeight: 420,
     center: true,
   });
