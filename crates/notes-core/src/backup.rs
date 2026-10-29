@@ -116,7 +116,12 @@ fn relative_text(root: &Path, path: &Path) -> Result<String> {
     for component in rel.components() {
         match component {
             Component::Normal(value) => parts.push(value.to_string_lossy().into_owned()),
-            _ => return Err(backup_error(format!("unsafe vault path: {}", rel.display()))),
+            _ => {
+                return Err(backup_error(format!(
+                    "unsafe vault path: {}",
+                    rel.display()
+                )))
+            }
         }
     }
     let text = parts.join("/");
@@ -245,7 +250,8 @@ pub fn create_vault_backup(root: &Path, destination: &Path) -> Result<BackupSumm
         for source in &files {
             zip.start_file(&source.rel, options)
                 .map_err(|error| backup_error(error.to_string()))?;
-            let mut reader = BufReader::new(File::open(&source.path).map_err(io_err(&source.path))?);
+            let mut reader =
+                BufReader::new(File::open(&source.path).map_err(io_err(&source.path))?);
             let mut hasher = Sha256::new();
             let mut written = 0_u64;
             loop {
@@ -490,7 +496,10 @@ fn unique_restore_target(parent: &Path, vault_name: &str) -> PathBuf {
     candidate
 }
 
-pub fn restore_vault_backup(archive_path: &Path, destination_parent: &Path) -> Result<RestoreSummary> {
+pub fn restore_vault_backup(
+    archive_path: &Path,
+    destination_parent: &Path,
+) -> Result<RestoreSummary> {
     if !destination_parent.is_dir() {
         return Err(backup_error(format!(
             "restore destination is not a directory: {}",
@@ -572,7 +581,11 @@ mod tests {
         fs::create_dir_all(dir.path().join(".mdnotes/cache")).unwrap();
         fs::create_dir_all(dir.path().join(".mdnotes/trash")).unwrap();
         fs::create_dir_all(dir.path().join("attachments")).unwrap();
-        fs::write(dir.path().join(".mdnotes/config.json"), b"{\"version\":1}\n").unwrap();
+        fs::write(
+            dir.path().join(".mdnotes/config.json"),
+            b"{\"version\":1}\n",
+        )
+        .unwrap();
         fs::write(dir.path().join(".mdnotes/cache/index.db"), b"CACHE").unwrap();
         fs::write(dir.path().join(".mdnotes/trash/deleted.md"), b"deleted").unwrap();
         fs::write(dir.path().join("Нотатка.md"), "Привіт".as_bytes()).unwrap();
@@ -593,7 +606,10 @@ mod tests {
         let restore_parent = tempfile::tempdir().unwrap();
         let restored = restore_vault_backup(&archive, restore_parent.path()).unwrap();
         let restored = PathBuf::from(restored.path);
-        assert_eq!(fs::read(restored.join("Нотатка.md")).unwrap(), "Привіт".as_bytes());
+        assert_eq!(
+            fs::read(restored.join("Нотатка.md")).unwrap(),
+            "Привіт".as_bytes()
+        );
         assert_eq!(
             fs::read(restored.join(".mdnotes/trash/deleted.md")).unwrap(),
             b"deleted"
@@ -629,7 +645,10 @@ mod tests {
 
         let parent = tempfile::tempdir().unwrap();
         let error = restore_vault_backup(&broken, parent.path()).unwrap_err();
-        assert!(error.to_string().contains("checksum mismatch") || error.to_string().contains("size mismatch"));
+        assert!(
+            error.to_string().contains("checksum mismatch")
+                || error.to_string().contains("size mismatch")
+        );
         assert!(fs::read_dir(parent.path()).unwrap().next().is_none());
     }
 
