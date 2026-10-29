@@ -76,3 +76,16 @@ Backup ADR-0009 має брати консистентний snapshot, врах�
 - **FAIL routing:** у багатовіконному сценарії вибір вершини графа маршрутизує/відкриває нотатку у фоновому/невидимому вікні з вкладками замість видимого робочого редактора.
 - Отже ADR-0010 все ще не прийнято повністю. r2 має реалізувати адресний destination для graph navigation та прибрати залежність звичайного graph click від прихованого tab state.
 - Runtime PASS ставиться лише після повторного тесту власником.
+
+
+## Runtime correction r2 — 29.10.2026
+
+Після owner test r1 підтверджено, що graph + main + кілька detached editor windows можуть працювати одночасно, але destination graph navigation інколи опинявся у фоновому/невидимому main.
+
+r2 інтегровано PR #158:
+- `GRAPH_OPEN_NOTE` з graph адресований конкретно `main` через `emitTo`, а не broadcast;
+- detached editor windows не отримують цю навігацію і не змінюють власну note identity;
+- main перед показом вибраної нотатки розгортається/показується та піднімається у Z-order, після чого focus повертається graph;
+- replace-active routing, guarded save/conflict check та latest-request guard лишаються з r1.
+
+CI = PASS, Windows test artifact = готовий. **Runtime verdict r2 ще відсутній, тому ADR-0010 лишається NOT DONE.**
