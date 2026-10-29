@@ -403,3 +403,12 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - r5 window target: graph starts compact on the right, main on the left. Для надійності layout треба виконувати на native-рівні, а не покладатися лише на JS window positioning. Додати explicit re-tile action як ручний fallback/діагностику.
 - Detached `editor-*` windows stay independent and are not part of graph destination routing.
 - Owner runtime PASS remains mandatory.
+
+- r5 implementation checkpoint:
+  - graph→main routing deliberately unchanged after owner clarification; active note switches correctly, visibility is the defect;
+  - added Rust/Tauri `tile_graph_workspace` command using physical monitor work-area pixels, not JS logical coordinates;
+  - native split keeps graph compact (~36%, clamped 360–680 physical px) and main in the remaining left area;
+  - layout is attempted after native graph creation, again after `GraphWindow` React mount, and manually via visible `⇆` action;
+  - graph window shows native layout diagnostics (`main + graph / monitor`) or an explicit error string;
+  - all 7 graph locales include the re-tile action label.
+- Next: PR + full CI/mobile smoke; only after green checks issue unique Windows TEST r5.
