@@ -74,10 +74,10 @@ jobs:
 
           Test:
           1. Open a vault and detach the graph.
-          2. Open graph separately. It must visibly tile main on the left and graph compact on the right. Confirm the graph header shows the ⇆ re-tile control plus a numeric layout diagnostic or an explicit error.
+          2. Verify that opening the graph separately visibly tiles main + graph side-by-side; then click several graph nodes and confirm they update the visible main without hidden-tab accumulation.
           3. Use "Open in separate window" explicitly for a note.
           4. Keep main usable and open/detach additional notes.
-          5. Click several graph nodes and verify the already-visible main changes notes correctly while detached editor windows remain independent. If auto-layout fails, press ⇆ and report the exact diagnostic/error shown.
+          5. Use ↗ on several vault tabs and verify detached editor windows coexist with the tiled main + graph workspace.
 
           Runtime PASS must be reported by the owner; green CI alone is not acceptance.
           "@ | Set-Content -Encoding UTF8 (Join-Path $dir "README-TEST.txt")
