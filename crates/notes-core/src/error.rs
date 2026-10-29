@@ -25,6 +25,8 @@ pub enum Error {
     Crypto(String),
     #[error("index error: {0}")]
     Index(#[from] rusqlite::Error),
+    #[error("backup error: {0}")]
+    Backup(String),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
