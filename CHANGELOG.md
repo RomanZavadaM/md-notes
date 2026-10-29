@@ -34,6 +34,25 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.22](https://github.com/RomanZavadaM/md-notes/compare/v0.3.21...v0.3.22) (2026-10-29)
+
+
+### Нові можливості
+
+* **backup:** add portable vault backup and restore ([#182](https://github.com/RomanZavadaM/md-notes/issues/182)) ([71ba960](https://github.com/RomanZavadaM/md-notes/commit/71ba9604c30b8399137d79011f2bd97432b9505a))
+
+
+### Виправлення
+
+* **editor:** replace active note on graph navigation ([#153](https://github.com/RomanZavadaM/md-notes/issues/153)) ([9a2db35](https://github.com/RomanZavadaM/md-notes/commit/9a2db3532b63db2e7c9f52c05902d4f10a87cb24))
+* **graph:** detach graph without rearranging main ([#176](https://github.com/RomanZavadaM/md-notes/issues/176)) ([9c87605](https://github.com/RomanZavadaM/md-notes/commit/9c876050844bc492034ed95d630f033e84b2bff6))
+* **graph:** keep main visible during graph navigation ([#158](https://github.com/RomanZavadaM/md-notes/issues/158)) ([66eb972](https://github.com/RomanZavadaM/md-notes/commit/66eb9728bf9f0dadaf59d75a84ac3dde8ae30d17))
+* **graph:** make expand open the detached desktop graph ([#173](https://github.com/RomanZavadaM/md-notes/issues/173)) ([6002b52](https://github.com/RomanZavadaM/md-notes/commit/6002b529b84a8157d0b713ee4823c957cd532a58))
+* **graph:** open graph selections in normal main tabs ([#179](https://github.com/RomanZavadaM/md-notes/issues/179)) ([654b9d1](https://github.com/RomanZavadaM/md-notes/commit/654b9d17f8f022ef5223e6c350055fbd0d0eb3ef))
+* **graph:** tile detached graph beside main ([#162](https://github.com/RomanZavadaM/md-notes/issues/162)) ([b0f7813](https://github.com/RomanZavadaM/md-notes/commit/b0f7813c6820cfd5eefb92f0c414d723aab93147))
+* **graph:** tile graph beside main in native shell ([#169](https://github.com/RomanZavadaM/md-notes/issues/169)) ([fd1db06](https://github.com/RomanZavadaM/md-notes/commit/fd1db060f853965f5830d6ec4d2bc4fbea668653))
+* **graph:** tile windows after graph is created ([#166](https://github.com/RomanZavadaM/md-notes/issues/166)) ([572f4b0](https://github.com/RomanZavadaM/md-notes/commit/572f4b01d9710b7527c09024fa4f27ffb6a8dfa7))
+
 ## [0.3.21](https://github.com/RomanZavadaM/md-notes/compare/v0.3.20...v0.3.21) (2026-10-28)
 
 
