@@ -1,6 +1,6 @@
 # ADR-0010 — вкладки та незалежні вікна нотаток
 
-**Статус:** частково реалізовано; **runtime FAIL цільового UX у v0.3.21 (28.10.2026)**.
+**Статус:** прийнято власником 29.10.2026 (r8; практичне приймання для релізу).
 
 ## Мета
 
@@ -276,3 +276,11 @@ Automated checks and Windows build are green, but **ADR-0010 remains NOT DONE un
 - ZIP завантажено локально й перевірено: checksum збігається; archive integrity test passed.
 - **ADR-0010 лишається NOT DONE до owner runtime verdict r8.** Перевірити: main з 1+ вкладками; кілька різних вузлів graph повинні додавати/активувати вкладки в main без втрати вже відкритих.
 - Release Please #154 не зливати до owner verdict.
+
+
+## 29.10.2026 — owner acceptance
+
+- Owner verdict for r8: «вроді працює» and explicitly requested to stop polishing, finish, merge and release.
+- ADR-0010 is accepted for release with a pragmatic, not exhaustive, runtime verdict.
+- Accepted model: main is central; graph detaches independently; graph selections open/activate normal tabs in main; detached editor windows may coexist.
+- Further UX polishing is backlog, not a blocker for the next release.
