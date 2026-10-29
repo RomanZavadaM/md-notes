@@ -570,3 +570,13 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - ZIP завантажено локально й перевірено: checksum збігається; archive integrity test passed.
 - **ADR-0010 лишається NOT DONE до owner runtime verdict r8.** Перевірити: main з 1+ вкладками; кілька різних вузлів graph повинні додавати/активувати вкладки в main без втрати вже відкритих.
 - Release Please #154 не зливати до owner verdict.
+
+
+## 29.10.2026 — початок ADR-0009 r1
+
+- ADR-0010 r8 owner-accepted for release.
+- Реалізувати ручний переносимий backup/restore перед фінальним prerelease.
+- Перед backup UI зберігає всі відкриті документи.
+- Формат: ZIP з manifest.json, SHA-256 для кожного файла; файлове копіювання без `readNote`, щоб encrypted vault лишався ciphertext.
+- Виключення: `.git`, `.mdnotes/cache`, тимчасові/OS-specific файли. Кошик включати як відновлювані дані.
+- Restore: validate first, extract to temp, atomic rename into new vault, never overwrite.
