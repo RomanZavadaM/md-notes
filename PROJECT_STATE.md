@@ -234,3 +234,20 @@ Builds не вважаються підписаними/нотаризовани
 - ZIP downloaded and verified: checksum matches; archive integrity test passed.
 - **ADR-0010 remains NOT DONE until owner runtime verdict for r5.** Primary acceptance: detach graph → main visible left + graph compact right; `⇆` re-tile works; status reports dimensions/error; graph clicks update visible main.
 - Release Please PR #154 remains separate; do not merge/release 0.3.22 before runtime verdict.
+
+
+## 29.10.2026 — ADR-0010 r6: виправлено реальний шлях «Розгорнути», Windows TEST готовий
+
+- За скріншотами власника підтверджено: використовувалась велика кнопка `Розгорнути` всередині правої панелі графа. Вона перемикала внутрішній overlay у головному вікні та повністю обходила окреме вікно графа.
+- Тому r3–r5 не могли змінити саме цей сценарій; вони працювали над окремим вікном, яке викликалось малою кнопкою `↗`.
+- r6 PR #173 merged → product-code main `6002b529b84a8157d0b713ee4823c957cd532a58`.
+- У desktop велика `Розгорнути` тепер відкриває той самий окремий graph, що й `↗`; старе внутрішнє розгортання лишено лише як fallback без desktop-callback.
+- Навігація graph→main не змінювалась: за словами власника вона вже працює, проблема була у видимості main.
+- Повний CI для PR #173 = SUCCESS.
+- Тимчасовий TEST PR #174 закрито WITHOUT MERGE; Windows runtime workflow `40883602454` = SUCCESS.
+- Artifact ID `12902073405`: `MD-Notes-TEST-ADR0010-r6-6002b529-Windows-x64-portable`.
+- Inner ZIP SHA256 `5c68f4f788d3e4cf7355c815c3c9823b4abb5f7d17141747fc348cc67451b95b`.
+- `MD Notes.exe` SHA256 `2741e4135f271ea64c5e875ef21700bd27ef552c9b936aebd91df89240b7abb1`; size `29545984`; PE timestamp `2026-10-29 13:48:30 UTC`.
+- ZIP завантажено локально й перевірено: checksum збігається, archive integrity test passed.
+- **ADR-0010 залишається NOT DONE до owner runtime verdict для r6.** Головна перевірка: натиснути саме велику `Розгорнути` зі скріншота → graph відкривається окремо, main лишається видимим поруч; кліки по вершинах змінюють видиму нотатку в main.
+- Release Please #154 не зливати до цього verdict.
