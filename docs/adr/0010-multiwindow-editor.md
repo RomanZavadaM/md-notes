@@ -89,3 +89,22 @@ r2 інтегровано PR #158:
 - replace-active routing, guarded save/conflict check та latest-request guard лишаються з r1.
 
 CI = PASS, Windows test artifact = готовий. **Runtime verdict r2 ще відсутній, тому ADR-0010 лишається NOT DONE.**
+
+
+## UX correction r3 — side-by-side замість Z-order
+
+Owner уточнив фактичну причину проблеми: graph відкривається окремим великим центральним вікном і закриває main. Тому навіть правильне graph→main routing виглядає як «вкладка відкрилась у невидимому вікні».
+
+Прийнятий напрям r3:
+- команда розгортання/від’єднання graph автоматично розкладає main і graph поруч у work area поточного монітора;
+- main лишається видимою областю зміни нотаток, graph — видимою областю навігації;
+- graph click не створює нове editor-вікно й не потребує focus ping-pong;
+- ручне переміщення/resize/maximize після detach не блокується.
+
+r2 не вважати owner PASS; його addressed routing зберігається як основа, але Z-order підняття main замінюється на правильний початковий layout.
+
+### Від’єднання окремих вкладок у r3
+
+Side-by-side graph/main доповнюється явним per-tab detach: у кожної vault-вкладки є `↗`, який переносить саме цю вкладку в незалежне editor-вікно. Main лишається контейнером решти вкладок. Якщо від’єднано неактивну вкладку, поточний видимий документ main не змінюється.
+
+Це прийнятий explicit workflow для r3. Drag-and-drop вкладки за межі main можна додати пізніше окремим slice, але він не є умовою приймання ADR-0010.

@@ -331,3 +331,25 @@ Owner тестує r2 Windows Portable: graph + main + кілька detached edi
 - Позначення `ADR0010-r1/r2-<SHA>` у Windows Portable — це **runtime-test revision**, а не нова продуктова версія.
 - Щоб надалі це не виглядало як альтернативна схема SemVer, у PROJECT_RULES зафіксовано: офіційні release assets = `MD-Notes-X.Y.Z-...`; одноразові тести = `MD-Notes-TEST-<scope>-rN-<shortSHA>-...`.
 - Вже видані r1/r2 не перейменовувати заднім числом: їхні байти/SHA та записи Issue #8 незмінні. Наступний тестовий кандидат має отримати наступну унікальну ревізію.
+
+
+## Активний зріз 29.10.2026 — ADR-0010 r3 side-by-side graph/main
+
+- Owner runtime/UX correction: r2 лікує Z-order, але базова проблема інша — detached graph за замовчуванням відкривається великим центральним вікном поверх main, тому graph-node navigation змінює main, який фізично не видно.
+- Нова ціль r3: дія «відкрити/розгорнути граф окремо» має не накривати main, а автоматично розкладати `main + graph` поруч на робочій області поточного монітора. Main лишається видимим редактором; graph — видимою навігацією.
+- Звичайний graph click продовжує replace-active routing у main без створення нового detached editor. Detached `editor-*` не змінюються.
+- Не боротися з ручним maximize користувача: side-by-side є стартовим layout при detach/open graph; далі нативні вікна лишаються вільно переміщуваними/масштабованими.
+- При r3 прибрати focus/Z-order ping-pong r2 як нормальний navigation mechanism; він більше не потрібен, коли main видимий поруч.
+- Runtime PASS тільки після нового Windows TEST r3; r1/r2 не перевикористовувати.
+
+- r3 code checkpoint: `graphWindowApi.ts` більше не створює graph як 1280×860 centered overlay. При достатній робочій області поточного монітора main і graph автоматично tile side-by-side (~58/42) з невеликим gap; використовуються monitor workArea + DPI conversion.
+- Якщо graph уже існує і користувач знову викликає «відкрити граф окремо», layout повторно розкладає обидва native windows поруч. Якщо екран замалий для мінімальних ширин, лишається безпечний centered fallback graph.
+- r2 focus/Z-order ping-pong прибрано з graph navigation: `openGraphNoteInMain()` тепер лише адресно надсилає note у main і відновлює його, якщо він був мінімізований. Ручний move/resize/maximize після detach поважається.
+- Capability доповнено тільки необхідними window permissions: unmaximize, set-position, set-size.
+- Далі: PR + CI; runtime verdict тільки після Windows TEST r3.
+
+- Owner extension: від’єднання вкладок підсилює side-by-side модель. Реалізовано explicit per-tab detach: кожна vault-вкладка має власний `↗`; можна винести саме її в окреме editor-вікно без попередньої активації.
+- Спільна `detachDocument(path)` зберігає/перевіряє конкретний документ, відкриває його через existing `openEditorWindow`, прибирає лише цю вкладку з main; якщо від’єднувалась неактивна вкладка, активна main-вкладка не змінюється.
+- Верхня кнопка «Відкрити в окремому вікні» тепер використовує ту саму `detachDocument()` для активної вкладки. Drag-and-drop detach не додавався в r3; explicit `↗` є простішим і перевірюваним UX.
+
+- Edge-case correction before issuing r3 test: per-tab detach no longer forces `activeDocument = vault`. If external Markdown is currently visible and the detached vault tab was its background vault fallback, only the vault fallback state changes; the visible external document stays visible.

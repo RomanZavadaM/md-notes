@@ -620,24 +620,33 @@ export default function App() {
     [activateDocument, saveVaultDocument, setDocuments],
   );
 
-  const detachActiveDocument = useCallback(async () => {
-    const current = noteRef.current;
-    if (!current || !vault || !isDesktop) return;
+  const detachDocument = useCallback(async (path: string) => {
+    if (!vault || !isDesktop) return;
     const documents = openDocumentsRef.current;
-    const index = documents.findIndex((document) => document.note.path === current.path);
+    const index = documents.findIndex((document) => document.note.path === path);
     if (index < 0) return;
-    if (!(await saveVaultDocument(current.path))) return;
+    const document = documents[index];
+    if (!(await saveVaultDocument(path))) return;
     try {
-      await openEditorWindow(current.path, vault.root, current.title);
-      const next = openDocumentsRef.current.filter((document) => document.note.path !== current.path);
+      await openEditorWindow(document.note.path, vault.root, document.note.title);
+      const next = openDocumentsRef.current.filter((item) => item.note.path !== path);
       setDocuments(next);
-      const fallback = next[Math.min(index - 1, next.length - 1)] ?? next[0] ?? null;
-      activateDocument(fallback);
-      setActiveDocument("vault");
+      if (noteRef.current?.path === path) {
+        const fallback = next[Math.min(index - 1, next.length - 1)] ?? next[0] ?? null;
+        // Keep the currently visible document surface unchanged. If an external
+        // Markdown file is active, only update the vault's background fallback.
+        activateDocument(fallback);
+      }
     } catch (e) {
       report(e);
     }
   }, [activateDocument, isDesktop, report, saveVaultDocument, setDocuments, vault]);
+
+  const detachActiveDocument = useCallback(async () => {
+    const current = noteRef.current;
+    if (!current) return;
+    await detachDocument(current.path);
+  }, [detachDocument]);
 
   const createAndOpen = useCallback(
     async (dir: string, title: string, template?: string) => {
@@ -1224,6 +1233,17 @@ export default function App() {
                   {document.note.title}
                   {document.draft !== document.savedContent ? " •" : ""}
                 </button>
+                {isDesktop && (
+                  <button
+                    type="button"
+                    className="document-tab-detach"
+                    title={t.openSeparateWindow}
+                    aria-label={t.openSeparateWindow}
+                    onClick={() => void detachDocument(document.note.path)}
+                  >
+                    ↗
+                  </button>
+                )}
                 <button type="button" className="document-tab-close" onClick={() => void closeDocument(document.note.path)}>
                   ×
                 </button>
