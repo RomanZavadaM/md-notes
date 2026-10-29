@@ -18,6 +18,11 @@ export interface GraphActiveNote {
   mode?: GraphWindowMode;
 }
 
+/** True when this webview is the detached graph window. */
+export function isGraphWindow(): boolean {
+  return new URLSearchParams(window.location.search).get("view") === "graph";
+}
+
 /**
  * Opens the graph as an independent native window, like a detached note tab.
  * It must not resize, reposition, hide or otherwise mutate the main window.
