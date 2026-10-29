@@ -305,3 +305,7 @@ Safety requirements для Git push мають зберігати існуючі
 - Ціль r2: зробити destination graph navigation явним/адресним і не створювати прихованих вкладок; не ламати вже підтверджені detached editor windows, conflict guard, safe close, graph preview/history.
 - Перед кодом повторно звірено backlog: ADR-0009 backup/restore **лише спроєктовано, не реалізовано**; Git↔SyncManifest conflict policy, WebDAV, physical Android/iOS, SAF/security-scoped folders, encrypted-vault gaps, signing, групові операції з файлами/папками лишаються незавершеними. Git push реалізований, але окремо не прийнятий живим runtime-тестом.
 - Поки r2 не прийнято власником, ADR-0009 не починати. Після r2 PASS наступний функціональний блок — ручний backup/restore slice за ADR-0009.
+
+- r2 code checkpoint: `graphWindowApi.ts` тепер використовує адресний `emitTo("main", GRAPH_OPEN_NOTE, path)` замість global broadcast. Після маршрутизації main примусово `unminimize()+show()`, коротко піднімається у Z-order і фокус одразу повертається в graph; це має прибрати ефект «нотатка відкрилася у невидимому вікні» без втрати можливості послідовно клікати граф. Detached `editor-*` навмисно не отримують graph navigation і зберігають власну note identity.
+- `GraphWindow.tsx` і звичайний node click, і явна кнопка preview «відкрити/редагувати» використовують один `openGraphNoteInMain()`. Наявний main-side `openGraphNote()` replace-active routing, conflict guard і latest-request guard не змінено.
+- Автоматична перевірка ще попереду; runtime PASS не заявляти до нового Windows Portable test.
