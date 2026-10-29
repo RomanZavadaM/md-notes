@@ -1306,7 +1306,6 @@ export default function App() {
             refreshKey={refreshKey}
             onOpen={(p) => void openNote(p)}
             onOpenLink={(target) => void openLink(target)}
-            onDetachGraph={() => setLinksPanel("off")}
           />
         )}
       </div>
