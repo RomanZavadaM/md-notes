@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](ENCRYPTED_VAULT.uk.md) · **🇬🇧 English** · [🇫🇷 Français](ENCRYPTED_VAULT.fr.md) · [🇩🇪 Deutsch](ENCRYPTED_VAULT.de.md) · [🇪🇸 Español](ENCRYPTED_VAULT.es.md) · [🇰🇷 한국어](ENCRYPTED_VAULT.ko.md) · [🇯🇵 日本語](ENCRYPTED_VAULT.ja.md)
 
-> Applies to MD Notes v0.3.23. Ukrainian is canonical. This describes actual product behavior, not merely the design intent of ADR-0007.
+> Applies to MD Notes v1.0.0. Ukrainian is canonical. This describes actual product behavior, not merely the design intent of ADR-0007.
 
 ## 1. Purpose
 
@@ -25,7 +25,7 @@ flowchart LR
 
 The underlying storage provider must not receive note or attachment plaintext.
 
-## 3. New v0.3.23 encrypted vault layout
+## 3. New v1.0.0 encrypted vault layout
 
 New encrypted vaults use **random names**. A logical path is not stored as a readable filesystem name. A physical file may look like:
 
@@ -95,7 +95,7 @@ Its current protection relies on:
 - cache not being committed to Git;
 - OS account security and disk encryption.
 
-Therefore “encrypted vault” in v0.3.23 is not equivalent to full-disk encryption of every MD Notes byte. Built-in backups exclude `.mdnotes/cache`.
+Therefore “encrypted vault” in v1.0.0 is not equivalent to full-disk encryption of every MD Notes byte. Built-in backups exclude `.mdnotes/cache`.
 
 ## 9. Attachments and images
 
