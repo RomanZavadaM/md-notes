@@ -21,6 +21,8 @@
 - Batch move і batch rename **не входять** у v0.3.23.
 - User guides синхронізовані UK / EN / FR / DE / ES / KO / JA.
 - Release notes: `docs/releases/RELEASE_NOTES_v0_3_23.md`.
+- PR #191 — окремий docs-only checkpoint: детальні принципи **графа/relations**, **зашифрованого vault** і **backup/recovery** додані UK / EN / FR / DE / ES / KO / JA.
+- Для ШІ/автоматизації додано єдині канонічні контракти в `docs/ai/` (Markdown + YAML); людські переклади не створюють окремої нормативної семантики.
 
 ## Важливі межі
 

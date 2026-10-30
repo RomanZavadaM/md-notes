@@ -1,0 +1,98 @@
+contract: md-notes-encrypted-vault/1
+applies_to: "v0.3.23 behavior"
+canonical_human_doc: ../security/ENCRYPTED_VAULT.uk.md
+
+encryption:
+  optional_per_vault: true
+  format: age
+  recipient_type: x25519
+  custom_crypto_allowed: false
+  plaintext_encrypted_before_persistent_provider: true
+
+layouts:
+  new_vault_default: random
+  random:
+    physical_names: random_age_files
+    logical_path_location: encrypted_envelope
+    hides_logical_names_from_filesystem: true
+  legacy_named:
+    supported: true
+    physical_name: logical_path_plus_age_suffix
+    path_metadata_visible: true
+
+service_directory:
+  path: .mdnotes
+  generally_plain: true
+  encrypted_exception:
+    - .mdnotes/trash
+  encryption_config:
+    path: .mdnotes/encryption.json
+    secret: false
+    allowed_content:
+      - format
+      - version
+      - vaultId
+      - public_recipients
+      - name_layout
+    private_key_allowed: false
+
+private_key:
+  prefix: AGE-SECRET-KEY-
+  allowed_working_storage: os_secret_store
+  forbidden_storage:
+    - vault
+    - localStorage
+    - git
+    - logs
+    - backup_zip
+    - telemetry
+  may_echo_to_logs_or_docs: false
+
+recovery:
+  multiple_public_recipients_supported: true
+  private_recovery_key_user_controlled: true
+  store_separately_recommended: true
+  existing_vault_add_recipient_ui_complete_in_v0_3_23: false
+
+plaintext_exceptions:
+  - path: .mdnotes/cache/index.db
+    reason: rebuildable_local_index
+    synced: false
+    git: false
+    builtin_backup: false
+
+attachments:
+  storage_can_encrypt_arbitrary_bytes: true
+  encrypted_vault_preview_ui_complete_in_v0_3_23: false
+
+git:
+  plaintext_push_guard_required: true
+  decrypted_mirror_may_be_staged: false
+
+backup:
+  copies_physical_state: true
+  encrypted_user_files_remain_ciphertext: true
+  excludes:
+    - .git
+    - .mdnotes/cache
+    - private_keys
+    - recovery_private_keys
+  restore:
+    validate_manifest: true
+    validate_paths: true
+    validate_sizes: true
+    validate_sha256: true
+    overwrite_existing_vault: false
+    destination: new_unique_vault
+
+master_key:
+  exists: false
+
+ai_forbidden:
+  - persist_decrypted_user_content_for_convenience
+  - store_private_key_in_vault
+  - publish_private_key
+  - bypass_crypto_or_checksum_failure
+  - claim_cache_is_encrypted
+  - claim_full_disk_protection
+  - claim_lost_keys_are_recoverable_by_md_notes

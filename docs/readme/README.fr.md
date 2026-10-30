@@ -104,3 +104,11 @@ Le menu **Fichier** propose **Créer une sauvegarde…** et **Restaurer une sauv
 - notes, pièces jointes, configuration, modèles et corbeille sont inclus ; `.git`, `.mdnotes/cache` et les fichiers temporaires du système sont exclus ;
 - un coffre chiffré est copié **sans déchiffrement** ; la clé privée/de récupération n’est jamais ajoutée à l’archive ;
 - la restauration vérifie d’abord les chemins, tailles et sommes de contrôle, puis crée un **nouveau** dossier de coffre sans écraser l’existant.
+
+## Principes et procédures détaillés
+
+- [Liens et graphe de connaissances](../concepts/KNOWLEDGE_GRAPH.fr.md)
+- [Coffre chiffré](../security/ENCRYPTED_VAULT.fr.md)
+- [Sauvegarde et récupération](../security/BACKUP_AND_RECOVERY.fr.md)
+- [Contrats canoniques pour IA/automatisation](../ai/README.md)
+
