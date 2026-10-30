@@ -1,5 +1,13 @@
 # PROJECT_STATE — MD Notes
 
+## АКТУАЛЬНИЙ СТАН — stable desktop v1.0.2 (30.10.2026)
+
+- **Latest stable release v1.0.2**; release workflow 41114443139 SUCCESS, 13 artifacts для Windows/macOS/Linux та юридичних/контрольних файлів.
+- PR #204/205 merged, open PRs 0 на час перевірки. Release tag https://github.com/RomanZavadaM/md-notes/releases/tag/v1.0.2.
+- v1.0.1 packaging failure через Cargo.lock виправлено; v1.0.1 tag не переміщували. Поточний main до docs update f1724c6d2e60b1452926d4897f200ea53e005685.
+- Режим use-and-stabilize: без нових функцій, фіксувати лише реальні дефекти. Старі записи нижче збережено як історичний checkpoint.
+
+
 Оновлено: **30.10.2026**
 
 ## Статус продукту
