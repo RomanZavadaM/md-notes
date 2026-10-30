@@ -4,9 +4,6 @@ name: Lockfiles
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - fix/v1.0.0-stable-audit-cleanup
 
 permissions:
   contents: write
