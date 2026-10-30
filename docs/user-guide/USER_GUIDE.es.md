@@ -38,6 +38,8 @@ En pantallas estrechas, el panel lateral y el panel de enlaces se abren sobre el
 - **+ Carpeta** crea una carpeta.
 - **✎** cambia el nombre del elemento seleccionado. La extensión `.md` se añade automáticamente. **Los enlaces a la nota renombrada, o a las notas de una carpeta renombrada, se actualizan en todas las demás notas**, propiedades incluidas. La aplicación indica en cuántas notas se actualizaron enlaces.
 - **🗑** mueve el elemento a la papelera de la bóveda `.mdnotes/trash/`. Nada se elimina definitivamente: el archivo se puede devolver a mano.
+- **Selección múltiple:** `Ctrl` (Windows/Linux) o `Cmd` (macOS) añade o quita un elemento de la selección; `Shift` selecciona un intervalo visible del árbol. Un clic normal vuelve a una selección única y al comportamiento habitual de apertura.
+- Si hay varios elementos seleccionados, **🗑** los mueve a la papelera como un lote. Si se seleccionan a la vez una carpeta y un elemento que contiene, el elemento anidado no se procesa dos veces. El cambio de nombre sigue disponible solo para un elemento seleccionado.
 
 ## 4. Edición
 

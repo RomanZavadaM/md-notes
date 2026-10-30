@@ -38,6 +38,8 @@ On narrow screens the sidebar and the links panel open over the content.
 - **+ Folder** creates a folder.
 - **✎** renames the selected item. The `.md` extension is added automatically. **Links to the renamed note, or to notes inside a renamed folder, are updated in all other notes**, including properties. The app tells you how many notes were updated.
 - **🗑** moves the item to the vault trash `.mdnotes/trash/`. Nothing is deleted permanently: you can move the file back by hand.
+- **Multiple selection:** `Ctrl` (Windows/Linux) or `Cmd` (macOS) adds or removes an item from the selection; `Shift` selects a visible range in the tree. A normal click returns to a single selection and the usual open behavior.
+- When several items are selected, **🗑** moves them to trash as one batch. If a folder and an item inside it are both selected, the nested item is not processed twice. Rename is still available only for one selected item.
 
 ## 4. Editing
 

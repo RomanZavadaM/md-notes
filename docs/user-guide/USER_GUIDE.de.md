@@ -38,6 +38,8 @@ Auf schmalen Bildschirmen öffnen sich Seitenleiste und Verknüpfungsleiste übe
 - **+ Ordner** legt einen Ordner an.
 - **✎** benennt das ausgewählte Element um. Die Endung `.md` wird automatisch ergänzt. **Links auf die umbenannte Notiz oder auf Notizen in einem umbenannten Ordner werden in allen anderen Notizen aktualisiert**, auch in Eigenschaften. Die App zeigt an, in wie vielen Notizen Links aktualisiert wurden.
 - **🗑** verschiebt das Element in den Papierkorb des Tresors `.mdnotes/trash/`. Nichts wird endgültig gelöscht: Die Datei lässt sich von Hand zurückholen.
+- **Mehrfachauswahl:** `Ctrl` (Windows/Linux) bzw. `Cmd` (macOS) fügt ein Element zur Auswahl hinzu oder entfernt es daraus; `Shift` wählt einen sichtbaren Bereich im Baum. Ein normaler Klick kehrt zur Einzelauswahl und zum gewohnten Öffnen zurück.
+- Sind mehrere Elemente ausgewählt, verschiebt **🗑** sie gemeinsam in den Papierkorb. Sind ein Ordner und zugleich ein darin enthaltenes Element ausgewählt, wird das untergeordnete Element nicht doppelt verarbeitet. Umbenennen bleibt vorerst auf ein einzelnes ausgewähltes Element beschränkt.
 
 ## 4. Bearbeiten
 

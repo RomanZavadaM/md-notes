@@ -34,6 +34,13 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.23](https://github.com/RomanZavadaM/md-notes/compare/v0.3.22...v0.3.23) (2026-10-30)
+
+
+### Нові можливості
+
+* **tree:** add multi-select and batch trash r1 ([#186](https://github.com/RomanZavadaM/md-notes/issues/186)) ([61dff93](https://github.com/RomanZavadaM/md-notes/commit/61dff93da651e6151ccf702fc99d25560fe3394f))
+
 ## [0.3.22](https://github.com/RomanZavadaM/md-notes/compare/v0.3.21...v0.3.22) (2026-10-29)
 
 
