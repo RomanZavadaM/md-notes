@@ -1334,7 +1334,7 @@ export default function App() {
           {external && activeDocument === "external" ? (
             <>
               {mode !== "preview" && <section className="pane pane-editor"><Editor docKey={`${external.path}#external`} value={externalDraft} onChange={setExternalDraft} onSave={() => void saveExternal()} /></section>}
-              {mode !== "edit" && <section className="pane pane-preview"><Preview content={externalDraft} notePath={external.name} vaultRoot={external.directory} files={[]} onOpenLink={() => {}} onOpenPath={() => {}} /></section>}
+              {mode !== "edit" && <section className="pane pane-preview"><Preview content={externalDraft} notePath={external.name} vaultRoot={external.directory} encrypted={false} files={[]} onOpenLink={() => {}} onOpenPath={() => {}} /></section>}
             </>
           ) : note ? (
             <>
