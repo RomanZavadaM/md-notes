@@ -21,16 +21,7 @@ jobs:
         working-directory: app
         run: npm install --package-lock-only --no-audit --no-fund
       - name: Update Cargo.lock
-        run: |
-          cargo update -p rustls --precise 0.23.46
-          cargo update -p rustls-webpki --precise 0.103.16
-          cargo update -p webpki-root-certs --precise 1.0.10
-          cargo update -p ctutils --precise 0.4.4
-          cargo update -p tauri
-          cargo update -p tauri-build
-          cargo update -p tauri-plugin-dialog
-          cargo update -p tauri-plugin-opener
-          cargo metadata --format-version 1 > /dev/null
+        run: cargo metadata --format-version 1 > /dev/null
       - name: Commit changes
         run: |
           if git diff --quiet; then
