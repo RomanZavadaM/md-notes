@@ -11,16 +11,55 @@
       "bump-minor-pre-major": true,
       "bump-patch-for-minor-pre-major": true,
       "changelog-sections": [
-        { "type": "feat", "section": "Нові можливості" },
-        { "type": "fix", "section": "Виправлення" },
-        { "type": "perf", "section": "Продуктивність" },
-        { "type": "refactor", "section": "Рефакторинг", "hidden": true },
-        { "type": "chore", "section": "Обслуговування", "hidden": true }
+        {
+          "type": "feat",
+          "section": "Нові можливості"
+        },
+        {
+          "type": "fix",
+          "section": "Виправлення"
+        },
+        {
+          "type": "perf",
+          "section": "Продуктивність"
+        },
+        {
+          "type": "refactor",
+          "section": "Рефакторинг",
+          "hidden": true
+        },
+        {
+          "type": "chore",
+          "section": "Обслуговування",
+          "hidden": true
+        }
       ],
       "extra-files": [
-        { "type": "toml", "path": "Cargo.toml", "jsonpath": "$.workspace.package.version" },
-        { "type": "json", "path": "app/package.json", "jsonpath": "$.version" },
-        { "type": "json", "path": "app/src-tauri/tauri.conf.json", "jsonpath": "$.version" }
+        {
+          "type": "toml",
+          "path": "Cargo.toml",
+          "jsonpath": "$.workspace.package.version"
+        },
+        {
+          "type": "json",
+          "path": "app/package.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "app/src-tauri/tauri.conf.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "app/package-lock.json",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "app/package-lock.json",
+          "jsonpath": "$.packages[''].version"
+        }
       ]
     }
   }
