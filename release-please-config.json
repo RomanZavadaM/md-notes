@@ -3,7 +3,8 @@
   "packages": {
     ".": {
       "release-type": "simple",
-      "prerelease": true,
+      "prerelease": false,
+      "release-as": "1.0.0",
       "initial-version": "0.1.0",
       "package-name": "md-notes",
       "changelog-path": "CHANGELOG.md",

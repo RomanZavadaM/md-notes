@@ -101,3 +101,17 @@ AI は、検証済み restore 前に最後の正常コピーを削除したり�
 暗号化データ規則: [ENCRYPTED_VAULT_CONTRACT.md](../ai/ENCRYPTED_VAULT_CONTRACT.md)。
 
 > 自動生成翻訳であり、ネイティブ校閲は未実施です。ウクライナ語版が正本です。
+
+## 1.0 recovery 検証
+
+Desktop 1.0 の前に、暗号化 vault 用の end-to-end recovery drill を自動化しました。
+
+1. 別の recovery recipient を持つ実際の暗号化 vault を作成する；
+2. Markdown ノートを書き、バイナリ添付をインポートする；
+3. portable ZIP backup を作成する；
+4. backup を新しいフォルダーへ復元する；
+5. 復元した vault を **recovery private key** で再度開く；
+6. 暗号化 storage provider 経由で復元したノートと添付バイトを読み取る。
+
+このシナリオは 1.0 前に Windows、macOS、Linux の core gate で CI を通過しました。これは自動化された recovery の証拠であり、実データを使った別個の owner 手動テストを置き換えるものではありません。
+

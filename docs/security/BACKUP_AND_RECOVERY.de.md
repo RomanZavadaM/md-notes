@@ -87,3 +87,17 @@ Eine KI darf die letzte bekannte gute Kopie nicht vor verifiziertem Restore lös
 Encrypted-Regeln: [ENCRYPTED_VAULT_CONTRACT.md](../ai/ENCRYPTED_VAULT_CONTRACT.md).
 
 > Automatisch erzeugte, nicht muttersprachlich geprüfte Übersetzung; Ukrainisch ist kanonisch.
+
+## Recovery-Prüfung für 1.0
+
+Vor Desktop 1.0 wurde ein automatisierter End-to-End-Recovery-Drill für verschlüsselte Vaults ergänzt:
+
+1. ein echter verschlüsselter Vault mit separatem Recovery-Empfänger wird erstellt;
+2. eine Markdown-Notiz und ein binärer Anhang werden geschrieben/importiert;
+3. ein portables ZIP-Backup wird erstellt;
+4. das Backup wird in einen neuen Ordner wiederhergestellt;
+5. der wiederhergestellte Vault wird mit dem **Recovery Private Key** geöffnet;
+6. Notiz und Anhangsdaten werden über den verschlüsselten Storage Provider gelesen.
+
+Dieses Szenario lief vor 1.0 in den Core-Gates unter Windows, macOS und Linux erfolgreich. Es ist ein automatisierter Recovery-Nachweis und ersetzt keinen separaten manuellen Owner-Test mit echten Daten.
+

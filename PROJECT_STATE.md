@@ -4,108 +4,133 @@
 
 ## Інтегрований стан
 
-- Статус: **ACTIVE / desktop feature-complete / stabilization to 1.0.0**.
-- Останній реліз: **v0.3.23 prerelease**.
-- Release target: `92e8478511e776ccf90867aacd38d8bcb656c478`.
-- Release workflow: `41068168980` — **SUCCESS**.
-- Усі release jobs успішні: release-please, Windows, macOS universal, Linux, assets, README links.
-- Опубліковано **13 assets**.
-- `main` після автоматичного README links update і перед фінальним docs-checkpoint: `619e94a6787bfe9152377269ac4940806e9ce764`.
+- Статус: **desktop feature-complete / stabilization gates complete / preparing stable 1.0.0**.
+- Поточний `main` перед release-prep: `423b8d2e3a92c953367c818eab64da999f9fdcff`.
+- Останній опублікований реліз: **v0.3.23 prerelease**.
+- 0.3.24 не випускався; generated PR #193/#195 закриті без merge.
+- Release target next: **stable v1.0.0**.
+- Desktop platforms: Windows / macOS / Linux.
 - Ліцензія: proprietary / All Rights Reserved; Roman Zavada / Роман Завада.
-- Основна мова документації: українська. User guides: UK / EN / FR / DE / ES / KO / JA.
+- Основна мова документації: українська; user-facing guides: UK / EN / FR / DE / ES / KO / JA.
 
-## v0.3.23
+## Desktop 1.0 baseline
 
-PR #186 додав перший реалізований зріз групових операцій у дереві:
+Функціонально завершено:
 
-- Ctrl/Cmd toggle multi-selection;
-- Shift visible-range selection;
-- звичайний клік повертає одиночний вибір;
-- batch trash для кількох файлів/папок;
-- parent + child selection dedupe;
-- безпечне закриття вкладок нотаток, які переміщено в кошик;
-- reconciliation при частковій помилці batch trash.
+- local-first Markdown vault без proprietary content format;
+- editor / preview / split / autosave / atomic writes;
+- file tree, tabs, standalone Markdown, detached/multi-window views;
+- search/FTS5, tags, aliases, backlinks, quick open;
+- templates, daily notes, schema properties, PARA/Zettelkasten/Empty presets;
+- attachments, Mermaid, KaTeX;
+- global/local knowledge graph, typed relations A1–F6, reliability grades, relation tree, weakest-link path;
+- Git foundation + encrypted-vault plaintext push guard;
+- folder import + identity merge / duplicate candidates;
+- encrypted vault age/X25519, random physical names, OS secret store;
+- public recovery recipient management for existing encrypted vault;
+- encrypted image/PDF preview only in memory;
+- backup ZIP + manifest/SHA-256 + safe restore into new vault;
+- encrypted recovery drill;
+- 7-language UI/documentation;
+- Windows/macOS/Linux CI + Android/iOS build smoke.
 
-Owner runtime verdict для Windows TEST r1: **practical PASS** — «вроді все добре». Не трактувати як exhaustive edge-case coverage.
+## 1.0 stabilization evidence
 
-**Не входять у v0.3.23:** batch move та batch rename. Їх робити окремими slices.
+### #192 encrypted vault
 
-## Документація знань і безпеки
+Merge: `ea226a90b98ae4d3f7eb2ea9d1c35dc6ba25c53e`.
 
-Docs-only PR #191 додає окремий завершений шар пояснень без зміни runtime або версії продукту:
+- memory-only image/PDF preview;
+- no plaintext temp-file external open;
+- recovery recipient UI;
+- AI security contract updated to encrypted-vault/2;
+- human security/user docs aligned in 7 languages.
+- CI `41079247425` = SUCCESS.
+- Mobile smoke `41079247290` = SUCCESS.
 
-- `docs/concepts/KNOWLEDGE_GRAPH.*.md` — правила wiki-links, typed `relations`, A1–F6, global/local graph, relation tree і weakest-link semantics;
-- `docs/security/ENCRYPTED_VAULT.*.md` — age/X25519, random-name layout нових vault, OS secret store, recovery, plaintext cache boundary і threat model;
-- `docs/security/BACKUP_AND_RECOVERY.*.md` — ZIP/manifest/SHA-256, exclusions, safe restore в новий vault та recovery drill;
-- усі три людські набори є UK / EN / FR / DE / ES / KO / JA, українська — канонічна;
-- `docs/ai/` містить одну канонічну нормативну пару Markdown + machine-readable YAML для graph і encrypted-vault, щоб AI-правила не розходилися між перекладами.
+### #194 regression/security gates
 
-## Multi-window / ADR-0010
+Merge: `256b0d61d9b13f93d938ff7cb33045e0682876fa`.
 
-- Прийнято власником як достатньо робочий у v0.3.22 (r8).
-- Main лишається центральним вікном.
-- Graph може бути незалежним native-вікном.
-- Graph navigation використовує звичайні вкладки main.
-- Explicit detached note/editor windows лишаються окремою дією.
-- Не продовжувати полірування без нового фактичного runtime-дефекту.
+- automated parity for all 7 languages across specialized maps;
+- high/critical production npm advisory gate;
+- remaining hard-coded Git menu / detached error strings localized.
+- CI `41081985372` = SUCCESS.
+- Mobile smoke `41081985348` = SUCCESS.
 
-## Backup / restore / ADR-0009
+At checkpoint, production audit had only low-severity KaTeX-chain advisories; no high/critical production blocker passed the gate.
 
-Реалізовано й випущено з v0.3.22:
+### #196 Windows packaging
 
-- manual portable ZIP backup;
-- manifest + SHA-256 для вмісту;
-- перед backup відкриті документи зберігаються;
-- включаються нотатки, вкладення, конфігурація, шаблони та кошик;
-- не включаються `.git`, `.mdnotes/cache` і тимчасовий системний шум;
-- encrypted vault копіюється як ciphertext, без розшифрування й без secret/recovery keys;
-- restore спочатку повністю валідовує архів і відновлює лише в новий vault, без silent overwrite.
+Merge: `48e0eb0085fe57964ff3d8d98902e767cb3acfec`.
 
-Автоматизовані desktop tests пройдені. **Окремого owner manual runtime backup/restore test не було.**
+- NSIS/MSI embed WebView2 offline installer;
+- Windows installer bundles VC runtime;
+- CI adds a path-aware installer smoke build;
+- smoke artifact id `12991027276`, size 456803020 bytes;
+- artifact digest `sha256:1b328fab1502a03f2471cb12c8b9e884cdfebd6f2438db6ecdab82300a0659a7`.
+- CI `41083660181` = SUCCESS.
+- Mobile smoke `41083660161` = SUCCESS.
 
-## Релізні пакети v0.3.23
+Portable ZIP remains intentionally lightweight and requires an existing system WebView2 Runtime.
 
-- Windows: Portable ZIP, NSIS EXE, MSI.
-- macOS: universal DMG, universal app archive.
-- Linux: AppImage, deb, rpm.
-- Додатково: START/source ZIP, `SHA256SUMS.txt`, `LICENSE.md`, `COPYRIGHT.md`, `THIRD_PARTY_NOTICES.md`.
-- Збірки unsigned / not notarized.
+### #197 encrypted backup/recovery
 
-## Рішення про desktop 1.0
+Merge / current main: `423b8d2e3a92c953367c818eab64da999f9fdcff`.
 
-30.10.2026 власник зафіксував: **«розробку першої повноцінної desktop-версії завершено; переходимо в режим використання й стабілізації»**.
+Automated end-to-end test proves:
 
-До 1.0 входять лише стабілізаційні роботи: security gaps, regression tests, packaging/offline prerequisites, backup/recovery verification, documentation/release hygiene. Android/iOS не блокують desktop 1.0 і переходять у post-1.0. Batch move/rename також post-1.0.
+- create real encrypted vault with recovery recipient;
+- write note + binary attachment;
+- backup;
+- restore into new folder;
+- reopen using recovery private key;
+- read restored note + attachment bytes.
 
-Активний slice: PR #192 — recovery recipient UX для existing encrypted vault та in-memory preview encrypted images/PDF без plaintext temp files.
+CI `41085366766` = SUCCESS.
+Mobile smoke `41085366949` = SUCCESS.
 
-## Відкритий технічний хвіст
+## Backup / recovery boundary
 
-- PR #188 закрито без merge; archive trace: `archive/test-file-tree-multiselect-r1-20172b7` → `20172b747c180694bc2c199c58eb44832fc9393e`.
-- PR #192 — активний 1.0 security stabilization slice.
+- automated encrypted recovery drill = PASS;
+- separate manual owner backup/restore drill on real data = **not claimed**;
+- encrypted backup contains ciphertext and no secret/recovery private keys;
+- restore validates before writing and never silently overwrites an existing vault.
 
-## Backlog
+## 1.0 release packaging
 
-1. PR #192 encrypted-vault stabilization.
-2. Frontend regression tests / i18n parity gate (MDN-04).
-3. WebView2 offline installer packaging for Windows (MDN-08).
-4. Automated + owner recovery drill for backup/restore where practical.
-5. Stable 1.0.0 release preparation; signing/notarization only when real signing credentials exist.
+Expected stable release assets after release workflow:
 
-Post-1.0:
+- Windows: NSIS EXE, MSI, portable ZIP;
+- macOS: universal DMG + app archive;
+- Linux: AppImage, deb, rpm;
+- START/source ZIP;
+- SHA256SUMS;
+- LICENSE / COPYRIGHT / THIRD_PARTY_NOTICES.
+
+Builds remain unsigned/not notarized until real credentials exist.
+
+## Post-1.0 backlog
+
+Not blockers for desktop 1.0:
+
 - batch move / batch rename;
-- Git state ↔ `SyncManifest` / ADR-0005 and WebDAV;
-- physical-device Android/iOS validation, SAF/security-scoped folders;
-- encrypted cache as a possible stronger-security future mode;
-- larger `App.tsx` refactor when a future feature touches it.
+- Git ↔ SyncManifest / ADR-0005;
+- WebDAV;
+- physical Android/iOS runtime acceptance;
+- Android SAF / iOS security-scoped folders;
+- encrypted cache option;
+- signing/notarization + auto-update when credentials/channel exist;
+- larger App.tsx decomposition when future work requires it;
+- future task/calendar/cloud/canvas/history ideas only after explicit owner approval.
 
 ## Метод роботи
 
-- GitHub — фактичне джерело істини.
-- Один PR на фічу; acceptance rounds вести в тому самому PR, не множити гілки.
-- Видану тестову ревізію rN не перевикористовувати.
-- Закриті без merge гілки не видаляти без звірки з main та архівного сліду.
-- `START_HERE.md` і цей файл тримати короткими; історія є у Git та Issue #8.
-- Новий product slice починати лише після прямої вказівки власника.
+- GitHub is the factual source of truth.
+- One PR per slice; acceptance rounds stay in the same PR.
+- Issued test revision numbers are never reused.
+- Closed-without-merge test work keeps an archive trace.
+- START_HERE / PROJECT_STATE / WORKLOG stay compact.
+- No new product scope before 1.0 release completes.
 
-Деталі релізу: `docs/releases/RELEASE_NOTES_v0_3_23.md`.
+Release notes candidate: `docs/releases/RELEASE_NOTES_v1_0_0.md`.

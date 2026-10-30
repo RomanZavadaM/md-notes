@@ -5,7 +5,7 @@
 <!-- x-release-please-start-version -->
 > **Release checkpoint: MD Notes v0.3.23**
 >
-> **Development status: ACTIVE — roadmap stage v0.3 “mobile platforms and synchronization”.**
+> **Status: desktop feature-complete; stabilization is complete and stable v1.0.0 is being prepared.**
 
 ## Download MD Notes v0.3.23
 
@@ -20,13 +20,15 @@
 
 > Builds are currently unsigned/not notarized, so your operating system may show a standard security warning.
 
+> **Windows 1.0 packaging:** NSIS/MSI include the offline WebView2 installer and VC runtime; the lightweight portable ZIP uses the WebView2 Runtime already installed in Windows.
+
 ## What it is
 
 **MD Notes** is a cross-platform, local-first Markdown knowledge-base app. It works with ordinary `.md/.markdown` files, attachments and open JSON metadata without a hidden proprietary data format.
 
 **Your data belongs to you.** Notes can be opened with any editor, stored in your own filesystem and versioned with Git. MD Notes has no application server, analytics or telemetry.
 
-Platforms: **Windows, macOS, Linux**. Android and iOS are active v0.3 targets; CI validates buildability, while physical-device runtime is not yet claimed as validated.
+Desktop 1.0 platforms: **Windows, macOS, Linux**. Android/iOS continue to build in CI, but physical-device runtime validation and mobile-store publication are post-1.0.
 
 ## Implemented
 

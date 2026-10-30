@@ -148,3 +148,17 @@ An AI must not delete the last known-good copy before verified restore, treat sy
 Encrypted-data rules: [ENCRYPTED_VAULT_CONTRACT.md](../ai/ENCRYPTED_VAULT_CONTRACT.md).
 
 > This translation was generated automatically and has not been reviewed by a native speaker; Ukrainian is canonical.
+
+## 1.0 recovery verification
+
+Before desktop 1.0, an automated end-to-end recovery drill was added for encrypted vaults:
+
+1. create a real encrypted vault with a separate recovery recipient;
+2. write a Markdown note and import a binary attachment;
+3. create the portable ZIP backup;
+4. restore the backup into a new folder;
+5. reopen the restored vault with the **recovery private key**;
+6. read the restored note and attachment bytes through the encrypted storage provider.
+
+This scenario passed CI before 1.0 across Windows, macOS and Linux core gates. It is automated recovery evidence and does not replace a separate owner-run manual drill on real data.
+

@@ -101,3 +101,17 @@ Una IA no debe borrar la última copia buena antes de un restore verificado, tra
 Reglas encrypted: [ENCRYPTED_VAULT_CONTRACT.md](../ai/ENCRYPTED_VAULT_CONTRACT.md).
 
 > Traducción generada automáticamente y no revisada por un hablante nativo; el ucraniano es canónico.
+
+## Verificación recovery para 1.0
+
+Antes de desktop 1.0 se añadió un recovery drill end-to-end automatizado para bóvedas cifradas:
+
+1. se crea una bóveda cifrada real con un destinatario recovery separado;
+2. se escribe una nota Markdown y se importa un adjunto binario;
+3. se crea el backup ZIP portable;
+4. el backup se restaura en una carpeta nueva;
+5. la bóveda restaurada se vuelve a abrir con la **recovery private key**;
+6. se leen la nota restaurada y los bytes del adjunto mediante el proveedor de almacenamiento cifrado.
+
+Este escenario pasó CI antes de 1.0 en los gates core de Windows, macOS y Linux. Es evidencia automatizada del mecanismo recovery y no sustituye un ensayo manual separado del propietario con datos reales.
+

@@ -2,11 +2,11 @@
 
 [🇺🇦 Українська](USER_GUIDE.uk.md) · [🇬🇧 English](USER_GUIDE.en.md) · [🇫🇷 Français](USER_GUIDE.fr.md) · [🇩🇪 Deutsch](USER_GUIDE.de.md) · **🇪🇸 Español** · [🇰🇷 한국어](USER_GUIDE.ko.md) · [🇯🇵 日本語](USER_GUIDE.ja.md)
 
-Aplicable a la **v0.3.19**. La versión ucraniana es el texto de referencia.
+Aplicable a la **v1.0.0**. La versión ucraniana es el texto de referencia.
 
 ## 1. Primer inicio
 
-1. Instala MD Notes para tu sistema (consulta el README).
+1. Instala MD Notes para tu sistema (consulta el README). En Windows, los instaladores NSIS/MSI de v1.0 incluyen WebView2 offline y el runtime VC; el ZIP portable usa el WebView2 Runtime ya instalado en Windows.
 2. Si lo necesitas, elige el idioma de la interfaz en la pantalla de bienvenida.
 3. Pulsa **«Abrir carpeta»** y elige una carpeta con notas. Sirve cualquier carpeta con archivos `.md`, incluida `sample-vault/` del repositorio.
 4. MD Notes recuerda la carpeta y la abre en el siguiente inicio.
