@@ -1,7 +1,7 @@
 # MD Notes Graph Contract for AI and automation
 
 **Contract:** `md-notes-graph/1`  
-**Applies to:** current v0.3.23 semantics  
+**Applies to:** current v1.0.0 semantics  
 **Audience:** AI agents, importers, batch editors, analyzers and code changes that read/write graph data.
 
 Normative words **MUST**, **MUST NOT**, **SHOULD** and **MAY** are intentional.
@@ -105,7 +105,7 @@ An AI **MUST NOT** generate a grade without a defined assessment basis.
 - typed relations between known nodes are overlaid;
 - isolated nodes are valid.
 
-### Local graph in v0.3.23
+### Local graph in v1.0.0
 - starts with the focus note;
 - visible neighbourhood is one hop over resolved ordinary wiki-link edges;
 - typed relations are overlaid only when both endpoints are already in that visible snapshot.
