@@ -1,5 +1,16 @@
 # START_HERE — MD Notes
 
+## АКТУАЛЬНИЙ CHECKPOINT — stable v1.0.2 (30.10.2026)
+
+- **Останній повний stable release: v1.0.2**, tag/release: https://github.com/RomanZavadaM/md-notes/releases/tag/v1.0.2.
+- Release workflow 41114443139 — **SUCCESS**; 13/13 artifacts: Windows NSIS EXE, MSI, portable ZIP; macOS Universal DMG, app tar.gz; Linux AppImage, DEB, RPM; START ZIP, SHA256SUMS, LICENSE, COPYRIGHT, THIRD_PARTY_NOTICES.
+- PR #204 та release PR #205 злиті, відкритих PR на контрольній точці немає.
+- Попередній реліз v1.0.1 неповний через старий Cargo.lock; тег не змінювати. На v1.0.2 Cargo.lock синхронізовано, release metadata CI вимагає cargo metadata --locked.
+- Контрольний main до оновлення документації: f1724c6d2e60b1452926d4897f200ea53e005685. Поточний main щоразу перевіряти заново.
+- **Режим: тільки використання і стабілізація; жодних нових функцій без рішення власника.** Перевірка реального запуску на пристроях власника окремо не заявляється.
+- Вести докладний протокол у WORKLOG.md, Issue #8 і Google Drive MD_NOTES_CHECKPOINT_20261028_v0.3.21. Старі секції нижче — історія.
+
+
 > Перша точка входу для нового чату або відновлення після обриву.
 
 ## Поточний checkpoint — stable v1.0.0
