@@ -32,7 +32,6 @@ allow = [
     "CC0-1.0",
     "Unlicense",
     "Unicode-3.0",
-    "Unicode-DFS-2016",
     "CDLA-Permissive-2.0",
 ]
 
