@@ -41,6 +41,15 @@
 - Опубліковано 13 assets: Windows Portable/EXE/MSI, macOS DMG/app archive, Linux AppImage/deb/rpm, START/source, SHA256SUMS та legal notices.
 - Після автоматичного README links update `main` = `619e94a6787bfe9152377269ac4940806e9ce764`.
 
+### Graph / encryption / recovery documentation contracts
+
+- Owner прямо погодив окремий docs slice.
+- PR #191: `docs: add graph encryption and recovery guides`.
+- Human guides: graph/relations, encrypted vault, backup/recovery — по 7 мов (UK / EN / FR / DE / ES / KO / JA), українська канонічна.
+- AI/automation: одна канонічна серія контрактів у `docs/ai/` + YAML, без 7 незалежних нормативних копій.
+- Зміст звірено з фактичним v0.3.23 code path: one-hop local graph, weakest-link pathGrade, random-name layout нових encrypted vault, plaintext cache exception, ciphertext backup і safe restore.
+- Slice docs-only: runtime/version/release не змінюються; heavy CI не запускається за path-aware policy.
+
 ### Backup / checkpoint
 
 - Product ADR-0009 backup/restore уже реалізований з v0.3.22; у v0.3.23 збережений без регресій.

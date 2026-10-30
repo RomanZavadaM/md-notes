@@ -30,6 +30,16 @@ Owner runtime verdict для Windows TEST r1: **practical PASS** — «врод�
 
 **Не входять у v0.3.23:** batch move та batch rename. Їх робити окремими slices.
 
+## Документація знань і безпеки
+
+Docs-only PR #191 додає окремий завершений шар пояснень без зміни runtime або версії продукту:
+
+- `docs/concepts/KNOWLEDGE_GRAPH.*.md` — правила wiki-links, typed `relations`, A1–F6, global/local graph, relation tree і weakest-link semantics;
+- `docs/security/ENCRYPTED_VAULT.*.md` — age/X25519, random-name layout нових vault, OS secret store, recovery, plaintext cache boundary і threat model;
+- `docs/security/BACKUP_AND_RECOVERY.*.md` — ZIP/manifest/SHA-256, exclusions, safe restore в новий vault та recovery drill;
+- усі три людські набори є UK / EN / FR / DE / ES / KO / JA, українська — канонічна;
+- `docs/ai/` містить одну канонічну нормативну пару Markdown + machine-readable YAML для graph і encrypted-vault, щоб AI-правила не розходилися між перекладами.
+
 ## Multi-window / ADR-0010
 
 - Прийнято власником як достатньо робочий у v0.3.22 (r8).
