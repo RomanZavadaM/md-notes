@@ -1,0 +1,58 @@
+name: Final docs audit
+
+on:
+  push:
+    branches:
+      - audit/v1.0.0-final-docs-r2
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Verify stable docs metadata and local links
+        shell: python
+        run: |
+          import json, re, tomllib
+          from pathlib import Path
+          root=Path('.').resolve()
+          cargo=tomllib.loads(Path('Cargo.toml').read_text(encoding='utf-8'))
+          package=json.loads(Path('app/package.json').read_text(encoding='utf-8'))
+          lock=json.loads(Path('app/package-lock.json').read_text(encoding='utf-8'))
+          tauri=json.loads(Path('app/src-tauri/tauri.conf.json').read_text(encoding='utf-8'))
+          marker=Path('version.txt').read_text(encoding='utf-8').strip()
+          versions=[cargo['workspace']['package']['version'],marker,package['version'],lock['version'],lock['packages']['']['version'],tauri['version']]
+          assert set(versions)=={'1.0.0'}, versions
+          required=['LICENSE.md','COPYRIGHT.md','THIRD_PARTY_NOTICES.md','docs/LEGAL_AND_COPYRIGHT.md','docs/releases/RELEASE_NOTES_v1_0_0.md']
+          assert not [p for p in required if not Path(p).is_file()]
+          broken=[]; checked=0
+          tick=chr(96)
+          for src in Path('.').rglob('*.md'):
+              if '.git' in src.parts: continue
+              text=src.read_text(encoding='utf-8')
+              text=re.sub(r'(?s)'+re.escape(tick*4)+r'.*?'+re.escape(tick*4),'',text)
+              text=re.sub(r'(?s)'+re.escape(tick*3)+r'.*?'+re.escape(tick*3),'',text)
+              text=re.sub(re.escape(tick)+r'[^'+re.escape(tick)+r'\n]*'+re.escape(tick),'',text)
+              for target in re.findall(r'\[[^\]]*\]\(([^)]+)\)',text):
+                  target=target.strip()
+                  if not target or target.startswith(('#','http://','https://','mailto:')): continue
+                  target=target.split('#',1)[0].split('?',1)[0]
+                  if not target: continue
+                  candidate=(src.parent/target).resolve(); checked+=1
+                  try: candidate.relative_to(root)
+                  except ValueError:
+                      broken.append((str(src),target,'outside repo')); continue
+                  if not candidate.exists(): broken.append((str(src),target,str(candidate)))
+          print('links checked',checked)
+          assert not broken, broken
+      - name: Reject stale current stable claims
+        shell: bash
+        run: |
+          set -euo pipefail
+          ! grep -RInE 'Git/WebDAV sync is being added in v0\.3|синхронізація додається.*v0\.3' app/src --include='*.ts' --include='*.tsx'
+          ! grep -RInE '^> .*v0\.3\.23.*(current|actual|Актуально|Gilt|Valable|Válido|基準|対象)' docs/concepts docs/security --include='*.md'
+          ! grep -RInE '^\*\*Applies to:\*\* current v0\.3\.23' docs/ai --include='*.md'
+          ! grep -n 'погоджений багатовіконний UX ще не реалізований' README.md
