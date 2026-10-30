@@ -2,90 +2,95 @@
 
 Оновлено: **30.10.2026**
 
-> Поточний operational log. Розгорнута попередня історія лишається в Git history та Issue #8.
+> Operational log after the first stable desktop release. Older detail remains in Git history and Issue #8.
 
-## Рішення власника
+## Owner decision
 
 30.10.2026: **«розробку першої повноцінної desktop-версії завершено; переходимо в режим використання й стабілізації»**.
 
-До stable 1.0.0 не додаємо нових desktop features. Mobile, sync expansion і batch move/rename — post-1.0.
+## Stable v1.0.0 — RELEASED
 
-## Live state перед release-prep
+- Release/tag: **v1.0.0**.
+- Stable: yes; prerelease: no.
+- Release target: `100fb61a7cd20385cd2f73042586527d20cb3dc4`.
+- Release workflow: `41089712205` = **SUCCESS**.
+- Assets: **13**.
+- Post-release README link update: `5d34e85ff648f1adadf258b65b4c8fa0bdf83832`.
+- Open PR at release checkpoint: none.
+- 0.3.24 was never released.
 
-- Repository: `RomanZavadaM/md-notes`.
-- Main: `423b8d2e3a92c953367c818eab64da999f9fdcff`.
-- Latest published release: **v0.3.23 prerelease**.
-- Generated 0.3.24 PR #193/#195: closed without merge; no 0.3.24 release exists.
-- Release-prep target: **stable 1.0.0**.
+## Platform build results
 
-## Stabilization completed
+- Windows = SUCCESS.
+- macOS universal = SUCCESS.
+- Ubuntu/Linux = SUCCESS.
+- assets = SUCCESS.
+- README links = SUCCESS.
 
-### PR #192 — encrypted vault
+Published:
+- Windows EXE / MSI / portable ZIP;
+- macOS universal DMG / app tar.gz;
+- Linux AppImage / DEB / RPM;
+- START/source ZIP;
+- SHA256SUMS;
+- LICENSE / COPYRIGHT / THIRD_PARTY_NOTICES.
 
-- Merge: `ea226a90b98ae4d3f7eb2ea9d1c35dc6ba25c53e`.
-- Recovery public-recipient UI for existing encrypted vault.
-- Encrypted image/PDF preview: plaintext only in memory.
-- Encrypted attachment external-open disabled to avoid plaintext temp files.
-- Human docs 7 languages + canonical AI contract v2.
-- CI `41079247425`: SUCCESS.
-- Mobile smoke `41079247290`: SUCCESS.
+## Stabilization delivered before 1.0
 
-### PR #194 — regression/security gates
+### #192 — encrypted vault
 
-- Merge: `256b0d61d9b13f93d938ff7cb33045e0682876fa`.
-- AST-based i18n parity: UK/EN/FR/DE/ES/KO/JA; 11 specialized maps at the checkpoint.
-- Production npm audit high/critical gate in existing frontend job.
-- Remaining hard-coded Git menu / detached-window error localized.
-- CI `41081985372`: SUCCESS.
-- Mobile smoke `41081985348`: SUCCESS.
+- recovery public-recipient UI;
+- in-memory encrypted image/PDF preview;
+- no plaintext temp external open;
+- CI + mobile smoke SUCCESS.
 
-### PR #196 — Windows offline installer
+### #194 — regression/security gates
 
-- Merge: `48e0eb0085fe57964ff3d8d98902e767cb3acfec`.
-- Tauri Windows packaging: WebView2 `offlineInstaller` + `bundleVCRuntime`.
-- CI path classifier gains packaging scope + Windows NSIS/MSI smoke job.
-- Installer build passed.
-- Artifact id: `12991027276`.
-- Artifact ZIP size: 456803020 bytes.
-- Digest: `sha256:1b328fab1502a03f2471cb12c8b9e884cdfebd6f2438db6ecdab82300a0659a7`.
-- CI `41083660181`: SUCCESS.
-- Mobile smoke `41083660161`: SUCCESS.
+- seven-language parity gate;
+- production npm high/critical audit gate;
+- hard-coded UI strings localized;
+- CI + mobile smoke SUCCESS.
 
-### PR #197 — encrypted recovery drill
+### #196 — Windows packaging
 
-- Merge: `423b8d2e3a92c953367c818eab64da999f9fdcff`.
-- Automated real encrypted-vault recovery flow:
-  encrypted vault → note + attachment → portable backup → restore new vault → recovery private key → read note + attachment.
-- CI `41085366766`: SUCCESS.
-- Mobile smoke `41085366949`: SUCCESS.
+- offline WebView2 installer in NSIS/MSI;
+- bundled VC runtime;
+- dedicated Windows installer smoke artifact;
+- CI + mobile smoke SUCCESS.
 
-## Release-prep content
+### #197 — encrypted recovery drill
 
-Prepared for stable 1.0:
+- real encrypted vault;
+- note + attachment;
+- backup;
+- restore new vault;
+- reopen with recovery private key;
+- read restored note + attachment;
+- CI + mobile smoke SUCCESS.
 
-- release-please: `prerelease=false`, explicit `release-as=1.0.0`;
-- root + six translated README: desktop 1.0 status, mobile boundary, Windows offline-installer semantics;
-- user guides all seven languages marked for v1.0.0;
-- backup/recovery docs all seven languages include the automated recovery drill and preserve the manual-owner-test boundary;
-- roadmap rewritten around desktop 1.0 / post-1.0;
-- `docs/releases/RELEASE_NOTES_v1_0_0.md`;
-- START/STATE/WORKLOG aligned.
+### #198 / #199 — stable release
 
-## Remaining exact release sequence
+- release-prep CI SUCCESS;
+- versions/manifests aligned to 1.0.0;
+- stable release PR validated and merged;
+- full release workflow SUCCESS.
 
-1. Merge release-prep after checks.
-2. Verify Release Please creates stable **1.0.0** PR (not 0.3.x).
-3. Verify release metadata consistency, then merge the 1.0.0 release PR.
-4. Wait for Release workflow: Windows/macOS/Linux, assets, README links.
-5. Verify release tag, asset inventory, SHA256SUMS and final main SHA.
-6. Update Issue #8 and Google Drive checkpoint with final immutable 1.0 facts.
-7. Then switch project status to **stable / use-and-stabilize**.
+## Post-release cleanup
 
-## Non-blocking post-1.0 work
+- one-time `release-as: 1.0.0` removed;
+- README statuses changed from “preparing” to **stable released**;
+- START/STATE/WORKLOG converted from release-prep state to stable baseline.
 
-- batch move / rename;
-- Git SyncManifest / WebDAV;
-- physical mobile acceptance;
-- encrypted cache;
-- signing/notarization if credentials are supplied;
-- future features only by owner decision.
+## Boundaries not to overclaim
+
+- manual owner recovery drill on real data: not separately recorded;
+- builds: unsigned / not notarized;
+- Android/iOS physical runtime: not accepted;
+- WebDAV / full SyncManifest conflict policy: not in desktop 1.0;
+- encrypted cache: not implemented.
+
+## Next mode
+
+**Use and stabilize.**
+
+Do not start a new feature automatically. Fix factual defects from real use first. Post-1.0 features only by explicit owner decision.

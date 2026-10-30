@@ -5,7 +5,7 @@
 <!-- x-release-please-start-version -->
 > **リリース checkpoint: MD Notes v1.0.0**
 >
-> **状態: desktop 機能開発完了。安定化も完了し、stable v1.0.0 を準備中。**
+> **状態: desktop 機能開発完了。stable v1.0.0 を公開済みです。現在は実運用と安定化の段階です。**
 
 ## MD Notes v1.0.0 をダウンロード
 

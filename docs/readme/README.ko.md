@@ -5,7 +5,7 @@
 <!-- x-release-please-start-version -->
 > **릴리스 체크포인트: MD Notes v1.0.0**
 >
-> **상태: desktop 기능 개발 완료; 안정화 완료, stable v1.0.0 준비 중.**
+> **상태: desktop 기능 개발 완료; stable v1.0.0 배포 완료. 이제 실제 사용과 안정화 단계입니다.**
 
 ## MD Notes v1.0.0 다운로드
 

@@ -2,135 +2,115 @@
 
 Оновлено: **30.10.2026**
 
-## Інтегрований стан
+## Статус продукту
 
-- Статус: **desktop feature-complete / stabilization gates complete / preparing stable 1.0.0**.
-- Поточний `main` перед release-prep: `423b8d2e3a92c953367c818eab64da999f9fdcff`.
-- Останній опублікований реліз: **v0.3.23 prerelease**.
-- 0.3.24 не випускався; generated PR #193/#195 закриті без merge.
-- Release target next: **stable v1.0.0**.
-- Desktop platforms: Windows / macOS / Linux.
+- **Stable desktop v1.0.0 RELEASED.**
+- Режим роботи: **use-and-stabilize**.
+- Release/tag target: `100fb61a7cd20385cd2f73042586527d20cb3dc4`.
+- Release workflow `41089712205`: **SUCCESS**.
+- Post-release README links commit: `5d34e85ff648f1adadf258b65b4c8fa0bdf83832`.
+- Поточний main SHA надалі завжди звіряти live перед змінами.
+- Release is stable: `prerelease=false`, `draft=false`.
+- Assets: **13**.
 - Ліцензія: proprietary / All Rights Reserved; Roman Zavada / Роман Завада.
-- Основна мова документації: українська; user-facing guides: UK / EN / FR / DE / ES / KO / JA.
+- Основна мова: українська; user-facing interface/docs: UK / EN / FR / DE / ES / KO / JA.
 
 ## Desktop 1.0 baseline
 
 Функціонально завершено:
 
-- local-first Markdown vault без proprietary content format;
+- local-first Markdown vault;
 - editor / preview / split / autosave / atomic writes;
 - file tree, tabs, standalone Markdown, detached/multi-window views;
 - search/FTS5, tags, aliases, backlinks, quick open;
-- templates, daily notes, schema properties, PARA/Zettelkasten/Empty presets;
+- templates, daily notes, schema properties, PARA/Zettelkasten/Empty;
 - attachments, Mermaid, KaTeX;
-- global/local knowledge graph, typed relations A1–F6, reliability grades, relation tree, weakest-link path;
+- global/local graph, typed relations A1–F6, reliability grades, relation tree, weakest-link path;
 - Git foundation + encrypted-vault plaintext push guard;
 - folder import + identity merge / duplicate candidates;
 - encrypted vault age/X25519, random physical names, OS secret store;
-- public recovery recipient management for existing encrypted vault;
+- public recovery recipient management;
 - encrypted image/PDF preview only in memory;
 - backup ZIP + manifest/SHA-256 + safe restore into new vault;
-- encrypted recovery drill;
-- 7-language UI/documentation;
+- automated encrypted recovery drill;
+- 7-language UI/docs;
 - Windows/macOS/Linux CI + Android/iOS build smoke.
 
-## 1.0 stabilization evidence
+## v1.0.0 release evidence
 
-### #192 encrypted vault
+Release workflow: `41089712205` = SUCCESS.
 
-Merge: `ea226a90b98ae4d3f7eb2ea9d1c35dc6ba25c53e`.
+Platform jobs:
+- Windows build = SUCCESS;
+- macOS universal build = SUCCESS;
+- Linux build = SUCCESS;
+- assets = SUCCESS;
+- README links = SUCCESS.
 
-- memory-only image/PDF preview;
-- no plaintext temp-file external open;
-- recovery recipient UI;
-- AI security contract updated to encrypted-vault/2;
-- human security/user docs aligned in 7 languages.
-- CI `41079247425` = SUCCESS.
-- Mobile smoke `41079247290` = SUCCESS.
-
-### #194 regression/security gates
-
-Merge: `256b0d61d9b13f93d938ff7cb33045e0682876fa`.
-
-- automated parity for all 7 languages across specialized maps;
-- high/critical production npm advisory gate;
-- remaining hard-coded Git menu / detached error strings localized.
-- CI `41081985372` = SUCCESS.
-- Mobile smoke `41081985348` = SUCCESS.
-
-At checkpoint, production audit had only low-severity KaTeX-chain advisories; no high/critical production blocker passed the gate.
-
-### #196 Windows packaging
-
-Merge: `48e0eb0085fe57964ff3d8d98902e767cb3acfec`.
-
-- NSIS/MSI embed WebView2 offline installer;
-- Windows installer bundles VC runtime;
-- CI adds a path-aware installer smoke build;
-- smoke artifact id `12991027276`, size 456803020 bytes;
-- artifact digest `sha256:1b328fab1502a03f2471cb12c8b9e884cdfebd6f2438db6ecdab82300a0659a7`.
-- CI `41083660181` = SUCCESS.
-- Mobile smoke `41083660161` = SUCCESS.
-
-Portable ZIP remains intentionally lightweight and requires an existing system WebView2 Runtime.
-
-### #197 encrypted backup/recovery
-
-Merge / current main: `423b8d2e3a92c953367c818eab64da999f9fdcff`.
-
-Automated end-to-end test proves:
-
-- create real encrypted vault with recovery recipient;
-- write note + binary attachment;
-- backup;
-- restore into new folder;
-- reopen using recovery private key;
-- read restored note + attachment bytes.
-
-CI `41085366766` = SUCCESS.
-Mobile smoke `41085366949` = SUCCESS.
-
-## Backup / recovery boundary
-
-- automated encrypted recovery drill = PASS;
-- separate manual owner backup/restore drill on real data = **not claimed**;
-- encrypted backup contains ciphertext and no secret/recovery private keys;
-- restore validates before writing and never silently overwrites an existing vault.
-
-## 1.0 release packaging
-
-Expected stable release assets after release workflow:
-
-- Windows: NSIS EXE, MSI, portable ZIP;
-- macOS: universal DMG + app archive;
-- Linux: AppImage, deb, rpm;
+Assets:
+- Windows NSIS EXE / MSI / portable ZIP;
+- macOS universal DMG / app tar.gz;
+- Linux AppImage / DEB / RPM;
 - START/source ZIP;
 - SHA256SUMS;
 - LICENSE / COPYRIGHT / THIRD_PARTY_NOTICES.
 
-Builds remain unsigned/not notarized until real credentials exist.
+Key published digests:
+- Windows portable: `sha256:0d85c6c59de2a355e9a976a605ac0882b04e40179f5073de703bb977388786fc`;
+- Windows EXE: `sha256:55fc7213a093790d95e51618e0b5eef94492e08f38ba3e83063a369893c7bcf2`;
+- Windows MSI: `sha256:76fe580c6d39ca5b609a37587a4e9cb2493a9636340b1b7fc66f58622facc78b`;
+- macOS DMG: `sha256:84d6ee38d9df72a09454b9186292743360c21b7eeb88b1a1b28aa6280e1b92c5`;
+- AppImage: `sha256:e800a3ed9fcdfee97ade8f6fe1466eb99a49f74e7c37d2c4f8a806f075212768`;
+- `SHA256SUMS.txt` asset digest: `sha256:1c0082447f2a8f1ff46c32ffe65a0791a34c12df0956fa64d51bc1bbdc008ccf`.
 
-## Post-1.0 backlog
+## 1.0 stabilization evidence
 
-Not blockers for desktop 1.0:
+- #192 encrypted vault: CI `41079247425`, mobile `41079247290` — SUCCESS.
+- #194 i18n/security gates: CI `41081985372`, mobile `41081985348` — SUCCESS.
+- #196 offline Windows packaging: CI `41083660181`, mobile `41083660161` — SUCCESS.
+- #197 encrypted recovery drill: CI `41085366766`, mobile `41085366949` — SUCCESS.
+- #198 release prep: CI `41088207365` — SUCCESS.
+- #199 release metadata consistency — SUCCESS.
 
-- batch move / batch rename;
+## Backup / security boundary
+
+- automated encrypted recovery drill = PASS;
+- separate manual owner recovery drill on real data = not claimed;
+- recovery/private keys are not included in backup;
+- restore never silently overwrites an existing vault;
+- `.mdnotes/cache` remains outside the encrypted trust boundary;
+- encrypted external attachment open is intentionally disabled to avoid plaintext disk copies.
+
+## Packaging boundary
+
+- Windows NSIS/MSI: offline WebView2 installer + bundled VC runtime;
+- Windows portable: lightweight; system WebView2 Runtime required;
+- builds remain unsigned/not notarized until real signing credentials exist.
+
+## Release management
+
+- v1.0.0 was created with a one-time `release-as` override.
+- After successful release that override is removed.
+- Future releases use normal semantic release flow.
+- 0.3.24 was never released.
+
+## Post-1.0
+
+Not blockers / future separate slices:
+
+- real-use defects and stabilization;
+- batch move / rename;
 - Git ↔ SyncManifest / ADR-0005;
 - WebDAV;
-- physical Android/iOS runtime acceptance;
-- Android SAF / iOS security-scoped folders;
-- encrypted cache option;
-- signing/notarization + auto-update when credentials/channel exist;
-- larger App.tsx decomposition when future work requires it;
-- future task/calendar/cloud/canvas/history ideas only after explicit owner approval.
+- physical Android/iOS acceptance;
+- SAF/security-scoped folders;
+- encrypted-cache option;
+- signing/notarization + auto-update when credentials exist;
+- future task/calendar/cloud/canvas/history ideas only after owner approval.
 
-## Метод роботи
+## Method
 
-- GitHub is the factual source of truth.
-- One PR per slice; acceptance rounds stay in the same PR.
-- Issued test revision numbers are never reused.
-- Closed-without-merge test work keeps an archive trace.
-- START_HERE / PROJECT_STATE / WORKLOG stay compact.
-- No new product scope before 1.0 release completes.
-
-Release notes candidate: `docs/releases/RELEASE_NOTES_v1_0_0.md`.
+- GitHub facts beat docs if they differ.
+- One PR per slice; no revision reuse after test issuance.
+- No automatic product expansion after 1.0.
+- START_HERE remains source of truth for next session.

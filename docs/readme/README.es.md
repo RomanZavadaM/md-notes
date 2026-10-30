@@ -5,7 +5,7 @@
 <!-- x-release-please-start-version -->
 > **Checkpoint de versión: MD Notes v1.0.0**
 >
-> **Estado: desktop funcionalmente completo; estabilización terminada y preparación de la stable v1.0.0.**
+> **Estado: desktop funcionalmente completo; stable v1.0.0 publicada. El proyecto pasa al modo de uso y estabilización.**
 
 ## Descargar MD Notes v1.0.0
 

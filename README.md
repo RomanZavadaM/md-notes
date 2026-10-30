@@ -7,7 +7,7 @@
 <!-- x-release-please-start-version -->
 > **Release checkpoint: MD Notes v1.0.0**
 >
-> **Статус: desktop feature-complete; стабілізація завершена, готується stable v1.0.0.**
+> **Статус: desktop feature-complete; stable v1.0.0 опубліковано. Проєкт перейшов у режим використання й стабілізації.**
 
 ## Завантажити MD Notes v1.0.0
 

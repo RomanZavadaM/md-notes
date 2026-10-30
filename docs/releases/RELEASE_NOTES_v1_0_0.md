@@ -117,3 +117,23 @@ CI має автоматичний parity gate, щоб спеціалізова�
 MD Notes не вимагає міграції нотаток у власний формат. Звичайні vault залишаються звичайними папками Markdown. Existing vault можна відкрити без перетворення; encrypted vault є окремим свідомим режимом.
 
 Copyright © 2026 Roman Zavada / Роман Завада. All Rights Reserved.
+
+## Фактична публікація
+
+Stable v1.0.0 опубліковано 30.10.2026.
+
+- Release/tag target: `100fb61a7cd20385cd2f73042586527d20cb3dc4`.
+- Release workflow: `41089712205` — **SUCCESS**.
+- Windows build — SUCCESS.
+- macOS universal build — SUCCESS.
+- Linux build — SUCCESS.
+- Assets — SUCCESS.
+- README links — SUCCESS.
+- Release assets: **13**.
+- Release flags: `prerelease=false`, `draft=false`.
+- Post-release README-links commit: `5d34e85ff648f1adadf258b65b4c8fa0bdf83832`.
+
+Published packages: Windows EXE/MSI/portable ZIP, macOS universal DMG/app archive, Linux AppImage/DEB/RPM, START/source ZIP, legal files and `SHA256SUMS.txt`.
+
+One-time release override `release-as: 1.0.0` is removed after publication so future releases can follow normal semantic versioning.
+
