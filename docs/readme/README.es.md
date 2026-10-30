@@ -94,7 +94,7 @@ Copyright © 2026 Roman Zavada (Роман Завада). Todos los derechos res
 
 **v0.3.21** publica ADR-0010 M1–M3. Se pueden mantener varias notas del almacén abiertas en pestañas, cada una con su propio borrador. En escritorio, la nota activa se puede mover con **Abrir en una ventana separada** a una ventana de editor independiente. Los cambios se guardan antes de moverla y la ventana principal vuelve a la pestaña anterior o a un área vacía.
 
-M1–M3 forman parte de **v0.3.21** publicada: protección de conflictos, cierre seguro de editores separados y guardado global/salida segura. CI de Windows/macOS/Linux y los build smoke de Android/iOS pasan. **M4 ahora significa aceptación manual en tiempo de ejecución**; la prerelease de prueba ya está publicada.
+M1–M3 forman parte de **v0.3.21** publicada: protección de conflictos, cierre seguro de editores separados y guardado global/salida segura. CI de Windows/macOS/Linux y los build smoke de Android/iOS pasan. El flujo multiventana está aceptado en la versión estable **v1.0.0**; la aceptación práctica en Windows se completó antes del lanzamiento estable, mientras CI sigue cubriendo Windows/macOS/Linux y build smoke de Android/iOS.
 
 
 ## Copia de seguridad y restauración
