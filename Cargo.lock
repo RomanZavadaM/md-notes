@@ -3970,7 +3970,7 @@ dependencies = [
 
 [[package]]
 name = "md-notes"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "android-native-keyring-store",
  "apple-native-keyring-store",
@@ -4164,7 +4164,7 @@ checksum = "9737e026353e5cd0736f98eddae28665118eb6f6600902a7f50db585621fecb6"
 
 [[package]]
 name = "notes-core"
-version = "1.0.0"
+version = "1.0.1"
 dependencies = [
  "age",
  "chrono",
