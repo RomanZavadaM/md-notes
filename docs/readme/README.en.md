@@ -94,7 +94,7 @@ Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved. M
 
 **v0.3.21** publishes ADR-0010 M1–M3. Multiple vault notes can stay open in tabs, each with its own draft. On desktop, the active note can be moved with **Open in separate window** into an independent editor window. Changes are saved before the move, and the main window returns to the previous tab or an empty workspace.
 
-M1–M3 are part of published **v0.3.21**: conflict guards, safe detached-editor close, and save-all/safe Quit are implemented. Windows/macOS/Linux CI and Android/iOS build smoke pass. **M4 now means manual runtime acceptance**; the test prerelease is already published.
+M1–M3 are part of published **v0.3.21**: conflict guards, safe detached-editor close, and save-all/safe Quit are implemented. Windows/macOS/Linux CI and Android/iOS build smoke pass. The multi-window workflow is accepted in stable **v1.0.0**; practical Windows acceptance was completed before the stable release, while CI continues to cover Windows/macOS/Linux and Android/iOS build smoke.
 
 
 ## Backup and restore
