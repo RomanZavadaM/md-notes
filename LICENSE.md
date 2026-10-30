@@ -35,7 +35,7 @@ Nothing in this license restricts rights that cannot lawfully be excluded under 
 
 ## 4. Your notes and files
 
-Notes, attachments and other content that you create or store with MD Notes belong to you. This license does not grant the copyright owner any rights in your content and does not restrict how you use, copy, publish or move it. MD Notes stores your content as plain open files so that it remains usable without the Software.
+Notes, attachments and other content that you create or store with MD Notes belong to you. This license does not grant the copyright owner any rights in your content and does not restrict how you use, copy, publish or move it. By default, MD Notes stores your content as ordinary open files (including Markdown and attachments). If you explicitly create an encrypted vault, its content is stored in the documented open age encryption format instead; this optional protection does not transfer ownership of your content to the copyright owner.
 
 ## 5. Modifications for the copyright owner
 
