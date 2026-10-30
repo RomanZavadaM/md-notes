@@ -103,7 +103,7 @@ En pantallas estrechas, el panel lateral y el panel de enlaces se abren sobre el
 - Tras crearla, la clave privada (`AGE-SECRET-KEY-…`) se muestra **una sola vez**. Guárdela en un gestor de contraseñas o sin conexión: no se puede recuperar. De forma permanente, la clave solo vive en el almacén de secretos del sistema de este dispositivo.
 - Puede indicar una **clave pública de recuperación** (`age1…`): también abre la bóveda si se pierde la clave principal.
 - En otro ordenador, copie la carpeta de la bóveda y ábrala: la aplicación pedirá la clave. Pegue la clave privada y se guardará en el almacén de secretos de ese ordenador.
-- Por ahora una bóveda cifrada no muestra imágenes ni adjuntos, y el índice `.mdnotes/cache` no está cifrado.
+- En la estabilización 1.0, las imágenes y PDF de una bóveda cifrada se muestran sin escribir una copia en texto plano en el disco: los datos se descifran solo en memoria. En una bóveda existente, **Archivo → «Gestionar clave de recuperación…»** permite añadir otro destinatario público `age1…`. «Abrir archivo» externo está desactivado para adjuntos cifrados y el índice `.mdnotes/cache` sigue sin cifrar.
 
 ### Git (solo escritorio)
 

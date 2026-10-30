@@ -65,7 +65,7 @@ Plateformes : **Windows, macOS, Linux**. Android et iOS sont des cibles actives 
 
 Encore **non terminé** : intégration complète avec `SyncManifest` / ADR-0005, WebDAV, validation sur appareils Android/iOS physiques et dossiers externes optionnels Android SAF / iOS security-scoped.
 
-Le **coffre chiffré** est une option, pas une obligation : les coffres ordinaires fonctionnent sans changement, et une build sans la feature `encrypted-vault` ne contient aucun code de chiffrement. Pour l’instant, un coffre chiffré n’affiche pas les images ni les pièces jointes, il n’existe pas d’interface pour ajouter une clé de récupération à un coffre existant, et l’index `.mdnotes/cache` reste non chiffré ; le Git push depuis un tel coffre passe par une garde qui refuse d’envoyer du texte en clair.
+Le **coffre chiffré** reste optionnel : les coffres ordinaires fonctionnent sans changement et une build sans la feature `encrypted-vault` ne contient aucun code de chiffrement. Dans la stabilisation 1.0, les images et PDF sont prévisualisés par déchiffrement uniquement en mémoire et un coffre existant peut recevoir un destinataire public de récupération depuis le menu Fichier. L’ouverture externe des pièces jointes chiffrées est désactivée afin d’éviter une copie en clair sur le disque ; l’index `.mdnotes/cache` reste non chiffré et le Git push conserve sa garde anti-texte-clair.
 
 Plan complet : [roadmap](../roadmap.md) (ukrainien, référence).
 

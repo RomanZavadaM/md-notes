@@ -65,7 +65,7 @@ Plataformas: **Windows, macOS, Linux**. Android e iOS son objetivos activos de v
 
 Aún **no está terminado**: integración completa con `SyncManifest` / ADR-0005, WebDAV, validación runtime en dispositivos Android/iOS físicos y carpetas externas opcionales Android SAF / iOS security-scoped.
 
-La **bóveda cifrada** es una opción, no un requisito: las bóvedas normales funcionan sin cambios y una build sin la feature `encrypted-vault` no contiene código de cifrado. Por ahora una bóveda cifrada no muestra imágenes ni adjuntos, no hay interfaz para añadir una clave de recuperación a una bóveda existente y el índice `.mdnotes/cache` sigue sin cifrar; el Git push desde una bóveda así pasa por una protección que impide enviar texto en claro.
+La **bóveda cifrada** sigue siendo opcional: las bóvedas normales funcionan sin cambios y una build sin la feature `encrypted-vault` no contiene código de cifrado. En la estabilización 1.0, las imágenes y PDF se previsualizan descifrando solo en memoria y una bóveda existente puede añadir un destinatario público de recuperación desde el menú Archivo. La apertura externa de adjuntos cifrados está desactivada para evitar una copia en texto plano en disco; el índice `.mdnotes/cache` sigue sin cifrar y Git push conserva su protección contra texto plano.
 
 Plan completo: [roadmap](../roadmap.md) (ucraniano, canónico).
 

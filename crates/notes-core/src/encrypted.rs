@@ -644,5 +644,9 @@ mod vault_tests {
             vault.provider().read(&info.path).unwrap(),
             b"ATTACH-MARKER bytes"
         );
+        assert_eq!(
+            vault.read_file_bytes(&info.path).unwrap(),
+            b"ATTACH-MARKER bytes"
+        );
     }
 }

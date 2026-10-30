@@ -59,7 +59,7 @@ No transporte vault y clave privada por el mismo canal si busca protección inde
 
 age puede cifrar para varios destinatarios públicos. Modelo recomendado: clave de trabajo en el secret store, clave privada de recovery separada y preferiblemente offline, solo claves públicas en el vault.
 
-Límite v0.3.23: la interfaz para añadir una recovery key a un vault **ya creado** aún no está terminada.
+En la estabilización 1.0, una bóveda cifrada **ya creada** puede añadir un destinatario de recuperación desde **Archivo → «Gestionar clave de recuperación…»**. Pegue únicamente la clave pública `age1…`; MD Notes vuelve a cifrar los archivos para todos los destinatarios. La clave privada de recuperación permanece fuera de la bóveda.
 
 ## 8. Caché/índice
 
@@ -71,7 +71,9 @@ Por ello “encrypted vault” no equivale a cifrar cada byte de MD Notes.
 
 ## 9. Adjuntos e imágenes
 
-La capa de almacenamiento puede cifrar bytes arbitrarios, pero **v0.3.23 aún tiene una limitación de interfaz al mostrar imágenes/adjuntos dentro de un vault cifrado**. No debe presentarse este flujo como completamente terminado.
+En la estabilización 1.0, las imágenes y PDF de una bóveda cifrada se leen mediante el proveedor de almacenamiento activo, se descifran **solo en memoria** y se muestran mediante URL Blob en memoria. No se escribe ningún archivo temporal en texto plano en el disco.
+
+La acción externa **«Abrir archivo»** está desactivada intencionadamente para adjuntos cifrados, porque entregarlos a otra aplicación exigiría una copia en texto plano en el disco. Los demás tipos de adjuntos siguen almacenados correctamente cifrados aunque no tengan vista previa integrada.
 
 ## 10. Git
 

@@ -103,7 +103,7 @@ Sur les écrans étroits, le panneau latéral et le panneau des liens s'ouvrent 
 - Après la création, la clé privée (`AGE-SECRET-KEY-…`) est affichée **une seule fois**. Conservez-la dans un gestionnaire de mots de passe ou hors ligne : elle ne peut pas être récupérée. Durablement, la clé ne reste que dans le magasin de secrets système de cet appareil.
 - Vous pouvez indiquer une **clé publique de récupération** (`age1…`) : elle permet aussi d’ouvrir le coffre si la clé principale est perdue.
 - Sur un autre ordinateur, copiez le dossier du coffre et ouvrez-le : l’application demande la clé. Collez la clé privée ; elle est ensuite conservée dans le magasin de secrets de cet ordinateur.
-- Pour l’instant, un coffre chiffré n’affiche pas les images ni les pièces jointes, et l’index `.mdnotes/cache` n’est pas chiffré.
+- Dans la stabilisation 1.0, les images et PDF d’un coffre chiffré sont affichés sans écrire de copie en clair sur le disque : les données ne sont déchiffrées qu’en mémoire. Pour un coffre existant, **Fichier → « Gérer la clé de récupération… »** permet d’ajouter un autre destinataire public `age1…`. L’ouverture externe est désactivée pour les pièces jointes chiffrées et l’index `.mdnotes/cache` reste non chiffré.
 
 ### Git (ordinateurs uniquement)
 

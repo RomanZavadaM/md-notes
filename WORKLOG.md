@@ -6,13 +6,16 @@
 
 ## Поточний стан
 
+> **Owner decision 30.10.2026:** desktop feature development is complete; MD Notes is now in stabilization toward **1.0.0**. Mobile and new feature slices move post-1.0.
+
 - Репозиторій: `RomanZavadaM/md-notes`.
 - Latest release: **v0.3.23 prerelease**.
 - Release target: `92e8478511e776ccf90867aacd38d8bcb656c478`.
 - Release workflow: `41068168980` = **SUCCESS**.
 - Post-release README update main перед docs-checkpoint: `619e94a6787bfe9152377269ac4940806e9ce764`.
 - Release assets: **13**.
-- Відкритий PR: #188 — temporary Windows TEST PR; **не merge**.
+- PR #188: archived trace created and PR closed without merge.
+- Active PR #192: 1.0 encrypted-vault stabilization.
 
 ## Завершено 30.10.2026
 
@@ -59,23 +62,24 @@
   https://docs.google.com/document/d/1SQpKJ-nCUP82cYzCC2RfMV-4w5ios2rTrjYe1rsleck
 - У checkpoint записано release SHA/run/assets, runtime evidence, backup/restore boundary та backlog.
 
+### 1.0 stabilization — encrypted vault
+
+- Branch: `work/v1.0-encrypted-vault-stabilization`.
+- Draft PR #192.
+- Core can read attachment bytes through active storage provider; encrypted plaintext remains in memory.
+- UI images/PDF use in-memory Blob URLs; encrypted external-open is disabled to avoid plaintext temp files.
+- Existing encrypted vault can add a **public** recovery recipient through a localized dialog; backend re-encrypts for all recipients.
+- Human security docs/user guides/README and canonical AI contract are updated in the same slice.
+- Final CI/runtime evidence still required before merge.
+
 ## Відкритий технічний хвіст
 
-- PR #188 / branch `test/file-tree-multiselect-r1-windows` — test-only.
-- Не зливати.
-- За `dev-strategy` перед закриттям незлитої гілки потрібен archive tag/trace.
-- Поточний GitHub connector не має create-tag action; тому не закривати PR лише заради чистого списку.
+- PR #188 закрито без merge після archive trace branch `archive/test-file-tree-multiselect-r1-20172b7`.
+- Поточний активний технічний хвіст — PR #192 до проходження gates.
 
 ## Наступна точна дія
 
-**Пауза після v0.3.23. Новий product slice починати лише після прямої вказівки власника.**
-
-Кандидати окремими slices:
-1. batch move;
-2. batch rename;
-3. frontend autotests / i18n parity;
-4. WebView2 self-contained packaging;
-5. Git ↔ SyncManifest / WebDAV / physical mobile / encrypted-vault gaps / signing.
+Довести PR #192 до green gates і merge. Далі послідовно: frontend/i18n regression gate → WebView2 offline installer → backup/recovery drill → 1.0.0 stable release preparation. Не додавати нових desktop features до 1.0.
 
 Правила наступної сесії:
 - спочатку `START_HERE.md`, `PROJECT_RULES.md`, `PROJECT_STATE.md`, цей файл та Issue #8;

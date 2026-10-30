@@ -103,7 +103,7 @@ On narrow screens the sidebar and the links panel open over the content.
 - After creation the private key (`AGE-SECRET-KEY-…`) is shown **once**. Keep it in a password manager or offline: it cannot be recovered. Permanently the key lives only in this device's system secret store.
 - You can enter a **recovery public key** (`age1…`): it can also open the vault if the main key is lost.
 - On another computer, copy the vault folder and open it: the app asks for the key. Paste the private key and it is then kept in that computer's system secret store.
-- For now an encrypted vault does not display images and attachments, and the `.mdnotes/cache` index is not encrypted.
+- In the 1.0 stabilization, images and PDFs in an encrypted vault are displayed without writing a plaintext copy to disk: data is decrypted only in memory. For an existing encrypted vault, **File → “Manage recovery key…”** can add another public `age1…` recipient. External “Open file” is disabled for encrypted attachments, and the `.mdnotes/cache` index remains unencrypted.
 
 ### Git (desktop only)
 

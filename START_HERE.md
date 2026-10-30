@@ -4,6 +4,8 @@
 
 ## Поточний checkpoint — 30.10.2026
 
+> **Рішення власника:** розробку першої повноцінної desktop-версії вважаємо завершеною. Проєкт перейшов у **режим стабілізації до 1.0.0**. Нові продуктові функції не додаємо до 1.0; Android/iOS — post-1.0 і не блокують desktop release.
+
 - Репозиторій: `RomanZavadaM/md-notes`.
 - Останній опублікований реліз: **v0.3.23 prerelease**.
 - Release target: `92e8478511e776ccf90867aacd38d8bcb656c478`.
@@ -30,7 +32,8 @@
 - ADR-0009 backup/restore реалізовано з v0.3.22: portable ZIP + manifest/SHA-256, encrypted vault копіюється як ciphertext, restore лише в новий vault.
 - Окремого ручного owner runtime-тесту backup/restore ще не було; є автоматизовані desktop tests.
 - Physical Android/iOS runtime не підтверджений; WebDAV не реалізовано; signing/notarization не реалізовано.
-- Тимчасовий PR #188 **не зливати**. Це TEST-build checkpoint; закривати його лише з архівним слідом відповідно до `dev-strategy`.
+- TEST PR #188 закрито без merge після створення archive trace branch `archive/test-file-tree-multiselect-r1-20172b7`.
+- Активний 1.0 stabilization PR #192: encrypted-vault recovery UX + safe in-memory attachment preview.
 
 ## Перед будь-якою новою роботою
 
@@ -40,11 +43,14 @@
 4. Не починати новий product slice без прямого слова власника.
 5. Для наступної розробки дотримуватись рекомендацій `dev-strategy/outbox/MD_NOTES_RECOMMENDATIONS_20261030.md`: один PR на фічу, мінімум тестових гілок, архівний слід перед видаленням незлитих гілок.
 
-## Наступні окремі кандидати
+## Шлях до 1.0.0
 
-- batch move, потім batch rename — тільки окремими slices;
-- frontend autotests / i18n parity у CI;
-- WebView2 self-contained packaging;
-- Git ↔ SyncManifest, WebDAV, physical mobile validation, encrypted-vault gaps, signing.
+1. Закрити security slice PR #192: recovery recipient UX + encrypted attachment/image/PDF preview без plaintext temp files.
+2. Додати frontend regression tests / i18n parity gate.
+3. Зробити Windows installer офлайн-встановлюваним щодо WebView2; portable лишити з чесною залежністю, якщо повністю self-contained portable недоцільний.
+4. Провести/автоматизувати recovery drill backup → validate → restore, окремо для encrypted vault.
+5. Підготувати release 1.0.0, документацію й stable release notes; signing/notarization виконати лише якщо доступні реальні сертифікати/credentials.
+
+Post-1.0: batch move/rename, Git ↔ SyncManifest, WebDAV, physical Android/iOS validation, SAF/security-scoped folders та інші нові slices.
 
 > **Продовжуємо MD Notes. Відкрий у GitHub `START_HERE.md` і продовжуй строго за ним.**

@@ -59,7 +59,7 @@ Vault und privaten Schlüssel möglichst nicht über denselben Kanal transportie
 
 age kann für mehrere öffentliche Empfänger verschlüsseln. Empfohlen: Arbeitsschlüssel im Secret Store, Recovery-Privatschlüssel getrennt/offline, nur öffentliche Schlüssel im Vault.
 
-Grenze v0.3.23: Die UI zum Hinzufügen eines Recovery Keys zu einem **bereits vorhandenen** Vault ist noch nicht fertig.
+In der 1.0-Stabilisierung kann auch einem **bereits vorhandenen** verschlüsselten Vault über **Datei → „Wiederherstellungsschlüssel verwalten…“** ein Recovery-Empfänger hinzugefügt werden. Eingefügt wird nur der öffentliche `age1…`-Schlüssel; MD Notes verschlüsselt die Vault-Dateien für alle Empfänger neu. Der private Recovery-Schlüssel bleibt außerhalb des Vaults.
 
 ## 8. Cache/Index
 
@@ -71,7 +71,9 @@ Er wird nicht synchronisiert, nicht in Git aufgenommen und vom eingebauten Backu
 
 ## 9. Anhänge
 
-Die Storage-Schicht kann beliebige Bytes verschlüsseln, aber **die Anzeige von Bildern/Anhängen im verschlüsselten Vault hat in v0.3.23 noch eine bekannte UI-Lücke**. Dieser Workflow darf nicht als vollständig fertig beschrieben werden.
+In der 1.0-Stabilisierung werden Bilder und PDFs eines verschlüsselten Vaults über den aktiven Storage Provider gelesen, **nur im Speicher** entschlüsselt und über In-Memory-Blob-URLs angezeigt. Es wird keine Klartext-Temporärdatei auf den Datenträger geschrieben.
+
+Das externe **„Datei öffnen“** ist für verschlüsselte Anhänge absichtlich deaktiviert, weil die Übergabe an eine andere Anwendung eine Klartextkopie auf dem Datenträger erfordern würde. Andere Anhangstypen bleiben korrekt verschlüsselt, auch wenn sie keine Inline-Vorschau haben.
 
 ## 10. Git
 

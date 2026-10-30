@@ -65,7 +65,7 @@
 
 まだ **未完了**: `SyncManifest` / ADR-0005 との完全な Git state 統合、WebDAV、物理 Android/iOS 端末での runtime 検証、optional Android SAF / iOS security-scoped 外部フォルダー。
 
-**暗号化保管庫**は必須ではなくオプションです。通常の保管庫は従来どおり動作し、`encrypted-vault` feature なしのビルドには暗号化コードが含まれません。現時点では、暗号化保管庫では画像と添付ファイルが表示されず、既存の保管庫に復旧鍵を追加する UI がなく、`.mdnotes/cache` インデックスは暗号化されません。この保管庫からの Git push は、平文を送信しないガードを通ります。
+**暗号化保管庫**は引き続きオプションです。通常の保管庫は従来どおり動作し、`encrypted-vault` feature なしのビルドには暗号化コードが含まれません。1.0 安定化では、画像と PDF はメモリ内だけで復号してプレビューし、既存の保管庫にもファイルメニューから公開 recovery recipient を追加できます。暗号化添付の外部表示は平文のディスクコピーを避けるため無効で、`.mdnotes/cache` インデックスは引き続き暗号化されず、Git push の平文防止ガードも維持されます。
 
 全体計画: [roadmap](../roadmap.md)（ウクライナ語、正本）。
 

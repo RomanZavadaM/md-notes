@@ -1,6 +1,6 @@
 # MD Notes Encrypted Vault Contract for AI and automation
 
-**Contract:** `md-notes-encrypted-vault/1`  
+**Contract:** `md-notes-encrypted-vault/2`  
 **Applies to:** current v0.3.23 behavior  
 **Audience:** AI agents, automation, backup/migration tooling and code changes that touch encrypted vaults.
 
@@ -60,7 +60,7 @@ An AI **MUST NOT** echo a real private key into documentation, issue comments, c
 
 Multiple public recipients MAY be configured. A recovery private key is user-controlled and SHOULD be stored separately/offline.
 
-Current v0.3.23 limitation: user-facing UI for adding a recovery recipient to an already-created vault is incomplete. Automation **MUST NOT** present that as a completed normal UI workflow.
+In the 1.0 stabilization, user-facing UI can add a **public** recovery recipient to an already-created encrypted vault. The operation re-encrypts vault files for all recipients while the working private key remains in the OS secret store. Automation **MUST NOT** ask for or store the recovery private key when adding a recipient.
 
 ## 6. Plaintext cache exception
 
@@ -76,9 +76,9 @@ Any future change to encrypt the cache requires an explicit project decision/con
 
 ## 7. Attachments
 
-The storage layer can encrypt arbitrary bytes. However, current v0.3.23 UI has a known gap displaying images/attachments in encrypted vaults.
+The storage layer encrypts arbitrary attachment bytes. In the 1.0 stabilization, images and PDFs are read through the active provider, decrypted only in memory, and exposed to the WebView as in-memory Blob URLs.
 
-Agents **MUST distinguish storage encryption from completed attachment-preview UX**.
+Agents **MUST NOT** create plaintext temporary files merely to preview or externally open encrypted attachments. External “Open file” stays disabled for encrypted attachments unless a future design provides an equally strong no-plaintext-on-disk handoff. Other attachment types MAY remain without inline preview while their stored bytes stay encrypted.
 
 ## 8. Git/synchronization
 
