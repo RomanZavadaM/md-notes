@@ -250,11 +250,14 @@ jobs:
 
           cargo = tomllib.loads(Path("Cargo.toml").read_text(encoding="utf-8"))
           package = json.loads(Path("app/package.json").read_text(encoding="utf-8"))
+          package_lock = json.loads(Path("app/package-lock.json").read_text(encoding="utf-8"))
           tauri = json.loads(Path("app/src-tauri/tauri.conf.json").read_text(encoding="utf-8"))
 
           versions = {
               "Cargo.toml": cargo["workspace"]["package"]["version"],
               "app/package.json": package["version"],
+              "app/package-lock.json": package_lock["version"],
+              "app/package-lock.json#root": package_lock["packages"][""]["version"],
               "app/src-tauri/tauri.conf.json": tauri["version"],
           }
 
