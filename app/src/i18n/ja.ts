@@ -86,6 +86,7 @@ export const ja: Strings = {
   trashTitle: "削除",
   trashConfirm: (name: string) => `「${name}」を保管庫のゴミ箱 (.mdnotes/trash) へ移動しますか?`,
   externalChange: "ノートがアプリの外で変更されました。保存するとその変更は上書きされます。",
+  missingNotePath: "ノートのパスがありません。",
   linksUpdated: (count: number) => `リンクを更新したノート: ${count}`,
 
   properties: "プロパティ",

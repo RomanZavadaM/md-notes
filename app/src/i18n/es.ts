@@ -86,6 +86,7 @@ export const es: Strings = {
   trashTitle: "Eliminación",
   trashConfirm: (name: string) => `¿Mover «${name}» a la papelera de la bóveda (.mdnotes/trash)?`,
   externalChange: "La nota se modificó fuera de la aplicación. Al guardar se sobrescribirán esos cambios.",
+  missingNotePath: "Falta la ruta de la nota.",
   linksUpdated: (count: number) => `Enlaces actualizados en notas: ${count}`,
 
   properties: "Propiedades",

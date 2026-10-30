@@ -86,6 +86,7 @@ export const ko: Strings = {
   trashTitle: "삭제",
   trashConfirm: (name: string) => `「${name}」을(를) 보관함 휴지통(.mdnotes/trash)으로 옮길까요?`,
   externalChange: "앱 밖에서 노트가 변경되었습니다. 저장하면 그 변경 사항을 덮어씁니다.",
+  missingNotePath: "노트 경로가 없습니다.",
   linksUpdated: (count: number) => `링크를 갱신한 노트: ${count}`,
 
   properties: "속성",

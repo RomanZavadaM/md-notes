@@ -86,6 +86,7 @@ export const uk = {
   trashTitle: "Видалення",
   trashConfirm: (name: string) => `Перемістити «${name}» у кошик сховища (.mdnotes/trash)?`,
   externalChange: "Нотатку змінено поза застосунком. Ваше збереження перезапише ті зміни.",
+  missingNotePath: "Немає шляху до нотатки.",
   linksUpdated: (count: number) => `Оновлено посилання в нотатках: ${count}`,
 
   properties: "Властивості",

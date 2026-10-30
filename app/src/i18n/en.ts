@@ -86,6 +86,7 @@ export const en: Strings = {
   trashTitle: "Delete",
   trashConfirm: (name: string) => `Move “${name}” to the vault trash (.mdnotes/trash)?`,
   externalChange: "The note was changed outside the app. Saving will overwrite those changes.",
+  missingNotePath: "Missing note path.",
   linksUpdated: (count: number) => `Links updated in notes: ${count}`,
 
   properties: "Properties",
