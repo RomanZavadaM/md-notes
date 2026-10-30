@@ -222,7 +222,7 @@ jobs:
         working-directory: app
         run: npm ci
       - name: Verify Cargo.lock is reproducible
-        run: cargo metadata --locked --format-version 1 > /dev/null
+        run: cargo metadata --locked --format-version 1
       - name: Build NSIS and MSI with offline WebView2
         working-directory: app
         run: npm run tauri build -- --bundles nsis,msi
