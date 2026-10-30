@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](KNOWLEDGE_GRAPH.uk.md) · [🇬🇧 English](KNOWLEDGE_GRAPH.en.md) · [🇫🇷 Français](KNOWLEDGE_GRAPH.fr.md) · **🇩🇪 Deutsch** · [🇪🇸 Español](KNOWLEDGE_GRAPH.es.md) · [🇰🇷 한국어](KNOWLEDGE_GRAPH.ko.md) · [🇯🇵 日本語](KNOWLEDGE_GRAPH.ja.md)
 
-> Gilt für MD Notes v0.3.23. Der ukrainische Text ist kanonisch. Dieses Dokument beschreibt das tatsächliche Datenmodell und das aktuelle Verhalten; die optische Position eines Knotens ist kein Wissensinhalt.
+> Gilt für MD Notes v1.0.0. Der ukrainische Text ist kanonisch. Dieses Dokument beschreibt das tatsächliche Datenmodell und das aktuelle Verhalten; die optische Position eines Knotens ist kein Wissensinhalt.
 
 ## 1. Grundprinzip
 
@@ -90,7 +90,7 @@ Für die schnelle Ansicht gruppiert die Oberfläche vor allem die Ziffer: 1–2 
 
 Der **globale Graph** enthält alle indexierten Notizen, aufgelöste Wiki-Links und typisierte Relationen zwischen bekannten Knoten. Eine isolierte Notiz darf ohne Kante erscheinen.
 
-In v0.3.23 zeigt der **lokale Graph** die aktive Notiz plus eine **Ein-Hop-Nachbarschaft** aus aufgelösten normalen Links.
+In v1.0.0 zeigt der **lokale Graph** die aktive Notiz plus eine **Ein-Hop-Nachbarschaft** aus aufgelösten normalen Links.
 
 Aktuelle Grenze: Eine typisierte Relation allein erweitert den lokalen Snapshot nicht. Sie wird eingeblendet, wenn beide Endpunkte bereits sichtbar sind.
 
