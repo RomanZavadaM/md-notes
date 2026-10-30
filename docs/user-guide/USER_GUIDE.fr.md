@@ -38,6 +38,8 @@ Sur les écrans étroits, le panneau latéral et le panneau des liens s'ouvrent 
 - **+ Dossier** crée un dossier.
 - **✎** renomme l'élément sélectionné. L'extension `.md` est ajoutée automatiquement. **Les liens vers la note renommée, ou vers les notes d'un dossier renommé, sont mis à jour dans toutes les autres notes**, propriétés comprises. L'application indique combien de notes ont été mises à jour.
 - **🗑** déplace l'élément dans la corbeille du coffre `.mdnotes/trash/`. Rien n'est supprimé définitivement : le fichier peut être replacé à la main.
+- **Sélection multiple :** `Ctrl` (Windows/Linux) ou `Cmd` (macOS) ajoute ou retire un élément de la sélection ; `Shift` sélectionne une plage visible dans l'arborescence. Un clic normal revient à une sélection unique et au comportement d'ouverture habituel.
+- Lorsque plusieurs éléments sont sélectionnés, **🗑** les déplace ensemble vers la corbeille. Si un dossier et un élément qu'il contient sont sélectionnés en même temps, l'élément imbriqué n'est pas traité deux fois. Le renommage reste limité à un seul élément sélectionné.
 
 ## 4. Édition
 
