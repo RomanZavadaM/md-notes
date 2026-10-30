@@ -40,7 +40,7 @@ Application `app/src-tauri`:
 - Vite, `@vitejs/plugin-react` — MIT (build tools)
 - TypeScript — Apache-2.0 (build tool)
 
-Some packages listed here arrive with feature branches of v0.2/v0.3 and apply once those changes are integrated.
+This notice reflects dependencies present in the stable v1.0.0 source/build checkpoint; authoritative versions remain recorded in `Cargo.lock` and `app/package-lock.json`.
 
 ## License review
 
