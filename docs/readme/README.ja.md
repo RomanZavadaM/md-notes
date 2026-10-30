@@ -3,19 +3,19 @@
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · [🇩🇪 Deutsch](README.de.md) · [🇪🇸 Español](README.es.md) · [🇰🇷 한국어](README.ko.md) · **🇯🇵 日本語**
 
 <!-- x-release-please-start-version -->
-> **リリース checkpoint: MD Notes v1.0.0**
+> **リリース checkpoint: MD Notes v1.0.2**
 >
-> **状態: desktop 機能開発完了。stable v1.0.0 を公開済みです。現在は実運用と安定化の段階です。**
+> **状態: desktop 機能開発完了。stable v1.0.2 を公開済みです。現在は実運用と安定化の段階です。**
 
-## MD Notes v1.0.0 をダウンロード
+## MD Notes v1.0.2 をダウンロード
 
 **クイックインストール:**
 
-- **Windows 64-bit:** [.exe インストーラー](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD.Notes_1.0.0_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD.Notes_1.0.0_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD-Notes-1.0.0-Windows-x64-portable.zip)
-- **macOS Universal:** [DMG をダウンロード](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD.Notes_1.0.0_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD.Notes_1.0.0_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD.Notes_1.0.0_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD.Notes-1.0.0-1.x86_64.rpm)
+- **Windows 64-bit:** [.exe インストーラー](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD.Notes_1.0.2_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD.Notes_1.0.2_x64_en-US.msi) · [portable ZIP](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD-Notes-1.0.2-Windows-x64-portable.zip)
+- **macOS Universal:** [DMG をダウンロード](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD.Notes_1.0.2_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD.Notes_1.0.2_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD.Notes_1.0.2_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD.Notes-1.0.2-1.x86_64.rpm)
 
-[**v1.0.0 のすべてのリリースファイル →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v1.0.0)
+[**v1.0.2 のすべてのリリースファイル →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v1.0.2)
 <!-- x-release-please-end -->
 
 > 現在のビルドは未署名/未公証のため、OS が通常のセキュリティ警告を表示することがあります。

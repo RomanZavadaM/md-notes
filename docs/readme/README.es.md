@@ -3,19 +3,19 @@
 [🇺🇦 Українська](../../README.md) · [🇬🇧 English](README.en.md) · [🇫🇷 Français](README.fr.md) · [🇩🇪 Deutsch](README.de.md) · **🇪🇸 Español** · [🇰🇷 한국어](README.ko.md) · [🇯🇵 日本語](README.ja.md)
 
 <!-- x-release-please-start-version -->
-> **Checkpoint de versión: MD Notes v1.0.0**
+> **Checkpoint de versión: MD Notes v1.0.2**
 >
-> **Estado: desktop funcionalmente completo; stable v1.0.0 publicada. El proyecto pasa al modo de uso y estabilización.**
+> **Estado: desktop funcionalmente completo; stable v1.0.2 publicada. El proyecto pasa al modo de uso y estabilización.**
 
-## Descargar MD Notes v1.0.0
+## Descargar MD Notes v1.0.2
 
 **Instalación rápida:**
 
-- **Windows 64-bit:** [instalador .exe](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD.Notes_1.0.0_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD.Notes_1.0.0_x64_en-US.msi) · [ZIP portable](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD-Notes-1.0.0-Windows-x64-portable.zip)
-- **macOS Universal:** [descargar DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD.Notes_1.0.0_universal.dmg)
-- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD.Notes_1.0.0_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD.Notes_1.0.0_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0/MD.Notes-1.0.0-1.x86_64.rpm)
+- **Windows 64-bit:** [instalador .exe](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD.Notes_1.0.2_x64-setup.exe) · [MSI](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD.Notes_1.0.2_x64_en-US.msi) · [ZIP portable](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD-Notes-1.0.2-Windows-x64-portable.zip)
+- **macOS Universal:** [descargar DMG](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD.Notes_1.0.2_universal.dmg)
+- **Linux x86_64:** [AppImage](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD.Notes_1.0.2_amd64.AppImage) · [DEB](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD.Notes_1.0.2_amd64.deb) · [RPM](https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.2/MD.Notes-1.0.2-1.x86_64.rpm)
 
-[**Todos los archivos de v1.0.0 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v1.0.0)
+[**Todos los archivos de v1.0.2 →**](https://github.com/RomanZavadaM/md-notes/releases/tag/v1.0.2)
 <!-- x-release-please-end -->
 
 > Las builds todavía no están firmadas/notarizadas, por lo que el sistema puede mostrar una advertencia de seguridad estándar.
