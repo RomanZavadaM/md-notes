@@ -1,0 +1,80 @@
+name: Final stable packaging audit
+
+on:
+  push:
+    branches:
+      - audit/v1.0.0-final-packaging-r3
+
+permissions:
+  contents: read
+
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Verify stable metadata
+        shell: python
+        run: |
+          import json, tomllib
+          from pathlib import Path
+          cargo=tomllib.loads(Path('Cargo.toml').read_text(encoding='utf-8'))
+          package=json.loads(Path('app/package.json').read_text(encoding='utf-8'))
+          lock=json.loads(Path('app/package-lock.json').read_text(encoding='utf-8'))
+          tauri=json.loads(Path('app/src-tauri/tauri.conf.json').read_text(encoding='utf-8'))
+          versions=[cargo['workspace']['package']['version'],package['version'],lock['version'],lock['packages']['']['version'],tauri['version']]
+          assert set(versions)=={'1.0.0'}, versions
+          for p in ['LICENSE.md','COPYRIGHT.md','THIRD_PARTY_NOTICES.md','docs/releases/RELEASE_NOTES_v1_0_0.md']:
+              assert Path(p).is_file(), p
+          print('metadata OK', versions)
+
+  linux-package:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - name: System libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev libssl-dev
+      - name: Install frontend dependencies
+        working-directory: app
+        run: npm ci
+      - name: Verify locked Rust graph
+        run: cargo metadata --locked --format-version 1 > /dev/null
+      - name: Build Linux packages
+        working-directory: app
+        run: npm run tauri build -- --bundles appimage,deb,rpm
+      - name: Verify Linux packages exist
+        shell: bash
+        run: |
+          set -e
+          ls target/release/bundle/appimage/*.AppImage
+          ls target/release/bundle/deb/*.deb
+          ls target/release/bundle/rpm/*.rpm
+
+  macos-package:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install frontend dependencies
+        working-directory: app
+        run: npm ci
+      - name: Verify locked Rust graph
+        run: cargo metadata --locked --format-version 1 > /dev/null
+      - name: Build macOS DMG smoke
+        working-directory: app
+        run: npm run tauri build -- --bundles dmg
+      - name: Verify DMG exists
+        run: ls target/release/bundle/dmg/*.dmg
