@@ -105,7 +105,7 @@ CI використовує path-aware routing і не повинен без п�
 - Android/iOS Mobile smoke запускається автоматично лише для ready/non-draft змін, що зачіпають native/core/dependency boundary, або вручну через `workflow_dispatch`;
 - license/advisory gates запускаються при зміні dependency metadata або консервативно для невідомих non-doc paths; окремий weekly `Security audit` перевіряє RustSec та production npm advisories навіть без змін коду;
 - невідомі non-doc paths за замовчуванням отримують повну перевірку, а не пропускаються;
-- release-please PR не повинен запускати повний Rust/Tauri/Mobile набір; для нього достатня перевірка release metadata/version consistency перед release checkpoint;
+- release-please PR не повинен запускати повний Rust/Tauri/Mobile набір; для нього достатні release metadata/version consistency **і** `cargo metadata --locked`; version bump у `Cargo.toml` змінює workspace package versions у `Cargo.lock`, тому release PR не можна зливати, доки lockfile не оновлено на ту саму версію;
 - docs-only та workflow-only push у `main` не запускає release-please;
 - реальний release packaging не можна ставити на `cancel-in-progress`, щоб наступний push не обірвав публікацію assets;
 - `cancel-in-progress` дозволений для звичайного CI/Mobile PR feedback.

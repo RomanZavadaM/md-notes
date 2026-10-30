@@ -8,6 +8,18 @@
 
 30.10.2026: **«розробку першої повноцінної desktop-версії завершено; переходимо в режим використання й стабілізації»**.
 
+## Active repair slice — release lock synchronization after v1.0.1 packaging failure
+
+- Stable audit fixes were merged as PR #202 and release metadata as PR #203.
+- v1.0.1 tag/release was created at `15087b894cb79b1e3d10e89a9edfe2e707577c2a`, but platform packaging stopped before upload because release-please updated `Cargo.toml` to 1.0.1 without refreshing local workspace package versions in `Cargo.lock`.
+- The failure is intentionally **not** bypassed by removing `--locked`, and the v1.0.1 tag is not moved or rewritten.
+- Repair branch: `fix/v1.0.2-release-lock-sync`.
+- Repair:
+  - synchronize `Cargo.lock` local workspace versions to 1.0.1;
+  - make release-please metadata CI run `cargo metadata --locked`;
+  - require every future release PR to refresh Cargo.lock after its version bump before merge.
+- Target: merge this fix, let release-please prepare v1.0.2, refresh Cargo.lock inside the v1.0.2 release PR to 1.0.2, then publish the complete stable desktop assets and verify checksums/links.
+
 ## Active stabilization slice — full stable 1.0 audit cleanup
 
 - Owner request: full post-release verification of code, environment, packaging, localization, docs and descriptions.
