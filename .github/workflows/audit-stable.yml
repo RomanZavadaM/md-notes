@@ -1,0 +1,122 @@
+name: Stable 1.0 audit
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  repository-audit:
+    if: ${{ github.head_ref == 'audit/v1.0.0-full-verification' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Verify stable versions and required files
+        shell: python
+        run: |
+          import json, tomllib
+          from pathlib import Path
+          cargo = tomllib.loads(Path("Cargo.toml").read_text(encoding="utf-8"))
+          package = json.loads(Path("app/package.json").read_text(encoding="utf-8"))
+          tauri = json.loads(Path("app/src-tauri/tauri.conf.json").read_text(encoding="utf-8"))
+          versions = {
+              "Cargo.toml": cargo["workspace"]["package"]["version"],
+              "app/package.json": package["version"],
+              "tauri.conf.json": tauri["version"],
+          }
+          assert set(versions.values()) == {"1.0.0"}, versions
+          required = [
+              "LICENSE.md", "COPYRIGHT.md", "THIRD_PARTY_NOTICES.md",
+              "docs/releases/RELEASE_NOTES_v1_0_0.md",
+              "docs/user-guide/USER_GUIDE.uk.md",
+              "docs/user-guide/USER_GUIDE.en.md",
+              "docs/user-guide/USER_GUIDE.fr.md",
+              "docs/user-guide/USER_GUIDE.de.md",
+              "docs/user-guide/USER_GUIDE.es.md",
+              "docs/user-guide/USER_GUIDE.ko.md",
+              "docs/user-guide/USER_GUIDE.ja.md",
+              "docs/ai/GRAPH_CONTRACT.md",
+              "docs/ai/graph-contract.yaml",
+              "docs/ai/ENCRYPTED_VAULT_CONTRACT.md",
+              "docs/ai/encrypted-vault-contract.yaml",
+          ]
+          missing = [p for p in required if not Path(p).is_file()]
+          assert not missing, missing
+          print("Stable version/files OK:", versions)
+
+      - name: Check local Markdown links
+        shell: python
+        run: |
+          import re
+          from pathlib import Path
+          root = Path(".")
+          broken = []
+          checked = 0
+          for src in root.rglob("*.md"):
+              if ".git" in src.parts:
+                  continue
+              text = src.read_text(encoding="utf-8")
+              for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", text):
+                  target = target.strip()
+                  if not target or target.startswith(("#", "http://", "https://", "mailto:")):
+                      continue
+                  target = target.split("#", 1)[0].split("?", 1)[0]
+                  if not target:
+                      continue
+                  candidate = (src.parent / target).resolve()
+                  checked += 1
+                  try:
+                      candidate.relative_to(root.resolve())
+                  except ValueError:
+                      broken.append((str(src), target, "outside repository"))
+                      continue
+                  if not candidate.exists():
+                      broken.append((str(src), target, str(candidate.relative_to(root.resolve()))))
+          print(f"Checked {checked} local Markdown links")
+          if broken:
+              for item in broken:
+                  print("BROKEN:", *item)
+              raise SystemExit(f"{len(broken)} broken local Markdown links")
+
+      - name: Detect stale pre-1.0 user-facing version claims
+        shell: bash
+        run: |
+          set -euo pipefail
+          bad=0
+          if grep -RInE 'v0\.3(\.[0-9]+)?' app/src --include='*.ts' --include='*.tsx'; then
+            echo "::error::Pre-1.0 version text remains in user-facing app source"
+            bad=1
+          fi
+          if grep -RInE 'Applies to.*v0\.3\.23|Актуально для MD Notes v0\.3\.23|current v0\.3\.23|NOT DONE until owner runtime verdict|M4 is the manual runtime acceptance' docs --include='*.md'; then
+            echo "::error::Stale pre-1.0/current-status claims remain in documentation"
+            bad=1
+          fi
+          exit "$bad"
+
+      - name: Verify published v1.0.0 release asset URLs
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://github.com/RomanZavadaM/md-notes/releases/download/v1.0.0"
+          assets=(
+            "MD.Notes_1.0.0_x64-setup.exe"
+            "MD.Notes_1.0.0_x64_en-US.msi"
+            "MD-Notes-1.0.0-Windows-x64-portable.zip"
+            "MD.Notes_1.0.0_universal.dmg"
+            "MD.Notes_universal.app.tar.gz"
+            "MD.Notes_1.0.0_amd64.AppImage"
+            "MD.Notes_1.0.0_amd64.deb"
+            "MD.Notes-1.0.0-1.x86_64.rpm"
+            "MD-Notes-1.0.0-START.zip"
+            "SHA256SUMS.txt"
+            "LICENSE.md"
+            "COPYRIGHT.md"
+            "THIRD_PARTY_NOTICES.md"
+          )
+          for asset in "${assets[@]}"; do
+            echo "Checking $asset"
+            curl --fail --location --silent --show-error --range 0-0 -o /dev/null "$base/$asset"
+          done
