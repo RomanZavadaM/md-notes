@@ -47,7 +47,13 @@ jobs:
           assert not missing, missing
           print("Stable version/files OK:", versions)
 
+      - name: Audit Rust dependency advisories
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check advisories
+
       - name: Check local Markdown links
+        if: always()
         shell: python
         run: |
           import re
