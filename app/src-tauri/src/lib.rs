@@ -738,6 +738,15 @@ fn restore_backup(archive: String, destination_parent: String) -> CmdResult<Rest
 }
 
 #[tauri::command]
+fn read_vault_file(path: String, state: State<'_, AppState>) -> CmdResult<tauri::ipc::Response> {
+    with_session(&state, |s| {
+        s.vault
+            .read_file_bytes(&path)
+            .map(tauri::ipc::Response::new)
+    })
+}
+
+#[tauri::command]
 fn import_attachment(source: String, state: State<'_, AppState>) -> CmdResult<AttachmentInfo> {
     with_session(&state, |s| s.vault.import_attachment(source))
 }
@@ -816,6 +825,7 @@ pub fn run() {
             search,
             create_backup,
             restore_backup,
+            read_vault_file,
             import_attachment,
             list_attachments,
             attachment_used_by,

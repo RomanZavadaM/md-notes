@@ -65,7 +65,7 @@ Plattformen: **Windows, macOS, Linux**. Android und iOS sind aktive v0.3-Ziele; 
 
 Noch **nicht abgeschlossen**: vollständige Git-State-Integration mit `SyncManifest` / ADR-0005, WebDAV, Runtime-Validierung auf physischen Android/iOS-Geräten und optionale externe Ordner über Android SAF / iOS security-scoped access.
 
-Der **verschlüsselte Tresor** ist eine Option, keine Pflicht: normale Tresore funktionieren unverändert, und ein Build ohne das Feature `encrypted-vault` enthält keinen Verschlüsselungscode. Bisher zeigt ein verschlüsselter Tresor keine Bilder und Anhänge an, es gibt keine Oberfläche zum Hinzufügen eines Wiederherstellungsschlüssels zu einem bestehenden Tresor, und der Index `.mdnotes/cache` bleibt unverschlüsselt; Git Push aus einem solchen Tresor läuft über eine Sperre, die keinen Klartext sendet.
+Der **verschlüsselte Tresor** bleibt optional: normale Tresore funktionieren unverändert und ein Build ohne das Feature `encrypted-vault` enthält keinen Verschlüsselungscode. In der 1.0-Stabilisierung werden Bilder und PDFs nur im Speicher entschlüsselt und angezeigt; einem bestehenden Vault kann über das Datei-Menü ein öffentlicher Recovery-Empfänger hinzugefügt werden. Externes Öffnen verschlüsselter Anhänge ist deaktiviert, damit keine Klartextkopie auf dem Datenträger entsteht; der Index `.mdnotes/cache` bleibt unverschlüsselt und Git Push behält seine Klartext-Sperre.
 
 Vollständiger Plan: [Roadmap](../roadmap.md) (Ukrainisch, maßgeblich).
 

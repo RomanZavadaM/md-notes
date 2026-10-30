@@ -1,4 +1,4 @@
-contract: md-notes-encrypted-vault/1
+contract: md-notes-encrypted-vault/2
 applies_to: "v0.3.23 behavior"
 canonical_human_doc: ../security/ENCRYPTED_VAULT.uk.md
 
@@ -52,7 +52,8 @@ recovery:
   multiple_public_recipients_supported: true
   private_recovery_key_user_controlled: true
   store_separately_recommended: true
-  existing_vault_add_recipient_ui_complete_in_v0_3_23: false
+  existing_vault_add_public_recipient_ui_complete_in_1_0: true
+  private_recovery_key_requested_by_add_recipient_ui: false
 
 plaintext_exceptions:
   - path: .mdnotes/cache/index.db
@@ -63,7 +64,10 @@ plaintext_exceptions:
 
 attachments:
   storage_can_encrypt_arbitrary_bytes: true
-  encrypted_vault_preview_ui_complete_in_v0_3_23: false
+  encrypted_vault_inline_image_pdf_preview_in_memory: true
+  plaintext_temp_file_for_preview: false
+  encrypted_vault_external_open_allowed: false
+  external_open_reason: would_require_plaintext_disk_copy
 
 git:
   plaintext_push_guard_required: true

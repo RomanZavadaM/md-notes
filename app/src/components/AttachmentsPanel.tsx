@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { convertFileSrc } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import { openPath } from "@tauri-apps/plugin-opener";
 import { api, type AttachmentInfo } from "../api";
 import { useI18n } from "../i18n";
+import { ENCRYPTION_STRINGS } from "../i18n/encryption";
+import { VaultImage, VaultPdfFrame } from "./VaultAsset";
 import "./AttachmentsPanel.css";
 
 const IMAGE = /\.(png|jpe?g|gif|webp|svg|bmp|avif)$/i;
@@ -11,6 +12,7 @@ const PDF = /\.pdf$/i;
 
 interface Props {
   vaultRoot: string;
+  encrypted: boolean;
   refreshKey: number;
   canInsert: boolean;
   onInserted: (attachment: AttachmentInfo) => void;
@@ -18,8 +20,9 @@ interface Props {
   onError: (error: unknown) => void;
 }
 
-export function AttachmentsPanel({ vaultRoot, refreshKey, canInsert, onInserted, onChanged, onError }: Props) {
-  const { t } = useI18n();
+export function AttachmentsPanel({ vaultRoot, encrypted, refreshKey, canInsert, onInserted, onChanged, onError }: Props) {
+  const { t, language } = useI18n();
+  const encryptionStrings = ENCRYPTION_STRINGS[language];
   const [attachments, setAttachments] = useState<AttachmentInfo[]>([]);
   const [orphans, setOrphans] = useState<AttachmentInfo[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -67,8 +70,6 @@ export function AttachmentsPanel({ vaultRoot, refreshKey, canInsert, onInserted,
     }
   };
 
-  const selectedUrl = selectedItem ? convertFileSrc(absolutePath(selectedItem.path)) : null;
-
   return (
     <div className="attachments-panel">
       <div className="attachment-toolbar">
@@ -90,11 +91,20 @@ export function AttachmentsPanel({ vaultRoot, refreshKey, canInsert, onInserted,
                 type="button"
                 className={`attachment-item ${active ? "on" : ""}`}
                 onClick={() => setSelected(item.path)}
-                onDoubleClick={() => void openPath(absolutePath(item.path))}
+                onDoubleClick={() => {
+                  if (!encrypted) void openPath(absolutePath(item.path));
+                }}
                 title={`${item.path}\n${orphan ? t.attachmentUnused : t.attachmentUsedBy}`}
               >
                 {IMAGE.test(item.name) ? (
-                  <img src={convertFileSrc(absolutePath(item.path))} alt="" loading="lazy" />
+                  <VaultImage
+                    path={item.path}
+                    vaultRoot={vaultRoot}
+                    encrypted={encrypted}
+                    alt=""
+                    loading="lazy"
+                    onAssetError={onError}
+                  />
                 ) : (
                   <span className="attachment-file-icon" aria-hidden>{PDF.test(item.name) ? "PDF" : "FILE"}</span>
                 )}
@@ -107,11 +117,25 @@ export function AttachmentsPanel({ vaultRoot, refreshKey, canInsert, onInserted,
       )}
       {selectedItem && (
         <div className="attachment-details">
-          {IMAGE.test(selectedItem.name) && selectedUrl && (
-            <img className="attachment-preview-image" src={selectedUrl} alt={selectedItem.name} />
+          {IMAGE.test(selectedItem.name) && (
+            <VaultImage
+              className="attachment-preview-image"
+              path={selectedItem.path}
+              vaultRoot={vaultRoot}
+              encrypted={encrypted}
+              alt={selectedItem.name}
+              onAssetError={onError}
+            />
           )}
-          {PDF.test(selectedItem.name) && selectedUrl && (
-            <iframe className="attachment-preview-pdf" src={selectedUrl} title={selectedItem.name} />
+          {PDF.test(selectedItem.name) && (
+            <VaultPdfFrame
+              className="attachment-preview-pdf"
+              path={selectedItem.path}
+              vaultRoot={vaultRoot}
+              encrypted={encrypted}
+              title={selectedItem.name}
+              onAssetError={onError}
+            />
           )}
           <strong>{t.attachmentUsageCount(usedBy.length)}</strong>
           {usedBy.length > 0 ? (
@@ -120,7 +144,14 @@ export function AttachmentsPanel({ vaultRoot, refreshKey, canInsert, onInserted,
             <span>{t.attachmentUnused}</span>
           )}
           <div className="attachment-detail-actions">
-            <button type="button" onClick={() => void openPath(absolutePath(selectedItem.path))}>
+            <button
+              type="button"
+              disabled={encrypted}
+              title={encrypted ? encryptionStrings.attachmentExternalOpenUnavailable : undefined}
+              onClick={() => {
+                if (!encrypted) void openPath(absolutePath(selectedItem.path));
+              }}
+            >
               {t.attachmentOpen}
             </button>
             {canInsert && (

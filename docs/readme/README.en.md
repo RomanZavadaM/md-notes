@@ -65,7 +65,7 @@ Platforms: **Windows, macOS, Linux**. Android and iOS are active v0.3 targets; C
 
 Still **not complete**: full Git-state integration with `SyncManifest` / ADR-0005 conflict policy, WebDAV, physical Android/iOS runtime validation, and optional Android SAF / iOS security-scoped external folders.
 
-**Encrypted vault** is an option, not a requirement: ordinary vaults work unchanged, and a build without the `encrypted-vault` feature contains no encryption code. For now an encrypted vault does not display images and attachments, has no interface for adding a recovery key to an existing vault, and the `.mdnotes/cache` index stays unencrypted; Git push from such a vault goes through a guard that refuses to send plaintext.
+**Encrypted vault** is optional: ordinary vaults work unchanged, and a build without the `encrypted-vault` feature contains no encryption code. In the 1.0 stabilization, images and PDFs are previewed by decrypting only in memory, and an existing vault can add a public recovery recipient from the File menu. External opening of encrypted attachments is disabled to avoid a plaintext disk copy; the `.mdnotes/cache` index remains unencrypted, and Git push still passes through the plaintext guard.
 
 Full plan: [roadmap](../roadmap.md) (Ukrainian, canonical).
 

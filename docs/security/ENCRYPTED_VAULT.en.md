@@ -84,7 +84,7 @@ Recommended model:
 - recovery private key stored separately, preferably offline;
 - only public `age1...` recipients in the vault.
 
-Known v0.3.23 boundary: the UI for adding a recovery key to an **already existing** vault is not complete. Documentation must not present that operation as a finished user workflow.
+In the 1.0 stabilization, an **already existing** encrypted vault can add a recovery recipient from **File → “Manage recovery key…”**. Paste only the public `age1…` key; MD Notes re-encrypts vault files for all recipients. Keep the recovery private key outside the vault.
 
 ## 8. Cache/index boundary
 
@@ -99,9 +99,9 @@ Therefore “encrypted vault” in v0.3.23 is not equivalent to full-disk encryp
 
 ## 9. Attachments and images
 
-The storage layer can encrypt arbitrary bytes, but **v0.3.23 still has a known UI gap for displaying images/attachments in an encrypted vault**.
+In the 1.0 stabilization, images and PDFs in an encrypted vault are read through the active storage provider, decrypted **only in memory**, and displayed through in-memory Blob URLs. No plaintext temporary file is written to disk.
 
-Do not claim that encrypted-vault attachment UX is complete. A missing preview is not proof that encryption of the stored file failed; this remains a separate product gap.
+External **“Open file”** is intentionally disabled for encrypted attachments because handing the file to another application would require a plaintext disk copy. Other attachment types remain correctly encrypted in the vault even when they have no inline preview.
 
 ## 10. Git and external synchronization
 

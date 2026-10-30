@@ -4,7 +4,7 @@
 
 ## Інтегрований стан
 
-- Статус: **ACTIVE / release checkpoint complete**.
+- Статус: **ACTIVE / desktop feature-complete / stabilization to 1.0.0**.
 - Останній реліз: **v0.3.23 prerelease**.
 - Release target: `92e8478511e776ccf90867aacd38d8bcb656c478`.
 - Release workflow: `41068168980` — **SUCCESS**.
@@ -71,28 +71,33 @@ Docs-only PR #191 додає окремий завершений шар пояс
 - Додатково: START/source ZIP, `SHA256SUMS.txt`, `LICENSE.md`, `COPYRIGHT.md`, `THIRD_PARTY_NOTICES.md`.
 - Збірки unsigned / not notarized.
 
+## Рішення про desktop 1.0
+
+30.10.2026 власник зафіксував: **«розробку першої повноцінної desktop-версії завершено; переходимо в режим використання й стабілізації»**.
+
+До 1.0 входять лише стабілізаційні роботи: security gaps, regression tests, packaging/offline prerequisites, backup/recovery verification, documentation/release hygiene. Android/iOS не блокують desktop 1.0 і переходять у post-1.0. Batch move/rename також post-1.0.
+
+Активний slice: PR #192 — recovery recipient UX для existing encrypted vault та in-memory preview encrypted images/PDF без plaintext temp files.
+
 ## Відкритий технічний хвіст
 
-- PR #188 — тимчасовий Windows TEST PR для file-tree r1; **не merge**.
-- За правилами `dev-strategy` незлитий тестовий branch перед закриттям має мати архівний слід. Доступний у цьому чаті GitHub connector не має create-tag action, тому PR не закривати лише заради чистоти списку.
+- PR #188 закрито без merge; archive trace: `archive/test-file-tree-multiselect-r1-20172b7` → `20172b747c180694bc2c199c58eb44832fc9393e`.
+- PR #192 — активний 1.0 security stabilization slice.
 
 ## Backlog
 
-Високий/ближчий:
-1. Batch move — окремий slice.
-2. Batch rename — окремий slice після move.
-3. Frontend autotests / i18n parity у CI (MDN-04).
-4. WebView2 self-contained packaging для Windows (MDN-08).
-5. З'ясувати/зафіксувати причину bot-generated release-please `action_required` без jobs (MDN-07; у v0.3.23 human docs commit дав реальний зелений CI).
+1. PR #192 encrypted-vault stabilization.
+2. Frontend regression tests / i18n parity gate (MDN-04).
+3. WebView2 offline installer packaging for Windows (MDN-08).
+4. Automated + owner recovery drill for backup/restore where practical.
+5. Stable 1.0.0 release preparation; signing/notarization only when real signing credentials exist.
 
-Інший:
-- Git state ↔ `SyncManifest` / ADR-0005;
-- WebDAV;
-- physical-device Android/iOS runtime validation;
-- Android SAF / iOS security-scoped external folders;
-- encrypted-vault gaps (attachments/images, recovery-key UX, encrypted cache);
-- signing/notarization;
-- подальше розбиття великого `App.tsx`.
+Post-1.0:
+- batch move / batch rename;
+- Git state ↔ `SyncManifest` / ADR-0005 and WebDAV;
+- physical-device Android/iOS validation, SAF/security-scoped folders;
+- encrypted cache as a possible stronger-security future mode;
+- larger `App.tsx` refactor when a future feature touches it.
 
 ## Метод роботи
 

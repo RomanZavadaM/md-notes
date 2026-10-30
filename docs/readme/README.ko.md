@@ -65,7 +65,7 @@
 
 아직 **완료되지 않음**: `SyncManifest` / ADR-0005와의 완전한 Git state 통합, WebDAV, 실제 Android/iOS 기기 runtime 검증, optional Android SAF / iOS security-scoped 외부 폴더.
 
-**암호화 보관함**은 필수가 아닌 선택 기능입니다. 일반 보관함은 그대로 동작하며, `encrypted-vault` feature 없이 빌드하면 암호화 코드가 포함되지 않습니다. 현재 암호화 보관함에서는 이미지와 첨부 파일이 표시되지 않고, 이미 만든 보관함에 복구 키를 추가하는 UI가 없으며, `.mdnotes/cache` 인덱스는 암호화되지 않습니다. 이런 보관함의 Git push는 평문 전송을 막는 안전장치를 거칩니다.
+**암호화 보관함**은 계속 선택 기능입니다. 일반 보관함은 그대로 동작하고 `encrypted-vault` feature 없는 빌드에는 암호화 코드가 포함되지 않습니다. 1.0 안정화에서는 이미지와 PDF를 메모리에서만 복호화해 미리보기하고, 기존 보관함에도 파일 메뉴에서 공개 recovery recipient를 추가할 수 있습니다. 암호화 첨부파일의 외부 열기는 디스크의 평문 복사본을 피하기 위해 비활성화되며, `.mdnotes/cache` 인덱스는 계속 암호화되지 않고 Git push의 평문 방지 장치는 유지됩니다.
 
 전체 계획: [roadmap](../roadmap.md) (우크라이나어, 기준 문서).
 

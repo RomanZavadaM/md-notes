@@ -362,6 +362,8 @@ export const api = {
   createBackup: (destination: string) => invoke<BackupSummary>("create_backup", { destination }),
   restoreBackup: (archive: string, destinationParent: string) =>
     invoke<RestoreSummary>("restore_backup", { archive, destinationParent }),
+  /** Reads through the active provider; encrypted vault bytes are decrypted in memory. */
+  readVaultFile: (path: string) => invoke<ArrayBuffer>("read_vault_file", { path }),
   importAttachment: (source: string) => invoke<AttachmentInfo>("import_attachment", { source }),
   listAttachments: () => invoke<AttachmentInfo[]>("list_attachments"),
   attachmentUsedBy: (path: string) => invoke<string[]>("attachment_used_by", { path }),

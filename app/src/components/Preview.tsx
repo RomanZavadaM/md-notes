@@ -3,11 +3,11 @@ import Markdown, { defaultUrlTransform } from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import { convertFileSrc } from "@tauri-apps/api/core";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import "katex/dist/katex.min.css";
 import { parentPath } from "../api";
 import { useI18n } from "../i18n";
+import { VaultImage } from "./VaultAsset";
 
 const WIKI_SCHEME = "wikilink:";
 const EMBED_SCHEME = "wikiembed:";
@@ -112,17 +112,17 @@ interface Props {
   notePath: string;
   /** Absolute path of the vault folder. */
   vaultRoot: string;
+  /** Whether file bytes must be read through the encrypted storage provider. */
+  encrypted: boolean;
   /** Vault-relative paths of all files, for `![[image.png]]` embeds. */
   files: string[];
   onOpenLink: (target: string) => void;
   onOpenPath: (path: string) => void;
 }
 
-export function Preview({ content, notePath, vaultRoot, files, onOpenLink, onOpenPath }: Props) {
+export function Preview({ content, notePath, vaultRoot, encrypted, files, onOpenLink, onOpenPath }: Props) {
   const { t } = useI18n();
   const { frontMatter, body } = splitFrontMatter(content);
-  const sep = vaultRoot.includes("\\") ? "\\" : "/";
-  const assetUrl = (rel: string) => convertFileSrc(`${vaultRoot}${sep}${rel.split("/").join(sep)}`);
 
   const findFile = (name: string): string | undefined => {
     const wanted = name.toLowerCase();
@@ -132,14 +132,12 @@ export function Preview({ content, notePath, vaultRoot, files, onOpenLink, onOpe
     );
   };
 
-  const imageSrc = (src: string): string | undefined => {
+  const imagePath = (src: string): string | undefined => {
     if (src.startsWith(EMBED_SCHEME)) {
-      const found = findFile(decodeURIComponent(src.slice(EMBED_SCHEME.length)));
-      return found ? assetUrl(found) : undefined;
+      return findFile(decodeURIComponent(src.slice(EMBED_SCHEME.length)));
     }
-    if (isExternal(src)) return src;
-    const rel = resolveRelative(notePath, src);
-    return rel ? assetUrl(rel) : undefined;
+    if (isExternal(src)) return undefined;
+    return resolveRelative(notePath, src) ?? undefined;
   };
 
   return (
@@ -193,9 +191,21 @@ export function Preview({ content, notePath, vaultRoot, files, onOpenLink, onOpe
               </a>
             );
           },
-          img: ({ src, alt, title }) => (
-            <img src={typeof src === "string" ? imageSrc(src) : undefined} alt={alt ?? ""} title={title} loading="lazy" />
-          ),
+          img: ({ src, alt, title }) => {
+            if (typeof src !== "string") return <img alt={alt ?? ""} title={title} loading="lazy" />;
+            if (isExternal(src)) return <img src={src} alt={alt ?? ""} title={title} loading="lazy" />;
+            const path = imagePath(src);
+            return path ? (
+              <VaultImage
+                path={path}
+                vaultRoot={vaultRoot}
+                encrypted={encrypted}
+                alt={alt ?? ""}
+                title={title}
+                loading="lazy"
+              />
+            ) : <img alt={alt ?? ""} title={title} loading="lazy" />;
+          },
           code: ({ className, children }) => {
             if (className?.includes("language-mermaid")) {
               return <MermaidDiagram code={String(children).replace(/\n$/, "")} />;

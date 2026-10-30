@@ -59,7 +59,7 @@ Copiez/restaurez le coffre, ouvrez-le, puis importez séparément `AGE-SECRET-KE
 
 age peut chiffrer pour plusieurs clés publiques. Modèle recommandé : clé de travail dans le secret store, clé privée de récupération séparée hors ligne, seulement les clés publiques dans le coffre.
 
-Limite v0.3.23 : l’interface d’ajout d’une recovery key à un coffre **déjà créé** n’est pas terminée.
+Dans la stabilisation 1.0, un coffre chiffré **déjà créé** peut recevoir un destinataire de récupération via **Fichier → « Gérer la clé de récupération… »**. Collez uniquement la clé publique `age1…` ; MD Notes rechiffre les fichiers pour tous les destinataires. La clé privée de récupération reste hors du coffre.
 
 ## 8. Cache/index
 
@@ -71,7 +71,9 @@ Le coffre chiffré n’est donc pas un chiffrement intégral de tous les octets 
 
 ## 9. Pièces jointes
 
-La couche stockage sait chiffrer des octets quelconques, mais **l’affichage des images/pièces jointes dans un coffre chiffré présente encore une lacune UI en v0.3.23**. Ne pas déclarer ce parcours entièrement terminé.
+Dans la stabilisation 1.0, les images et PDF d’un coffre chiffré sont lus via le fournisseur de stockage actif, déchiffrés **uniquement en mémoire** et affichés par des URL Blob en mémoire. Aucun fichier temporaire en clair n’est écrit sur le disque.
+
+L’action externe **« Ouvrir le fichier »** est volontairement désactivée pour les pièces jointes chiffrées, car la remise du fichier à une autre application nécessiterait une copie en clair sur le disque. Les autres types de pièces jointes restent correctement chiffrés même sans aperçu intégré.
 
 ## 10. Git
 

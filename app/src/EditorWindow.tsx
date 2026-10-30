@@ -32,6 +32,7 @@ export function EditorWindow() {
   const [draft, setDraft] = useState("");
   const [savedContent, setSavedContent] = useState("");
   const [files, setFiles] = useState<string[]>([]);
+  const [encrypted, setEncrypted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useStoredState<ViewMode>("mdnotes.mode", "split");
   const draftRef = useRef("");
@@ -84,7 +85,10 @@ export function EditorWindow() {
     }
     void loadNote(initialPath);
     void api.getTree().then((tree) => setFiles(flattenFiles(tree))).catch(() => setFiles([]));
-  }, [initialPath, loadNote]);
+    void api.encryptionStatus(vaultRoot)
+      .then((status) => setEncrypted(status.encrypted))
+      .catch(() => setEncrypted(false));
+  }, [initialPath, loadNote, vaultRoot]);
 
   useEffect(() => {
     if (draft === savedContent) return;
@@ -184,6 +188,7 @@ export function EditorWindow() {
               content={draft}
               notePath={note.path}
               vaultRoot={vaultRoot}
+              encrypted={encrypted}
               files={files}
               onOpenLink={(target) => void openLink(target)}
               onOpenPath={(nextPath) => void openPathInWindow(nextPath)}

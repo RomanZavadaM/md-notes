@@ -18,7 +18,7 @@ import {
   type VaultInfo,
 } from "./api";
 import { Editor } from "./components/Editor";
-import { ImportKeyDialog } from "./components/EncryptionDialogs";
+import { ImportKeyDialog, RecoveryRecipientDialog } from "./components/EncryptionDialogs";
 import { AppMenu } from "./components/AppMenu";
 import { GitPanel } from "./components/GitPanel";
 import { openEditorWindow } from "./editorWindowApi";
@@ -64,6 +64,7 @@ export default function App() {
   const { t, language, setLanguage } = useI18n();
   const [aboutOpen, setAboutOpen] = useState(false);
   const [encrypted, setEncrypted] = useState(false);
+  const [recoveryOpen, setRecoveryOpen] = useState(false);
   const [gitOpen, setGitOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [keyPrompt, setKeyPrompt] = useState<string | null>(null);
@@ -954,6 +955,9 @@ export default function App() {
               },
             ]
           : []),
+        ...(vault && encrypted
+          ? [{ label: ENCRYPTION_STRINGS[language].manageRecovery, onSelect: () => setRecoveryOpen(true) }]
+          : []),
         ...(vault && isDesktop ? [{ label: "Git…", onSelect: () => setGitOpen(true) }] : []),
         ...(isDesktop ? [{ label: t.makeMarkdownDefault, onSelect: () => void configureMarkdownAssociation() }] : []),
         { label: t.about, onSelect: () => setAboutOpen(true), separatorBefore: true },
@@ -1075,6 +1079,7 @@ export default function App() {
                 content={draft}
                 notePath={standalone.name}
                 vaultRoot={standalone.directory}
+                encrypted={false}
                 files={[]}
                 onOpenLink={() => {}}
                 onOpenPath={() => {}}
@@ -1248,6 +1253,7 @@ export default function App() {
             {sidebarTab === "attachments" && (
               <AttachmentsPanel
                 vaultRoot={vault.root}
+                encrypted={encrypted}
                 refreshKey={refreshKey}
                 canInsert={note !== null}
                 onInserted={insertAttachment}
@@ -1328,7 +1334,7 @@ export default function App() {
           {external && activeDocument === "external" ? (
             <>
               {mode !== "preview" && <section className="pane pane-editor"><Editor docKey={`${external.path}#external`} value={externalDraft} onChange={setExternalDraft} onSave={() => void saveExternal()} /></section>}
-              {mode !== "edit" && <section className="pane pane-preview"><Preview content={externalDraft} notePath={external.name} vaultRoot={external.directory} files={[]} onOpenLink={() => {}} onOpenPath={() => {}} /></section>}
+              {mode !== "edit" && <section className="pane pane-preview"><Preview content={externalDraft} notePath={external.name} vaultRoot={external.directory} encrypted={false} files={[]} onOpenLink={() => {}} onOpenPath={() => {}} /></section>}
             </>
           ) : note ? (
             <>
@@ -1348,6 +1354,7 @@ export default function App() {
                     content={draft}
                     notePath={note.path}
                     vaultRoot={vault.root}
+                    encrypted={encrypted}
                     files={files}
                     onOpenLink={(target) => void openLink(target)}
                     onOpenPath={(path) => void openNote(path)}
@@ -1421,6 +1428,16 @@ export default function App() {
       )}
 
       {aboutOpen && <AboutDialog onClose={() => setAboutOpen(false)} />}
+
+      {recoveryOpen && (
+        <RecoveryRecipientDialog
+          onAdded={(rewritten) => {
+            setRecoveryOpen(false);
+            setNotice(ENCRYPTION_STRINGS[language].recoveryAdded(rewritten));
+          }}
+          onCancel={() => setRecoveryOpen(false)}
+        />
+      )}
 
       {gitOpen && (
         <GitPanel
