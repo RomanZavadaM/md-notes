@@ -6,6 +6,15 @@
 [graph]
 all-features = true
 
+[advisories]
+# Fail direct/workspace unmaintained dependencies; transitive maintenance notices
+# remain visible without blocking when no safe upstream migration exists.
+unmaintained = "workspace"
+unused-ignored-advisory = "deny"
+ignore = [
+    { id = "RUSTSEC-2026-0387", reason = "age 0.12.1 is the latest upstream release and unconditionally includes the legacy p256/hpke stack; MD Notes encrypted vaults use only age::x25519 recipients/identities, not tag/tagpq/P-256. Temporary exception pending an upstream age release that removes or upgrades crypto-bigint.", expiry = "P30D" },
+]
+
 [licenses]
 version = 2
 confidence-threshold = 0.9
