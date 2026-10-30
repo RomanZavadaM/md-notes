@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](BACKUP_AND_RECOVERY.uk.md) · [🇬🇧 English](BACKUP_AND_RECOVERY.en.md) · [🇫🇷 Français](BACKUP_AND_RECOVERY.fr.md) · **🇩🇪 Deutsch** · [🇪🇸 Español](BACKUP_AND_RECOVERY.es.md) · [🇰🇷 한국어](BACKUP_AND_RECOVERY.ko.md) · [🇯🇵 日本語](BACKUP_AND_RECOVERY.ja.md)
 
-> Gilt für MD Notes v0.3.23. Ukrainisch ist kanonisch. Backup/Restore ist seit v0.3.22 implementiert; automatisierte Desktop-Tests existieren, ein separater vollständiger Owner-Runtime-Test wurde noch nicht dokumentiert.
+> Gilt für MD Notes v1.0.0. Ukrainisch ist kanonisch. Backup/Restore ist seit v0.3.22 implementiert; automatisierte Desktop-Tests existieren, ein separater vollständiger Owner-Runtime-Test wurde noch nicht dokumentiert.
 
 ## 1. Backup, Sync und Git sind verschieden
 
