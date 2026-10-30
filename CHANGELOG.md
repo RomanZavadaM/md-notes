@@ -34,6 +34,13 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [0.3.24](https://github.com/RomanZavadaM/md-notes/compare/v0.3.23...v0.3.24) (2026-10-30)
+
+
+### Виправлення
+
+* stabilize encrypted vault recovery and attachments ([#192](https://github.com/RomanZavadaM/md-notes/issues/192)) ([ea226a9](https://github.com/RomanZavadaM/md-notes/commit/ea226a90b98ae4d3f7eb2ea9d1c35dc6ba25c53e))
+
 ## [0.3.23](https://github.com/RomanZavadaM/md-notes/compare/v0.3.22...v0.3.23) (2026-10-30)
 
 
