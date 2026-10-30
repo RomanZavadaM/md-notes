@@ -687,6 +687,49 @@ mod tests {
         assert!(fs::read_dir(parent.path()).unwrap().next().is_none());
     }
 
+    #[cfg(feature = "encrypted-vault")]
+    #[test]
+    fn encrypted_backup_restore_reopens_with_recovery_key_and_reads_attachment() {
+        use crate::encrypted_vault::{
+            create_encrypted_vault, generate_key_pair, open_encrypted_vault,
+        };
+
+        let vault_dir = tempfile::tempdir().unwrap();
+        let (recovery_secret, recovery_public) = generate_key_pair();
+        let created = create_encrypted_vault(
+            vault_dir.path(),
+            Some("Private backup drill".into()),
+            &[recovery_public],
+        )
+        .unwrap();
+        created
+            .vault
+            .write_note("secret.md", "# Secret\nRecovery drill.\n")
+            .unwrap();
+
+        let source_dir = tempfile::tempdir().unwrap();
+        let source = source_dir.path().join("evidence.bin");
+        fs::write(&source, b"encrypted attachment bytes").unwrap();
+        let attachment = created.vault.import_attachment(&source).unwrap();
+
+        let holder = tempfile::tempdir().unwrap();
+        let archive = holder.path().join("encrypted-drill.zip");
+        let backup = create_vault_backup(vault_dir.path(), &archive).unwrap();
+        assert!(backup.encrypted);
+
+        let restore_parent = tempfile::tempdir().unwrap();
+        let restored = restore_vault_backup(&archive, restore_parent.path()).unwrap();
+        assert!(restored.encrypted);
+
+        let restored_path = PathBuf::from(restored.path);
+        let reopened = open_encrypted_vault(&restored_path, &recovery_secret).unwrap();
+        assert_eq!(reopened.read_note("secret.md").unwrap().title, "Secret");
+        assert_eq!(
+            reopened.read_file_bytes(&attachment.path).unwrap(),
+            b"encrypted attachment bytes"
+        );
+    }
+
     #[test]
     fn encrypted_backup_keeps_ciphertext_and_never_adds_secret_key() {
         let vault = tempfile::tempdir().unwrap();
