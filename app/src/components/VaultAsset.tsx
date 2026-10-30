@@ -33,9 +33,6 @@ export function useVaultAssetUrl(
     // Read every vault asset through the active storage provider. This works for
     // arbitrary user-selected vault paths without exposing broad filesystem
     // scopes to the WebView; encrypted providers still decrypt only in memory.
-    const vaultIdentity = `${encrypted ? "encrypted" : "plain"}:${vaultRoot}`;
-    void vaultIdentity;
-
     let cancelled = false;
     let objectUrl: string | null = null;
     setUrl(null);
