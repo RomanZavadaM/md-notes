@@ -14,14 +14,21 @@
 - Base main: `43fcf3720457b239458dcd34418328893d921dc7`.
 - Audit-only PR: #201 — **DO NOT MERGE**; forces current full CI/mobile/package checks and audit assertions.
 - Fix branch: `fix/v1.0.0-stable-audit-cleanup`.
-- Confirmed issues being corrected:
+- Confirmed issues corrected in this slice:
   - stale v0.3 user-facing mobile Git/WebDAV promise in all 7 languages;
   - Ukrainian-only language descriptions leaking into non-Ukrainian UI;
   - graph/encrypted-vault/backup current docs and AI contracts still scoped to v0.3.23;
   - current guides/readmes retaining obsolete multi-window acceptance wording;
-  - ADR/spec/sample docs presenting old v0.3 plans without a stable-1.0 status boundary.
-- Audit facts already PASS: 1.0.0 version alignment, required legal/release/docs files, 440 live local Markdown links, all 13 published v1.0.0 asset URLs.
-- Done only after fix PR checks pass, audit-only full CI/mobile/package evidence is reviewed, and the final integrated state is recorded.
+  - ADR/spec/sample docs presenting old v0.3 plans without a stable-1.0 status boundary;
+  - stale `app/package-lock.json` root version 0.2.1; release metadata now tracks both lockfile version fields;
+  - Rust dependency advisories: ZIP/TLS/webpki/root-cert/ctutils graph refreshed, ZIP moved to 9.x, deprecated YAML backend replaced; weekly RustSec/npm audit added;
+  - narrow documented residual RUSTSEC-2026-0387 exception for the unused P-256/HPKE path inside latest `age 0.12.1`; MD Notes uses X25519;
+  - missing Tauri `opener:allow-open-path` for plain attachment external-open, now scoped to the main window only;
+  - plain image/PDF preview depended on `convertFileSrc` while asset protocol scope was empty; all vault assets now read through the Rust storage provider into Blob URLs and filesystem asset protocol is disabled;
+  - release packaging now verifies locked Rust metadata and npm package/lock version consistency.
+- Audit facts already PASS: 1.0.0 metadata alignment at the audited checkpoint, required legal/release/docs files, 440 live local Markdown links in the baseline audit, all 13 published v1.0.0 asset URLs, privacy/no-telemetry source scan, and existing encrypted backup/recovery regression drill.
+- Separate test-only final packaging branch: `audit/v1.0.0-final-packaging`; **DO NOT MERGE**.
+- Done only after the final PR #202 head passes full CI + Android/iOS smoke, the separate macOS/Linux package smoke passes, and the integrated state is recorded.
 
 ## Stable v1.0.0 — RELEASED
 
