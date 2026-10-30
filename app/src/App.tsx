@@ -82,6 +82,7 @@ export default function App() {
   const [note, setNote] = useState<Note | null>(null);
   const [draft, setDraft] = useState("");
   const [selected, setSelected] = useState<TreeEntry | null>(null);
+  const [selectedEntries, setSelectedEntries] = useState<TreeEntry[]>([]);
   const [dialog, setDialog] = useState<DialogState | null>(null);
   const [switcherOpen, setSwitcherOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -253,6 +254,7 @@ export default function App() {
         setActiveDocument("vault");
         setVault(info);
         setSelected(null);
+        setSelectedEntries([]);
         setDocuments([]);
         showNote(null);
         storage.set(LAST_VAULT_KEY, path);
@@ -305,6 +307,7 @@ export default function App() {
         setVault(null);
         setTree([]);
         setSelected(null);
+        setSelectedEntries([]);
         setStandalone(document);
         showNote(document.note);
         setEditorVersion((v) => v + 1);
@@ -841,6 +844,11 @@ export default function App() {
     return selected.kind === "dir" ? selected.path : parentPath(selected.path);
   };
 
+  const applyTreeSelection = useCallback((entries: TreeEntry[]) => {
+    setSelectedEntries(entries);
+    setSelected(entries.length > 0 ? entries[entries.length - 1] : null);
+  }, []);
+
   const submitDialog = async (value: string, template: string) => {
     if (!dialog) return;
     setDialog(null);
@@ -860,6 +868,7 @@ export default function App() {
         await refreshTree();
         bump();
         setSelected(null);
+        setSelectedEntries([]);
         const current = noteRef.current;
         if (current && current.path === entry.path) await openNote(moved);
         else if (current && current.path.startsWith(`${entry.path}/`)) {
@@ -877,23 +886,49 @@ export default function App() {
   };
 
   const trashSelected = async () => {
-    if (!selected) return;
-    const confirmed = await ask(t.trashConfirm(selected.name), {
+    const chosen = selectedEntries.length > 0 ? selectedEntries : selected ? [selected] : [];
+    if (chosen.length === 0) return;
+
+    const roots = [...chosen]
+      .sort((left, right) => left.path.length - right.path.length || left.path.localeCompare(right.path))
+      .filter(
+        (entry, index, items) =>
+          !items
+            .slice(0, index)
+            .some((parent) => parent.kind === "dir" && entry.path.startsWith(`${parent.path}/`)),
+      );
+    const confirmed = await ask(t.trashConfirm(roots.map((entry) => entry.name).join(", ")), {
       title: t.trashTitle,
       kind: "warning",
     });
     if (!confirmed) return;
+    if (!(await saveAllOpenDocuments())) return;
+
+    const trashed: TreeEntry[] = [];
     try {
-      await api.trashEntry(selected.path);
-      const current = noteRef.current;
-      if (current && (current.path === selected.path || current.path.startsWith(`${selected.path}/`))) {
-        showNote(null);
+      for (const entry of roots) {
+        await api.trashEntry(entry.path);
+        trashed.push(entry);
       }
-      setSelected(null);
-      await refreshTree();
-      bump();
     } catch (e) {
       report(e);
+    }
+
+    if (trashed.length > 0) {
+      const isRemoved = (path: string) =>
+        trashed.some((entry) => path === entry.path || (entry.kind === "dir" && path.startsWith(`${entry.path}/`)));
+      const remainingDocuments = openDocumentsRef.current.filter((document) => !isRemoved(document.note.path));
+      const current = noteRef.current;
+      setDocuments(remainingDocuments);
+      if (current && isRemoved(current.path)) {
+        activateDocument(remainingDocuments.length > 0 ? remainingDocuments[remainingDocuments.length - 1] : null);
+      }
+
+      const remainingSelection = chosen.filter((entry) => !isRemoved(entry.path));
+      setSelectedEntries(remainingSelection);
+      setSelected(remainingSelection.length > 0 ? remainingSelection[remainingSelection.length - 1] : null);
+      await refreshTree();
+      bump();
     }
   };
 
@@ -1183,20 +1218,25 @@ export default function App() {
                   <button
                     type="button"
                     title={t.rename}
-                    disabled={!selected}
-                    onClick={() => selected && setDialog({ kind: "rename", entry: selected })}
+                    disabled={selectedEntries.length !== 1}
+                    onClick={() => selectedEntries.length === 1 && setDialog({ kind: "rename", entry: selectedEntries[0] })}
                   >
                     ✎
                   </button>
-                  <button type="button" title={t.moveToTrash} disabled={!selected} onClick={() => void trashSelected()}>
+                  <button
+                    type="button"
+                    title={t.moveToTrash}
+                    disabled={selectedEntries.length === 0}
+                    onClick={() => void trashSelected()}
+                  >
                     🗑
                   </button>
                 </div>
                 <FileTree
                   entries={tree}
-                  selectedPath={selected?.path ?? null}
+                  selectedPaths={selectedEntries.map((entry) => entry.path)}
                   activePath={note?.path ?? null}
-                  onSelect={setSelected}
+                  onSelectionChange={applyTreeSelection}
                   onOpen={(entry) => {
                     if (entry.kind === "note") void openNote(entry.path);
                   }}
