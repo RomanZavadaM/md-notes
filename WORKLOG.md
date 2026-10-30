@@ -8,6 +8,21 @@
 
 30.10.2026: **«розробку першої повноцінної desktop-версії завершено; переходимо в режим використання й стабілізації»**.
 
+## Active stabilization slice — full stable 1.0 audit cleanup
+
+- Owner request: full post-release verification of code, environment, packaging, localization, docs and descriptions.
+- Base main: `43fcf3720457b239458dcd34418328893d921dc7`.
+- Audit-only PR: #201 — **DO NOT MERGE**; forces current full CI/mobile/package checks and audit assertions.
+- Fix branch: `fix/v1.0.0-stable-audit-cleanup`.
+- Confirmed issues being corrected:
+  - stale v0.3 user-facing mobile Git/WebDAV promise in all 7 languages;
+  - Ukrainian-only language descriptions leaking into non-Ukrainian UI;
+  - graph/encrypted-vault/backup current docs and AI contracts still scoped to v0.3.23;
+  - current guides/readmes retaining obsolete multi-window acceptance wording;
+  - ADR/spec/sample docs presenting old v0.3 plans without a stable-1.0 status boundary.
+- Audit facts already PASS: 1.0.0 version alignment, required legal/release/docs files, 440 live local Markdown links, all 13 published v1.0.0 asset URLs.
+- Done only after fix PR checks pass, audit-only full CI/mobile/package evidence is reviewed, and the final integrated state is recorded.
+
 ## Stable v1.0.0 — RELEASED
 
 - Release/tag: **v1.0.0**.
