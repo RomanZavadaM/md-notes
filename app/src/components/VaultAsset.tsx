@@ -1,11 +1,5 @@
 import { useEffect, useState, type ImgHTMLAttributes } from "react";
-import { convertFileSrc } from "@tauri-apps/api/core";
 import { api } from "../api";
-
-function absoluteVaultPath(vaultRoot: string, rel: string): string {
-  const sep = vaultRoot.includes("\\") ? "\\" : "/";
-  return `${vaultRoot}${sep}${rel.split("/").join(sep)}`;
-}
 
 export function mimeTypeForPath(path: string): string {
   const ext = path.split(".").pop()?.toLowerCase();
@@ -36,11 +30,9 @@ export function useVaultAssetUrl(
       setUrl(null);
       return;
     }
-    if (!encrypted) {
-      setUrl(convertFileSrc(absoluteVaultPath(vaultRoot, path)));
-      return;
-    }
-
+    // Read every vault asset through the active storage provider. This works for
+    // arbitrary user-selected vault paths without exposing broad filesystem
+    // scopes to the WebView; encrypted providers still decrypt only in memory.
     let cancelled = false;
     let objectUrl: string | null = null;
     setUrl(null);

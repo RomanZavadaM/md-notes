@@ -94,7 +94,7 @@ Copyright © 2026 Roman Zavada (Роман Завада). Tous droits réservés
 
 **v0.3.21** publie les étapes M1–M3 d’ADR-0010. Plusieurs notes du coffre peuvent rester ouvertes dans des onglets, chacune avec son propre brouillon. Sur ordinateur, la note active peut être déplacée avec **Ouvrir dans une fenêtre séparée** vers une fenêtre d’édition indépendante. Les modifications sont enregistrées avant le déplacement, puis la fenêtre principale revient à l’onglet précédent ou à un espace vide.
 
-M1–M3 font partie de la version publiée **v0.3.21** : protection contre les conflits, fermeture sûre des éditeurs détachés et sauvegarde globale/arrêt sûr. La CI Windows/macOS/Linux et les builds de contrôle Android/iOS passent. **M4 désigne désormais la validation manuelle en exécution** ; la prerelease de test est déjà publiée.
+M1–M3 font partie de la version publiée **v0.3.21** : protection contre les conflits, fermeture sûre des éditeurs détachés et sauvegarde globale/arrêt sûr. La CI Windows/macOS/Linux et les builds de contrôle Android/iOS passent. Le flux multi-fenêtres est accepté dans la version stable **v1.0.0** ; la validation pratique sous Windows a été achevée avant la version stable, tandis que la CI continue de couvrir Windows/macOS/Linux et les builds de contrôle Android/iOS.
 
 
 ## Sauvegarde et restauration

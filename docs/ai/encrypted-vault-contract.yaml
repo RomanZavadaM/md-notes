@@ -1,5 +1,5 @@
 contract: md-notes-encrypted-vault/2
-applies_to: "v0.3.23 behavior"
+applies_to: "v1.0.0 behavior"
 canonical_human_doc: ../security/ENCRYPTED_VAULT.uk.md
 
 encryption:

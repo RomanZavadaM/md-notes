@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](ENCRYPTED_VAULT.uk.md) · [🇬🇧 English](ENCRYPTED_VAULT.en.md) · [🇫🇷 Français](ENCRYPTED_VAULT.fr.md) · [🇩🇪 Deutsch](ENCRYPTED_VAULT.de.md) · [🇪🇸 Español](ENCRYPTED_VAULT.es.md) · **🇰🇷 한국어** · [🇯🇵 日本語](ENCRYPTED_VAULT.ja.md)
 
-> MD Notes v0.3.23 기준입니다. 우크라이나어 문서가 기준본입니다. ADR-0007의 설계 의도만이 아니라 실제 제품 동작을 설명합니다.
+> MD Notes v1.0.0 기준입니다. 우크라이나어 문서가 기준본입니다. ADR-0007의 설계 의도만이 아니라 실제 제품 동작을 설명합니다.
 
 ## 1. 목적
 
@@ -27,7 +27,7 @@ flowchart LR
 
 ## 3. 새 vault의 무작위 이름
 
-v0.3.23에서 새 암호화 vault는 **random names**를 사용합니다. 예: `k8r2p6m1q4x7z9ab.age`. 논리 경로는 암호화된 envelope 안에 저장됩니다.
+v1.0.0에서 새 암호화 vault는 **random names**를 사용합니다. 예: `k8r2p6m1q4x7z9ab.age`. 논리 경로는 암호화된 envelope 안에 저장됩니다.
 
 따라서 새 vault에서는 파일 시스템과 Git에 노트/폴더 이름이 드러나지 않습니다. 이전 vault는 `named` 모드일 수 있으며, 이 경우 이름은 보이지만 내용은 암호화됩니다.
 

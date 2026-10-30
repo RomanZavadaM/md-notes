@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](BACKUP_AND_RECOVERY.uk.md) · [🇬🇧 English](BACKUP_AND_RECOVERY.en.md) · [🇫🇷 Français](BACKUP_AND_RECOVERY.fr.md) · [🇩🇪 Deutsch](BACKUP_AND_RECOVERY.de.md) · [🇪🇸 Español](BACKUP_AND_RECOVERY.es.md) · [🇰🇷 한국어](BACKUP_AND_RECOVERY.ko.md) · **🇯🇵 日本語**
 
-> MD Notes v0.3.23 を対象とします。ウクライナ語版が正本です。Backup/restore は v0.3.22 から実装され自動 desktop テストがありますが、手順全体の独立した owner runtime 試験はまだ記録されていません。
+> MD Notes v1.0.0 を対象とします。ウクライナ語版が正本です。Backup/restore は v0.3.22 から実装され自動 desktop テストがありますが、手順全体の独立した owner runtime 試験はまだ記録されていません。
 
 ## 1. Backup、同期、Git は別物
 

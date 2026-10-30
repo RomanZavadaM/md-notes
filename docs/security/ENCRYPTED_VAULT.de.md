@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](ENCRYPTED_VAULT.uk.md) · [🇬🇧 English](ENCRYPTED_VAULT.en.md) · [🇫🇷 Français](ENCRYPTED_VAULT.fr.md) · **🇩🇪 Deutsch** · [🇪🇸 Español](ENCRYPTED_VAULT.es.md) · [🇰🇷 한국어](ENCRYPTED_VAULT.ko.md) · [🇯🇵 日本語](ENCRYPTED_VAULT.ja.md)
 
-> Gilt für MD Notes v0.3.23. Ukrainisch ist kanonisch. Beschrieben wird das tatsächliche Produktverhalten, nicht nur die Absicht von ADR-0007.
+> Gilt für MD Notes v1.0.0. Ukrainisch ist kanonisch. Beschrieben wird das tatsächliche Produktverhalten, nicht nur die Absicht von ADR-0007.
 
 ## 1. Zweck
 
@@ -27,7 +27,7 @@ Der darunterliegende Storage Provider darf keinen Klartext von Notizen oder Anh�
 
 ## 3. Zufallsnamen neuer Vaults
 
-Neue v0.3.23-Vaults verwenden **random names**, z. B. `k8r2p6m1q4x7z9ab.age`. Der logische Pfad liegt innerhalb der verschlüsselten Hülle.
+Neue v1.0.0-Vaults verwenden **random names**, z. B. `k8r2p6m1q4x7z9ab.age`. Der logische Pfad liegt innerhalb der verschlüsselten Hülle.
 
 Damit sind Notiz- und Ordnernamen gegenüber Dateisystem und Git verborgen. Ältere Vaults können im `named`-Modus bleiben; dort sind Namen sichtbar, Inhalte aber verschlüsselt.
 

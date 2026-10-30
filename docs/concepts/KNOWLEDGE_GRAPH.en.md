@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](KNOWLEDGE_GRAPH.uk.md) · **🇬🇧 English** · [🇫🇷 Français](KNOWLEDGE_GRAPH.fr.md) · [🇩🇪 Deutsch](KNOWLEDGE_GRAPH.de.md) · [🇪🇸 Español](KNOWLEDGE_GRAPH.es.md) · [🇰🇷 한국어](KNOWLEDGE_GRAPH.ko.md) · [🇯🇵 日本語](KNOWLEDGE_GRAPH.ja.md)
 
-> Applies to MD Notes v0.3.23. The Ukrainian document is canonical. This translation explains the actual data model and current product behavior; visual node placement is not part of the knowledge itself.
+> Applies to MD Notes v1.0.0. The Ukrainian document is canonical. This translation explains the actual data model and current product behavior; visual node placement is not part of the knowledge itself.
 
 ## 1. Core principle
 
@@ -117,7 +117,7 @@ An isolated note may appear with no edges.
 
 ### Local graph
 
-In v0.3.23 the local graph contains the active note plus a **one-hop neighbourhood** formed by resolved ordinary links.
+In v1.0.0 the local graph contains the active note plus a **one-hop neighbourhood** formed by resolved ordinary links.
 
 Current implementation boundary: a typed relation by itself does not expand that local snapshot. It is displayed only when both endpoints are already among the visible nodes. This is rarely limiting in the global graph because all indexed notes are present there.
 

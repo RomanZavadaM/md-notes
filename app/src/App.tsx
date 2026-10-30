@@ -991,7 +991,7 @@ export default function App() {
           aria-label={t.language}
         >
           {LANGUAGES.map((lang) => (
-            <option key={lang.code} value={lang.code} title={lang.ukrainianDescription}>
+            <option key={lang.code} value={lang.code}>
               {lang.flag} {lang.nativeName}
             </option>
           ))}
@@ -1174,7 +1174,7 @@ export default function App() {
           title={t.language}
         >
           {LANGUAGES.map((lang) => (
-            <option key={lang.code} value={lang.code} title={lang.ukrainianDescription}>
+            <option key={lang.code} value={lang.code}>
               {lang.flag} {lang.nativeName}
             </option>
           ))}

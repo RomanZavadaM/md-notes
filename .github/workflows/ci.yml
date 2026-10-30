@@ -119,13 +119,13 @@ jobs:
         if: runner.os == 'Linux'
         run: cargo fmt --all --check
       - name: Clippy
-        run: cargo clippy -p notes-core --all-targets -- -D warnings
+        run: cargo clippy --locked -p notes-core --all-targets -- -D warnings
       - name: Test
-        run: cargo test -p notes-core
+        run: cargo test --locked -p notes-core
       - name: Clippy (encrypted-vault feature)
-        run: cargo clippy -p notes-core --all-targets --features encrypted-vault -- -D warnings
+        run: cargo clippy --locked -p notes-core --all-targets --features encrypted-vault -- -D warnings
       - name: Test (encrypted-vault feature)
-        run: cargo test -p notes-core --features encrypted-vault
+        run: cargo test --locked -p notes-core --features encrypted-vault
 
   frontend:
     name: Frontend build
@@ -139,6 +139,9 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: app/package-lock.json
+      - name: Verify npm lock metadata
+        working-directory: app
+        run: node -e "const p=require('./package.json'), l=require('./package-lock.json'); if (p.version !== l.version || p.version !== l.packages[''].version) { console.error({package:p.version,lock:l.version,root:l.packages[''].version}); process.exit(1) }"
       - name: Install npm packages
         working-directory: app
         run: npm ci
@@ -168,7 +171,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev libssl-dev
       - name: Clippy (Tauri app)
-        run: cargo clippy -p md-notes --all-targets -- -D warnings
+        run: cargo clippy --locked -p md-notes --all-targets -- -D warnings
 
   tauri-macos:
     name: Tauri clippy (macOS)
@@ -182,7 +185,7 @@ jobs:
           components: clippy
       - uses: Swatinem/rust-cache@v2
       - name: Clippy (macOS Tauri app)
-        run: cargo clippy -p md-notes --all-targets -- -D warnings
+        run: cargo clippy --locked -p md-notes --all-targets -- -D warnings
 
   licenses:
     name: Dependency licenses
@@ -193,7 +196,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: EmbarkStudios/cargo-deny-action@v2
         with:
-          command: check licenses
+          command: check licenses advisories
       - uses: actions/setup-node@v5
         with:
           node-version: 22
@@ -218,6 +221,8 @@ jobs:
       - name: Install npm packages
         working-directory: app
         run: npm ci
+      - name: Verify Cargo.lock is reproducible
+        run: cargo metadata --locked --format-version 1
       - name: Build NSIS and MSI with offline WebView2
         working-directory: app
         run: npm run tauri build -- --bundles nsis,msi
@@ -245,11 +250,16 @@ jobs:
 
           cargo = tomllib.loads(Path("Cargo.toml").read_text(encoding="utf-8"))
           package = json.loads(Path("app/package.json").read_text(encoding="utf-8"))
+          package_lock = json.loads(Path("app/package-lock.json").read_text(encoding="utf-8"))
           tauri = json.loads(Path("app/src-tauri/tauri.conf.json").read_text(encoding="utf-8"))
+          version_marker = Path("version.txt").read_text(encoding="utf-8").strip()
 
           versions = {
               "Cargo.toml": cargo["workspace"]["package"]["version"],
+              "version.txt": version_marker,
               "app/package.json": package["version"],
+              "app/package-lock.json": package_lock["version"],
+              "app/package-lock.json#root": package_lock["packages"][""]["version"],
               "app/src-tauri/tauri.conf.json": tauri["version"],
           }
 

@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](KNOWLEDGE_GRAPH.uk.md) · [🇬🇧 English](KNOWLEDGE_GRAPH.en.md) · [🇫🇷 Français](KNOWLEDGE_GRAPH.fr.md) · [🇩🇪 Deutsch](KNOWLEDGE_GRAPH.de.md) · **🇪🇸 Español** · [🇰🇷 한국어](KNOWLEDGE_GRAPH.ko.md) · [🇯🇵 日本語](KNOWLEDGE_GRAPH.ja.md)
 
-> Válido para MD Notes v0.3.23. El texto ucraniano es canónico. Este documento describe el modelo de datos y el comportamiento actual; la posición visual de un nodo no forma parte del conocimiento.
+> Válido para MD Notes v1.0.0. El texto ucraniano es canónico. Este documento describe el modelo de datos y el comportamiento actual; la posición visual de un nodo no forma parte del conocimiento.
 
 ## 1. Principio central
 
@@ -90,7 +90,7 @@ Para lectura rápida la interfaz agrupa sobre todo la cifra: 1–2 fiable, 3–4
 
 El **grafo global** contiene todas las notas indexadas, los wiki-enlaces resueltos y las relaciones tipadas entre nodos conocidos. Una nota aislada puede aparecer sin aristas.
 
-En v0.3.23, el **grafo local** muestra la nota activa más un **vecindario de un salto** formado por enlaces ordinarios resueltos.
+En v1.0.0, el **grafo local** muestra la nota activa más un **vecindario de un salto** formado por enlaces ordinarios resueltos.
 
 Límite actual: una relación tipada por sí sola no amplía ese snapshot local; solo se superpone cuando ambos extremos ya son visibles.
 

@@ -3,6 +3,8 @@
 - Статус: прийнято
 - Дата: 2026-10-01
 
+> **Стан на stable v1.0.0:** базовий `StorageProvider` і Git foundation реалізовані. WebDAV, S3, SFTP, OAuth-хмари та SMB не входять до desktop 1.0. Таблиця нижче зберігає первинний план етапів і не є актуальним release promise.
+
 ## Контекст
 
 Потрібні локальна папка, WebDAV, SFTP, SMB, Google Drive, OneDrive, Dropbox,

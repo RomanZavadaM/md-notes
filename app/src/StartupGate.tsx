@@ -185,7 +185,7 @@ export function StartupGate() {
           aria-label={t.language}
         >
           {LANGUAGES.map((lang) => (
-            <option key={lang.code} value={lang.code} title={lang.ukrainianDescription}>
+            <option key={lang.code} value={lang.code}>
               {lang.flag} {lang.nativeName}
             </option>
           ))}

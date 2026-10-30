@@ -12,7 +12,9 @@ Core library `crates/notes-core`:
 - gix (Gitoxide) — MIT OR Apache-2.0, Git repository and HTTPS synchronization foundation
 - rusqlite — MIT, SQLite bindings for the vault index; bundles **SQLite** (public domain)
 - serde, serde_json — MIT OR Apache-2.0, serialization
-- serde_yaml — MIT OR Apache-2.0, YAML front matter parsing
+- sha2 — MIT OR Apache-2.0, SHA-256 checksums for backup manifests and verification
+- zip — MIT, ZIP container implementation used by backup/restore; stable 1.x uses the security-maintained 9.x line and MD Notes performs its own path/size/checksum validation before restore
+- serde_norway (imported in code as `serde_yaml`) — MIT OR Apache-2.0, maintained YAML front matter parser compatible with the former serde_yaml API; uses maintained `unsafe-libyaml-norway` (MIT)
 - thiserror — MIT OR Apache-2.0, error types
 - ulid — MIT, stable note identifiers
 - age (optional feature `encrypted-vault`, ADR-0007) — MIT OR Apache-2.0, file encryption in the open age format; no default features (no async, CLI, plugin or SSH code)
@@ -40,11 +42,11 @@ Application `app/src-tauri`:
 - Vite, `@vitejs/plugin-react` — MIT (build tools)
 - TypeScript — Apache-2.0 (build tool)
 
-Some packages listed here arrive with feature branches of v0.2/v0.3 and apply once those changes are integrated.
+This notice reflects dependencies present in the stable v1.0.0 source/build checkpoint; authoritative versions remain recorded in `Cargo.lock` and `app/package-lock.json`.
 
 ## License review
 
-MD Notes ships only dependencies that can be used in a proprietary distribution. Every release is checked automatically (`deny.toml`, `app/scripts/check-licenses.mjs`, CI job “Dependency licenses”). The full review of 01.10.2026 covered 501 Rust crates and 400 npm packages; every newly added dependency must pass the same automated gates before integration.
+MD Notes ships only dependencies that can be used in a proprietary distribution. Every release checkpoint is checked automatically (`deny.toml`, `app/scripts/check-licenses.mjs`, CI job “Dependency licenses”), and the repository also runs a recurring dependency security audit. Exact dependency counts and versions are intentionally taken from the current `Cargo.lock` and `app/package-lock.json`; every newly added or updated dependency must pass the same gates before integration.
 
 - almost all components use MIT, Apache-2.0, BSD, ISC, Zlib, CC0, Unlicense or Unicode licenses;
 - dual-licensed components are used under their permissive option: `dompurify` (MPL-2.0 **or** Apache-2.0 → Apache-2.0), `r-efi` (MIT **or** Apache-2.0 **or** LGPL-2.1+ → MIT);

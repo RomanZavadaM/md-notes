@@ -9,7 +9,7 @@
 - `PROJECT_STATE.md` — лише інтегрований стан `main`: checkpoint, версія та наступний великий крок.
 - `WORKLOG.md` — оперативний знімок активної роботи: поточний slice, гілка/PR, останній перевірений SHA, блокери й точна наступна дія.
 - GitHub Issue #8 `MD Notes — live development ledger` — append-only журнал переходів стану активної роботи.
-- `Cargo.toml` (`[workspace.package] version`), `app/package.json` і `app/src-tauri/tauri.conf.json` — машинні джерела номера версії; їх синхронізує release-please.
+- `Cargo.toml` (`[workspace.package] version`), `app/package.json` і `app/src-tauri/tauri.conf.json` — основні машинні джерела номера версії; їх синхронізує release-please. Кореневий `version.txt` — лише похідний compatibility marker для стратегії release-please `simple`, не окреме джерело істини; CI зобов'язаний перевіряти його рівність основним джерелам і `app/package-lock.json`.
 - `docs/releases/` — незмінні нотатки опублікованих релізів.
 - `docs/adr/` — прийняті архітектурні рішення.
 - Якщо старий чат або застарілий документ суперечить актуальному `main`, пріоритет має `main`.
@@ -32,6 +32,13 @@
 - `docs`, `ci` і службові `chore` зміни самі по собі не повинні створювати нову продуктову версію; release-please має формувати release PR лише коли після останнього checkpoint є релізно значущі продуктові зміни (`feat`, `fix`, `perf` або окремо погоджений release-driving commit).
 
 Перехід до `1.0.0` робиться лише за окремим рішенням власника проєкту.
+
+Після встановлення stable 1.x:
+
+- сумісне виправлення піднімає patch: `1.0.0 -> 1.0.1`;
+- сумісна нова функція піднімає minor: `1.0.x -> 1.1.0`;
+- несумісна зміна формату/контракту потребує окремого рішення власника і major bump;
+- номер версії й надалі формує release-please з Conventional Commits; вручну машинні версії не змінюються.
 
 ### Тестові збірки між релізами
 
@@ -70,8 +77,10 @@
 - Сторонні бібліотеки, шрифти, іконки та цитовані матеріали зберігають власні права й умови; MD Notes не заявляє прав на них.
 - Нотатки та файли, які користувач створює в MD Notes, належать користувачу; ліцензія програми на них не поширюється.
 - При додаванні нової прямої залежності оновити `THIRD_PARTY_NOTICES.md`.
-- До складу програми можуть входити лише залежності з дозвільними ліцензіями (MIT, Apache-2.0, BSD, ISC, Zlib, CC0, Unlicense, Unicode тощо). Copyleft-ліцензії (GPL, LGPL, AGPL, MPL, EPL, CDDL) у пакеті програми не допускаються: для таких компонентів шукається заміна. Для подвійних ліцензій використовується дозвільна альтернатива.
-- Список дозволених ліцензій — `deny.toml` (Rust) і `app/scripts/check-licenses.mjs` (npm); CI job «Dependency licenses» блокує PR із недозволеною ліцензією.
+- За замовчуванням до складу програми допускаються залежності з дозвільними ліцензіями (MIT, Apache-2.0, BSD, ISC, Zlib, CC0, Unlicense, Unicode тощо). Для подвійних ліцензій використовується дозвільна альтернатива.
+- Copyleft-залежності не додаються без окремо задокументованого винятку. GPL/AGPL та інші strong-copyleft компоненти не допускаються до bundled application. Вузькі file-level винятки (зокрема MPL-2.0) можливі лише для конкретно перелічених незмінених transitive-компонентів, якщо їх сумісність із proprietary larger work перевірена, notices/source obligations задокументовані, а виняток закріплений у `deny.toml` і `THIRD_PARTY_NOTICES.md`. Поточні MPL-2.0 винятки для Tauri transitive crates є саме такими явними винятками, а не загальним дозволом MPL.
+- Динамічно підключені системні бібліотеки ОС (наприклад WebKitGTK/GTK на Linux) розглядаються як platform components і документуються окремо; вони не перетворюють MD Notes на open-source продукт.
+- Список дозволених ліцензій і точкових винятків — `deny.toml` (Rust) і `app/scripts/check-licenses.mjs` (npm); CI job «Dependency licenses» блокує невідомі або недозволені ліцензії.
 
 ## 7. Перед merge
 
@@ -82,7 +91,7 @@
 3. `cargo test -p notes-core`;
 4. `npm ci` і `npm run build` у `app/` (перевірка типів TypeScript і збірка інтерфейсу);
 4a. license gate: `cargo deny check licenses` і `npm run licenses` у `app/`;
-5. lock-файли (`Cargo.lock`, `app/package-lock.json`) актуальні; за потреби оновити їх workflow `Lockfiles`;
+5. lock-файли (`Cargo.lock`, `app/package-lock.json`) актуальні; Rust CI запускається з `--locked`/`cargo metadata --locked`, тому застарілий `Cargo.lock` є blocker; за потреби оновити lockfile контрольованим workflow/PR;
 6. для user-visible змін — перевірити зміну в запущеному застосунку (`npm run tauri dev`) або чесно зазначити в PR, що runtime-перевірки не було;
 7. version, показана в інтерфейсі, походить з build metadata; hardcoded номери версій в UI заборонені;
 8. перевірити, що робочі сховища, особисті нотатки, ключі, БД індексу та персональні файли не потрапили до Git.
@@ -94,7 +103,7 @@ CI використовує path-aware routing і не повинен без п�
 - frontend-only зміни проходять Node/frontend build без Rust matrix і без Mobile smoke;
 - Rust/core/Tauri зміни проходять повний Rust matrix на Linux/Windows/macOS + Tauri clippy;
 - Android/iOS Mobile smoke запускається автоматично лише для ready/non-draft змін, що зачіпають native/core/dependency boundary, або вручну через `workflow_dispatch`;
-- license gates запускаються при зміні dependency metadata або консервативно для невідомих non-doc paths;
+- license/advisory gates запускаються при зміні dependency metadata або консервативно для невідомих non-doc paths; окремий weekly `Security audit` перевіряє RustSec та production npm advisories навіть без змін коду;
 - невідомі non-doc paths за замовчуванням отримують повну перевірку, а не пропускаються;
 - release-please PR не повинен запускати повний Rust/Tauri/Mobile набір; для нього достатня перевірка release metadata/version consistency перед release checkpoint;
 - docs-only та workflow-only push у `main` не запускає release-please;
@@ -110,7 +119,7 @@ CI використовує path-aware routing і не повинен без п�
 - унікальний tag `vX.Y.Z`;
 - release notes у `docs/releases/RELEASE_NOTES_vX_Y_Z.md` і запис у `CHANGELOG.md`;
 - START/source пакет;
-- доступні платформні пакети (Windows, macOS, Linux; Android та iOS — з v0.3);
+- доступні платформні пакети для підтримуваної release-лінії: для stable desktop 1.x — Windows, macOS і Linux; Android/iOS build-smoke не вважається mobile release asset до окремого physical-device/store acceptance;
 - `SHA256SUMS.txt`;
 - legal notices (`LICENSE.md`, `COPYRIGHT.md`, `THIRD_PARTY_NOTICES.md`);
 - чітке маркування signing-статусу та обмежень тестової збірки.
@@ -154,7 +163,7 @@ CI використовує path-aware routing і не повинен без п�
 5. додати release notes у `docs/releases/` і оновити PROJECT_STATE/WORKLOG;
 6. виконати release builds/package для всіх підтримуваних платформ;
 7. сформувати START/source, `SHA256SUMS.txt` і legal notices;
-8. опублікувати незмінний Git tag та GitHub **prerelease**;
+8. опублікувати незмінний Git tag та GitHub Release: для stable 1.x patch/minor — **stable** за замовчуванням; prerelease використовувати лише для явно тестового/preview checkpoint;
 9. перевірити опубліковані assets і зафіксувати release SHA/run у WORKLOG та Issue #8.
 
 Ритм:

@@ -94,7 +94,7 @@ Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved. M
 
 **v0.3.21**에는 ADR-0010 M1–M3가 게시되어 있습니다. 여러 보관함 노트를 탭으로 동시에 열 수 있고 각 탭은 독립적인 초안을 유지합니다. 데스크톱에서는 활성 노트를 **별도 창에서 열기**로 독립 편집기 창으로 이동할 수 있습니다. 이동 전에 변경 사항을 저장하고, 기본 창은 이전 탭 또는 빈 작업 영역으로 돌아갑니다.
 
-M1–M3는 공개된 **v0.3.21**에 포함됩니다. 충돌 보호, 분리 편집기 안전 종료, 전체 저장/안전한 종료가 구현되었고 Windows/macOS/Linux CI와 Android/iOS build smoke를 통과했습니다. **M4는 이제 수동 런타임 검증을 의미하며**, 테스트 prerelease는 이미 게시되었습니다.
+M1–M3는 공개된 **v0.3.21**에 포함됩니다. 충돌 보호, 분리 편집기 안전 종료, 전체 저장/안전한 종료가 구현되었고 Windows/macOS/Linux CI와 Android/iOS build smoke를 통과했습니다. 다중 창 흐름은 stable **v1.0.0**에서 승인되었습니다. 실제 Windows 검증은 stable 출시 전에 완료되었고, CI는 계속 Windows/macOS/Linux와 Android/iOS build smoke를 확인합니다.
 
 
 ## 백업 및 복원

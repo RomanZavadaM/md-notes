@@ -38,7 +38,7 @@ export function AboutDialog({ onClose }: { onClose: () => void }) {
         <ul className="about-languages">
           {LANGUAGES.map((lang) => (
             <li key={lang.code}>
-              {lang.flag} {lang.nativeName} — {lang.ukrainianDescription}
+              {lang.flag} {lang.nativeName}
             </li>
           ))}
         </ul>

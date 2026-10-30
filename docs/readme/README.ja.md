@@ -94,7 +94,7 @@ Copyright © 2026 Roman Zavada (Роман Завада). All rights reserved. M
 
 **v0.3.21** では ADR-0010 M1–M3 が公開されています。複数の保管庫ノートをタブで同時に開き、それぞれ独立した下書きを保持できます。デスクトップでは、アクティブなノートを **別ウィンドウで開く** で独立したエディターウィンドウへ移動できます。移動前に変更内容を保存し、メインウィンドウは前のタブまたは空の作業領域に戻ります。
 
-M1–M3 は公開済み **v0.3.21** に含まれます。競合ガード、分離エディターの安全な終了、全保存/安全な終了を実装し、Windows/macOS/Linux CI と Android/iOS build smoke は通過しています。**M4 は現在、手動の実行時受け入れ確認を意味し**、テスト prerelease はすでに公開済みです。
+M1–M3 は公開済み **v0.3.21** に含まれます。競合ガード、分離エディターの安全な終了、全保存/安全な終了を実装し、Windows/macOS/Linux CI と Android/iOS build smoke は通過しています。マルチウィンドウ動作は stable **v1.0.0** で受け入れ済みです。実 Windows での確認は stable 公開前に完了し、CI では引き続き Windows/macOS/Linux と Android/iOS build smoke を確認します。
 
 
 ## バックアップと復元

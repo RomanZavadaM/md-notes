@@ -357,10 +357,6 @@ fn activate_vault(
         root: vault.root().display().to_string(),
         name: vault.display_name(),
     };
-    app.asset_protocol_scope()
-        .allow_directory(vault.root(), true)
-        .map_err(|e| e.to_string())?;
-
     #[cfg(not(any(target_os = "android", target_os = "ios")))]
     {
         let handle = app.clone();

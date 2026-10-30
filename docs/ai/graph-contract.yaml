@@ -1,5 +1,5 @@
 contract: md-notes-graph/1
-applies_to: "v0.3.23 semantics"
+applies_to: "v1.0.0 semantics"
 canonical_human_doc: ../concepts/KNOWLEDGE_GRAPH.uk.md
 
 source_of_truth:
@@ -58,7 +58,7 @@ global_graph:
   isolated_nodes_allowed: true
 
 local_graph:
-  version: v0.3.23
+  version: v1.0.0
   focus_included: true
   ordinary_link_hops: 1
   typed_relation_expands_snapshot: false

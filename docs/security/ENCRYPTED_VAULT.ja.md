@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](ENCRYPTED_VAULT.uk.md) · [🇬🇧 English](ENCRYPTED_VAULT.en.md) · [🇫🇷 Français](ENCRYPTED_VAULT.fr.md) · [🇩🇪 Deutsch](ENCRYPTED_VAULT.de.md) · [🇪🇸 Español](ENCRYPTED_VAULT.es.md) · [🇰🇷 한국어](ENCRYPTED_VAULT.ko.md) · **🇯🇵 日本語**
 
-> MD Notes v0.3.23 を対象とします。ウクライナ語版が正本です。ADR-0007 の設計意図だけでなく、実際の製品動作を説明します。
+> MD Notes v1.0.0 を対象とします。ウクライナ語版が正本です。ADR-0007 の設計意図だけでなく、実際の製品動作を説明します。
 
 ## 1. 目的
 
@@ -27,7 +27,7 @@ flowchart LR
 
 ## 3. 新しい vault のランダム名
 
-v0.3.23 で新規作成する暗号化 vault は **random names** を使います。物理ファイルは `k8r2p6m1q4x7z9ab.age` のようになり、論理パスは暗号化 envelope 内に入ります。
+v1.0.0 で新規作成する暗号化 vault は **random names** を使います。物理ファイルは `k8r2p6m1q4x7z9ab.age` のようになり、論理パスは暗号化 envelope 内に入ります。
 
 そのため新規 vault ではファイルシステムや Git からノート名・フォルダー名を隠せます。以前の vault は `named` モードのままの場合があり、その場合は名前が見えて内容だけが暗号化されます。
 

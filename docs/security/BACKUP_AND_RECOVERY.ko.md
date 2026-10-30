@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](BACKUP_AND_RECOVERY.uk.md) · [🇬🇧 English](BACKUP_AND_RECOVERY.en.md) · [🇫🇷 Français](BACKUP_AND_RECOVERY.fr.md) · [🇩🇪 Deutsch](BACKUP_AND_RECOVERY.de.md) · [🇪🇸 Español](BACKUP_AND_RECOVERY.es.md) · **🇰🇷 한국어** · [🇯🇵 日本語](BACKUP_AND_RECOVERY.ja.md)
 
-> MD Notes v0.3.23 기준입니다. 우크라이나어가 기준본입니다. Backup/restore는 v0.3.22부터 구현되어 있고 자동 desktop 테스트가 있지만, 전체 절차에 대한 별도의 owner runtime 테스트는 아직 기록되지 않았습니다.
+> MD Notes v1.0.0 기준입니다. 우크라이나어가 기준본입니다. Backup/restore는 v0.3.22부터 구현되어 있고 자동 desktop 테스트가 있지만, 전체 절차에 대한 별도의 owner runtime 테스트는 아직 기록되지 않았습니다.
 
 ## 1. Backup, 동기화, Git은 다릅니다
 

@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](ENCRYPTED_VAULT.uk.md) · [🇬🇧 English](ENCRYPTED_VAULT.en.md) · **🇫🇷 Français** · [🇩🇪 Deutsch](ENCRYPTED_VAULT.de.md) · [🇪🇸 Español](ENCRYPTED_VAULT.es.md) · [🇰🇷 한국어](ENCRYPTED_VAULT.ko.md) · [🇯🇵 日本語](ENCRYPTED_VAULT.ja.md)
 
-> Valable pour MD Notes v0.3.23. L’ukrainien est canonique. Ce texte décrit le comportement réel, pas seulement l’intention d’ADR-0007.
+> Valable pour MD Notes v1.0.0. L’ukrainien est canonique. Ce texte décrit le comportement réel, pas seulement l’intention d’ADR-0007.
 
 ## 1. But
 
@@ -27,7 +27,7 @@ Le fournisseur de stockage sous-jacent ne doit pas recevoir le texte clair des n
 
 ## 3. Noms aléatoires dans les nouveaux coffres
 
-Les nouveaux coffres v0.3.23 utilisent des **noms aléatoires**, par exemple `k8r2p6m1q4x7z9ab.age`. Le chemin logique est stocké dans l’enveloppe chiffrée.
+Les nouveaux coffres v1.0.0 utilisent des **noms aléatoires**, par exemple `k8r2p6m1q4x7z9ab.age`. Le chemin logique est stocké dans l’enveloppe chiffrée.
 
 Cela masque les noms de notes et de dossiers au système de fichiers et à Git. Les anciens coffres peuvent rester en mode `named`, où les noms sont visibles mais le contenu est chiffré.
 

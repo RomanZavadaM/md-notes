@@ -61,6 +61,11 @@ jobs:
       - name: Install npm packages
         working-directory: app
         run: npm ci
+      - name: Verify release lockfiles
+        run: |
+          cargo metadata --locked --format-version 1
+          cd app
+          node -e "const fs=require('fs'), p=require('./package.json'), l=require('./package-lock.json'), v=fs.readFileSync('../version.txt','utf8').trim(); if (p.version !== l.version || p.version !== l.packages[''].version || p.version !== v) process.exit(1)"
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

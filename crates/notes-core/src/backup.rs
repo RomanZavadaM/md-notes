@@ -413,7 +413,10 @@ fn verify_archive(
         let mut file = archive
             .by_index(index)
             .map_err(|error| backup_error(error.to_string()))?;
-        let name = file.name().to_string();
+        let name = file
+            .name()
+            .map_err(|error| backup_error(error.to_string()))?
+            .into_owned();
         if !seen.insert(name.clone()) {
             return Err(backup_error(format!("duplicate ZIP entry: {name}")));
         }
@@ -634,7 +637,7 @@ mod tests {
         let options = SimpleFileOptions::default().compression_method(CompressionMethod::Deflated);
         for index in 0..input.len() {
             let mut file = input.by_index(index).unwrap();
-            let name = file.name().to_string();
+            let name = file.name().unwrap().into_owned();
             writer.start_file(&name, options).unwrap();
             if name == "Нотатка.md" {
                 writer.write_all(b"tampered").unwrap();
