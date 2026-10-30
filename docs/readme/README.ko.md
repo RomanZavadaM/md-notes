@@ -5,7 +5,7 @@
 <!-- x-release-please-start-version -->
 > **릴리스 체크포인트: MD Notes v0.3.23**
 >
-> **개발 상태: ACTIVE — roadmap 단계 v0.3 「모바일 플랫폼과 동기화」.**
+> **상태: desktop 기능 개발 완료; 안정화 완료, stable v1.0.0 준비 중.**
 
 ## MD Notes v0.3.23 다운로드
 
@@ -20,13 +20,15 @@
 
 > 현재 빌드는 서명/공증되지 않았으므로 운영체제가 일반적인 보안 경고를 표시할 수 있습니다.
 
+> **Windows 1.0 패키징:** NSIS/MSI에는 offline WebView2 installer와 VC runtime이 포함됩니다. 가벼운 portable ZIP은 Windows에 이미 설치된 WebView2 Runtime을 사용합니다.
+
 ## 제품 소개
 
 **MD Notes**는 Markdown 개인 지식 베이스를 위한 크로스 플랫폼 local-first 앱입니다. 일반 `.md/.markdown` 파일, 첨부 파일, 공개 JSON 메타데이터를 사용하며 숨겨진 독점 형식을 만들지 않습니다.
 
 **데이터는 사용자의 것입니다.** 노트는 사용자의 파일 시스템에 남고 어떤 편집기에서도 열 수 있으며 Git으로 버전 관리할 수 있습니다. MD Notes에는 자체 애플리케이션 서버, 분석, 원격 측정이 없습니다.
 
-플랫폼: **Windows, macOS, Linux**. Android와 iOS는 v0.3의 활성 대상이며 CI가 빌드 가능성을 검증하지만 실제 기기 runtime 검증은 아직 완료로 선언하지 않습니다.
+Desktop 1.0 플랫폼: **Windows, macOS, Linux**. Android/iOS는 계속 CI에서 빌드되지만 실제 기기 runtime 검증과 mobile store 배포는 1.0 이후 작업입니다.
 
 ## 통합된 기능
 

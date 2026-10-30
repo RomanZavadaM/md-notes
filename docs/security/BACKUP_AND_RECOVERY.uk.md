@@ -203,3 +203,17 @@ AI не повинен:
 - заявляти успішне відновлення без фактичної перевірки створеного `*-restored` vault.
 
 Правила encrypted data: [ENCRYPTED_VAULT_CONTRACT.md](../ai/ENCRYPTED_VAULT_CONTRACT.md).
+
+## Перевірка recovery для 1.0
+
+Перед desktop 1.0 додано автоматизований end-to-end recovery drill для encrypted vault:
+
+1. створюється справжнє зашифроване сховище з окремим recovery recipient;
+2. записується Markdown-нотатка та імпортується бінарне вкладення;
+3. створюється portable ZIP backup;
+4. backup відновлюється в нову папку;
+5. відновлене сховище відкривається **recovery private key**;
+6. тест читає відновлену нотатку й байти вкладення через encrypted storage provider.
+
+Цей сценарій пройшов у CI перед 1.0 на Windows, macOS і Linux core gates. Це автоматизований доказ механізму recovery, але він не підміняє окремий ручний тест власника на реальних даних.
+

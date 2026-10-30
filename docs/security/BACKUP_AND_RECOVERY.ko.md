@@ -101,3 +101,17 @@ AI는 검증된 restore 전에 마지막 정상 복사본을 삭제하거나, sy
 암호화 데이터 규칙: [ENCRYPTED_VAULT_CONTRACT.md](../ai/ENCRYPTED_VAULT_CONTRACT.md).
 
 > 자동 생성 번역이며 원어민 검수는 아직 없습니다. 우크라이나어가 기준입니다.
+
+## 1.0 recovery 검증
+
+Desktop 1.0 전에 암호화 vault용 end-to-end recovery drill을 자동화했습니다.
+
+1. 별도의 recovery recipient를 가진 실제 암호화 vault를 생성합니다.
+2. Markdown 노트를 쓰고 바이너리 첨부파일을 가져옵니다.
+3. portable ZIP backup을 생성합니다.
+4. backup을 새 폴더에 복원합니다.
+5. 복원된 vault를 **recovery private key**로 다시 엽니다.
+6. 암호화 storage provider를 통해 복원된 노트와 첨부파일 바이트를 읽습니다.
+
+이 시나리오는 1.0 전에 Windows, macOS, Linux core gate에서 CI를 통과했습니다. 이는 자동화된 recovery 근거이며 실제 데이터로 수행하는 별도의 owner 수동 테스트를 대체하지 않습니다.
+

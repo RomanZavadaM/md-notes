@@ -93,3 +93,17 @@ Une IA ne doit pas supprimer la dernière bonne copie avant validation, assimile
 Règles encrypted : [ENCRYPTED_VAULT_CONTRACT.md](../ai/ENCRYPTED_VAULT_CONTRACT.md).
 
 > Traduction automatique non relue par un locuteur natif ; l’ukrainien est canonique.
+
+## Vérification recovery pour la 1.0
+
+Avant la 1.0 desktop, un recovery drill end-to-end automatisé a été ajouté pour les coffres chiffrés :
+
+1. création d’un vrai coffre chiffré avec un destinataire recovery séparé ;
+2. écriture d’une note Markdown et import d’une pièce jointe binaire ;
+3. création du backup ZIP portable ;
+4. restauration du backup dans un nouveau dossier ;
+5. réouverture du coffre restauré avec la **recovery private key** ;
+6. lecture de la note restaurée et des octets de la pièce jointe via le fournisseur de stockage chiffré.
+
+Ce scénario a réussi en CI avant la 1.0 sur les gates core Windows, macOS et Linux. C’est une preuve automatisée du mécanisme recovery ; elle ne remplace pas un test manuel distinct du propriétaire sur des données réelles.
+

@@ -2,11 +2,11 @@
 
 [🇺🇦 Українська](USER_GUIDE.uk.md) · [🇬🇧 English](USER_GUIDE.en.md) · [🇫🇷 Français](USER_GUIDE.fr.md) · [🇩🇪 Deutsch](USER_GUIDE.de.md) · [🇪🇸 Español](USER_GUIDE.es.md) · **🇰🇷 한국어** · [🇯🇵 日本語](USER_GUIDE.ja.md)
 
-**v0.3.19** 기준입니다. 우크라이나어판이 기준 문서입니다.
+**v1.0.0** 기준입니다. 우크라이나어판이 기준 문서입니다.
 
 ## 1. 처음 실행
 
-1. OS에 맞는 MD Notes를 설치합니다 (README 참고).
+1. OS에 맞는 MD Notes를 설치합니다 (README 참고). Windows의 v1.0 NSIS/MSI 설치 프로그램에는 offline WebView2와 VC runtime이 포함되며 portable ZIP은 Windows에 이미 설치된 WebView2 Runtime을 사용합니다.
 2. 필요하면 시작 화면에서 인터페이스 언어를 고릅니다.
 3. **「폴더 열기」**를 누르고 노트 폴더를 선택합니다. `.md` 파일이 있는 어떤 폴더든 되며, 저장소의 `sample-vault/`도 사용할 수 있습니다.
 4. MD Notes는 폴더를 기억하고 다음 실행 때 다시 엽니다.

@@ -5,7 +5,7 @@
 <!-- x-release-please-start-version -->
 > **リリース checkpoint: MD Notes v0.3.23**
 >
-> **開発状態: ACTIVE — roadmap 段階 v0.3「モバイルプラットフォームと同期」。**
+> **状態: desktop 機能開発完了。安定化も完了し、stable v1.0.0 を準備中。**
 
 ## MD Notes v0.3.23 をダウンロード
 
@@ -20,13 +20,15 @@
 
 > 現在のビルドは未署名/未公証のため、OS が通常のセキュリティ警告を表示することがあります。
 
+> **Windows 1.0 パッケージ:** NSIS/MSI は offline WebView2 installer と VC runtime を含みます。軽量 portable ZIP は Windows に既にインストールされている WebView2 Runtime を使用します。
+
 ## 製品について
 
 **MD Notes** は Markdown 個人ナレッジベースのためのクロスプラットフォーム local-first アプリです。通常の `.md/.markdown` ファイル、添付ファイル、公開 JSON メタデータを扱い、隠された独自形式は作りません。
 
 **データはユーザーのものです。** ノートは自分のファイルシステムに残り、任意のエディターで開き、Git でバージョン管理できます。MD Notes には独自のアプリケーションサーバー、分析、テレメトリーはありません。
 
-プラットフォーム: **Windows、macOS、Linux**。Android と iOS は v0.3 の対象で、CI はビルド可能性を検証していますが、物理端末での runtime 検証はまだ完了扱いではありません。
+Desktop 1.0 の対象: **Windows、macOS、Linux**。Android/iOS は引き続き CI でビルドしますが、物理端末での runtime 検証と mobile store 公開は 1.0 後に行います。
 
 ## 統合済み機能
 
