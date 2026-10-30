@@ -1,5 +1,16 @@
 # WORKLOG — MD Notes
 
+## FINAL RELEASE CHECKPOINT — 30.10.2026, v1.0.2
+
+- Owner: no new features; close release defects and maintain detailed GitHub + Google Drive protocol.
+- PR #204 merged as ee5e0b8ecddc94da1d386bfdfc4b17ba4c4e0343; PR #205 (with Cargo.lock synchronized to 1.0.2) merged as 3e99b014b9bdbc41f1cf798200dd21e0054fbc1f.
+- Release workflow 41114443139 COMPLETE / SUCCESS; stable v1.0.2 published with **13/13 assets**, including Windows portable/EXE/MSI, macOS universal DMG/tar.gz, Linux AppImage/DEB/RPM, START archive, SHA256SUMS, legal files.
+- Live main before docs update f1724c6d2e60b1452926d4897f200ea53e005685; open PRs none.
+- v1.0.1 incomplete release preserved immutable; v1.0.2 is current recommended download.
+- Automated packaging success is not a claim of interactive human acceptance on physical devices or local independent checksum download verification.
+- Next: use and stabilize; log actual owner defects. Google Drive checkpoint updated for handoff.
+
+
 Оновлено: **30.10.2026**
 
 > Operational log after the first stable desktop release. Older detail remains in Git history and Issue #8.
