@@ -1,15 +1,15 @@
 name: Dependency refresh audit
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - fix/v1.0.0-stable-audit-cleanup
 
 permissions:
   contents: read
 
 jobs:
   refresh:
-    if: ${{ github.head_ref == 'fix/v1.0.0-stable-audit-cleanup' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
