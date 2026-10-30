@@ -34,6 +34,13 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [1.0.1](https://github.com/RomanZavadaM/md-notes/compare/v1.0.0...v1.0.1) (2026-10-30)
+
+
+### Виправлення
+
+* stabilize MD Notes 1.0 after full audit ([c5e1d51](https://github.com/RomanZavadaM/md-notes/commit/c5e1d51612fe0c2f329639e034f636417c97e497))
+
 ## [1.0.0](https://github.com/RomanZavadaM/md-notes/compare/v0.3.23...v1.0.0) (2026-10-30)
 
 
