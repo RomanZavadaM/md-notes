@@ -1,0 +1,34 @@
+name: Release config dry run
+
+on:
+  push:
+    branches:
+      - audit/v1.0.0-release-config
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Validate release-please config without writes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx --yes release-please@latest release-pr \
+            --token="$GITHUB_TOKEN" \
+            --repo-url="${GITHUB_REPOSITORY}" \
+            --target-branch="audit/v1.0.0-release-config" \
+            --config-file="release-please-config.json" \
+            --manifest-file=".release-please-manifest.json" \
+            --dry-run \
+            --debug 2>&1 | tee release-please-dry-run.log
+          grep -q "app/package-lock.json" release-please-dry-run.log
