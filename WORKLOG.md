@@ -128,3 +128,15 @@ Published:
 **Use and stabilize.**
 
 Do not start a new feature automatically. Fix factual defects from real use first. Post-1.0 features only by explicit owner decision.
+
+
+## Release 1.0.2 — checkpoint 30.10.2026 після обриву чату
+
+- Рішення власника: жодних нових функцій; закрити всі знайдені проблеми випуску; ретельно вести GitHub Issue #8, WORKLOG і Google Drive.
+- PR #204 head c8a8a357c987c7ac5aa0800377aee073d4414c83: CI 41111012419 SUCCESS, Mobile smoke 41111012777 SUCCESS; злитий як main SHA ee5e0b8ecddc94da1d386bfdfc4b17ba4c4e0343.
+- Release-please run 41114073364 SUCCESS: створено PR #205 chore(main): release 1.0.2.
+- PR #205 спершу мав застарілі workspace package versions 1.0.1 у Cargo.lock, хоча manifests вже 1.0.2. Змінено дві workspace version до 1.0.2; commit 2b04cba2c6f4f8eae92a95b3a3fb5a1815351d81 у release PR.
+- PR #205 ВІДКРИТИЙ, НЕ злитий. Нові перевірки після зміни Cargo.lock треба дочекатися й перевірити; старі action_required на попередньому head не є результатом нового commit.
+- Неповний v1.0.1 лишається незмінним: tag не переписувати. Опубліковано три Windows assets; Linux/macOS відсутні через failed Release 41110399579.
+- Перед merge #205: green release metadata + locked Cargo + потрібні CI, і лише потім merge. Після merge: Release v1.0.2, Windows NSIS/MSI/portable, macOS universal DMG/tar.gz, Linux AppImage/DEB/RPM, додаткові assets, SHA256SUMS та посилання; перевірити кожен.
+- Google Drive checkpoint: MD_NOTES_CHECKPOINT_20261028_v0.3.21 (додана секція 30.10). Після release оновити Drive ще раз, а також START_HERE/PROJECT_STATE/WORKLOG в main.

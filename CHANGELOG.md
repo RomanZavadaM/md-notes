@@ -34,6 +34,13 @@
 - physical-device Android/iOS runtime validation;
 - optional Android SAF / iOS security-scoped external-folder adapters.
 
+## [1.0.2](https://github.com/RomanZavadaM/md-notes/compare/v1.0.1...v1.0.2) (2026-10-30)
+
+
+### Виправлення
+
+* repair release Cargo.lock synchronization ([#204](https://github.com/RomanZavadaM/md-notes/issues/204)) ([ee5e0b8](https://github.com/RomanZavadaM/md-notes/commit/ee5e0b8ecddc94da1d386bfdfc4b17ba4c4e0343))
+
 ## [1.0.1](https://github.com/RomanZavadaM/md-notes/compare/v1.0.0...v1.0.1) (2026-10-30)
 
 
