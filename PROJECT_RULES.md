@@ -9,7 +9,7 @@
 - `PROJECT_STATE.md` — лише інтегрований стан `main`: checkpoint, версія та наступний великий крок.
 - `WORKLOG.md` — оперативний знімок активної роботи: поточний slice, гілка/PR, останній перевірений SHA, блокери й точна наступна дія.
 - GitHub Issue #8 `MD Notes — live development ledger` — append-only журнал переходів стану активної роботи.
-- `Cargo.toml` (`[workspace.package] version`), `app/package.json` і `app/src-tauri/tauri.conf.json` — машинні джерела номера версії; їх синхронізує release-please.
+- `Cargo.toml` (`[workspace.package] version`), `app/package.json` і `app/src-tauri/tauri.conf.json` — основні машинні джерела номера версії; їх синхронізує release-please. Кореневий `version.txt` — лише похідний compatibility marker для стратегії release-please `simple`, не окреме джерело істини; CI зобов'язаний перевіряти його рівність основним джерелам і `app/package-lock.json`.
 - `docs/releases/` — незмінні нотатки опублікованих релізів.
 - `docs/adr/` — прийняті архітектурні рішення.
 - Якщо старий чат або застарілий документ суперечить актуальному `main`, пріоритет має `main`.
