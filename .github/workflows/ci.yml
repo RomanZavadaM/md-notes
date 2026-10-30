@@ -51,6 +51,10 @@ jobs:
               app/src/*|app/public/*|app/index.html|app/vite.config.*|app/tsconfig*.json)
                 frontend=true
                 ;;
+              app/scripts/*)
+                frontend=true
+                licenses=true
+                ;;
               app/package.json|app/package-lock.json)
                 frontend=true
                 licenses=true
@@ -126,6 +130,12 @@ jobs:
       - name: Install npm packages
         working-directory: app
         run: npm ci
+      - name: Verify seven-language i18n parity
+        working-directory: app
+        run: npm run i18n:check
+      - name: Audit production npm dependencies
+        working-directory: app
+        run: npm audit --omit=dev --audit-level=high
       - name: Typecheck and build frontend
         working-directory: app
         run: npm run build

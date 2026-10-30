@@ -26,6 +26,7 @@ import { GRAPH_ACTIVE_NOTE, GRAPH_OPEN_NOTE, openGraphWindow, type GraphActiveNo
 import { GRAPH_STRINGS } from "./i18n/graph";
 import { IMPORTER_STRINGS } from "./i18n/importer";
 import { MENU_STRINGS } from "./i18n/menu";
+import { GIT_STRINGS } from "./i18n/git";
 import { FileTree } from "./components/FileTree";
 import { LinksPanel } from "./components/LinksPanel";
 import { NameDialog } from "./components/NameDialog";
@@ -958,7 +959,7 @@ export default function App() {
         ...(vault && encrypted
           ? [{ label: ENCRYPTION_STRINGS[language].manageRecovery, onSelect: () => setRecoveryOpen(true) }]
           : []),
-        ...(vault && isDesktop ? [{ label: "Git…", onSelect: () => setGitOpen(true) }] : []),
+        ...(vault && isDesktop ? [{ label: `${GIT_STRINGS[language].title}…`, onSelect: () => setGitOpen(true) }] : []),
         ...(isDesktop ? [{ label: t.makeMarkdownDefault, onSelect: () => void configureMarkdownAssociation() }] : []),
         { label: t.about, onSelect: () => setAboutOpen(true), separatorBefore: true },
         ...(isDesktop ? [{ label: `${MENU_STRINGS[language].quit} (Ctrl+Q)`, onSelect: () => void quitApp(), separatorBefore: true }] : []),

@@ -80,7 +80,7 @@ export function EditorWindow() {
 
   useEffect(() => {
     if (!initialPath) {
-      setError("Missing note path");
+      setError(t.missingNotePath);
       return;
     }
     void loadNote(initialPath);
@@ -88,7 +88,7 @@ export function EditorWindow() {
     void api.encryptionStatus(vaultRoot)
       .then((status) => setEncrypted(status.encrypted))
       .catch(() => setEncrypted(false));
-  }, [initialPath, loadNote, vaultRoot]);
+  }, [initialPath, loadNote, t.missingNotePath, vaultRoot]);
 
   useEffect(() => {
     if (draft === savedContent) return;

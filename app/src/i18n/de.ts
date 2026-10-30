@@ -86,6 +86,7 @@ export const de: Strings = {
   trashTitle: "Löschen",
   trashConfirm: (name: string) => `„${name}“ in den Papierkorb des Tresors (.mdnotes/trash) verschieben?`,
   externalChange: "Die Notiz wurde außerhalb der App geändert. Beim Speichern werden diese Änderungen überschrieben.",
+  missingNotePath: "Der Pfad zur Notiz fehlt.",
   linksUpdated: (count: number) => `Links in Notizen aktualisiert: ${count}`,
 
   properties: "Eigenschaften",

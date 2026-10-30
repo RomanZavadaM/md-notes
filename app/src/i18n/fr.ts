@@ -86,6 +86,7 @@ export const fr: Strings = {
   trashTitle: "Suppression",
   trashConfirm: (name: string) => `Déplacer « ${name} » dans la corbeille du coffre (.mdnotes/trash) ?`,
   externalChange: "La note a été modifiée en dehors de l'application. Votre enregistrement écrasera ces modifications.",
+  missingNotePath: "Le chemin de la note est manquant.",
   linksUpdated: (count: number) => `Liens mis à jour dans les notes : ${count}`,
 
   properties: "Propriétés",
