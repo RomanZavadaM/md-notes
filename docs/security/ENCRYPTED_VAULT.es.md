@@ -2,7 +2,7 @@
 
 [🇺🇦 Українська](ENCRYPTED_VAULT.uk.md) · [🇬🇧 English](ENCRYPTED_VAULT.en.md) · [🇫🇷 Français](ENCRYPTED_VAULT.fr.md) · [🇩🇪 Deutsch](ENCRYPTED_VAULT.de.md) · **🇪🇸 Español** · [🇰🇷 한국어](ENCRYPTED_VAULT.ko.md) · [🇯🇵 日本語](ENCRYPTED_VAULT.ja.md)
 
-> Válido para MD Notes v0.3.23. El ucraniano es el texto canónico. Este documento describe el comportamiento real del producto, no solo la intención de ADR-0007.
+> Válido para MD Notes v1.0.0. El ucraniano es el texto canónico. Este documento describe el comportamiento real del producto, no solo la intención de ADR-0007.
 
 ## 1. Propósito
 
@@ -27,7 +27,7 @@ El proveedor de almacenamiento inferior no debe recibir texto plano de notas o a
 
 ## 3. Nombres aleatorios en vault nuevos
 
-Los nuevos vault de v0.3.23 usan **random names**, por ejemplo `k8r2p6m1q4x7z9ab.age`. La ruta lógica queda dentro del contenedor cifrado.
+Los nuevos vault de v1.0.0 usan **random names**, por ejemplo `k8r2p6m1q4x7z9ab.age`. La ruta lógica queda dentro del contenedor cifrado.
 
 Esto oculta nombres de notas y carpetas frente al sistema de archivos y Git. Los vault antiguos pueden seguir en modo `named`, donde los nombres son visibles aunque el contenido esté cifrado.
 
