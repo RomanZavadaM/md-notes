@@ -48,7 +48,11 @@ Backup ADR-0009 має брати консистентний snapshot, врах�
 - Натискання вершини графа, як погоджено раніше, **оновлює активну нотатку головного редактора**, не перекидаючи чи не закриваючи відокремлені вікна.
 
 
-## Runtime результат v0.3.21 — 28.10.2026
+## Історичний журнал runtime-приймання
+
+> Усі проміжні FAIL / NOT DONE / pending-статуси нижче є історичними checkpoint-записами. Їх перевизначає фінальний статус на початку ADR: **прийнято власником 29.10.2026 (r8)** і включено до stable v1.0.0.
+
+### Runtime результат v0.3.21 — 28.10.2026
 
 Ручний тест власника показав, що реалізація не відповідає погодженій поведінці:
 
@@ -142,8 +146,8 @@ Automated checks and Windows build are green, but **ADR-0010 remains NOT DONE un
 - Inner ZIP: `MD-Notes-TEST-ADR0010-r4-572f4b01-Windows-x64-portable.zip`; SHA256 `6206a01e639feb0b86b2b3bab20c5e1128404de34f83168d96be51082570a155`.
 - ZIP downloaded and independently verified: checksum matches; `unzip -t` reports no errors.
 - Product SemVer remains 0.3.21; TEST r4 is not v0.3.22.
-- **ADR-0010 remains NOT DONE until owner runtime verdict for r4.** Single next action: test whether opening detached graph visibly tiles `main + graph` side-by-side on Windows; also verify graph clicks update visible main and per-tab `↗` detach still works.
-- Do not start ADR-0009 backup/restore until this verdict is recorded.
+- **На цьому історичному checkpoint ADR-0010 ще очікував owner runtime verdict для r4.** Single next action: test whether opening detached graph visibly tiles `main + graph` side-by-side on Windows; also verify graph clicks update visible main and per-tab `↗` detach still works.
+- Історична умова цього checkpoint: ADR-0009 не починати до фіксації verdict; пізніше цю умову виконано, а backup/restore увійшов до stable 1.0.0.
 
 
 ## 29.10.2026 — ADR-0010 r4 runtime FAIL → r5 workspace model
@@ -171,7 +175,7 @@ Automated checks and Windows build are green, but **ADR-0010 remains NOT DONE un
 - Inner ZIP SHA256 `c83cd9fef593dcca61e82c9e442b731138349dfe86949bf1d62645410e637e88`.
 - `MD Notes.exe` SHA256 `83b1aad02e82329efd8cbfde2c73e74118f7b5d3faf7812fe5f5a105cb7f5954`; size `29545984`; build timestamp `2026-10-29 13:14:40 UTC`.
 - ZIP downloaded and verified: checksum matches; archive integrity test passed.
-- **ADR-0010 remains NOT DONE until owner runtime verdict for r5.** Primary acceptance: detach graph → main visible left + graph compact right; `⇆` re-tile works; status reports dimensions/error; graph clicks update visible main.
+- **На цьому історичному checkpoint ADR-0010 ще очікував owner runtime verdict для r5.** Primary acceptance: detach graph → main visible left + graph compact right; `⇆` re-tile works; status reports dimensions/error; graph clicks update visible main.
 - Release Please PR #154 remains separate; do not merge/release 0.3.22 before runtime verdict.
 
 
