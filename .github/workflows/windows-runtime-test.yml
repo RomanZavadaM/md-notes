@@ -1,0 +1,98 @@
+name: Windows runtime test
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/windows-runtime-test.yml"
+      - "app/**"
+      - "crates/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: windows-runtime-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  portable:
+    name: Windows x64 portable test
+    runs-on: windows-latest
+    env:
+      PRODUCT_CANDIDATE_SHA: 95a4cdf5f74a8e65978da3daf86f3f439151b252
+      ARTIFACT_BASENAME: MD-Notes-TEST-file-tree-multiselect-r1-95a4cdf5-Windows-x64-portable
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install npm packages
+        working-directory: app
+        run: npm ci
+
+      - name: Build Windows executable
+        working-directory: app
+        run: npm run tauri -- build --no-bundle
+
+      - name: Assemble portable test package
+        shell: pwsh
+        run: |
+          $dir = Join-Path $PWD "dist/$env:ARTIFACT_BASENAME"
+          New-Item -ItemType Directory -Force -Path $dir | Out-Null
+
+          $candidates = @(
+            (Join-Path $PWD "target/release/md-notes.exe"),
+            (Join-Path $PWD "app/src-tauri/target/release/md-notes.exe")
+          )
+          $exe = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $exe) {
+            throw "Portable executable not found. Checked: $($candidates -join ', ')"
+          }
+
+          Copy-Item $exe (Join-Path $dir "MD Notes.exe")
+          Copy-Item "LICENSE.md" $dir
+          Copy-Item "COPYRIGHT.md" $dir
+          Copy-Item "THIRD_PARTY_NOTICES.md" $dir
+
+          @"
+          MD Notes — file-tree multi-select r1 Windows runtime test
+
+          TEST BUILD — not a published release.
+          Product candidate: $env:PRODUCT_CANDIDATE_SHA
+          Purpose: manual Windows acceptance of multi-select and batch trash.
+          Runtime PASS must be reported by the owner; green CI alone is not acceptance.
+
+          Test:
+          1. Ordinary click: note opens normally; folder toggles normally.
+          2. Ctrl-click: add/remove separate files and folders without opening/toggling them.
+          3. Shift-click: select a visible contiguous range.
+          4. Select a folder plus one of its children; batch trash must process the subtree once.
+          5. Batch trash several selected roots; deleted open vault tabs must disappear safely.
+          6. Confirm remaining tabs stay usable and the active tab falls back safely if its note was trashed.
+          7. Cancel the confirmation once and verify nothing changes.
+          "@ | Set-Content -Encoding UTF8 (Join-Path $dir "README-TEST.txt")
+
+          $zip = Join-Path $PWD "dist/$env:ARTIFACT_BASENAME.zip"
+          Compress-Archive -Path "$dir/*" -DestinationPath $zip -Force
+
+          $hash = (Get-FileHash -Algorithm SHA256 $zip).Hash.ToLowerInvariant()
+          "$hash  $env:ARTIFACT_BASENAME.zip" | Set-Content -Encoding ASCII (Join-Path $PWD "dist/SHA256SUMS-file-tree-multiselect-r1.txt")
+
+      - name: Upload Windows runtime test artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_BASENAME }}
+          path: |
+            dist/${{ env.ARTIFACT_BASENAME }}.zip
+            dist/SHA256SUMS-file-tree-multiselect-r1.txt
+          if-no-files-found: error
+          retention-days: 14
