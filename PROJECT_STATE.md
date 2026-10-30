@@ -1,5 +1,18 @@
 # PROJECT_STATE — MD Notes
 
+## ПІДСУМКОВИЙ ПРОТОКОЛ ЗАКРИТТЯ ВИПУСКУ — 30.10.2026
+
+- Власник: завершити випуск, **не починати нові функції**, вести протоколи GitHub + Google Drive.
+- Перевірений stable: **v1.0.2**, https://github.com/RomanZavadaM/md-notes/releases/tag/v1.0.2; GitHub Release workflow **41114443139 SUCCESS**, у релізі **13 assets**.
+- Windows: portable ZIP, NSIS EXE, MSI; macOS: Universal DMG, app tar.gz; Linux: AppImage, DEB, RPM; додатково START ZIP, SHA256SUMS.txt, LICENSE.md, COPYRIGHT.md, THIRD_PARTY_NOTICES.md.
+- Закрито проблему невідповідності Cargo.lock у release-please: PR #204 merged SHA ee5e0b8ecddc94da1d386bfdfc4b17ba4c4e0343; release PR #205 merged SHA 3e99b014b9bdbc41f1cf798200dd21e0054fbc1f; CI 41114353779 SUCCESS.
+- Неповний v1.0.1 зберігається як історичний immutable tag (не переписувати). Новий рекомендований реліз — v1.0.2.
+- Live GitHub перед заключним протоколом: main SHA 3849b5cf1e15c137eac78253669959b81f3477ae; відкритих PR 0.
+- Автоматична збірка/публікація підтверджена. **Не заявляти** про ручне GUI-приймання на кожній ОС, реальне відновлення власного сховища чи окреме локальне скачування й звірку SHA256 кожного файла.
+- Наступний режим: використання та стабілізація. Лише підтверджені дефекти, нові функції — за окремим рішенням. Усі наступні чати починають із START_HERE.md і звіряють live GitHub.
+- Дзеркало протоколу: GitHub Issue #8, Google Drive документ MD_NOTES_CHECKPOINT_20261028_v0.3.21 (із новими секціями 30.10.2026).
+
+
 ## АКТУАЛЬНИЙ СТАН — stable desktop v1.0.2 (30.10.2026)
 
 - **Latest stable release v1.0.2**; release workflow 41114443139 SUCCESS, 13 artifacts для Windows/macOS/Linux та юридичних/контрольних файлів.
