@@ -91,7 +91,7 @@
 3. `cargo test -p notes-core`;
 4. `npm ci` і `npm run build` у `app/` (перевірка типів TypeScript і збірка інтерфейсу);
 4a. license gate: `cargo deny check licenses` і `npm run licenses` у `app/`;
-5. lock-файли (`Cargo.lock`, `app/package-lock.json`) актуальні; за потреби оновити їх workflow `Lockfiles`;
+5. lock-файли (`Cargo.lock`, `app/package-lock.json`) актуальні; Rust CI запускається з `--locked`/`cargo metadata --locked`, тому застарілий `Cargo.lock` є blocker; за потреби оновити lockfile контрольованим workflow/PR;
 6. для user-visible змін — перевірити зміну в запущеному застосунку (`npm run tauri dev`) або чесно зазначити в PR, що runtime-перевірки не було;
 7. version, показана в інтерфейсі, походить з build metadata; hardcoded номери версій в UI заборонені;
 8. перевірити, що робочі сховища, особисті нотатки, ключі, БД індексу та персональні файли не потрапили до Git.
@@ -103,7 +103,7 @@ CI використовує path-aware routing і не повинен без п�
 - frontend-only зміни проходять Node/frontend build без Rust matrix і без Mobile smoke;
 - Rust/core/Tauri зміни проходять повний Rust matrix на Linux/Windows/macOS + Tauri clippy;
 - Android/iOS Mobile smoke запускається автоматично лише для ready/non-draft змін, що зачіпають native/core/dependency boundary, або вручну через `workflow_dispatch`;
-- license gates запускаються при зміні dependency metadata або консервативно для невідомих non-doc paths;
+- license/advisory gates запускаються при зміні dependency metadata або консервативно для невідомих non-doc paths; окремий weekly `Security audit` перевіряє RustSec та production npm advisories навіть без змін коду;
 - невідомі non-doc paths за замовчуванням отримують повну перевірку, а не пропускаються;
 - release-please PR не повинен запускати повний Rust/Tauri/Mobile набір; для нього достатня перевірка release metadata/version consistency перед release checkpoint;
 - docs-only та workflow-only push у `main` не запускає release-please;
