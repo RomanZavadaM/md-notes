@@ -19,6 +19,13 @@ export interface EncryptionStrings {
   importing: string;
   badge: string;
   badgeTitle: string;
+  manageRecovery: string;
+  manageRecoveryTitle: string;
+  manageRecoveryText: string;
+  addRecovery: string;
+  addingRecovery: string;
+  recoveryAdded: (files: number) => string;
+  attachmentExternalOpenUnavailable: string;
 }
 
 export const ENCRYPTION_STRINGS: Record<LanguageCode, EncryptionStrings> = {
@@ -44,6 +51,13 @@ export const ENCRYPTION_STRINGS: Record<LanguageCode, EncryptionStrings> = {
     importing: "Перевірка ключа…",
     badge: "Зашифровано",
     badgeTitle: "Нотатки зберігаються на диску зашифрованими (age)",
+    manageRecovery: "Керувати ключем відновлення…",
+    manageRecoveryTitle: "Додати ключ відновлення",
+    manageRecoveryText: "Додайте ще один публічний age-ключ. MD Notes повторно зашифрує файли сховища для всіх одержувачів; приватний recovery key сюди не вставляйте.",
+    addRecovery: "Додати ключ",
+    addingRecovery: "Перешифрування…",
+    recoveryAdded: (files) => `Ключ відновлення додано. Перешифровано файлів: ${files}.`,
+    attachmentExternalOpenUnavailable: "У зашифрованому сховищі зовнішнє відкриття вимкнене, щоб не створювати plaintext-копію на диску.",
   },
   en: {
     createEncrypted: "Encrypt this vault",
@@ -67,6 +81,13 @@ export const ENCRYPTION_STRINGS: Record<LanguageCode, EncryptionStrings> = {
     importing: "Checking key…",
     badge: "Encrypted",
     badgeTitle: "Notes are stored on disk encrypted (age)",
+    manageRecovery: "Manage recovery key…",
+    manageRecoveryTitle: "Add a recovery key",
+    manageRecoveryText: "Add another public age key. MD Notes will re-encrypt vault files for all recipients; do not paste the private recovery key here.",
+    addRecovery: "Add key",
+    addingRecovery: "Re-encrypting…",
+    recoveryAdded: (files) => `Recovery key added. Files re-encrypted: ${files}.`,
+    attachmentExternalOpenUnavailable: "External opening is disabled for encrypted vaults so MD Notes does not create a plaintext copy on disk.",
   },
   fr: {
     createEncrypted: "Chiffrer ce coffre",
@@ -90,6 +111,13 @@ export const ENCRYPTION_STRINGS: Record<LanguageCode, EncryptionStrings> = {
     importing: "Vérification de la clé…",
     badge: "Chiffré",
     badgeTitle: "Les notes sont stockées chiffrées (age) sur le disque",
+    manageRecovery: "Gérer la clé de récupération…",
+    manageRecoveryTitle: "Ajouter une clé de récupération",
+    manageRecoveryText: "Ajoutez une autre clé publique age. MD Notes rechiffrera les fichiers pour tous les destinataires ; ne collez pas ici la clé privée de récupération.",
+    addRecovery: "Ajouter la clé",
+    addingRecovery: "Rechiffrement…",
+    recoveryAdded: (files) => `Clé de récupération ajoutée. Fichiers rechiffrés : ${files}.`,
+    attachmentExternalOpenUnavailable: "L’ouverture externe est désactivée pour les coffres chiffrés afin de ne pas créer de copie en clair sur le disque.",
   },
   de: {
     createEncrypted: "Tresor verschlüsseln",
@@ -113,6 +141,13 @@ export const ENCRYPTION_STRINGS: Record<LanguageCode, EncryptionStrings> = {
     importing: "Schlüssel wird geprüft…",
     badge: "Verschlüsselt",
     badgeTitle: "Notizen werden verschlüsselt (age) auf der Festplatte gespeichert",
+    manageRecovery: "Wiederherstellungsschlüssel verwalten…",
+    manageRecoveryTitle: "Wiederherstellungsschlüssel hinzufügen",
+    manageRecoveryText: "Fügen Sie einen weiteren öffentlichen age-Schlüssel hinzu. MD Notes verschlüsselt die Vault-Dateien für alle Empfänger neu; fügen Sie hier keinen privaten Recovery-Schlüssel ein.",
+    addRecovery: "Schlüssel hinzufügen",
+    addingRecovery: "Neuverschlüsselung…",
+    recoveryAdded: (files) => `Wiederherstellungsschlüssel hinzugefügt. Neu verschlüsselte Dateien: ${files}.`,
+    attachmentExternalOpenUnavailable: "Externes Öffnen ist bei verschlüsselten Vaults deaktiviert, damit keine Klartextkopie auf dem Datenträger entsteht.",
   },
   es: {
     createEncrypted: "Cifrar esta bóveda",
@@ -136,6 +171,13 @@ export const ENCRYPTION_STRINGS: Record<LanguageCode, EncryptionStrings> = {
     importing: "Comprobando la clave…",
     badge: "Cifrada",
     badgeTitle: "Las notas se guardan cifradas (age) en el disco",
+    manageRecovery: "Gestionar clave de recuperación…",
+    manageRecoveryTitle: "Añadir una clave de recuperación",
+    manageRecoveryText: "Añade otra clave pública age. MD Notes volverá a cifrar los archivos para todos los destinatarios; no pegues aquí la clave privada de recuperación.",
+    addRecovery: "Añadir clave",
+    addingRecovery: "Volviendo a cifrar…",
+    recoveryAdded: (files) => `Clave de recuperación añadida. Archivos recifrados: ${files}.`,
+    attachmentExternalOpenUnavailable: "La apertura externa está desactivada en bóvedas cifradas para no crear una copia en texto plano en el disco.",
   },
   ko: {
     createEncrypted: "보관함 암호화",
@@ -158,6 +200,13 @@ export const ENCRYPTION_STRINGS: Record<LanguageCode, EncryptionStrings> = {
     importing: "키 확인 중…",
     badge: "암호화됨",
     badgeTitle: "노트는 암호화(age)되어 디스크에 저장됩니다",
+    manageRecovery: "복구 키 관리…",
+    manageRecoveryTitle: "복구 키 추가",
+    manageRecoveryText: "추가 공개 age 키를 등록합니다. MD Notes가 모든 recipient용으로 파일을 다시 암호화합니다. 개인 recovery 키는 여기에 붙여 넣지 마세요.",
+    addRecovery: "키 추가",
+    addingRecovery: "다시 암호화 중…",
+    recoveryAdded: (files) => `복구 키를 추가했습니다. 다시 암호화한 파일: ${files}개.`,
+    attachmentExternalOpenUnavailable: "암호화 vault에서는 디스크에 평문 복사본을 만들지 않도록 외부 열기를 비활성화합니다.",
   },
   ja: {
     createEncrypted: "保管庫を暗号化",
@@ -180,5 +229,12 @@ export const ENCRYPTION_STRINGS: Record<LanguageCode, EncryptionStrings> = {
     importing: "鍵を確認中…",
     badge: "暗号化済み",
     badgeTitle: "ノートは暗号化（age）されてディスクに保存されます",
+    manageRecovery: "復旧キーを管理…",
+    manageRecoveryTitle: "復旧キーを追加",
+    manageRecoveryText: "別の公開 age キーを追加します。MD Notes は全 recipient 向けにファイルを再暗号化します。秘密の recovery key はここに貼り付けないでください。",
+    addRecovery: "キーを追加",
+    addingRecovery: "再暗号化中…",
+    recoveryAdded: (files) => `復旧キーを追加しました。再暗号化したファイル: ${files}。`,
+    attachmentExternalOpenUnavailable: "暗号化 vault では、ディスクに平文コピーを作らないため外部アプリでの表示を無効にしています。",
   },
 };

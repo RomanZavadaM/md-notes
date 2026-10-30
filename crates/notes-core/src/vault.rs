@@ -197,6 +197,16 @@ impl Vault {
         self.storage.read_note(rel)
     }
 
+    /// Reads a visible vault file through the active storage provider.
+    /// Encrypted-vault plaintext therefore exists only in memory.
+    pub fn read_file_bytes(&self, rel: &str) -> Result<Vec<u8>> {
+        let rel = paths::normalize(rel)?;
+        if rel.is_empty() || rel.split('/').any(|part| part.starts_with('.')) {
+            return Err(Error::InvalidPath(rel));
+        }
+        self.storage.provider().read(&rel)
+    }
+
     /// Saves a note atomically through the storage provider.
     pub fn write_note(&self, rel: &str, content: &str) -> Result<Note> {
         self.storage.write_note(rel, content)
@@ -366,10 +376,19 @@ mod tests {
         let (_dir, vault) = vault();
         assert!(vault.write_note("../outside.md", "x").is_err());
         assert!(vault.write_note("file.txt", "x").is_err());
+        assert!(vault.read_file_bytes("../outside.bin").is_err());
+        assert!(vault.read_file_bytes(".mdnotes/config.json").is_err());
         assert!(matches!(
             vault.read_note("missing.md"),
             Err(Error::NotFound(_))
         ));
+    }
+
+    #[test]
+    fn reads_visible_file_bytes_through_storage_provider() {
+        let (dir, vault) = vault();
+        std::fs::write(dir.path().join("image.bin"), b"asset").unwrap();
+        assert_eq!(vault.read_file_bytes("image.bin").unwrap(), b"asset");
     }
 
     #[test]
