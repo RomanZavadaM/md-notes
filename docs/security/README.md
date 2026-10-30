@@ -6,7 +6,7 @@
 
 🇺🇦 [Українська](ENCRYPTED_VAULT.uk.md) · 🇬🇧 [English](ENCRYPTED_VAULT.en.md) · 🇫🇷 [Français](ENCRYPTED_VAULT.fr.md) · 🇩🇪 [Deutsch](ENCRYPTED_VAULT.de.md) · 🇪🇸 [Español](ENCRYPTED_VAULT.es.md) · 🇰🇷 [한국어](ENCRYPTED_VAULT.ko.md) · 🇯🇵 [日本語](ENCRYPTED_VAULT.ja.md)
 
-Описує age/X25519, random-name layout, secret store, recovery key, відкритий cache/index, Git/backup і фактичні межі захисту v0.3.23.
+Описує age/X25519, random-name layout, secret store, recovery key, відкритий cache/index, Git/backup і фактичні межі захисту v1.0.0.
 
 ## Backup і відновлення
 
