@@ -252,9 +252,11 @@ jobs:
           package = json.loads(Path("app/package.json").read_text(encoding="utf-8"))
           package_lock = json.loads(Path("app/package-lock.json").read_text(encoding="utf-8"))
           tauri = json.loads(Path("app/src-tauri/tauri.conf.json").read_text(encoding="utf-8"))
+          version_marker = Path("version.txt").read_text(encoding="utf-8").strip()
 
           versions = {
               "Cargo.toml": cargo["workspace"]["package"]["version"],
+              "version.txt": version_marker,
               "app/package.json": package["version"],
               "app/package-lock.json": package_lock["version"],
               "app/package-lock.json#root": package_lock["packages"][""]["version"],
