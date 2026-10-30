@@ -104,3 +104,11 @@ M1–M3 は公開済み **v0.3.21** に含まれます。競合ガード、分�
 - ノート、添付ファイル、設定、テンプレート、ゴミ箱を含み、`.git`、`.mdnotes/cache`、一時的な OS ファイルは除外します。
 - 暗号化保管庫は **復号せずに** コピーされ、秘密鍵/復旧キーはアーカイブに保存されません。
 - 復元はパス、サイズ、チェックサムを先に検証し、その後 **新しい保管庫フォルダー**を作成して既存の保管庫を上書きしません。
+
+## 詳細な原則と手順
+
+- [知識リンクとグラフ](../concepts/KNOWLEDGE_GRAPH.ja.md)
+- [暗号化 Vault](../security/ENCRYPTED_VAULT.ja.md)
+- [Backup と復旧](../security/BACKUP_AND_RECOVERY.ja.md)
+- [AI/自動化向け正本 contract](../ai/README.md)
+

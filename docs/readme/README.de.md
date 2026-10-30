@@ -104,3 +104,11 @@ Im Menü **Datei** gibt es **Sicherung erstellen…** und **Sicherung wiederhers
 - Notizen, Anhänge, Konfiguration, Vorlagen und Papierkorb werden gesichert; `.git`, `.mdnotes/cache` und temporäre Systemdateien werden ausgeschlossen;
 - verschlüsselte Tresore werden **ohne Entschlüsselung** kopiert; private/Wiederherstellungsschlüssel werden nie ins Archiv gelegt;
 - die Wiederherstellung prüft zuerst Pfade, Größen und Prüfsummen und erstellt danach einen **neuen** Tresorordner, ohne den bestehenden zu überschreiben.
+
+## Detaillierte Prinzipien und Verfahren
+
+- [Wissensverknüpfungen und Graph](../concepts/KNOWLEDGE_GRAPH.de.md)
+- [Verschlüsselter Vault](../security/ENCRYPTED_VAULT.de.md)
+- [Backup und Wiederherstellung](../security/BACKUP_AND_RECOVERY.de.md)
+- [Kanonische KI-/Automatisierungsverträge](../ai/README.md)
+

@@ -104,3 +104,11 @@ El menú **Archivo** incluye **Crear copia de seguridad…** y **Restaurar copia
 - se incluyen notas, adjuntos, configuración, plantillas y papelera; se excluyen `.git`, `.mdnotes/cache` y archivos temporales del sistema;
 - las bóvedas cifradas se copian **sin descifrar**; la clave privada/de recuperación nunca se guarda en el archivo;
 - la restauración verifica primero rutas, tamaños y sumas de control y después crea una **nueva** carpeta de bóveda sin sobrescribir la existente.
+
+## Principios y procedimientos detallados
+
+- [Enlaces y grafo de conocimiento](../concepts/KNOWLEDGE_GRAPH.es.md)
+- [Almacén cifrado](../security/ENCRYPTED_VAULT.es.md)
+- [Backup y recuperación](../security/BACKUP_AND_RECOVERY.es.md)
+- [Contratos canónicos para IA/automatización](../ai/README.md)
+

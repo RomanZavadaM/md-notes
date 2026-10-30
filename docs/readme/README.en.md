@@ -104,3 +104,11 @@ The **File** menu provides manual **Create backup…** and **Restore backup…**
 - notes, attachments, configuration, templates and trash are included; `.git`, `.mdnotes/cache` and temporary OS noise are excluded;
 - encrypted vaults are copied **without decryption**; private/recovery keys are never stored in the archive;
 - restore validates paths, sizes and checksums first, then creates a **new** vault folder and never overwrites the current vault.
+
+## Detailed principles and procedures
+
+- [Knowledge links and graph](../concepts/KNOWLEDGE_GRAPH.en.md)
+- [Encrypted vault](../security/ENCRYPTED_VAULT.en.md)
+- [Backup and recovery](../security/BACKUP_AND_RECOVERY.en.md)
+- [Canonical AI/automation contracts](../ai/README.md)
+

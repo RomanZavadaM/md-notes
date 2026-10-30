@@ -102,6 +102,8 @@ npm run tauri dev
 - [Керівництво користувача](docs/user-guide/USER_GUIDE.uk.md) · [усі мови](docs/user-guide/README.md)
 - [Архітектура](docs/architecture.md) · [Модель даних](docs/data-model.md) · [Мова запитів](docs/query-language.md) · [ADR](docs/adr/)
 - [Roadmap](docs/roadmap.md) · [Changelog](CHANGELOG.md) · [Release notes](docs/releases/)
+- **Детальні принципи:** [зв’язки і граф](docs/concepts/KNOWLEDGE_GRAPH.uk.md) · [зашифроване сховище](docs/security/ENCRYPTED_VAULT.uk.md) · [backup і відновлення](docs/security/BACKUP_AND_RECOVERY.uk.md)
+- **Для ШІ/автоматизації:** [канонічні контракти](docs/ai/README.md)
 
 ## Дані, приватність і Git credentials
 

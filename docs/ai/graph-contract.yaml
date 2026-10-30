@@ -1,0 +1,95 @@
+contract: md-notes-graph/1
+applies_to: "v0.3.23 semantics"
+canonical_human_doc: ../concepts/KNOWLEDGE_GRAPH.uk.md
+
+source_of_truth:
+  notes: markdown_and_yaml_front_matter
+  index: rebuildable_cache
+  visual_layout_semantic: false
+
+ordinary_link:
+  edge_direction: source_to_resolved_target
+  duplicate_edges: deduplicate
+  self_edge: ignore
+  unresolved_target: no_node_no_edge
+  semantic_meaning: reference_only
+  forbidden_implicit_meanings:
+    - ownership
+    - causality
+    - control
+    - legal_direction
+
+typed_relation:
+  container: front_matter.relations
+  required:
+    - to
+  optional:
+    - type
+    - grade
+    - origin
+    - status
+    - evidence
+    - dir
+  direction:
+    default: holder_to_target
+    reverse_when:
+      dir: in
+  unresolved_target: ignore_relation
+  self_relation: ignore_relation
+  preserve_unknown_front_matter_fields: true
+
+grade:
+  format: "^[A-F][1-6]$"
+  letter_meaning: source_reliability
+  digit_meaning: claim_reliability
+  strongest: A1
+  weakest: F6
+  absent_meaning: not_formally_graded
+  ui_bands:
+    reliable: [1, 2]
+    medium: [3, 4]
+    weak_rumour: [5, 6]
+  ai_may_invent_without_basis: false
+
+global_graph:
+  nodes: all_indexed_notes
+  edges: resolved_ordinary_links
+  typed_relations: overlay_between_known_nodes
+  isolated_nodes_allowed: true
+
+local_graph:
+  version: v0.3.23
+  focus_included: true
+  ordinary_link_hops: 1
+  typed_relation_expands_snapshot: false
+  typed_relation_overlay_requires_both_endpoints_visible: true
+
+relation_tree:
+  directional: true
+  pair_grade: best_grade_among_pair_edges
+  path_grade: weakest_grade_on_root_path
+  average_path_grade: false
+
+ai_write_policy:
+  must_not_invent:
+    - relation
+    - type
+    - grade
+    - origin
+    - status
+    - evidence
+  use_plain_link_for: ordinary_reference
+  use_typed_relation_for:
+    - explicit_semantics
+    - direction
+    - provenance
+    - evidence
+  avoid_bidirectional_duplicate_fact: true
+  preserve_unrelated_content: true
+
+forbidden_inference:
+  - visual_proximity_implies_relation
+  - common_neighbor_implies_common_owner
+  - missing_edge_implies_no_real_relation
+  - weak_grade_implies_false
+  - ordinary_link_implies_legal_relation
