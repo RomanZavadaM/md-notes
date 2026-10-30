@@ -904,26 +904,31 @@ export default function App() {
     if (!confirmed) return;
     if (!(await saveAllOpenDocuments())) return;
 
+    const trashed: TreeEntry[] = [];
     try {
       for (const entry of roots) {
         await api.trashEntry(entry.path);
+        trashed.push(entry);
       }
-
-      const isRemoved = (path: string) =>
-        roots.some((entry) => path === entry.path || (entry.kind === "dir" && path.startsWith(`${entry.path}/`)));
-      const remaining = openDocumentsRef.current.filter((document) => !isRemoved(document.note.path));
-      const current = noteRef.current;
-      setDocuments(remaining);
-      if (current && isRemoved(current.path)) {
-        activateDocument(remaining.length > 0 ? remaining[remaining.length - 1] : null);
-      }
-
-      setSelected(null);
-      setSelectedEntries([]);
-      await refreshTree();
-      bump();
     } catch (e) {
       report(e);
+    }
+
+    if (trashed.length > 0) {
+      const isRemoved = (path: string) =>
+        trashed.some((entry) => path === entry.path || (entry.kind === "dir" && path.startsWith(`${entry.path}/`)));
+      const remainingDocuments = openDocumentsRef.current.filter((document) => !isRemoved(document.note.path));
+      const current = noteRef.current;
+      setDocuments(remainingDocuments);
+      if (current && isRemoved(current.path)) {
+        activateDocument(remainingDocuments.length > 0 ? remainingDocuments[remainingDocuments.length - 1] : null);
+      }
+
+      const remainingSelection = chosen.filter((entry) => !isRemoved(entry.path));
+      setSelectedEntries(remainingSelection);
+      setSelected(remainingSelection.length > 0 ? remainingSelection[remainingSelection.length - 1] : null);
+      await refreshTree();
+      bump();
     }
   };
 
