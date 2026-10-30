@@ -4,3 +4,5 @@
 fn main() {
     md_notes_lib::run()
 }
+
+// Audit-only CI trigger for stable v1.0.0 verification. Do not merge.
