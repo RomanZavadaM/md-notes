@@ -68,13 +68,15 @@ jobs:
           cache: npm
           cache-dependency-path: app/package-lock.json
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
       - name: Install frontend dependencies
         working-directory: app
         run: npm ci
       - name: Verify locked Rust graph
         run: cargo metadata --locked --format-version 1 > /dev/null
-      - name: Build macOS DMG smoke
+      - name: Build macOS Universal DMG smoke
         working-directory: app
-        run: npm run tauri build -- --bundles dmg
+        run: npm run tauri build -- --target universal-apple-darwin --bundles dmg
       - name: Verify DMG exists
         run: ls target/release/bundle/dmg/*.dmg
