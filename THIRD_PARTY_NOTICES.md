@@ -12,7 +12,7 @@ Core library `crates/notes-core`:
 - gix (Gitoxide) — MIT OR Apache-2.0, Git repository and HTTPS synchronization foundation
 - rusqlite — MIT, SQLite bindings for the vault index; bundles **SQLite** (public domain)
 - serde, serde_json — MIT OR Apache-2.0, serialization
-- serde_yaml — MIT OR Apache-2.0, YAML front matter parsing
+- serde_norway (imported in code as `serde_yaml`) — MIT OR Apache-2.0, maintained YAML front matter parser compatible with the former serde_yaml API; uses maintained `unsafe-libyaml-norway` (MIT)
 - thiserror — MIT OR Apache-2.0, error types
 - ulid — MIT, stable note identifiers
 - age (optional feature `encrypted-vault`, ADR-0007) — MIT OR Apache-2.0, file encryption in the open age format; no default features (no async, CLI, plugin or SSH code)
