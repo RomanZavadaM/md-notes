@@ -1,7 +1,7 @@
 # MD Notes Encrypted Vault Contract for AI and automation
 
 **Contract:** `md-notes-encrypted-vault/2`  
-**Applies to:** current v0.3.23 behavior  
+**Applies to:** current v1.0.0 behavior  
 **Audience:** AI agents, automation, backup/migration tooling and code changes that touch encrypted vaults.
 
 ## 1. Security model
@@ -15,7 +15,7 @@
 ## 2. Current physical layouts
 
 ### New vaults
-New v0.3.23 encrypted vaults use `random` name layout:
+New v1.0.0 encrypted vaults use `random` name layout:
 - physical files use random `*.age` names;
 - logical note/folder paths live inside the encrypted MD Notes envelope;
 - logical names **MUST NOT** be reconstructed by filename guessing.
