@@ -1,0 +1,42 @@
+name: Dependency refresh audit
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    if: ${{ github.head_ref == 'fix/v1.0.0-stable-audit-cleanup' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Refresh security-sensitive compatible dependencies
+        run: |
+          cargo update -p rustls --precise 0.23.46
+          cargo update -p rustls-webpki --precise 0.103.16
+          cargo update -p webpki-root-certs --precise 1.0.10
+          cargo update -p ctutils --precise 0.4.4
+          cargo update -p tauri
+          cargo update -p tauri-build
+          cargo update -p tauri-plugin-dialog
+          cargo update -p tauri-plugin-opener
+
+      - name: Show changed dependency versions
+        run: git diff -- Cargo.lock
+
+      - name: Validate notes-core default and encrypted
+        run: |
+          cargo test -p notes-core
+          cargo test -p notes-core --features encrypted-vault
+
+      - name: Upload refreshed Cargo.lock
+        uses: actions/upload-artifact@v4
+        with:
+          name: refreshed-cargo-lock
+          path: Cargo.lock
+          if-no-files-found: error
