@@ -1,0 +1,38 @@
+name: Rust release strategy dry run
+
+on:
+  push:
+    branches:
+      - audit/v1.0.0-release-strategy-rust
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Validate Rust strategy without writes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx --yes release-please@latest release-pr \
+            --token="$GITHUB_TOKEN" \
+            --repo-url="${GITHUB_REPOSITORY}" \
+            --target-branch="audit/v1.0.0-release-strategy-rust" \
+            --config-file="release-please-config.json" \
+            --manifest-file=".release-please-manifest.json" \
+            --dry-run --debug 2>&1 | tee dry.log
+          grep -q 'release 1.0.1' dry.log
+          grep -q 'Cargo.toml' dry.log
+          grep -q 'app/package.json' dry.log
+          grep -q 'app/package-lock.json' dry.log
+          grep -q 'app/src-tauri/tauri.conf.json' dry.log
+          if grep -q 'version.txt' dry.log; then echo 'unexpected version.txt updater'; exit 1; fi
