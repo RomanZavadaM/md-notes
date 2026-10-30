@@ -79,4 +79,4 @@ jobs:
         working-directory: app
         run: npm run tauri build -- --target universal-apple-darwin --bundles dmg
       - name: Verify DMG exists
-        run: ls target/release/bundle/dmg/*.dmg
+        run: ls target/universal-apple-darwin/release/bundle/dmg/*.dmg
